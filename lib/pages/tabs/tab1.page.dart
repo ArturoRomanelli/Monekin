@@ -37,6 +37,7 @@ class _Tab1PageState extends State<Tab1Page> {
               Expanded(
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   itemCount: (accounts?.length ?? 0) + 1,
                   itemBuilder: (BuildContext context, int index) {
                     return SizedBox(
@@ -47,7 +48,7 @@ class _Tab1PageState extends State<Tab1Page> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () => {
+                            onTap: () async => {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

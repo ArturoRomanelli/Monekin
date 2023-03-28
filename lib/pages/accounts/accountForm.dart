@@ -1,7 +1,8 @@
 import 'package:finlytics/pages/tabs/tabs.page.dart';
 import 'package:finlytics/services/account/account.model.dart';
+import 'package:finlytics/services/currency/currency.dart';
+import 'package:finlytics/services/currency/currency.service.dart';
 import 'package:finlytics/services/db/db.service.dart';
-import 'package:finlytics/services/isoCurrencyCodes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -19,7 +20,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   var _iniValue = 0.0;
   var _type = '';
   var _icon = '';
-  var _currency = IsoCurrencyCodes.USD;
+  var _currency = CurrencyService().getUserDefaultCurrency();
 
   addAccount() async {
     Account newAccount = Account(
@@ -39,43 +40,85 @@ class _AccountFormPageState extends State<AccountFormPage> {
         });
   }
 
+  List<Currency> filteredCurrencies = CurrencyService().getCurrencies();
+
   void showModal(context) {
     showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
-          return Container(
-            padding: const EdgeInsets.all(8),
-            height: 400,
-            alignment: Alignment.center,
-            child: ListView.separated(
-                itemCount: IsoCurrencyCodes.values.length,
-                separatorBuilder: (context, i) {
-                  return const Divider();
-                },
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                      child: ListTile(
-                        title: Text(
-                            convertToString(IsoCurrencyCodes.values[index])),
-                        leading: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
+          return DraggableScrollableSheet(
+            expand: false,
+            maxChildSize: 0.8,
+            minChildSize: 0.4,
+            initialChildSize: 0.8,
+            builder: (context, scrollController) {
+              return ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+                child: Scaffold(
+                  appBar: AppBar(
+                    title: const Text("Selecciona una moneda"),
+                    elevation: 5,
+                  ),
+                  body: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Search by name or currency code',
+                            labelText: "Search currency",
+                            border: OutlineInputBorder(),
                           ),
-                          child: SvgPicture.asset(
-                            'assets/icons/currency_flags/afn.svg',
-                            height: 35,
-                            width: 35,
-                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              filteredCurrencies = CurrencyService()
+                                  .searchCurrencies(value, context);
+                            });
+
+                            print(filteredCurrencies.toString());
+                          },
                         ),
                       ),
-                      onTap: () {
-                        setState(() {
-                          _currency = IsoCurrencyCodes.values[index];
-                        });
-                        Navigator.of(context).pop();
-                      });
-                }),
+                      Expanded(
+                          child: ListView.separated(
+                              controller: scrollController,
+                              itemCount: filteredCurrencies.length,
+                              separatorBuilder: (context, i) {
+                                return const Divider();
+                              },
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                    child: ListTile(
+                                      title: Text(filteredCurrencies[index]
+                                          .getLocaleName(context)),
+                                      leading: Container(
+                                        clipBehavior: Clip.hardEdge,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/icons/currency_flags/${CurrencyService().getCurrencies()[index].code.toLowerCase()}.svg',
+                                          height: 35,
+                                          width: 35,
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        _currency = CurrencyService()
+                                            .getCurrencies()[index];
+                                      });
+                                      Navigator.of(context).pop();
+                                    });
+                              })),
+                    ],
+                  ),
+                ),
+              );
+            },
           );
         });
   }
@@ -158,8 +201,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
               ),
               TextFormField(
                 decoration: const InputDecoration(
-                  hintText: 'Enter account icon',
-                ),
+                    hintText: 'Enter account icon',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.access_alarm)),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter account icon';
@@ -171,41 +215,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
                 },
                 textInputAction: TextInputAction.next,
               ),
-              TextFormField(
-                decoration:
-                    const InputDecoration(hintText: 'Enter account currency'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter account currency';
-                  }
-                  if (!IsoCurrencyCodes.values
-                      .map((e) => e.toString())
-                      .contains('IsoCurrencyCodes.$value')) {
-                    return 'Please enter a valid currency code';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _currency = convertToEnum(value!);
-                },
-              ),
-              DropdownButtonFormField<IsoCurrencyCodes>(
-                value: _currency,
-                items: IsoCurrencyCodes.values
-                    .map((currency) => DropdownMenuItem(
-                          value: currency,
-                          child: Text(convertToString(currency)),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _currency = value ?? _currency;
-                  });
-                },
-              ),
               TextField(
-                  controller:
-                      TextEditingController(text: convertToString(_currency)),
+                  controller: TextEditingController(
+                      text: _currency.getLocaleName(context)),
                   readOnly: true,
                   onTap: () => showModal(context),
                   decoration: InputDecoration(
@@ -219,21 +231,11 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: SvgPicture.asset(
-                          'assets/icons/currency_flags/afn.svg',
+                          'assets/icons/currency_flags/${_currency.code.toLowerCase()}.svg',
                           height: 25,
                           width: 25,
                         ),
                       ))),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
-                    child: const Text('Show Modal'),
-                    onPressed: () => showModal(context),
-                  ),
-                  Text('Selected item: $_currency')
-                ],
-              ),
             ],
           ),
         ),

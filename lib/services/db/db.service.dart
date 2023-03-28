@@ -1,4 +1,5 @@
 import 'package:finlytics/services/account/account.model.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,24 +14,11 @@ class DbService {
 
     // Open the database and store the reference.
     _database = await openDatabase(
-        // Set the path to the database. Note: Using the `join` function from the
-        // `path` package is best practice to ensure the path is correctly
-        // constructed for each platform.
+        // Set the path to the database. Note: Using the `join` function from the `path` package is best practice
+        // to ensure the path is correctly constructed for each platform.
         join(await getDatabasesPath(), 'app-data.db'),
-        onCreate: (db, version) => {
-              db.execute('''CREATE TABLE accounts (
-                  id TEXT PRIMARY KEY,
-                  name TEXT UNIQUE NOT NULL,
-                  iniValue REAL NOT NULL,
-                  date TEXT NOT NULL,
-                  text TEXT,
-                  type TEXT NOT NULL,
-                  icon TEXT NOT NULL,
-                  currency TEXT NOT NULL,
-                  iban TEXT,
-                  swift TEXT
-                );''')
-            },
+        onCreate: (db, version) async =>
+            {db.execute(await rootBundle.loadString("assets/sql/schema.sql"))},
         version: 1);
 
     return _database!;

@@ -14,7 +14,7 @@ Account _$AccountFromJson(Map<String, dynamic> json) => Account(
       text: json['text'] as String?,
       type: json['type'] as String,
       icon: json['icon'] as String,
-      currency: convertToEnum(json['currency'] as String),
+      currency: Account._getCurrencyByCode(json['currency'] as String),
       iban: json['iban'] as String?,
       swift: json['swift'] as String?,
     );
@@ -27,7 +27,7 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'text': instance.text,
       'type': instance.type,
       'icon': instance.icon,
-      'currency': convertToString(instance.currency),
+      'currency': Account._getCurrencyCode(instance.currency),
       'iban': instance.iban,
       'swift': instance.swift,
     };

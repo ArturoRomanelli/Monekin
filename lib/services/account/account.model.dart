@@ -1,4 +1,5 @@
-import 'package:finlytics/services/isoCurrencyCodes.dart';
+import 'package:finlytics/services/currency/currency.dart';
+import 'package:finlytics/services/currency/currency.service.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'account.model.g.dart';
@@ -23,11 +24,15 @@ class Account {
 
   String icon;
 
-  /// Currency of all the transactions of this account.
-  /// When you change this currency all transactions in this account
+  /// Currency of all the transactions of this account. When you change this currency all transactions in this account
   /// will have the new currency but their amount/value will remain the same.
-  @JsonKey(toJson: convertToString, fromJson: convertToEnum)
-  IsoCurrencyCodes currency;
+  @JsonKey(toJson: _getCurrencyCode, fromJson: _getCurrencyByCode)
+  Currency currency;
+
+  static String _getCurrencyCode(Currency currency) => currency.code;
+  static Currency _getCurrencyByCode(String id) =>
+      CurrencyService().getCurrencyByCode(id) ??
+      CurrencyService().getUserDefaultCurrency();
 
   String? iban;
   String? swift;

@@ -1,7 +1,8 @@
 import 'package:finlytics/pages/accounts/accountForm.dart';
 import 'package:finlytics/services/account/account.model.dart';
-import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/services/account/accountService.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Tab1Page extends StatefulWidget {
   const Tab1Page({Key? key}) : super(key: key);
@@ -15,9 +16,8 @@ class _Tab1PageState extends State<Tab1Page> {
 
   @override
   void initState() {
-    DbService().getAccounts().then((value) => setState(() {
+    context.read<AccountService>().getAccounts().then((value) => setState(() {
           accounts = value;
-          print(accounts.toString());
         }));
 
     super.initState();
@@ -54,8 +54,11 @@ class _Tab1PageState extends State<Tab1Page> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const AccountFormPage()))
+                                      builder: (context) => AccountFormPage(
+                                          accountUUID:
+                                              (index == (accounts?.length ?? 0))
+                                                  ? null
+                                                  : accounts![index].id)))
                             },
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,

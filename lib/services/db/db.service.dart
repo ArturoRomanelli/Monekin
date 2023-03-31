@@ -1,13 +1,24 @@
-import 'package:finlytics/services/account/account.model.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbService {
-  Database? _database;
+  DbService._();
 
-  Future<Database> _getDatabase() async {
+  static final DbService instance = DbService._();
+  static Database? _database;
+
+  // Getter database
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+
+    _database = await _initDatabase();
+
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
     if (_database != null) return _database!;
 
     WidgetsFlutterBinding.ensureInitialized();
@@ -22,25 +33,5 @@ class DbService {
         version: 1);
 
     return _database!;
-  }
-
-  Future<void> insertAccount(Account account) async {
-    final db = await _getDatabase();
-
-    await db.insert(
-      'accounts',
-      account.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.fail,
-    );
-  }
-
-  Future<List<Account>> getAccounts() async {
-    final db = await _getDatabase();
-
-    final List<Map<String, dynamic>> maps = await db.query('accounts');
-
-    return List.generate(maps.length, (i) {
-      return Account.fromJson(maps[i]);
-    });
   }
 }

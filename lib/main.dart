@@ -1,5 +1,7 @@
 import 'package:finlytics/pages/tabs/tabs.page.dart';
+import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
+import 'package:finlytics/services/db/db.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +11,8 @@ void main() {
     MultiProvider(
       providers: [
         Provider<CurrencyService>(create: (context) => CurrencyService()),
+        ChangeNotifierProvider<AccountService>(
+            create: (context) => AccountService(DbService.instance)),
       ],
       child: const MyApp(),
     ),

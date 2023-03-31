@@ -1,14 +1,18 @@
 import 'package:finlytics/pages/tabs/tabs.page.dart';
 import 'package:finlytics/services/account/account.model.dart';
+import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/currency/currency.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
-import 'package:finlytics/services/db/db.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class AccountFormPage extends StatefulWidget {
-  const AccountFormPage({Key? key}) : super(key: key);
+  const AccountFormPage({Key? key, this.accountUUID}) : super(key: key);
+
+  /// Account UUID to edit (if any)
+  final String? accountUUID;
 
   @override
   State<AccountFormPage> createState() => _AccountFormPageState();
@@ -17,35 +21,73 @@ class AccountFormPage extends StatefulWidget {
 class _AccountFormPageState extends State<AccountFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  var _name = '';
-  var _iniValue = 0.0;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _iniValueController = TextEditingController();
+
   var _type = '';
   var _icon = '';
   late Currency _currency;
 
-  addAccount() async {
-    Account newAccount = Account(
-        id: "xkjlcfklhkkdl $_name",
-        name: _name,
-        iniValue: _iniValue,
-        date: DateTime.now(),
+  Account? _accountToEdit;
+
+  submitForm() async {
+    Account accountToSubmit = Account(
+        id: _accountToEdit?.id ?? const Uuid().v4(),
+        name: _nameController.text,
+        iniValue: double.parse(_iniValueController.text),
+        date: _accountToEdit?.date ?? DateTime.now(),
         type: _type,
         icon: _icon,
         currency: _currency);
 
-    DbService().insertAccount(newAccount).then((value) => {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => TabsPage()),
-              (Route<dynamic> route) => false)
-        });
+    final navigateBack = Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => TabsPage()),
+        (Route<dynamic> route) => false);
+
+    if (_accountToEdit != null) {
+      context
+          .read<AccountService>()
+          .updateAccount(accountToSubmit)
+          .then((value) => {navigateBack});
+    } else {
+      context
+          .read<AccountService>()
+          .insertAccount(accountToSubmit)
+          .then((value) => {navigateBack});
+    }
   }
 
   @override
   void initState() {
     super.initState();
 
+    if (widget.accountUUID != null) {
+      _fillForm();
+    }
+
     _currency = context.read<CurrencyService>().getUserDefaultCurrency();
+  }
+
+  void _fillForm() {
+    context
+        .read<AccountService>()
+        .getAccountByID(widget.accountUUID!)
+        .then((value) => setState(() {
+              _accountToEdit = value;
+
+              if (_accountToEdit == null) return;
+
+              _nameController.text = _accountToEdit!.name;
+              _iniValueController.text = _accountToEdit!.iniValue.toString();
+            }));
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _iniValueController.dispose();
+    super.dispose();
   }
 
   void showModal(BuildContext context) {
@@ -137,7 +179,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text("Create Account"),
+          title: Text(
+              widget.accountUUID != null ? "Edit account" : "Create Account"),
           elevation: 2,
           actions: <Widget>[
             IconButton(
@@ -146,110 +189,108 @@ class _AccountFormPageState extends State<AccountFormPage> {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
 
-                  addAccount();
+                  submitForm();
                 }
               },
             ),
           ]),
-      body: Container(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "Hola",
-                  hintText: 'Enter account name',
-                  border: OutlineInputBorder(),
+      body: widget.accountUUID != null && _accountToEdit == null
+          ? const LinearProgressIndicator()
+          : Container(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: "Hola",
+                        hintText: 'Enter account name',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter account name';
+                        }
+                        return null;
+                      },
+                      textInputAction: TextInputAction.next,
+                    ),
+                    TextFormField(
+                      controller: _iniValueController,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter initial value',
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter initial value';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
+                      textInputAction: TextInputAction.next,
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: 'Enter account type',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter account type';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _type = value!;
+                      },
+                      textInputAction: TextInputAction.next,
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                          hintText: 'Enter account icon',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.access_alarm)),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter account icon';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _icon = value!;
+                      },
+                      textInputAction: TextInputAction.next,
+                    ),
+                    TextField(
+                        controller: TextEditingController(
+                            text: _currency.getLocaleName(context)),
+                        readOnly: true,
+                        onTap: () => showModal(context),
+                        decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Read-only field',
+                            suffixIcon: const Icon(Icons.arrow_drop_down),
+                            prefixIcon: Container(
+                              margin: const EdgeInsets.all(10),
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/icons/currency_flags/${_currency.code.toLowerCase()}.svg',
+                                height: 25,
+                                width: 25,
+                              ),
+                            ))),
+                  ],
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter account name';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _name = value!;
-                },
-                textInputAction: TextInputAction.next,
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Enter initial value',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter initial value';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _iniValue = double.parse(value!);
-                },
-                textInputAction: TextInputAction.next,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'Enter account type',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter account type';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _type = value!;
-                },
-                textInputAction: TextInputAction.next,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    hintText: 'Enter account icon',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.access_alarm)),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter account icon';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _icon = value!;
-                },
-                textInputAction: TextInputAction.next,
-              ),
-              TextField(
-                  controller: TextEditingController(
-                      text: _currency.getLocaleName(context)),
-                  readOnly: true,
-                  onTap: () => showModal(context),
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Read-only field',
-                      suffixIcon: const Icon(Icons.arrow_drop_down),
-                      prefixIcon: Container(
-                        margin: const EdgeInsets.all(10),
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: SvgPicture.asset(
-                          'assets/icons/currency_flags/${_currency.code.toLowerCase()}.svg',
-                          height: 25,
-                          width: 25,
-                        ),
-                      ))),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

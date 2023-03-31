@@ -49,6 +49,8 @@ class _Tab1PageState extends State<Tab1Page> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () async => {
+                              await Future.delayed(
+                                  const Duration(milliseconds: 200)),
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

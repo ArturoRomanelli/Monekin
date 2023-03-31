@@ -5,6 +5,7 @@ import 'package:finlytics/services/currency/currency.service.dart';
 import 'package:finlytics/services/db/db.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class AccountFormPage extends StatefulWidget {
   const AccountFormPage({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   var _iniValue = 0.0;
   var _type = '';
   var _icon = '';
-  var _currency = CurrencyService().getUserDefaultCurrency();
+  late Currency _currency;
 
   addAccount() async {
     Account newAccount = Account(
@@ -40,86 +41,95 @@ class _AccountFormPageState extends State<AccountFormPage> {
         });
   }
 
-  List<Currency> filteredCurrencies = CurrencyService().getCurrencies();
+  @override
+  void initState() {
+    super.initState();
 
-  void showModal(context) {
+    _currency = context.read<CurrencyService>().getUserDefaultCurrency();
+  }
+
+  void showModal(BuildContext context) {
+    final currencyService = context.read<CurrencyService>();
+
+    List<Currency> filteredCurrencies = currencyService.getCurrencies();
+
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return DraggableScrollableSheet(
-            expand: false,
-            maxChildSize: 0.8,
-            minChildSize: 0.4,
-            initialChildSize: 0.8,
-            builder: (context, scrollController) {
-              return ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20)),
-                child: Scaffold(
-                  appBar: AppBar(
-                    title: const Text("Selecciona una moneda"),
-                    elevation: 5,
-                  ),
-                  body: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            hintText: 'Search by name or currency code',
-                            labelText: "Search currency",
-                            border: OutlineInputBorder(),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setSheetState) {
+            return DraggableScrollableSheet(
+              expand: false,
+              maxChildSize: 0.8,
+              minChildSize: 0.4,
+              initialChildSize: 0.8,
+              builder: (context, scrollController) {
+                return ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  child: Scaffold(
+                    appBar: AppBar(
+                      title: const Text("Selecciona una moneda"),
+                      elevation: 5,
+                    ),
+                    body: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Search by name or currency code',
+                              labelText: "Search currency",
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (value) {
+                              setSheetState(() {
+                                filteredCurrencies = currencyService
+                                    .searchCurrencies(value, context);
+                              });
+                            },
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              filteredCurrencies = CurrencyService()
-                                  .searchCurrencies(value, context);
-                            });
-
-                            print(filteredCurrencies.toString());
-                          },
                         ),
-                      ),
-                      Expanded(
-                          child: ListView.separated(
-                              controller: scrollController,
-                              itemCount: filteredCurrencies.length,
-                              separatorBuilder: (context, i) {
-                                return const Divider();
-                              },
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                    child: ListTile(
-                                      title: Text(filteredCurrencies[index]
-                                          .getLocaleName(context)),
-                                      leading: Container(
-                                        clipBehavior: Clip.hardEdge,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                        ),
-                                        child: SvgPicture.asset(
-                                          'assets/icons/currency_flags/${CurrencyService().getCurrencies()[index].code.toLowerCase()}.svg',
-                                          height: 35,
-                                          width: 35,
+                        Expanded(
+                            child: ListView.separated(
+                                controller: scrollController,
+                                itemCount: filteredCurrencies.length,
+                                separatorBuilder: (context, i) {
+                                  return const Divider();
+                                },
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                      child: ListTile(
+                                        title: Text(filteredCurrencies[index]
+                                            .getLocaleName(context)),
+                                        leading: Container(
+                                          clipBehavior: Clip.hardEdge,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: SvgPicture.asset(
+                                            'assets/icons/currency_flags/${filteredCurrencies[index].code.toLowerCase()}.svg',
+                                            height: 35,
+                                            width: 35,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        _currency = CurrencyService()
-                                            .getCurrencies()[index];
+                                      onTap: () {
+                                        setState(() {
+                                          _currency = filteredCurrencies[index];
+                                        });
+                                        Navigator.of(context).pop();
                                       });
-                                      Navigator.of(context).pop();
-                                    });
-                              })),
-                    ],
+                                })),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
+          });
         });
   }
 

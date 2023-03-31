@@ -8,16 +8,20 @@ class CurrencyService {
   List<Currency> getCurrencies() {
     if (_currencies != null) return _currencies!;
 
-    return supportedCurrencies.map((e) => Currency.fromJson(e)).toList();
+    _currencies = supportedCurrencies.map((e) => Currency.fromJson(e)).toList();
+
+    return _currencies!;
   }
 
   List<Currency> searchCurrencies(String? toSearch, context) {
     if (toSearch == "" || toSearch == null) return getCurrencies();
 
+    toSearch = toSearch.toLowerCase();
+
     return getCurrencies()
         .where((x) =>
-            x.code.contains(toSearch) ||
-            x.getLocaleName(context).contains(toSearch))
+            x.code.toLowerCase().contains(toSearch!) ||
+            x.getLocaleName(context).toLowerCase().contains(toSearch))
         .toList();
   }
 

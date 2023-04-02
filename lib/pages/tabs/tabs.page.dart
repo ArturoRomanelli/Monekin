@@ -78,9 +78,7 @@ class _TabsPageState extends State<TabsPage> {
           );
         } else {
           return Scaffold(
-            body: Center(
-              child: _tabsComponent[widget.currentPageIndex],
-            ),
+            body: _tabsComponent[widget.currentPageIndex],
             bottomNavigationBar: NavigationBar(
               destinations: List.generate(
                 _tabs.length,

@@ -13,12 +13,12 @@ class DbService {
   Future<Database> get database async {
     if (_database != null) return _database!;
 
-    _database = await _initDatabase();
+    _database = await initDatabase();
 
     return _database!;
   }
 
-  Future<Database> _initDatabase() async {
+  Future<Database> initDatabase() async {
     if (_database != null) return _database!;
 
     WidgetsFlutterBinding.ensureInitialized();

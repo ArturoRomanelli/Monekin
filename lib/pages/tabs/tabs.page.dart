@@ -13,7 +13,7 @@ class TabsPage extends StatefulWidget {
 }
 
 class _TabsPageState extends State<TabsPage> {
-  static const List<Map<String, dynamic>> _tabs = [
+  final List<Map<String, dynamic>> _tabs = [
     {
       'icon': Icons.home,
       'label': 'Home',
@@ -28,21 +28,32 @@ class _TabsPageState extends State<TabsPage> {
     },
   ];
 
-  static final _tabsComponent = [
-    _buildTabComponent(widget: const Tab1Page()),
-    _buildTabComponent(widget: const Tab2Page()),
-    _buildTabComponent(widget: const Tab3Page()),
-  ];
+  final List<Widget> tabsPages = [];
+
+  Widget _selectedWidget = _buildTabComponent(widget: const Tab1Page(), key: 0);
+
+  @override
+  void initState() {
+    tabsPages.addAll([
+      _buildTabComponent(widget: const Tab1Page(), key: 0),
+      _buildTabComponent(widget: const Tab2Page(), key: 1),
+      _buildTabComponent(widget: const Tab3Page(), key: 2),
+    ]);
+
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       widget.currentPageIndex = index;
+      _selectedWidget = tabsPages[widget.currentPageIndex];
     });
   }
 
-  static Widget _buildTabComponent({required Widget widget}) {
+  static Widget _buildTabComponent({required Widget widget, required int key}) {
     return Scaffold(
       body: widget,
+      key: ValueKey<int>(key),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: const Icon(Icons.add),
@@ -71,14 +82,16 @@ class _TabsPageState extends State<TabsPage> {
                 ),
                 const VerticalDivider(thickness: 1, width: 1),
                 Expanded(
-                  child: _tabsComponent[widget.currentPageIndex],
+                  child: tabsPages[widget.currentPageIndex],
                 ),
               ],
             ),
           );
         } else {
           return Scaffold(
-            body: _tabsComponent[widget.currentPageIndex],
+            body: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: _selectedWidget),
             bottomNavigationBar: NavigationBar(
               destinations: List.generate(
                 _tabs.length,

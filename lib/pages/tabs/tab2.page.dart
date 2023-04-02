@@ -1,4 +1,3 @@
-import 'package:finlytics/pages/tabs/animations/fadeScaleAtStart.dart';
 import 'package:flutter/material.dart';
 
 class Tab2Page extends StatefulWidget {
@@ -29,21 +28,19 @@ class _Tab2PageState extends State<Tab2Page> {
               },
             ),
           ]),
-      body: FadeScaleAtStart(
-        child: Center(
-          child: ListView.builder(
-            itemCount: 40,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text('Title $index'),
-                subtitle: Text('Subtitle $index'),
-                leading: Icon(Icons.join_full_rounded),
-                onTap: () {
-                  print('Final value $index');
-                },
-              );
-            },
-          ),
+      body: Center(
+        child: ListView.builder(
+          itemCount: 40,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text('Title $index'),
+              subtitle: Text('Subtitle $index'),
+              leading: Icon(Icons.join_full_rounded),
+              onTap: () {
+                print('Final value $index');
+              },
+            );
+          },
         ),
       ),
     );

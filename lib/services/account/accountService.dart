@@ -35,8 +35,8 @@ class AccountService extends ChangeNotifier {
   Future<Account?> getAccountByID(String idToFind) async {
     final db = await _dbService!.database;
 
-    final List<Map<String, dynamic>> maps =
-        await db.query(_tableName, where: 'id = ?', whereArgs: [idToFind]);
+    final List<Map<String, dynamic>> maps = await db.query(_tableName,
+        where: 'id = ?', whereArgs: [idToFind], limit: 1);
 
     return maps.isEmpty ? null : Account.fromJson(maps.first);
   }

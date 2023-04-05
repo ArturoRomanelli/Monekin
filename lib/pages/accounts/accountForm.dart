@@ -3,6 +3,9 @@ import 'package:finlytics/services/account/account.model.dart';
 import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/currency/currency.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
+import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/widgets/currency_selector_modal.dart';
+import 'package:finlytics/widgets/icon_selector_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +28,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   final TextEditingController _iniValueController = TextEditingController();
 
   var _type = '';
-  var _icon = '';
+  var _icon = 'question_mark';
   late Currency _currency;
 
   Account? _accountToEdit;
@@ -80,6 +83,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
               _nameController.text = _accountToEdit!.name;
               _iniValueController.text = _accountToEdit!.iniValue.toString();
+
+              _icon = _accountToEdit!.icon;
             }));
   }
 
@@ -88,91 +93,6 @@ class _AccountFormPageState extends State<AccountFormPage> {
     _nameController.dispose();
     _iniValueController.dispose();
     super.dispose();
-  }
-
-  void showModal(BuildContext context) {
-    final currencyService = context.read<CurrencyService>();
-
-    List<Currency> filteredCurrencies = currencyService.getCurrencies();
-
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setSheetState) {
-            return DraggableScrollableSheet(
-              expand: false,
-              maxChildSize: 0.8,
-              minChildSize: 0.4,
-              initialChildSize: 0.8,
-              builder: (context, scrollController) {
-                return ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(20)),
-                  child: Scaffold(
-                    appBar: AppBar(
-                      title: const Text("Selecciona una moneda"),
-                      elevation: 5,
-                    ),
-                    body: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: 'Search by name or currency code',
-                              labelText: "Search currency",
-                              border: OutlineInputBorder(),
-                            ),
-                            onChanged: (value) {
-                              setSheetState(() {
-                                filteredCurrencies = currencyService
-                                    .searchCurrencies(value, context);
-                              });
-                            },
-                          ),
-                        ),
-                        Expanded(
-                            child: ListView.separated(
-                                controller: scrollController,
-                                itemCount: filteredCurrencies.length,
-                                separatorBuilder: (context, i) {
-                                  return const Divider();
-                                },
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                      child: ListTile(
-                                        title: Text(filteredCurrencies[index]
-                                            .getLocaleName(context)),
-                                        leading: Container(
-                                          clipBehavior: Clip.hardEdge,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
-                                          child: SvgPicture.asset(
-                                            'assets/icons/currency_flags/${filteredCurrencies[index].code.toLowerCase()}.svg',
-                                            height: 35,
-                                            width: 35,
-                                          ),
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        setState(() {
-                                          _currency = filteredCurrencies[index];
-                                        });
-                                        Navigator.of(context).pop();
-                                      });
-                                })),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          });
-        });
   }
 
   @override
@@ -203,25 +123,76 @@ class _AccountFormPageState extends State<AccountFormPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: "Hola",
-                        hintText: 'Enter account name',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter account name';
-                        }
-                        return null;
-                      },
-                      textInputAction: TextInputAction.next,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return IconSelectorModal(
+                                    preselectedIcon: _icon,
+                                    onIconSelected: (selectedIcon) {
+                                      setState(() {
+                                        _icon = selectedIcon.id;
+                                      });
+                                    },
+                                  );
+                                });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1,
+                                    color:
+                                        Theme.of(context).colorScheme.outline),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(6))),
+                            child: SvgPicture.asset(
+                              SupportedIconService.instance
+                                  .getIconByID(_icon)
+                                  .urlToAssets,
+                              height: 50,
+                              width: 50,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _nameController,
+                            decoration: const InputDecoration(
+                              labelText: "Account name *",
+                              hintText: "Ex.: My account",
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter account name';
+                              }
+                              return null;
+                            },
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            textInputAction: TextInputAction.next,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
                     ),
                     TextFormField(
                       controller: _iniValueController,
                       decoration: const InputDecoration(
-                        hintText: 'Enter initial value',
+                        labelText: 'Initial balance *',
+                        hintText: "Ex.: 200",
+                        border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -233,47 +204,33 @@ class _AccountFormPageState extends State<AccountFormPage> {
                         }
                         return null;
                       },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       textInputAction: TextInputAction.next,
                     ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        hintText: 'Enter account type',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter account type';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _type = value!;
-                      },
-                      textInputAction: TextInputAction.next,
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                          hintText: 'Enter account icon',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.access_alarm)),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter account icon';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _icon = value!;
-                      },
-                      textInputAction: TextInputAction.next,
+                    const SizedBox(
+                      height: 20,
                     ),
                     TextField(
                         controller: TextEditingController(
                             text: _currency.getLocaleName(context)),
                         readOnly: true,
-                        onTap: () => showModal(context),
+                        onTap: () => {
+                              showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return CurrencySelectorModal(
+                                        preselectedCurrency: _currency,
+                                        onCurrencySelected: (newCurrency) => {
+                                              setState(() {
+                                                _currency = newCurrency;
+                                              })
+                                            });
+                                  })
+                            },
                         decoration: InputDecoration(
                             border: const OutlineInputBorder(),
-                            labelText: 'Read-only field',
+                            labelText: 'Currency',
                             suffixIcon: const Icon(Icons.arrow_drop_down),
                             prefixIcon: Container(
                               margin: const EdgeInsets.all(10),
@@ -282,7 +239,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: SvgPicture.asset(
-                                'assets/icons/currency_flags/${_currency.code.toLowerCase()}.svg',
+                                'lib/assets/icons/currency_flags/${_currency.code.toLowerCase()}.svg',
                                 height: 25,
                                 width: 25,
                               ),

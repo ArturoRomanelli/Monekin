@@ -37,5 +37,5 @@ Map<String, dynamic> _$ChildCategoryToJson(ChildCategory instance) =>
       'id': instance.id,
       'name': instance.name,
       'icon': instance.icon,
-      'parentCategory': instance.parentCategory.toJson(),
+      'parentCategory': instance.parentCategory,
     };

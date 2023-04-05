@@ -8,6 +8,9 @@ class Currency {
 
   final LocaleNames _names;
 
+  String get currencyIconPath =>
+      'lib/assets/icons/currency_flags/${code.toLowerCase()}.svg';
+
   Currency({required this.code, required LocaleNames names}) : _names = names;
 
   /// Get the currency name in the language of the user

@@ -6,24 +6,21 @@ class Tab3Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: const Text("Hello Tab 2"),
-          elevation: 3,
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // Do something
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {
-                // Do something
-              },
-            ),
-          ]),
-      body: const Text("Hello 2"),
+      appBar: AppBar(title: const Text('Hello Tab 2'), elevation: 3, actions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            // Do something
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () {
+            // Do something
+          },
+        ),
+      ]),
+      body: const Text('Hello 2'),
     );
   }
 }

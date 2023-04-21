@@ -1,27 +1,25 @@
-// ignore_for_file: constant_identifier_names
-
-import 'package:finlytics/services/locale_names.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Currency {
   final String code;
+  final String symbol;
 
-  final LocaleNames _names;
+  final String name;
 
   String get currencyIconPath =>
       'lib/assets/icons/currency_flags/${code.toLowerCase()}.svg';
 
-  Currency({required this.code, required LocaleNames names}) : _names = names;
-
-  /// Get the currency name in the language of the user
-  String getLocaleName(context) {
-    return _names.toJson()[
-            AppLocalizations.of(context)!.localeName.split("_").first] ??
-        _names.en;
+  SvgPicture displayFlagIcon({double? size}) {
+    return SvgPicture.asset(
+      currencyIconPath,
+      height: size,
+      width: size,
+    );
   }
 
-  factory Currency.fromJson(Map<String, dynamic> json) =>
-      Currency(code: json["code"], names: LocaleNames.fromJson(json["names"]));
+  Currency({required this.code, required this.symbol, required this.name});
 
-  Map<String, dynamic> toJson() => {"code": code, "names": _names.toJson()};
+  /// Convert a row of this entity in the database to this class
+  static Future<Currency> fromDB(Map<String, dynamic> data) async =>
+      Currency(code: data['code'], symbol: data['symbol'], name: data['name']);
 }

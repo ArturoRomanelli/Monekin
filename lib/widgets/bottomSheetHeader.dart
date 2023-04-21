@@ -7,7 +7,7 @@ class BottomSheetHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         Row(
           children: [
             const Spacer(),
@@ -22,7 +22,7 @@ class BottomSheetHeader extends StatelessWidget {
             const Spacer(),
           ],
         ),
-        SizedBox(height: 22),
+        const SizedBox(height: 12),
       ],
     );
   }

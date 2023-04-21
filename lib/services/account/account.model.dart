@@ -1,10 +1,9 @@
 import 'package:finlytics/services/currency/currency.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/services/supported_icon/supported_icon.dart';
+import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
 
-part 'account.model.g.dart';
-
-@JsonSerializable()
 class Account {
   final String id;
 
@@ -22,17 +21,11 @@ class Account {
 
   String type;
 
-  String icon;
+  SupportedIcon icon;
 
   /// Currency of all the transactions of this account. When you change this currency all transactions in this account
   /// will have the new currency but their amount/value will remain the same.
-  @JsonKey(toJson: _getCurrencyCode, fromJson: _getCurrencyByCode)
   Currency currency;
-
-  static String _getCurrencyCode(Currency currency) => currency.code;
-  static Currency _getCurrencyByCode(String id) =>
-      CurrencyService().getCurrencyByCode(id) ??
-      CurrencyService().getUserDefaultCurrency();
 
   String? iban;
   String? swift;
@@ -49,8 +42,34 @@ class Account {
       this.iban,
       this.swift});
 
-  factory Account.fromJson(Map<String, dynamic> json) =>
-      _$AccountFromJson(json);
+  /// Convert this entity to the format that it has in the database. This is usually a plain object, without nested data/objects.
+  Map<String, dynamic> toDB() => {
+        'id': id,
+        'name': name,
+        'iniValue': iniValue,
+        'date': date.toIso8601String(),
+        'text': text,
+        'type': type,
+        'icon': icon.id,
+        'currency': currency.code,
+        'iban': iban,
+        'swift': swift,
+      };
 
-  Map<String, dynamic> toJson() => _$AccountToJson(this);
+  /// Convert a row of this entity in the database to this class
+  static Future<Account> fromDB(Map<String, dynamic> json) async => Account(
+        id: json['id'],
+        name: json['name'],
+        iniValue: (json['iniValue'] as num).toDouble(),
+        date: DateTime.parse(json['date']),
+        text: json['text'],
+        type: json['type'],
+        icon: SupportedIconService.instance.getIconByID(json['icon']),
+        currency: await CurrencyService(DbService.instance)
+                .getCurrencyByCode(json['currency']) ??
+            await CurrencyService(DbService.instance)
+                .getUserPreferredCurrency(),
+        iban: json['iban'],
+        swift: json['swift'],
+      );
 }

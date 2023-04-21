@@ -2,8 +2,12 @@ import 'package:finlytics/pages/accounts/accountForm.dart';
 import 'package:finlytics/pages/settings/settings.page.dart';
 import 'package:finlytics/services/account/account.model.dart';
 import 'package:finlytics/services/account/accountService.dart';
+import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/widgets/currency_displayer.dart';
+import 'package:finlytics/widgets/skeleton.dart';
+import 'package:finlytics/widgets/trending_value.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class Tab1Page extends StatefulWidget {
@@ -41,37 +45,55 @@ class _Tab1PageState extends State<Tab1Page> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: Colors.transparent, width: 2),
-            ),
-            child: /* Container(
-              height: 28,
-              width: 28,
-              child: SvgPicture.asset(
-                'lib/assets/icons/currency_flags/bbva-2019.svg',
-                fit: BoxFit.contain,
-              ), */
-
-                Icon(
-              Icons.wallet_giftcard,
-              size: 28,
-            ),
-          ),
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: Colors.transparent, width: 2),
+              ),
+              child: SizedBox(
+                  height: 28,
+                  width: 28,
+                  child: SvgPicture.asset(
+                    account.icon.urlToAssets,
+                    fit: BoxFit.contain,
+                  ))),
           const SizedBox(
             width: 10,
           ),
           Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              children: [
                 Text(account.name, style: const TextStyle(fontSize: 16)),
-                Text(NumberFormat.simpleCurrency(
-                        locale: "es",
-                        decimalDigits: 0,
-                        name: account.currency.code)
-                    .format(account.iniValue)),
+                Row(
+                  children: [
+                    FutureBuilder(
+                        initialData: 0.0,
+                        future: context
+                            .watch<AccountService>()
+                            .getAccountMoney(account: account),
+                        builder: (context, snapshot) {
+                          return CurrencyDisplayer(
+                            amountToConvert: snapshot.data!,
+                            currency: account.currency,
+                          );
+                        }),
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    FutureBuilder(
+                        initialData: 0.0,
+                        future: context
+                            .watch<AccountService>()
+                            .getAccountsMoneyVariation(
+                                accounts: [account],
+                                convertToPreferredCurrency: false),
+                        builder: (context, snapshot) {
+                          return TrendingValue(
+                              percentage: snapshot.data!, decimalDigits: 0);
+                        }),
+                  ],
+                )
               ]),
         ],
       ),
@@ -106,7 +128,7 @@ class _Tab1PageState extends State<Tab1Page> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
                           Icon(Icons.add),
-                          Text("Create account"),
+                          Text('Create account'),
                         ])
                   : accountItemInSwiper(accounts![index]),
             ),
@@ -118,7 +140,16 @@ class _Tab1PageState extends State<Tab1Page> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    // Rebuild when a exchange rate change
+    context.select((ExchangeRateService p) => setState(() => {}));
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: colors.primary,
+        toolbarHeight: 0,
+      ),
       body: Column(
         children: [
           DefaultTextStyle.merge(
@@ -137,12 +168,31 @@ class _Tab1PageState extends State<Tab1Page> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
-                              Text("Good evening,",
+                              Text('Good evening,',
                                   style: TextStyle(fontSize: 12)),
-                              Text("user", style: TextStyle(fontSize: 18)),
+                              Text('user', style: TextStyle(fontSize: 18)),
                             ],
                           ),
-                          const Text("Hello")
+                          ActionChip(
+                            // TODO: ActionChip not show ripple effect when a background color is applied.
+                            // This is a known issue of flutter, see:
+                            // - https://github.com/flutter/flutter/issues/73215
+                            // - https://github.com/flutter/flutter/issues/115824
+
+                            onPressed: () {
+                              false;
+                            },
+                            label: Text(
+                              'Este mes',
+                              style: TextStyle(color: colors.onPrimary),
+                            ),
+                            avatar: Icon(
+                              Icons.calendar_month,
+                              color: colors.onPrimary,
+                            ),
+                            side: BorderSide(color: colors.onPrimary),
+                            backgroundColor: Theme.of(context).primaryColor,
+                          )
                         ]),
                     const SizedBox(
                       height: 8,
@@ -151,20 +201,67 @@ class _Tab1PageState extends State<Tab1Page> {
                     const SizedBox(
                       height: 8,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Total balance",
-                            style: TextStyle(fontSize: 12)),
-                        Text("287287",
-                            style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium!
-                                    .fontSize)),
-                      ],
-                    )
+                    FutureBuilder(
+                        future: context.watch<AccountService>().getAccounts(),
+                        builder: (context, accounts) {
+                          if (!accounts.hasData) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Total balance',
+                                    style: TextStyle(fontSize: 12)),
+                                const Skeleton(width: 70, height: 40),
+                              ],
+                            );
+                          } else {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Total balance',
+                                    style: TextStyle(fontSize: 12)),
+                                FutureBuilder(
+                                    future: context
+                                        .watch<AccountService>()
+                                        .getAccountsMoney(
+                                            accounts: accounts.data!),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return CurrencyDisplayer(
+                                            amountToConvert: snapshot.data!,
+                                            textStyle: const TextStyle(
+                                                fontSize: 40,
+                                                fontWeight: FontWeight.w600));
+                                      } else {
+                                        return const Skeleton(
+                                            width: 70, height: 40);
+                                      }
+                                    }),
+                                FutureBuilder(
+                                    initialData: 0.0,
+                                    future: context
+                                        .watch<AccountService>()
+                                        .getAccountsMoneyVariation(
+                                            accounts: accounts.data!,
+                                            convertToPreferredCurrency: true),
+                                    builder: (context, snapshot) {
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 230, 255, 230),
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        child: TrendingValue(
+                                            percentage: snapshot.data!),
+                                      );
+                                    }),
+                              ],
+                            );
+                          }
+                        }),
                   ],
                 ),
               ),
@@ -179,9 +276,8 @@ class _Tab1PageState extends State<Tab1Page> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("My accounts"),
+                        const Text('My accounts'),
                         TextButton(
-                          child: const Text("See all"),
                           style: ButtonStyle(
                             overlayColor:
                                 MaterialStateProperty.all(Colors.transparent),
@@ -194,29 +290,22 @@ class _Tab1PageState extends State<Tab1Page> {
                                     builder: (context) =>
                                         const AccountFormPage()))
                           },
+                          child: const Text('See all'),
                         )
                       ],
                     ),
                   ),
                   SizedBox(
-                    height: 100,
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: FutureBuilder(
-                                future: context
-                                    .watch<AccountService>()
-                                    .getAccounts(),
-                                builder: (context, accounts) {
-                                  if (!accounts.hasData) {
-                                    return const LinearProgressIndicator();
-                                  } else {
-                                    return accountList(accounts.data);
-                                  }
-                                }),
-                          ),
-                        ]),
+                    height: 90,
+                    child: FutureBuilder(
+                        future: context.watch<AccountService>().getAccounts(),
+                        builder: (context, accounts) {
+                          if (!accounts.hasData) {
+                            return const LinearProgressIndicator();
+                          } else {
+                            return accountList(accounts.data);
+                          }
+                        }),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12),
@@ -226,9 +315,9 @@ class _Tab1PageState extends State<Tab1Page> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                              padding: EdgeInsets.all(16),
-                              child: Text("Tools",
-                                  style: const TextStyle(fontSize: 18))),
+                              padding: const EdgeInsets.all(16),
+                              child: const Text('Tools',
+                                  style: TextStyle(fontSize: 18))),
                           ListView.builder(
                             padding: EdgeInsets.zero,
                             itemCount: _tools.length,
@@ -238,9 +327,9 @@ class _Tab1PageState extends State<Tab1Page> {
                               final item = _tools[index];
 
                               return ListTile(
-                                title: Text(item["label"]),
+                                title: Text(item['label']),
                                 leading: Icon(
-                                  item["icon"],
+                                  item['icon'],
                                   color: Theme.of(context).primaryColor,
                                 ),
                                 trailing: const Icon(
@@ -251,7 +340,7 @@ class _Tab1PageState extends State<Tab1Page> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => item["route"]))
+                                          builder: (context) => item['route']))
                                 },
                               );
                             },

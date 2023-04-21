@@ -1,115 +1,84 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:finlytics/services/category/categoryService.dart';
+import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/services/supported_icon/supported_icon.dart';
+import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
 
-part 'category.model.g.dart';
-
-abstract class CategoryBase {
+class Category {
   final String id;
   String name;
-  String icon;
+  SupportedIcon icon;
 
-  CategoryBase({
-    required this.id,
-    required this.name,
-    required this.icon,
-  });
-
-  CategoryBase.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        icon = json['icon'];
-}
-
-class Category extends CategoryBase {
   String? _color;
   String? _type;
-  MainCategory? parentCategory;
+  Category? parentCategory;
 
   String get color => _color ?? parentCategory!.color;
   String get type => _type ?? parentCategory!.type;
 
-  bool get isMainCategory => parentCategory != null;
+  set color(String newColor) {
+    if (isMainCategory) {
+      _color = newColor;
+    } else {
+      throw Exception('You can not set the color of a subcategory');
+    }
+  }
+
+  set type(String newType) {
+    if (isMainCategory) {
+      _type = newType;
+    } else {
+      throw Exception('You can not set the type of a subcategory');
+    }
+  }
+
+  bool get isMainCategory => parentCategory == null;
   bool get isChildCategory => !isMainCategory;
 
-  Category(
-      {required String id,
-      required String name,
-      required String icon,
+  Category._(
+      {required this.id,
+      required this.name,
+      required this.icon,
       String? color,
       String? type,
       this.parentCategory})
       : assert((color != null && type != null) || parentCategory != null),
         _color = color,
-        _type = type,
-        super(
-          id: id,
-          name: name,
-          icon: icon,
-        );
+        _type = type;
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        icon: json['icon'] as String,
-        type: json['type'] as String?,
-        color: json['color'] as String?,
-        parentCategory: json['parentCategory'] == null
-            ? null
-            : MainCategory.fromJson(
-                json['parentCategory'] as Map<String, dynamic>),
-      );
+  Category.childCategory(
+      {required this.id,
+      required this.name,
+      required this.icon,
+      required this.parentCategory});
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Category.mainCategory({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required String color,
+    required String type,
+  })  : _color = color,
+        _type = type;
+
+  /// Convert this entity to the format that it has in the database. This is usually a plain object, without nested data/objects.
+  Map<String, dynamic> toDB() => {
         'id': id,
         'name': name,
-        'icon': icon,
+        'icon': icon.id,
         'type': _type,
         'color': _color,
-        'parentCategory': parentCategory,
+        'parentCategoryID': parentCategory?.id,
       };
-}
 
-@JsonSerializable()
-class MainCategory extends CategoryBase {
-  /// The color of the category and its subcategories
-  String color;
-
-  String type;
-
-  MainCategory({
-    required String id,
-    required String name,
-    required String icon,
-    required this.color,
-    required this.type,
-  }) : super(
-          id: id,
-          name: name,
-          icon: icon,
-        );
-
-  factory MainCategory.fromJson(Map<String, dynamic> json) =>
-      _$MainCategoryFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MainCategoryToJson(this);
-}
-
-@JsonSerializable()
-class ChildCategory extends CategoryBase {
-  MainCategory parentCategory;
-
-  ChildCategory({
-    required String id,
-    required String name,
-    required String icon,
-    required this.parentCategory,
-  }) : super(
-          id: id,
-          name: name,
-          icon: icon,
-        );
-
-  factory ChildCategory.fromJson(Map<String, dynamic> json) =>
-      _$ChildCategoryFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ChildCategoryToJson(this);
+  /// Convert a row of this entity in the database to this class
+  static Future<Category> fromDB(Map<String, dynamic> data) async => Category._(
+      id: data['id'],
+      name: data['name'],
+      icon: SupportedIconService.instance.getIconByID(data['icon']),
+      color: data['color'],
+      type: data['type'],
+      parentCategory: data['parentCategoryID'] != null
+          ? await CategoryService(DbService.instance)
+              .getCategoryById(data['parentCategoryID'])
+          : null);
 }

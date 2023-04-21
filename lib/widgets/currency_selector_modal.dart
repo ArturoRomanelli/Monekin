@@ -2,17 +2,18 @@ import 'package:finlytics/services/currency/currency.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
 import 'package:finlytics/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/widgets/bottomSheetHeader.dart';
+import 'package:finlytics/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class CurrencySelectorModal extends StatefulWidget {
   const CurrencySelectorModal(
-      {super.key, required this.preselectedCurrency, this.onCurrencySelected});
+      {super.key, this.preselectedCurrency, this.onCurrencySelected});
 
   final void Function(Currency selectedCurrency)? onCurrencySelected;
 
-  final Currency preselectedCurrency;
+  final Currency? preselectedCurrency;
 
   @override
   State<CurrencySelectorModal> createState() => _CurrencySelectorModalState();
@@ -31,7 +32,12 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
 
     _currencyService = context.read<CurrencyService>();
     _selectedCurrency = widget.preselectedCurrency;
-    _filteredCurrencies = _currencyService!.getCurrencies();
+
+    _currencyService!.getCurrencies().then((value) {
+      setState(() {
+        _filteredCurrencies = value;
+      });
+    });
   }
 
   @override
@@ -57,7 +63,7 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Select a currency",
+                        'Select a currency',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       Chip(
@@ -66,18 +72,17 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                         label: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(child: Text("${_selectedCurrency?.code}")),
+                            Flexible(
+                                child: Text(_selectedCurrency?.code ?? '???')),
                             Container(
                               margin: const EdgeInsets.only(left: 6),
                               clipBehavior: Clip.hardEdge,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(100),
                               ),
-                              child: SvgPicture.asset(
-                                _selectedCurrency!.currencyIconPath,
-                                height: 20,
-                                width: 20,
-                              ),
+                              child: _selectedCurrency != null
+                                  ? _selectedCurrency!.displayFlagIcon(size: 20)
+                                  : const Skeleton(width: 22, height: 22),
                             )
                           ],
                         ),
@@ -88,15 +93,18 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                 TextField(
                   decoration: const InputDecoration(
                       hintText: 'Search for a currency by name or code',
-                      labelText: "Tap to search",
+                      labelText: 'Tap to search',
                       prefixIcon: Icon(Icons.search),
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
                   onChanged: (value) {
-                    setState(() {
-                      _filteredCurrencies = context
-                          .read<CurrencyService>()
-                          .searchCurrencies(value, context);
+                    context
+                        .read<CurrencyService>()
+                        .searchCurrencies(value)
+                        .then((curr) {
+                      setState(() {
+                        _filteredCurrencies = curr;
+                      });
                     });
                     (() {});
                   },
@@ -118,7 +126,7 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
 
                         return ListTile(
                           title: Text(
-                            currencyItem.getLocaleName(context),
+                            currencyItem.name,
                             overflow: TextOverflow.fade,
                             softWrap: false,
                             maxLines: 1,
@@ -182,10 +190,13 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                   )
                 ])),
                 BottomSheetFooter(
-                    onSaved: () => {
-                          widget.onCurrencySelected!(_selectedCurrency!),
-                          Navigator.pop(context)
-                        })
+                    onSaved: _selectedCurrency != null
+                        ? () {
+                            Navigator.pop(context);
+
+                            widget.onCurrencySelected!(_selectedCurrency!);
+                          }
+                        : null)
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:finlytics/pages/tabs/tab1.page.dart';
 import 'package:finlytics/pages/tabs/tab2.page.dart';
 import 'package:finlytics/pages/tabs/tab3.page.dart';
+import 'package:finlytics/pages/transactions/transaction_form.page.dart';
 import 'package:flutter/material.dart';
 
 class TabsPage extends StatefulWidget {
@@ -15,22 +16,25 @@ class TabsPage extends StatefulWidget {
 class _TabsPageState extends State<TabsPage> {
   final List<Map<String, dynamic>> _tabs = [
     {
-      'icon': Icons.home,
+      'icon': Icons.home_outlined,
+      'selectedIcon': Icons.home,
       'label': 'Home',
     },
     {
-      'icon': Icons.business,
-      'label': 'Business',
+      'icon': Icons.list_alt_outlined,
+      'selectedIcon': Icons.list_alt,
+      'label': 'Transactions',
     },
     {
-      'icon': Icons.school,
-      'label': 'School',
+      'icon': Icons.query_stats_outlined,
+      'selectedIcon': Icons.query_stats,
+      'label': 'Analysis',
     },
   ];
 
   final List<Widget> tabsPages = [];
 
-  Widget _selectedWidget = _buildTabComponent(widget: const Tab1Page(), key: 0);
+  late Widget _selectedWidget;
 
   @override
   void initState() {
@@ -39,6 +43,8 @@ class _TabsPageState extends State<TabsPage> {
       _buildTabComponent(widget: const Tab2Page(), key: 1),
       _buildTabComponent(widget: const Tab3Page(), key: 2),
     ]);
+
+    _selectedWidget = tabsPages[0];
 
     super.initState();
   }
@@ -50,12 +56,17 @@ class _TabsPageState extends State<TabsPage> {
     });
   }
 
-  static Widget _buildTabComponent({required Widget widget, required int key}) {
+  Widget _buildTabComponent({required Widget widget, required int key}) {
     return Scaffold(
       body: widget,
       key: ValueKey<int>(key),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const TransactionFormPage()));
+        },
         child: const Icon(Icons.add),
       ),
     );
@@ -74,9 +85,13 @@ class _TabsPageState extends State<TabsPage> {
                     _tabs.length,
                     (index) => NavigationRailDestination(
                       icon: Icon(_tabs[index]['icon']),
+                      selectedIcon: Icon(_tabs[index]['selectedIcon']),
                       label: Text(_tabs[index]['label']),
                     ),
                   ),
+                  leading: const SizedBox(
+                      height: 50, child: Icon(Icons.safety_check)),
+                  labelType: NavigationRailLabelType.all,
                   selectedIndex: widget.currentPageIndex,
                   onDestinationSelected: _onItemTapped,
                 ),
@@ -97,6 +112,7 @@ class _TabsPageState extends State<TabsPage> {
                 _tabs.length,
                 (index) => NavigationDestination(
                   icon: Icon(_tabs[index]['icon']),
+                  selectedIcon: Icon(_tabs[index]['selectedIcon']),
                   label: _tabs[index]['label'],
                 ),
               ),

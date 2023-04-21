@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
 class BottomSheetFooter extends StatefulWidget {
-  const BottomSheetFooter({super.key, required this.onSaved});
+  const BottomSheetFooter(
+      {super.key,
+      this.onSaved,
+      this.submitText = 'Save',
+      this.submitIcon = Icons.save});
 
-  final void Function() onSaved;
+  final String submitText;
+  final IconData submitIcon;
+  final void Function()? onSaved;
 
   @override
   State<BottomSheetFooter> createState() => _BottomSheetFooterState();
@@ -42,11 +48,18 @@ class _BottomSheetFooterState extends State<BottomSheetFooter> {
                 ),
               ),
               FilledButton.icon(
-                  icon: const Icon(Icons.save),
-                  label: const Text('Save'),
-                  onPressed: () => {
-                        widget.onSaved(),
-                      }),
+                  style: ElevatedButton.styleFrom(
+                    disabledBackgroundColor:
+                        Colors.grey[200], // Background Color
+                    disabledForegroundColor: Colors.grey, //Text Color
+                  ),
+                  icon: Icon(widget.submitIcon),
+                  label: Text(widget.submitText),
+                  onPressed: widget.onSaved != null
+                      ? () {
+                          widget.onSaved!();
+                        }
+                      : null),
             ],
           ),
         ),

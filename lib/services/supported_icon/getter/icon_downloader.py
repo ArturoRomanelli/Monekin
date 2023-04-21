@@ -10,7 +10,7 @@ def download_google_font_icons(data, path: str):
     new_path = os.path.join(current_path, path)
 
     for el in data:
-        url = f"https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/{el['id']}/default/48px.svg"
+        url = f"https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/{el['id']}/fill1/48px.svg"
         response = requests.get(url)
 
         if response.status_code != 200:

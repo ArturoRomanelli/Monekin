@@ -3,14 +3,13 @@ import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/widgets/bottomSheetHeader.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class IconSelectorModal extends StatefulWidget {
   const IconSelectorModal(
-      {super.key, required this.preselectedIcon, this.onIconSelected});
+      {super.key, required this.preselectedIconID, this.onIconSelected});
 
-  final String preselectedIcon;
+  final String preselectedIconID;
 
   final void Function(SupportedIcon selectedIcon)? onIconSelected;
 
@@ -26,7 +25,7 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
     super.initState();
 
     _selectedIcon =
-        SupportedIconService.instance.getIconByID(widget.preselectedIcon);
+        SupportedIconService.instance.getIconByID(widget.preselectedIconID);
   }
 
   @override
@@ -56,22 +55,18 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Select an icon",
+                            'Select an icon',
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
-                          Text(
-                            "Identify your account",
+                          const Text(
+                            'Identify your account',
                           ),
                         ],
                       ),
                       Chip(
                         side: BorderSide(color: colors.primary, width: 2),
                         //  backgroundColor: Theme.of(context).primaryColorLight,
-                        label: SvgPicture.asset(
-                          _selectedIcon!.urlToAssets,
-                          height: 34,
-                          width: 34,
-                        ),
+                        label: _selectedIcon!.display(size: 34),
                       )
                     ],
                   ),
@@ -119,19 +114,14 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                                                 });
                                               },
                                               child: Container(
-                                                padding: EdgeInsets.all(6),
-                                                child: SvgPicture.asset(
-                                                  e.urlToAssets,
-                                                  height: 34,
-                                                  width: 34,
-                                                  colorFilter:
-                                                      _selectedIcon?.id == e.id
-                                                          ? ColorFilter.mode(
-                                                              colors.onPrimary,
-                                                              BlendMode.srcIn)
-                                                          : null,
-                                                ),
-                                              ),
+                                                  padding: const EdgeInsets.all(6),
+                                                  child: e.display(
+                                                      size: 34,
+                                                      color:
+                                                          _selectedIcon?.id ==
+                                                                  e.id
+                                                              ? colors.onPrimary
+                                                              : null)),
                                             ),
                                           ))
                                       .toList(),

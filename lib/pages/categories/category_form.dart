@@ -350,14 +350,11 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                   ),
                                   items: const [
                                     DropdownMenuItem(
-                                        value: 'I',
-                                        child: Text('Income')),
+                                        value: 'I', child: Text('Income')),
                                     DropdownMenuItem(
-                                        value: 'E',
-                                        child: Text('Expense')),
+                                        value: 'E', child: Text('Expense')),
                                     DropdownMenuItem(
-                                        value: 'B',
-                                        child: Text('Both'))
+                                        value: 'B', child: Text('Both'))
                                   ],
                                   value: _type,
                                   onChanged: widget.categoryUUID != null

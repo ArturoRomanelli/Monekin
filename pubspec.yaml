@@ -57,6 +57,8 @@ dependencies:
   sqflite_common_ffi: ^2.2.2
   path_provider: ^2.0.14
   permission_handler: ^10.2.0
+  share_plus: ^6.3.2
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:
@@ -84,8 +86,10 @@ flutter:
   generate: true
 
   assets:
+    - lib/assets/icons/avatars/
     - lib/assets/icons/currency_flags/
     - lib/assets/icons/page_states/
+    - lib/assets/icons/entertainment/
     - lib/assets/icons/other/
     - lib/assets/icons/money/
     - lib/assets/icons/food/

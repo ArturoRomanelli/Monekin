@@ -4,6 +4,7 @@ import 'package:finlytics/services/category/categoryService.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
 import 'package:finlytics/services/db/db.service.dart';
 import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/services/filters/date_range_service.dart';
 import 'package:finlytics/services/transaction/transaction_service.dart';
 import 'package:finlytics/services/user-settings/user_settings.service.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ void main() {
             create: (context) => ExchangeRateService(DbService.instance)),
         ChangeNotifierProvider<CategoryService>(
             create: (context) => CategoryService(DbService.instance)),
+        ChangeNotifierProvider<DateRangeService>(
+            create: (context) => DateRangeService.instance),
         ChangeNotifierProvider<MoneyTransactionService>(
             create: (context) => MoneyTransactionService(DbService.instance)),
         ChangeNotifierProvider<UserSettingsService>(

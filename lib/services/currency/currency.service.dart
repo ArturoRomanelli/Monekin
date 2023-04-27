@@ -51,12 +51,14 @@ class CurrencyService {
   Future<Currency> getUserPreferredCurrency() async {
     final settingService = UserSettingsService(_dbService);
 
-    String? currencyCode = await settingService.getSetting('preferredCurrency');
+    String? currencyCode =
+        await settingService.getSetting(SettingKey.preferredCurrency);
 
     if (currencyCode == null) {
       currencyCode = 'USD';
 
-      await settingService.setSetting('preferredCurrency', currencyCode);
+      await settingService.setSetting(
+          SettingKey.preferredCurrency, currencyCode);
     }
 
     return (await getCurrencyByCode(currencyCode))!;

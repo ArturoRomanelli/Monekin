@@ -395,6 +395,10 @@ CREATE TABLE IF NOT EXISTS userSettings (
   settingValue TEXT
 );
 
+INSERT INTO userSettings VALUES
+('avatar', 'man')
+,('userName', 'User');
+
 CREATE TABLE IF NOT EXISTS appData (
   appDataKey TEXT PRIMARY KEY,
   appDataValue TEXT

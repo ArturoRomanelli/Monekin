@@ -3,12 +3,17 @@ import 'package:finlytics/pages/settings/settings.page.dart';
 import 'package:finlytics/services/account/account.model.dart';
 import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/services/filters/date_range_service.dart';
+import 'package:finlytics/services/transaction/transaction_service.dart';
+import 'package:finlytics/services/user-settings/user_settings.service.dart';
 import 'package:finlytics/widgets/currency_displayer.dart';
 import 'package:finlytics/widgets/skeleton.dart';
 import 'package:finlytics/widgets/trending_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+
+import '../../widgets/user_avatar.dart';
 
 class Tab1Page extends StatefulWidget {
   const Tab1Page({Key? key}) : super(key: key);
@@ -37,6 +42,15 @@ class _Tab1PageState extends State<Tab1Page> {
       'route': const SettingsPage()
     },
   ];
+
+  final dateRangeService = DateRangeService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+
+    dateRangeService.resetDateRanges();
+  }
 
   Widget accountItemInSwiper(Account account) {
     return Container(
@@ -142,8 +156,12 @@ class _Tab1PageState extends State<Tab1Page> {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    // Rebuild when a exchange rate change
+    // Rebuild when a service variable change
     context.select((ExchangeRateService p) => setState(() => {}));
+    context.select((DateRangeService p) => setState(() => {}));
+    context.select((MoneyTransactionService p) => setState(() => {}));
+
+    final accountService = context.watch<AccountService>();
 
     return Scaffold(
       appBar: AppBar(
@@ -155,7 +173,7 @@ class _Tab1PageState extends State<Tab1Page> {
           DefaultTextStyle.merge(
             style: const TextStyle(color: Colors.white),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: SafeArea(
                 child: Column(
@@ -164,14 +182,48 @@ class _Tab1PageState extends State<Tab1Page> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text('Good evening,',
-                                  style: TextStyle(fontSize: 12)),
-                              Text('user', style: TextStyle(fontSize: 18)),
-                            ],
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SettingsPage()));
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                FutureBuilder(
+                                    future: context
+                                        .watch<UserSettingsService>()
+                                        .getSetting(SettingKey.avatar),
+                                    builder: (context, snapshot) {
+                                      return UserAvatar(avatar: snapshot.data);
+                                    }),
+                                const SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Good evening,',
+                                        style: TextStyle(fontSize: 12)),
+                                    FutureBuilder(
+                                        future: context
+                                            .watch<UserSettingsService>()
+                                            .getSetting(SettingKey.userName),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const Skeleton(
+                                                width: 70, height: 14);
+                                          }
+
+                                          return Text(snapshot.data!,
+                                              style: TextStyle(fontSize: 18));
+                                        }),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           ActionChip(
                             // TODO: ActionChip not show ripple effect when a background color is applied.
@@ -180,7 +232,7 @@ class _Tab1PageState extends State<Tab1Page> {
                             // - https://github.com/flutter/flutter/issues/115824
 
                             onPressed: () {
-                              false;
+                              DateRangeService.instance.openDateModal(context);
                             },
                             label: Text(
                               'Este mes',
@@ -194,15 +246,12 @@ class _Tab1PageState extends State<Tab1Page> {
                             backgroundColor: Theme.of(context).primaryColor,
                           )
                         ]),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    const Divider(),
-                    const SizedBox(
-                      height: 8,
+                    Divider(
+                      height: 32,
+                      color: Colors.white.withOpacity(0.3),
                     ),
                     FutureBuilder(
-                        future: context.watch<AccountService>().getAccounts(),
+                        future: accountService.getAccounts(),
                         builder: (context, accounts) {
                           if (!accounts.hasData) {
                             return Column(
@@ -222,10 +271,8 @@ class _Tab1PageState extends State<Tab1Page> {
                                 const Text('Total balance',
                                     style: TextStyle(fontSize: 12)),
                                 FutureBuilder(
-                                    future: context
-                                        .watch<AccountService>()
-                                        .getAccountsMoney(
-                                            accounts: accounts.data!),
+                                    future: accountService.getAccountsMoney(
+                                        accounts: accounts.data!),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         return CurrencyDisplayer(
@@ -239,19 +286,46 @@ class _Tab1PageState extends State<Tab1Page> {
                                       }
                                     }),
                                 FutureBuilder(
-                                    initialData: 0.0,
-                                    future: context
-                                        .watch<AccountService>()
+                                    future: accountService
                                         .getAccountsMoneyVariation(
                                             accounts: accounts.data!,
+                                            startDate:
+                                                dateRangeService.startDate,
+                                            endDate: dateRangeService.endDate,
                                             convertToPreferredCurrency: true),
                                     builder: (context, snapshot) {
+                                      if (!snapshot.hasData ||
+                                          dateRangeService.startDate == null ||
+                                          dateRangeService.endDate == null) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                              color: snapshot.data != null
+                                                  ? snapshot.data! >= 0
+                                                      ? const Color.fromARGB(
+                                                          255, 230, 255, 230)
+                                                      : const Color.fromARGB(
+                                                          255, 255, 230, 230)
+                                                  : null,
+                                              borderRadius:
+                                                  BorderRadius.circular(4)),
+                                          child: const Skeleton(
+                                              height: 8, width: 70),
+                                        );
+                                      }
+
                                       return Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 6, vertical: 2),
                                         decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 230, 255, 230),
+                                            color: snapshot.data != null
+                                                ? snapshot.data! >= 0
+                                                    ? const Color.fromARGB(
+                                                        255, 230, 255, 230)
+                                                    : const Color.fromARGB(
+                                                        255, 255, 230, 230)
+                                                : null,
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                         child: TrendingValue(
@@ -298,7 +372,7 @@ class _Tab1PageState extends State<Tab1Page> {
                   SizedBox(
                     height: 90,
                     child: FutureBuilder(
-                        future: context.watch<AccountService>().getAccounts(),
+                        future: accountService.getAccounts(),
                         builder: (context, accounts) {
                           if (!accounts.hasData) {
                             return const LinearProgressIndicator();
@@ -309,44 +383,192 @@ class _Tab1PageState extends State<Tab1Page> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(12),
-                    child: Card(
-                      elevation: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              padding: const EdgeInsets.all(16),
-                              child: const Text('Tools',
-                                  style: TextStyle(fontSize: 18))),
-                          ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: _tools.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final item = _tools[index];
+                    child: Column(
+                      children: [
+                        Card(
+                          elevation: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text('Gastos e ingresos',
+                                        style: TextStyle(fontSize: 18)),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              width: 0.75,
+                                              color:
+                                                  Colors.green.withOpacity(0.8),
+                                            ),
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: const Icon(
+                                            Icons.arrow_upward,
+                                            color: Colors.green,
+                                            size: 18,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Income'),
+                                            FutureBuilder(
+                                                future: Future(() async {
+                                              final accounts =
+                                                  await accountService
+                                                      .getAccounts();
 
-                              return ListTile(
-                                title: Text(item['label']),
-                                leading: Icon(
-                                  item['icon'],
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                trailing: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 14,
-                                ),
-                                onTap: () => {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => item['route']))
+                                              return await accountService
+                                                  .getAccountsData(
+                                                accounts: accounts,
+                                                startDate:
+                                                    dateRangeService.startDate,
+                                                endDate:
+                                                    dateRangeService.endDate,
+                                                accountDataFilter:
+                                                    AccountDataFilter.income,
+                                                convertToPreferredCurrency:
+                                                    true,
+                                              );
+                                            }), builder: (context, snapshot) {
+                                              if (!snapshot.hasData) {
+                                                return const Skeleton(
+                                                    width: 20, height: 12);
+                                              }
+
+                                              return CurrencyDisplayer(
+                                                amountToConvert: snapshot.data!,
+                                                showDecimals: false,
+                                              );
+                                            })
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              width: 0.75,
+                                              color:
+                                                  Colors.red.withOpacity(0.8),
+                                            ),
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          child: const Icon(
+                                            Icons.arrow_downward,
+                                            color: Colors.red,
+                                            size: 18,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Expense'),
+                                            FutureBuilder(
+                                                future: Future(() async {
+                                              final accounts =
+                                                  await accountService
+                                                      .getAccounts();
+
+                                              return await accountService
+                                                  .getAccountsData(
+                                                accounts: accounts,
+                                                startDate:
+                                                    dateRangeService.startDate,
+                                                endDate:
+                                                    dateRangeService.endDate,
+                                                accountDataFilter:
+                                                    AccountDataFilter.expense,
+                                                convertToPreferredCurrency:
+                                                    true,
+                                              );
+                                            }), builder: (context, snapshot) {
+                                              if (!snapshot.hasData) {
+                                                return const Skeleton(
+                                                    width: 20, height: 12);
+                                              }
+
+                                              return CurrencyDisplayer(
+                                                amountToConvert: snapshot.data!,
+                                                showDecimals: false,
+                                              );
+                                            })
+                                          ],
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Card(
+                          elevation: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: const Text('Tools',
+                                      style: TextStyle(fontSize: 18))),
+                              ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: _tools.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final item = _tools[index];
+
+                                  return ListTile(
+                                    title: Text(item['label']),
+                                    leading: Icon(
+                                      item['icon'],
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 14,
+                                    ),
+                                    onTap: () => {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  item['route']))
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                          )
-                        ],
-                      ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 85)
+                      ],
                     ),
                   ),
                 ],

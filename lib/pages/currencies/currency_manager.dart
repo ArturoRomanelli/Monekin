@@ -59,7 +59,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
               onPressed: () {
                 context
                     .read<UserSettingsService>()
-                    .setSetting('preferredCurrency', newCurrency.code)
+                    .setSetting(SettingKey.preferredCurrency, newCurrency.code)
                     .then(
                   (value) {
                     setState(() {

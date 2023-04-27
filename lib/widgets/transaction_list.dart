@@ -8,12 +8,27 @@ class TransactionListComponent extends StatelessWidget {
 
   final List<MoneyTransaction> transactions;
 
+  Widget dateSeparator(DateTime date) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      child: Text(DateFormat.yMMMMd().format(date)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-        itemCount: transactions.length,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: transactions.length + 1,
+        shrinkWrap: true,
         itemBuilder: (context, index) {
-          final transaction = transactions[index];
+          if (transactions.isEmpty) return Container();
+
+          if (index == 0) {
+            return dateSeparator(transactions[0].date);
+          }
+
+          final transaction = transactions[index - 1];
 
           return ListTile(
             title: Text(transaction.isIncomeOrExpense
@@ -40,10 +55,23 @@ class TransactionListComponent extends StatelessWidget {
                   : const Icon(Icons.swap_vert, size: 28),
             ),
             onTap: () {},
+            onLongPress: () {},
           );
         },
         separatorBuilder: (context, index) {
-          return const Divider();
+          if (index == 0 ||
+              transactions.isEmpty ||
+              index >= transactions.length) {
+            return Container();
+          }
+
+          if (index >= 1 &&
+              DateUtils.isSameDay(
+                  transactions[index - 1].date, transactions[index].date)) {
+            return const Divider(indent: 68);
+          }
+
+          return dateSeparator(transactions[index].date);
         });
   }
 }

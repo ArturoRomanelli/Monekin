@@ -90,28 +90,24 @@ class AccountService extends ChangeNotifier {
     final accountIds = accounts.map((account) => account.id).toList();
 
     final result = await db.rawQuery("""
-      SELECT COALESCE(SUM(accounts.iniValue ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}) + COALESCE(SUM(t.value ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}), 0), 0) 
-     AS balance
-        FROM accounts
-            LEFT JOIN
-            (
-                SELECT value,
-                        accountID
-                  FROM transactions
-                  WHERE transactions.date <= ?
-            )
-            AS t ON accounts.id = t.accountID
-            ${convertToPreferredCurrency ? _joinAccountAndRate(date) : ''}
-      WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})
+      SELECT COALESCE(SUM(accounts.iniValue ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''} ), 0) AS balance
+      FROM accounts
+          ${convertToPreferredCurrency ? _joinAccountAndRate(date) : ''}
+          WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})
       """, [
-      date.toIso8601String(),
       if (convertToPreferredCurrency) DateFormat('yyyy-MM-dd').format(date),
       ...accountIds
     ]);
 
-    // TODO: Handle transfers between accounts
-
-    return result.isNotEmpty ? (result.first['balance'] as num).toDouble() : 0;
+    return (result.isNotEmpty
+            ? (result.first['balance'] as num).toDouble()
+            : 0) +
+        await getAccountsData(
+          accounts: accounts,
+          accountDataFilter: AccountDataFilter.balance,
+          convertToPreferredCurrency: convertToPreferredCurrency,
+          endDate: date,
+        );
   }
 
   Future<double> getAccountsData(

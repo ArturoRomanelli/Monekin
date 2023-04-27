@@ -62,10 +62,12 @@ class MoneyTransactionService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<MoneyTransaction>> getMoneyTransactions() async {
+  Future<List<MoneyTransaction>> getMoneyTransactions(
+      {String orderBy = 'date'}) async {
     final db = await _dbService!.database;
 
-    final List<Map<String, dynamic>> maps = await db.query(_tableName);
+    final List<Map<String, dynamic>> maps =
+        await db.query(_tableName, orderBy: orderBy);
 
     return [
       for (var i = 0; i < maps.length; i++)

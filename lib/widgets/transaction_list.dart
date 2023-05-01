@@ -1,5 +1,5 @@
 import 'package:finlytics/services/transaction/transaction.model.dart';
-import 'package:finlytics/services/utils/colorFromHex.dart';
+import 'package:finlytics/services/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

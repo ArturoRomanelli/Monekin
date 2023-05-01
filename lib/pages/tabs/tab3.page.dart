@@ -1,5 +1,14 @@
+import 'package:finlytics/pages/tabs/widgets/balance_bar_chart.dart';
+import 'package:finlytics/pages/tabs/widgets/chart_by_categories.dart';
+import 'package:finlytics/pages/tabs/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/filters/date_range_service.dart';
+import 'package:finlytics/services/transaction/transaction.model.dart';
+import 'package:finlytics/services/utils/date_getter.dart';
+import 'package:finlytics/widgets/currency_displayer.dart';
+import 'package:finlytics/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Tab3Page extends StatefulWidget {
@@ -15,6 +24,10 @@ class _Tab3PageState extends State<Tab3Page> {
   int initialIndex = 500;
   late PageController _pageController;
 
+  DateTime? selectedTabDate;
+
+  TransactionType selectedTypeForCategoriesChart = TransactionType.expense;
+
   @override
   void initState() {
     super.initState();
@@ -22,16 +35,31 @@ class _Tab3PageState extends State<Tab3Page> {
     _pageController = PageController(initialPage: initialIndex);
 
     final DateRangeService dateRangeService = context.read<DateRangeService>();
+
+    dateRangeService.getCurrentDateRange().then((value) {
+      setState(() {
+        selectedTabDate = value[0];
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final AccountService accountService = context.read<AccountService>();
+
     return Scaffold(
       appBar: AppBar(title: const Text('Hello Tab 2'), elevation: 3, actions: [
         IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            // Do something
+          icon: const Icon(Icons.calendar_month),
+          onPressed: () async {
+            await DateRangeService.instance.openDateModal(context);
+            _pageController
+                .animateToPage(initialIndex,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.ease)
+                .then((value) {
+              setState(() {});
+            });
           },
         ),
         IconButton(
@@ -44,23 +72,329 @@ class _Tab3PageState extends State<Tab3Page> {
       body: Column(
         children: [
           AppBar(
-            title: Text(
-                DateRangeService.instance.startDate?.toIso8601String() ?? ''),
-          ),
+              title: Builder(builder: (context) {
+                String text = '';
+
+                if (selectedTabDate == null) return Text(text);
+
+                if (DateRangeService.instance.selectedDateRange ==
+                    DateRange.monthly) {
+                  if (selectedTabDate!.year == currentYear) {
+                    text = DateFormat.MMMM().format(selectedTabDate!);
+                  } else {
+                    text = DateFormat.yMMMM().format(selectedTabDate!);
+                  }
+                } else if (DateRangeService.instance.selectedDateRange ==
+                    DateRange.annualy) {
+                  text = DateFormat.y().format(selectedTabDate!);
+                }
+
+                return Text(text);
+              }),
+              centerTitle: true,
+              leading: IconButton(
+                  onPressed: () {
+                    _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                  },
+                  icon: const Icon(Icons.keyboard_arrow_left)),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.ease);
+                    },
+                    icon: const Icon(Icons.keyboard_arrow_right)),
+              ]),
           Expanded(
             child: PageView.builder(
               //  physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
+              itemCount: 10000,
+              onPageChanged: (newPage) {
+                selectedTabDate = DateRangeService.instance
+                    .getDateRange(newPage - initialIndex)[0];
+
+                setState(() {});
+              },
               itemBuilder: (context, index) {
+                final dateRanges = context
+                    .read<DateRangeService>()
+                    .getDateRange(index - initialIndex);
+
+                final DateTime? startDate = dateRanges[0];
+                final DateTime? endDate = dateRanges[1];
+
                 return SingleChildScrollView(
-                    child: Column(children: [
-                  ...List.generate(10, (i) => Text(index.toString())),
-                  Text(context
-                          .read<DateRangeService>()
-                          .getDateRange(index - initialIndex)[0]
-                          ?.toIso8601String() ??
-                      '')
-                ]));
+                    child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(children: [
+                    Card(
+                      elevation: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text('Gastos e ingresos',
+                                    style: TextStyle(fontSize: 18)),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 0.75,
+                                          color: Colors.green.withOpacity(0.8),
+                                        ),
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: const Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.green,
+                                        size: 18,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Income'),
+                                        FutureBuilder(future: Future(() async {
+                                          final accounts = await accountService
+                                              .getAccounts();
+
+                                          return await accountService
+                                              .getAccountsData(
+                                            accounts: accounts,
+                                            startDate: startDate,
+                                            endDate: endDate,
+                                            accountDataFilter:
+                                                AccountDataFilter.income,
+                                          );
+                                        }), builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const Skeleton(
+                                                width: 20, height: 12);
+                                          }
+
+                                          return CurrencyDisplayer(
+                                            amountToConvert: snapshot.data!,
+                                            showDecimals: false,
+                                          );
+                                        })
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 0.75,
+                                          color: Colors.red.withOpacity(0.8),
+                                        ),
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: const Icon(
+                                        Icons.arrow_downward,
+                                        color: Colors.red,
+                                        size: 18,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Expense'),
+                                        FutureBuilder(future: Future(() async {
+                                          final accounts = await accountService
+                                              .getAccounts();
+
+                                          return await accountService
+                                              .getAccountsData(
+                                            accounts: accounts,
+                                            startDate: startDate,
+                                            endDate: endDate,
+                                            accountDataFilter:
+                                                AccountDataFilter.expense,
+                                          );
+                                        }), builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const Skeleton(
+                                                width: 20, height: 12);
+                                          }
+
+                                          return CurrencyDisplayer(
+                                            amountToConvert: snapshot.data!,
+                                            showDecimals: false,
+                                          );
+                                        })
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Text('Cash-flow',
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                  BalanceBarChart(
+                                    startDate: startDate,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('By categories',
+                                          style: TextStyle(fontSize: 18)),
+                                      PopupMenuButton(
+                                        child: Chip(
+                                          labelPadding:
+                                              const EdgeInsets.fromLTRB(
+                                                  8, 0, 2, 0),
+                                          padding: const EdgeInsets.all(2),
+                                          label: Row(
+                                            children: [
+                                              Text(
+                                                  selectedTypeForCategoriesChart ==
+                                                          TransactionType
+                                                              .expense
+                                                      ? 'Gasto'
+                                                      : 'Ingreso'),
+                                              const SizedBox(width: 10),
+                                              const Icon(Icons.arrow_drop_down)
+                                            ],
+                                          ),
+                                        ),
+                                        itemBuilder: (context) {
+                                          return <
+                                              PopupMenuEntry<TransactionType>>[
+                                            const PopupMenuItem(
+                                                value: TransactionType.expense,
+                                                child: ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  minLeadingWidth: 26,
+                                                  title: Text('Expense'),
+                                                )),
+                                            const PopupMenuDivider(height: 0),
+                                            const PopupMenuItem(
+                                                value: TransactionType.income,
+                                                child: ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  minLeadingWidth: 26,
+                                                  title: Text('Income'),
+                                                )),
+                                          ];
+                                        },
+                                        onSelected: (value) {
+                                          setState(() {
+                                            selectedTypeForCategoriesChart =
+                                                value;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ChartByCategories(
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  transactionsType:
+                                      selectedTypeForCategoriesChart,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Text('Fund evolution',
+                                        style: TextStyle(fontSize: 18)),
+                                  ),
+                                  FundEvolutionLineChart(
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
+                ));
               },
             ),
           ),

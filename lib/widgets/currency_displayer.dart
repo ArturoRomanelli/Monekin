@@ -41,9 +41,11 @@ class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
 
     if (currency == null) {
       context.read<CurrencyService>().getUserPreferredCurrency().then((curr) {
-        setState(() {
-          currency = curr;
-        });
+        if (mounted) {
+          setState(() {
+            currency = curr;
+          });
+        }
       });
     }
   }

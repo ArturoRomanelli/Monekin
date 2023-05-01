@@ -62,12 +62,31 @@ class MoneyTransactionService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<MoneyTransaction>> getMoneyTransactions(
-      {String orderBy = 'date'}) async {
+  Future<List<MoneyTransaction>> getMoneyTransactions({
+    String orderBy = 'date',
+    DateTime? endDate,
+    DateTime? startDate,
+    double? minValue,
+    double? maxValue,
+  }) async {
     final db = await _dbService!.database;
 
-    final List<Map<String, dynamic>> maps =
-        await db.query(_tableName, orderBy: orderBy);
+    final whereStatement = [
+      if (endDate != null) 'date <= ?',
+      if (startDate != null) 'date >= ?',
+      if (maxValue != null) 'value <= ?',
+      if (minValue != null) 'value >= ?',
+    ];
+
+    final List<Map<String, dynamic>> maps = await db.query(_tableName,
+        where: whereStatement.isNotEmpty ? whereStatement.join(' AND ') : null,
+        whereArgs: [
+          if (endDate != null) endDate.toIso8601String(),
+          if (startDate != null) startDate.toIso8601String(),
+          if (maxValue != null) maxValue,
+          if (minValue != null) minValue,
+        ],
+        orderBy: orderBy);
 
     return [
       for (var i = 0; i < maps.length; i++)

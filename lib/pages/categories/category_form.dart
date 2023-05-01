@@ -3,7 +3,7 @@ import 'package:finlytics/services/category/category.model.dart';
 import 'package:finlytics/services/category/categoryService.dart';
 import 'package:finlytics/services/supported_icon/supported_icon.dart';
 import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
-import 'package:finlytics/services/utils/colorFromHex.dart';
+import 'package:finlytics/services/utils/color_utils.dart';
 import 'package:finlytics/widgets/icon_selector_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

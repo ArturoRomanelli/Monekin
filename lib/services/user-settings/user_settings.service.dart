@@ -2,6 +2,7 @@ import 'package:finlytics/services/db/db.service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
+/// The keys of the avalaible settings of the app
 enum SettingKey { preferredCurrency, userName, avatar }
 
 class UserSettingsService extends ChangeNotifier {

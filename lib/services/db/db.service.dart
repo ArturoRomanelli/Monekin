@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io' show Directory, File, Platform, FileMode;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:finlytics/services/category/categoryService.dart';
+import 'package:finlytics/services/utils/get_download_path.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -75,31 +76,36 @@ class DbService {
   }
 
   Future<void> downloadDatabaseFile(BuildContext context) async {
+    final messeger = ScaffoldMessenger.of(context);
     final status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
     }
 
-    File file = File(await _databasePath);
-    List<int> bytes = await file.readAsBytes();
+    List<int> dbFileInBytes = await File(await _databasePath).readAsBytes();
 
-    String documentsPath = (await getApplicationDocumentsDirectory()).path;
-
-    String downloadPath = documentsPath;
-
-    if (!Platform.isAndroid) {
-      downloadPath = (await getDownloadsDirectory())!.path;
-    } else if ((await Directory('/storage/emulated/0/Download').exists())) {
-      downloadPath = '/storage/emulated/0/Download/';
-    }
-
+    String downloadPath = await getDownloadPath();
     downloadPath = '${downloadPath}Finlytics.db';
 
     File downloadFile = File(downloadPath);
 
-    await downloadFile.writeAsBytes(bytes);
+    await downloadFile.writeAsBytes(dbFileInBytes);
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    messeger.showSnackBar(SnackBar(
         content: Text('Base de datos descargada con exito en $downloadPath')));
+  }
+
+  Future<void> importDatabase() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path!);
+
+      // Delete the previous database
+      String path = await _databasePath;
+      await deleteDatabase(path);
+
+      // Load the new database
+      await file.copy(path);
+    }
   }
 }

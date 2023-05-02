@@ -356,6 +356,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   date TEXT NOT NULL,
   value REAL NOT NULL,
   text TEXT,
+  status TEXT CHECK(status IN ('voided', 'pending', 'reconcilied', 'unreconcilied')),
   categoryID TEXT REFERENCES categories(id),
   valueInDestiny REAL,
   receivingAccountID TEXT REFERENCES accounts(id),

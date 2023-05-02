@@ -3,10 +3,13 @@ import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/category/category.model.dart';
 import 'package:finlytics/services/category/categoryService.dart';
 import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/services/utils/enum_from_string.dart';
 
 enum TransactionType { income, expense, transfer }
 
-class TransactionCommon {
+enum TransactionStatus { voided, pending, reconcilied, unreconcilied }
+
+class MoneyTransaction {
   final String id;
 
   Account account;
@@ -14,6 +17,10 @@ class TransactionCommon {
   DateTime date;
   double value;
   String? text;
+
+  TransactionStatus? status;
+
+  bool isHidden;
 
   Category? category;
 
@@ -30,58 +37,41 @@ class TransactionCommon {
           ? TransactionType.expense
           : TransactionType.income;
 
-  TransactionCommon({
+  MoneyTransaction._({
     required this.id,
     required this.account,
     required this.date,
     required this.value,
+    this.isHidden = false,
+    this.status,
     this.text,
     this.category,
     this.valueInDestiny,
     this.receivingAccount,
   })  : assert((receivingAccount == null) != (category == null)),
         assert(category == null || valueInDestiny == null);
-}
-
-class MoneyTransaction extends TransactionCommon {
-  bool isPending;
-  bool isHidden;
-
-  MoneyTransaction._({
-    required super.id,
-    required super.account,
-    required super.date,
-    required super.value,
-    this.isHidden = false,
-    this.isPending = false,
-    super.text,
-    super.category,
-    super.valueInDestiny,
-    super.receivingAccount,
-  })  : assert((receivingAccount == null) != (category == null)),
-        assert(category == null || valueInDestiny == null);
 
   MoneyTransaction.incomeOrExpense({
-    required super.id,
-    required super.account,
-    required super.date,
-    required super.value,
-    super.text,
+    required this.id,
+    required this.account,
+    required this.date,
+    required this.value,
+    this.text,
     this.isHidden = false,
-    this.isPending = false,
-    required super.category,
+    this.status,
+    required this.category,
   });
 
   MoneyTransaction.transfer(
-      {required super.id,
-      required super.account,
-      required super.date,
-      required super.value,
-      super.text,
+      {required this.id,
+      required this.account,
+      required this.date,
+      required this.value,
+      this.text,
       this.isHidden = false,
-      this.isPending = false,
-      required super.receivingAccount,
-      super.valueInDestiny});
+      this.status,
+      required this.receivingAccount,
+      this.valueInDestiny});
 
   /// Convert this entity to the format that it has in the database. This is usually a plain object, without nested data/objects.
   Map<String, dynamic> toDB() => {
@@ -92,8 +82,8 @@ class MoneyTransaction extends TransactionCommon {
         'text': text,
         'categoryID': category?.id,
         'valueInDestiny': valueInDestiny,
+        'status': status?.name,
         'receivingAccountID': receivingAccount?.id,
-        'isPending': isPending ? 1 : 0,
         'isHidden': isHidden ? 1 : 0,
       };
 
@@ -113,9 +103,9 @@ class MoneyTransaction extends TransactionCommon {
             : null,
         date: DateTime.parse(data['date']),
         value: data['value'],
+        status: enumFromString(TransactionStatus.values, data['status']),
         valueInDestiny: data['valueInDestiny'],
         text: data['text'],
         isHidden: data['isHidden'] == 1 ? true : false,
-        isPending: data['isPending'] == 1 ? true : false,
       );
 }

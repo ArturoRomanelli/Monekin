@@ -86,7 +86,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
     final navigateBack = Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => TabsPage()),
+        MaterialPageRoute(builder: (context) => const TabsPage()),
         (Route<dynamic> route) => false);
 
     if (_accountToEdit != null) {
@@ -263,7 +263,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           controller: TextEditingController(
                               text: _currency != null
                                   ? _currency?.name
-                                  : "Sin especificar"),
+                                  : 'Sin especificar'),
                           readOnly: true,
                           onTap: () {
                             if (_currency == null) return;
@@ -310,16 +310,16 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(8),
                             child: Row(
-                              children: [
-                                const Icon(
+                              children: const [
+                                Icon(
                                   Icons.warning_rounded,
                                   color: Colors.amber,
                                   size: 28,
                                 ),
-                                const SizedBox(width: 10),
+                                SizedBox(width: 10),
                                 Flexible(
                                   child: Text(
-                                    "No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes",
+                                    'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes',
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w300),

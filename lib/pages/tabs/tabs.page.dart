@@ -1,13 +1,16 @@
+import 'package:finlytics/pages/accounts/accountForm.dart';
 import 'package:finlytics/pages/tabs/tab1.page.dart';
 import 'package:finlytics/pages/tabs/tab2.page.dart';
 import 'package:finlytics/pages/tabs/tab3.page.dart';
 import 'package:finlytics/pages/transactions/transaction_form.page.dart';
+import 'package:finlytics/services/account/accountService.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TabsPage extends StatefulWidget {
-  TabsPage({super.key, this.currentPageIndex = 0});
+  const TabsPage({super.key, this.currentPageIndex = 0});
 
-  int currentPageIndex;
+  final int currentPageIndex;
 
   @override
   State<TabsPage> createState() => _TabsPageState();
@@ -35,37 +38,78 @@ class _TabsPageState extends State<TabsPage> {
   final List<Widget> tabsPages = [];
 
   late Widget _selectedWidget;
+  late int currentSelectedIndex;
 
   @override
   void initState() {
     tabsPages.addAll([
-      _buildTabComponent(widget: const Tab1Page(), key: 0),
-      _buildTabComponent(widget: const Tab2Page(), key: 1),
-      _buildTabComponent(widget: const Tab3Page(), key: 2),
+      _buildTabComponent(widget: const Tab1Page(), context: context, key: 0),
+      _buildTabComponent(widget: const Tab2Page(), context: context, key: 1),
+      _buildTabComponent(widget: const Tab3Page(), context: context, key: 2),
     ]);
 
-    _selectedWidget = tabsPages[0];
+    currentSelectedIndex = widget.currentPageIndex;
+    _selectedWidget = tabsPages[currentSelectedIndex];
 
     super.initState();
   }
 
   void _onItemTapped(int index) {
     setState(() {
-      widget.currentPageIndex = index;
-      _selectedWidget = tabsPages[widget.currentPageIndex];
+      currentSelectedIndex = index;
+      _selectedWidget = tabsPages[currentSelectedIndex];
     });
   }
 
-  Widget _buildTabComponent({required Widget widget, required int key}) {
+  _showShouldCreateAccountWarn() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Ops!'),
+          content: const SingleChildScrollView(
+              child: Text(
+                  'You should create an account first to create this action perform this action')),
+          actions: [
+            TextButton(
+              child: const Text('Go for that!'),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountFormPage()));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTabComponent(
+      {required Widget widget,
+      required BuildContext context,
+      required int key}) {
+    final accountService = context.read<AccountService>();
+
     return Scaffold(
       body: widget,
       key: ValueKey<int>(key),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+          if ((await accountService.getAccounts()).isEmpty) {
+            _showShouldCreateAccountWarn();
+
+            return;
+          }
+
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const TransactionFormPage()));
+                  builder: (context) => TransactionFormPage(
+                        prevPage:
+                            TabsPage(currentPageIndex: currentSelectedIndex),
+                      )));
         },
         child: const Icon(Icons.add),
       ),
@@ -92,12 +136,12 @@ class _TabsPageState extends State<TabsPage> {
                   leading: const SizedBox(
                       height: 50, child: Icon(Icons.safety_check)),
                   labelType: NavigationRailLabelType.all,
-                  selectedIndex: widget.currentPageIndex,
+                  selectedIndex: currentSelectedIndex,
                   onDestinationSelected: _onItemTapped,
                 ),
                 const VerticalDivider(thickness: 1, width: 1),
                 Expanded(
-                  child: tabsPages[widget.currentPageIndex],
+                  child: tabsPages[currentSelectedIndex],
                 ),
               ],
             ),
@@ -116,7 +160,7 @@ class _TabsPageState extends State<TabsPage> {
                   label: _tabs[index]['label'],
                 ),
               ),
-              selectedIndex: widget.currentPageIndex,
+              selectedIndex: currentSelectedIndex,
               onDestinationSelected: _onItemTapped,
             ),
           );

@@ -8,8 +8,9 @@ import 'package:finlytics/services/user-settings/user_settings.service.dart';
 import 'package:finlytics/widgets/currency_selector_modal.dart';
 import 'package:finlytics/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+
+import '../../widgets/empty_indicator.dart';
 
 class CurrencyManagerPage extends StatefulWidget {
   const CurrencyManagerPage({super.key});
@@ -186,31 +187,10 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
             ),
           if (exchangeRates != null && exchangeRates!.isEmpty)
             Expanded(
-                child: Center(
-                    child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset(
-                    'lib/assets/icons/page_states/empty_state.svg',
-                    height: 200,
-                    width: 200,
-                    //colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                  ),
-                  Text(
-                    'No hay registros',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                ],
-              ),
-            )))
+                child: EmptyIndicator(
+                    title: 'No hay registros',
+                    description:
+                        'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos'))
         ],
       ),
     );

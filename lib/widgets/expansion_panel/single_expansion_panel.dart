@@ -2,9 +2,11 @@ import 'package:finlytics/widgets/expansion_panel/expansion_panel_without_icon.d
 import 'package:flutter/material.dart';
 
 class SingleExpansionPanel extends StatefulWidget {
-  const SingleExpansionPanel({super.key, required this.child});
+  const SingleExpansionPanel(
+      {super.key, required this.child, this.sidePadding = 0});
 
   final Widget child;
+  final double sidePadding;
 
   @override
   State<SingleExpansionPanel> createState() => _SingleExpansionPanelState();
@@ -26,24 +28,28 @@ class _SingleExpansionPanelState extends State<SingleExpansionPanel> {
         ExpansionPanel(
           // canTapOnHeader: true,
           headerBuilder: (context, isExpanded) {
-            return Row(
-              children: [
-                Expanded(child: const Divider()),
-                TextButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        expanded = !expanded;
-                      });
-                    },
-                    icon: AnimatedRotation(
-                        duration: const Duration(milliseconds: 250),
-                        turns: expanded ? 0.5 : 0,
-                        child: Icon(Icons.arrow_drop_down)),
-                    label: Text(expanded
-                        ? 'Mostrar menos campos'
-                        : 'Mostrar mas campos')),
-                Expanded(child: const Divider()),
-              ],
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: 0, horizontal: widget.sidePadding),
+              child: Row(
+                children: [
+                  const Expanded(child: Divider()),
+                  TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          expanded = !expanded;
+                        });
+                      },
+                      icon: AnimatedRotation(
+                          duration: const Duration(milliseconds: 250),
+                          turns: expanded ? 0.5 : 0,
+                          child: const Icon(Icons.arrow_drop_down)),
+                      label: Text(expanded
+                          ? 'Mostrar menos campos'
+                          : 'Mostrar mas campos')),
+                  const Expanded(child: Divider()),
+                ],
+              ),
             );
           },
           body: widget.child, isExpanded: expanded,

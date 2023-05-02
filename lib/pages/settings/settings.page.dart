@@ -144,6 +144,19 @@ class _SettingsPageState extends State<SettingsPage> {
                       print(err);
                     });
                   }),
+              const Divider(indent: 70),
+              createSettingItem(
+                  title: 'Import Database',
+                  subtitle:
+                      'Replace your current data with a new database file',
+                  icon: Icons.cloud_upload_outlined,
+                  onTap: () {
+                    DbService.instance.importDatabase().then((value) {
+                      print('EEEEEEEEEEE');
+                    }).catchError((err) {
+                      print(err);
+                    });
+                  }),
               createListSeparator('Help us'),
               createSettingItem(
                   title: 'Rate us',

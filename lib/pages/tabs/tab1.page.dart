@@ -101,6 +101,8 @@ class _Tab1PageState extends State<Tab1Page> {
                             .watch<AccountService>()
                             .getAccountsMoneyVariation(
                                 accounts: [account],
+                                startDate: dateRangeService.startDate,
+                                endDate: dateRangeService.endDate,
                                 convertToPreferredCurrency: false),
                         builder: (context, snapshot) {
                           return TrendingValue(

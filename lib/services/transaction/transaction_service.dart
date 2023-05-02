@@ -1,4 +1,5 @@
 import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/services/enums/order_dir.dart';
 import 'package:finlytics/services/transaction/transaction.model.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -64,6 +65,7 @@ class MoneyTransactionService extends ChangeNotifier {
 
   Future<List<MoneyTransaction>> getMoneyTransactions({
     String orderBy = 'date',
+    OrderDirection orderDir = OrderDirection.DESC,
     DateTime? endDate,
     DateTime? startDate,
     double? minValue,
@@ -86,7 +88,7 @@ class MoneyTransactionService extends ChangeNotifier {
           if (maxValue != null) maxValue,
           if (minValue != null) minValue,
         ],
-        orderBy: orderBy);
+        orderBy: '$orderBy ${orderDir.name}');
 
     return [
       for (var i = 0; i < maps.length; i++)

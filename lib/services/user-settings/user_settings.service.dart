@@ -1,4 +1,4 @@
-import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/core/database/db.service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 

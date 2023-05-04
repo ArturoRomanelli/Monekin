@@ -1,4 +1,4 @@
-import 'package:finlytics/services/utils/date_getter.dart';
+import 'package:finlytics/core/utils/date_getter.dart';
 import 'package:flutter/material.dart';
 
 enum DateRange {

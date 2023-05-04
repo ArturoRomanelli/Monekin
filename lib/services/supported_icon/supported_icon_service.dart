@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/services/supported_icon/getter/supported_icons.dart';
-import 'package:finlytics/services/supported_icon/supported_icon.dart';
 
 class SupportedIconService {
   SupportedIconService._();

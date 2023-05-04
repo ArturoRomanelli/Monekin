@@ -1,5 +1,5 @@
-import 'package:finlytics/services/category/category.model.dart';
-import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/core/database/db.service.dart';
+import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';

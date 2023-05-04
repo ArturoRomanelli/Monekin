@@ -1,8 +1,8 @@
-import 'package:finlytics/pages/tabs/tabs.page.dart';
+import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/core/database/db.service.dart';
 import 'package:finlytics/services/account/accountService.dart';
 import 'package:finlytics/services/category/categoryService.dart';
 import 'package:finlytics/services/currency/currency.service.dart';
-import 'package:finlytics/services/db/db.service.dart';
 import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
 import 'package:finlytics/services/filters/date_range_service.dart';
 import 'package:finlytics/services/transaction/transaction_service.dart';
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
           colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),
           useMaterial3: true,
           fontFamily: 'Nunito'),
-      home: TabsPage(),
+      home: const TabsPage(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
     );

@@ -1,4 +1,4 @@
-import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/core/database/db.service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

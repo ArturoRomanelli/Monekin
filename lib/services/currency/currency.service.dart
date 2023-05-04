@@ -1,5 +1,5 @@
-import 'package:finlytics/services/currency/currency.dart';
-import 'package:finlytics/services/db/db.service.dart';
+import 'package:finlytics/core/database/db.service.dart';
+import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/services/user-settings/user_settings.service.dart';
 
 class CurrencyService {

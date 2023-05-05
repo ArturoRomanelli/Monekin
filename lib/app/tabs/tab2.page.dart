@@ -1,5 +1,5 @@
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';

@@ -1,10 +1,10 @@
 import 'package:finlytics/app/categories/subcategory_form.dart';
+import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
-import 'package:finlytics/services/category/categoryService.dart';
-import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';

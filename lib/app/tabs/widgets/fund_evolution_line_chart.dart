@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:finlytics/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/accountService.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

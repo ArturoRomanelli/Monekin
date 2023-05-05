@@ -1,7 +1,7 @@
+import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
-import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

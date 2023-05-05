@@ -1,5 +1,5 @@
 import 'package:finlytics/core/database/db.service.dart';
-import 'package:finlytics/services/enums/order_dir.dart';
+import 'package:finlytics/core/enums/order_dir.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';

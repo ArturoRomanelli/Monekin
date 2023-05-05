@@ -3,7 +3,7 @@ import 'package:finlytics/app/tabs/tab1.page.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
 import 'package:finlytics/app/tabs/tab3.page.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
-import 'package:finlytics/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/accountService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

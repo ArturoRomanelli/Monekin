@@ -1,7 +1,7 @@
 import 'package:finlytics/app/currencies/exchange_rate_form.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/models/exchangeRate/exchange_rate.dart';
-import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

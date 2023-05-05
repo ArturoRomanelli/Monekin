@@ -1,7 +1,7 @@
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:finlytics/services/category/categoryService.dart';
+import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

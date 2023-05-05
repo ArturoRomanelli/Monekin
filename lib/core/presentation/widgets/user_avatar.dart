@@ -34,7 +34,7 @@ class UserAvatar extends StatelessWidget {
           }
 
           return SvgPicture.asset(
-            'lib/assets/icons/avatars/$avatar.svg',
+            'assets/icons/avatars/$avatar.svg',
             height: size,
             width: size,
           );

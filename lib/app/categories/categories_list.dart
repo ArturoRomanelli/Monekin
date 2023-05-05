@@ -1,7 +1,7 @@
 import 'package:finlytics/app/categories/category_form.dart';
 import 'package:finlytics/app/categories/subcategory_selector.dart';
 import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/services/category/categoryService.dart';
+import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

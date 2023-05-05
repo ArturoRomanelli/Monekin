@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io' show Directory, File, Platform, FileMode;
 
 import 'package:file_picker/file_picker.dart';
-import 'package:finlytics/services/category/categoryService.dart';
+import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:finlytics/core/utils/get_download_path.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -52,7 +52,7 @@ class DbService {
         // Set the path to the database. Note: Using the `join` function from the `path` package is best practice
         // to ensure the path is correctly constructed for each platform.
         await _databasePath, onCreate: (db, version) async {
-      String script = await rootBundle.loadString('lib/assets/sql/schema.sql');
+      String script = await rootBundle.loadString('assets/sql/schema.sql');
       // Get and run the statements
 
       final batch = db.batch();
@@ -67,7 +67,7 @@ class DbService {
       await batch.commit(noResult: true);
 
       String defaultCategories =
-          await rootBundle.loadString('lib/assets/sql/default_categories.json');
+          await rootBundle.loadString('assets/sql/default_categories.json');
 
       CategoryService(this).initializeCategories(jsonDecode(defaultCategories));
     }, version: 1);

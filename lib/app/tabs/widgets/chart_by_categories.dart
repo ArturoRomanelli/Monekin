@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/services/transaction/transaction_service.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

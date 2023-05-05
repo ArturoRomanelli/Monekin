@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:finlytics/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/accountService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

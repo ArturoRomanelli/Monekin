@@ -18,7 +18,7 @@ class EmptyIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
-            'lib/assets/icons/page_states/empty_state.svg',
+            'assets/icons/page_states/empty_state.svg',
             height: 200,
             width: 200,
             //colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),

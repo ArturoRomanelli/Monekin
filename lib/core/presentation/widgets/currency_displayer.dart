@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/services/currency/currency.service.dart';
+import 'package:finlytics/core/database/services/currency/currency.service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/number_symbols_data.dart';

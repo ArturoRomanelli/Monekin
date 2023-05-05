@@ -1,6 +1,6 @@
 import 'package:finlytics/core/database/db.service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/services/currency/currency.service.dart';
+import 'package:finlytics/core/database/services/currency/currency.service.dart';
 import 'package:intl/intl.dart';
 
 class ExchangeRate {

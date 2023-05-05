@@ -1,7 +1,7 @@
 import 'package:finlytics/core/database/db.service.dart';
+import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
-import 'package:finlytics/services/category/categoryService.dart';
-import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 
 class Category {
   final String id;

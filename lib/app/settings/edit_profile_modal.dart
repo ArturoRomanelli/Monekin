@@ -1,8 +1,8 @@
-import 'package:finlytics/services/user-settings/user_settings.service.dart';
-import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
+import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

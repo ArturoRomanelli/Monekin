@@ -1,8 +1,8 @@
 import 'package:finlytics/core/database/db.service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
-import 'package:finlytics/services/currency/currency.service.dart';
-import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/core/database/services/currency/currency.service.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 
 class Account {
   final String id;

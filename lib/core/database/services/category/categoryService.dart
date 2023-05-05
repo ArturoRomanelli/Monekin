@@ -1,6 +1,6 @@
 import 'package:finlytics/core/database/db.service.dart';
 import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';

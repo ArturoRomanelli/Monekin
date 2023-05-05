@@ -1,12 +1,12 @@
 import 'package:finlytics/app/tabs/widgets/balance_bar_chart.dart';
 import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/core/database/services/account/accountService.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/utils/date_getter.dart';
-import 'package:finlytics/services/account/accountService.dart';
-import 'package:finlytics/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';

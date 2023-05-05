@@ -3,10 +3,10 @@ import 'package:finlytics/app/currencies/exchange_rate_form.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/services/currency/currency.service.dart';
+import 'package:finlytics/core/database/services/currency/currency.service.dart';
 import 'package:finlytics/core/models/exchangeRate/exchange_rate.dart';
-import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
-import 'package:finlytics/services/user-settings/user_settings.service.dart';
+import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

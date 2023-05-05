@@ -1,15 +1,15 @@
 import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/core/database/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/currency/currency.service.dart';
+import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
 import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
-import 'package:finlytics/services/account/accountService.dart';
-import 'package:finlytics/services/currency/currency.service.dart';
-import 'package:finlytics/services/exchangeRates/exchange_rate.service.dart';
-import 'package:finlytics/services/supported_icon/supported_icon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -296,7 +296,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                             BorderRadius.circular(100),
                                       ),
                                       child: SvgPicture.asset(
-                                        'lib/assets/icons/currency_flags/${_currency!.code.toLowerCase()}.svg',
+                                        'assets/icons/currency_flags/${_currency!.code.toLowerCase()}.svg',
                                         height: 25,
                                         width: 25,
                                       ),

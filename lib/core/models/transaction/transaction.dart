@@ -1,7 +1,7 @@
 import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/accountService.dart';
 import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/services/category/categoryService.dart';
+import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:finlytics/core/database/db.service.dart';
 import 'package:finlytics/core/utils/enum_from_string.dart';
 

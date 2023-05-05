@@ -10,7 +10,7 @@ class SupportedIcon {
 
   final String scope;
 
-  String get urlToAssets => 'lib/assets/icons/$scope/$id.svg';
+  String get urlToAssets => 'assets/icons/$scope/$id.svg';
 
   SupportedIcon({required this.id, required this.scope});
 

@@ -7,7 +7,7 @@ class Currency {
   final String name;
 
   String get currencyIconPath =>
-      'lib/assets/icons/currency_flags/${code.toLowerCase()}.svg';
+      'assets/icons/currency_flags/${code.toLowerCase()}.svg';
 
   SvgPicture displayFlagIcon({double? size}) {
     return SvgPicture.asset(

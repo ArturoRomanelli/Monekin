@@ -1,7 +1,7 @@
 import 'package:finlytics/app/accounts/account_selector.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
@@ -10,9 +10,9 @@ import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class TransactionFormPage extends StatefulWidget {
@@ -55,6 +55,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
         controller:
             TextEditingController(text: inputValue ?? 'Sin especificar'),
         readOnly: true,
+        validator: (_) => textFieldValidator(inputValue, isRequired: true),
         onTap: () => onClick(),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
@@ -91,15 +92,12 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       value:
           selectedCategory!.type == 'E' ? valueToNumber! * -1 : valueToNumber!,
       category: selectedCategory!,
-      status: status,
+      status: status?.name,
       isHidden: isHidden,
-      text: noteController.text.isEmpty ? null : noteController.text,
+      note: noteController.text.isEmpty ? null : noteController.text,
     );
 
-    context
-        .read<MoneyTransactionService>()
-        .insertMoneyTransaction(toPush)
-        .then((value) {
+    TransactionService.instance.insertTransaction(toPush).then((value) {
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -114,7 +112,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   void initState() {
     super.initState();
 
-    context.read<AccountService>().getAccounts(limit: 1).then((acc) {
+    AccountService.instance.getAccounts(limit: 1).first.then((acc) {
       setState(() {
         fromAccount = acc[0];
       });

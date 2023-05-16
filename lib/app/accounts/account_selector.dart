@@ -1,10 +1,9 @@
-import 'package:collection/collection.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AccountSelector extends StatefulWidget {
   const AccountSelector(
@@ -33,7 +32,7 @@ class _AccountSelectorState extends State<AccountSelector> {
 
     selectedAccounts = widget.selectedAccounts;
 
-    context.read<AccountService>().getAccounts().then((acc) {
+    AccountService.instance.getAccounts().first.then((acc) {
       setState(() {
         allAccounts = acc;
       });

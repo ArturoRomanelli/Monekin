@@ -1,16 +1,15 @@
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
+import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/core/models/exchangeRate/exchange_rate.dart';
+import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
-import 'package:finlytics/core/database/services/currency/currency.service.dart';
-import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ExchangeRateFormDialog extends StatefulWidget {
   const ExchangeRateFormDialog(
@@ -53,7 +52,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
       }
     });
 
-    context.read<CurrencyService>().getUserPreferredCurrency().then((value) {
+    CurrencyService.instance.getUserPreferredCurrency().then((value) {
       userPreferredCurrency = value;
     });
   }
@@ -63,8 +62,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
 
     _formKey.currentState!.save();
 
-    context
-        .read<ExchangeRateService>()
+    ExchangeRateService.instance
         .insertOrUpdateExchangeRate(ExchangeRate(
             currency: _currency!,
             date: date,

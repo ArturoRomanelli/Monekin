@@ -1,57 +1,24 @@
 import 'package:finlytics/app/tabs/tabs.page.dart';
-import 'package:finlytics/core/database/db.service.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
-import 'package:finlytics/core/database/services/category/categoryService.dart';
-import 'package:finlytics/core/database/services/currency/currency.service.dart';
-import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
-import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<CurrencyService>(
-            create: (context) => CurrencyService(DbService.instance)),
-        ChangeNotifierProvider<AccountService>(
-            create: (context) => AccountService(DbService.instance)),
-        ChangeNotifierProvider<ExchangeRateService>(
-            create: (context) => ExchangeRateService(DbService.instance)),
-        ChangeNotifierProvider<CategoryService>(
-            create: (context) => CategoryService(DbService.instance)),
-        ChangeNotifierProvider<DateRangeService>(
-            create: (context) => DateRangeService.instance),
-        ChangeNotifierProvider<MoneyTransactionService>(
-            create: (context) => MoneyTransactionService(DbService.instance)),
-        ChangeNotifierProvider<UserSettingsService>(
-            create: (context) => UserSettingsService(DbService.instance)),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          dividerTheme: const DividerThemeData(space: 0),
-          colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),
-          useMaterial3: true,
-          fontFamily: 'Nunito'),
-      home: const TabsPage(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-    );
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            dividerTheme: const DividerThemeData(space: 0),
+            colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),
+            useMaterial3: true,
+            fontFamily: 'Nunito'),
+        home: const TabsPage());
   }
 }

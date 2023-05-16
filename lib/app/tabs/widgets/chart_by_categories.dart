@@ -1,11 +1,12 @@
 import 'package:collection/collection.dart';
+import 'package:drift/drift.dart';
+import 'package:finlytics/core/database/services/category/category_service.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ChartByCategoriesDataItem {
   Category category;
@@ -43,28 +44,41 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     final data = <ChartByCategoriesDataItem>[];
 
-    final accountService = context.read<MoneyTransactionService>();
+    final transactionService = TransactionService.instance;
 
-    final transactions = await accountService.getMoneyTransactions(
-      startDate: widget.startDate,
-      endDate: widget.endDate,
-      minValue: widget.transactionsType == TransactionType.income ? 0 : null,
-      maxValue: widget.transactionsType == TransactionType.expense ? 0 : null,
-    );
+    final transactions = await transactionService
+        .getTransactions(
+          predicate: (p0, p1, p2, p3, p4) =>
+              (widget.startDate != null
+                  ? p0.date.isBiggerThanValue(widget.startDate!)
+                  : p0.id.isNotNull()) &
+              (widget.endDate != null
+                  ? p0.date.isSmallerThanValue(widget.endDate!)
+                  : p0.id.isNotNull()) &
+              (widget.transactionsType == TransactionType.income
+                  ? p0.value.isBiggerOrEqualValue(0)
+                  : p0.id.isNotNull()) &
+              (widget.transactionsType == TransactionType.expense
+                  ? p0.value.isSmallerOrEqualValue(0)
+                  : p0.id.isNotNull()),
+        )
+        .first;
 
-    for (var transaction in transactions) {
+    for (final transaction in transactions) {
       final categoryToEdit = data.firstWhereOrNull((cat) =>
           cat.category.id == transaction.category?.id ||
-          cat.category.id == transaction.category?.parentCategory?.id);
+          cat.category.id == transaction.category?.parentCategoryID);
 
       if (categoryToEdit != null) {
         categoryToEdit.value += transaction.value.abs();
         categoryToEdit.transactions.add(transaction);
       } else {
         data.add(ChartByCategoriesDataItem(
-            category: transaction.category!.isMainCategory
-                ? transaction.category!
-                : transaction.category!.parentCategory!,
+            category: transaction.category!.parentCategoryID == null
+                ? Category.fromDB(transaction.category!, null)
+                : (await CategoryService.instance
+                    .getCategoryById(transaction.category!.parentCategoryID!)
+                    .first)!,
             transactions: [transaction],
             value: transaction.value.abs()));
       }

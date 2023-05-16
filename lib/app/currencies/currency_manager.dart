@@ -1,14 +1,13 @@
 import 'package:finlytics/app/currencies/exchange_rate_details.dart';
 import 'package:finlytics/app/currencies/exchange_rate_form.dart';
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
+import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
+import 'package:finlytics/core/models/currency/currency.dart';
+import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/core/database/services/currency/currency.service.dart';
-import 'package:finlytics/core/models/exchangeRate/exchange_rate.dart';
-import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
-import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../core/presentation/widgets/empty_indicator.dart';
 
@@ -28,7 +27,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
   void initState() {
     super.initState();
 
-    context.read<CurrencyService>().getUserPreferredCurrency().then((value) {
+    CurrencyService.instance.getUserPreferredCurrency().then((value) {
       setState(() {
         _userCurrency = value;
       });
@@ -38,7 +37,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
   }
 
   getExchangeRates() {
-    context.read<ExchangeRateService>().getExchangeRates().then((value) {
+    ExchangeRateService.instance.getExchangeRates().then((value) {
       setState(() {
         exchangeRates = value;
       });
@@ -58,8 +57,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
             TextButton(
               child: const Text('Approve'),
               onPressed: () {
-                context
-                    .read<UserSettingsService>()
+                UserSettingService.instance
                     .setSetting(SettingKey.preferredCurrency, newCurrency.code)
                     .then(
                   (value) {
@@ -67,8 +65,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                       _userCurrency = newCurrency;
                     });
 
-                    context
-                        .read<ExchangeRateService>()
+                    ExchangeRateService.instance
                         .deleteExchangeRates()
                         .then((value) {
                       getExchangeRates();
@@ -89,7 +86,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Currency manager'),
+        title: const Text('Currency manager'),
       ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
@@ -106,7 +103,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                   ? _userCurrency!.displayFlagIcon(size: 42)
                   : const Skeleton(height: 42, width: 42),
             ),
-            title: Text('Divisa base'),
+            title: const Text('Divisa base'),
             subtitle: _userCurrency != null
                 ? Text(_userCurrency!.name)
                 : const Skeleton(height: 12, width: 50),
@@ -133,7 +130,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Tipos de cambio'),
+                const Text('Tipos de cambio'),
                 TextButton(
                     onPressed: () async {
                       await showModalBottomSheet(
@@ -145,7 +142,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
 
                       getExchangeRates();
                     },
-                    child: Text('Añadir'))
+                    child: const Text('Añadir'))
               ],
             ),
           ),
@@ -161,21 +158,47 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                   return ListTile(
                     minVerticalPadding: 8,
                     leading: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: item.currency.displayFlagIcon(size: 42),
-                    ),
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: StreamBuilder(
+                          stream: CurrencyService.instance
+                              .getCurrencyByCode(item.currencyCode),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Skeleton(width: 42, height: 42);
+                            }
+
+                            return snapshot.data!.displayFlagIcon(size: 42);
+                          },
+                        )),
                     title: Text(item.currency.code),
-                    subtitle: Text(item.currency.name),
+                    subtitle: StreamBuilder(
+                        stream: CurrencyService.instance
+                            .getCurrencyByCode(item.currencyCode),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Skeleton(width: 40, height: 16);
+                          }
+
+                          return Text(snapshot.data!.name);
+                        }),
                     trailing: Text(item.exchangeRate.toString()),
-                    onTap: () {
+                    onTap: () async {
+                      final onTapContext = context;
+
+                      final currency = await CurrencyService.instance
+                          .getCurrencyByCode(item.currencyCode)
+                          .first;
+
+                      if (currency == null) return;
+
                       Navigator.push(
-                          context,
+                          onTapContext,
                           MaterialPageRoute(
                               builder: (context) => ExchangeRateDetailsPage(
-                                    currency: item.currency,
+                                    currency: currency,
                                   ))).whenComplete(() => getExchangeRates());
                     },
                   );
@@ -186,7 +209,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
               ),
             ),
           if (exchangeRates != null && exchangeRates!.isEmpty)
-            Expanded(
+            const Expanded(
                 child: EmptyIndicator(
                     title: 'No hay registros',
                     description:

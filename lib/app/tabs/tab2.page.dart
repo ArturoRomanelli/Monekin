@@ -3,7 +3,6 @@ import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Tab2Page extends StatefulWidget {
   const Tab2Page({Key? key}) : super(key: key);
@@ -38,11 +37,9 @@ class _Tab2PageState extends State<Tab2Page> {
       body: Column(
         children: [
           Expanded(
-            child: FutureBuilder(
+            child: StreamBuilder(
               initialData: const <MoneyTransaction>[],
-              future: context
-                  .watch<MoneyTransactionService>()
-                  .getMoneyTransactions(),
+              stream: TransactionService.instance.getTransactions(),
               builder: (context, snapshot) {
                 if (snapshot.data != null) {
                   if (snapshot.data!.isEmpty) {

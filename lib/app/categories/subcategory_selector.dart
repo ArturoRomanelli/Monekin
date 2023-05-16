@@ -1,9 +1,8 @@
+import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SubcategorySelector extends StatefulWidget {
   const SubcategorySelector({super.key, required this.parentCategory});
@@ -25,10 +24,11 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
 
     selectedCategory = widget.parentCategory;
 
-    context
-        .read<CategoryService>()
+    CategoryService.instance
         .getChildCategories(parentId: widget.parentCategory.id)
+        .first
         .then((value) {
+      print(value);
       setState(() {
         childCategories = value;
       });

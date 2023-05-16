@@ -1,9 +1,8 @@
+import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:collection/collection.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class FundEvolutionChartDataItem {
   List<double> balance;
@@ -37,9 +36,9 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
     List<Future<double>> balance = [];
     List<String> labels = [];
 
-    final accountService = context.read<AccountService>();
+    final accountService = AccountService.instance;
 
-    final accounts = await accountService.getAccounts();
+    final accounts = await accountService.getAccounts().first;
 
     DateTime currentDay = DateTime(
         widget.startDate!.year, widget.startDate!.month, widget.startDate!.day);
@@ -50,8 +49,10 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
     while (currentDay.compareTo(widget.endDate!) < 0) {
       labels.add(DateFormat.yMMMMd().format(currentDay));
 
-      balance.add(accountService.getAccountsMoney(
-          accounts: accounts, date: currentDay));
+      balance.add(accountService
+          .getAccountsMoney(
+              accountIds: accounts.map((e) => e.id), date: currentDay)
+          .first);
 
       currentDay = currentDay.add(Duration(days: dayRange));
     }
@@ -74,8 +75,8 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(),
+                    children: const [
+                      CircularProgressIndicator(),
                     ],
                   ),
                 ],

@@ -1,12 +1,11 @@
 import 'dart:math';
 
-import 'package:finlytics/core/models/currency/currency.dart';
+import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/core/database/services/currency/currency.service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/number_symbols_data.dart';
-import 'package:provider/provider.dart';
 
 class CurrencyDisplayer extends StatefulWidget {
   /// Creates a widget that takes an amount and display it in a localized currency format with the decimals smaller that the rest of the text. This widget is not in charge of the conversion to any currency, that is, the amount will be remain as it is.
@@ -20,7 +19,7 @@ class CurrencyDisplayer extends StatefulWidget {
   final double amountToConvert;
 
   /// The currency of the amount, used to display the symbol. If not specified, will be the user preferred currency
-  final Currency? currency;
+  final CurrencyInDB? currency;
 
   final TextStyle textStyle;
 
@@ -31,7 +30,7 @@ class CurrencyDisplayer extends StatefulWidget {
 }
 
 class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
-  Currency? currency;
+  CurrencyInDB? currency;
 
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
     currency = widget.currency;
 
     if (currency == null) {
-      context.read<CurrencyService>().getUserPreferredCurrency().then((curr) {
+      CurrencyService.instance.getUserPreferredCurrency().then((curr) {
         if (mounted) {
           setState(() {
             currency = curr;

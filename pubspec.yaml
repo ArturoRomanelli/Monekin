@@ -1,94 +1,58 @@
 name: finlytics
-description: A new Flutter project.
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+description: Finlytics
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
+publish_to: 'none'
+
 version: 1.0.0+1
 
 environment:
   sdk: '>=2.19.4 <3.0.0'
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
 
-  flutter_localizations:
-    sdk: flutter
+  # General
+  cupertino_icons: ^1.0.0
+  collection: ^1.17.0
+  equatable: ^2.0.5
+  intl: ^0.17.0
 
-  intl: any
+  # Drift
+  drift: ^2.5.0
+  path_provider: ^2.0.13
+  http: ^0.13.5
+  sqlite3: ^1.9.3
+  sqlite3_flutter_libs: ^0.5.13
 
-  collection: any
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-
-  json_annotation: ^4.8.0
-
+  # Riverpod
+  flutter_riverpod: ^2.3.1
+  riverpod_annotation: ^2.0.1
   path: ^1.8.2
-  flutter_svg: ^2.0.4
-  provider: ^6.0.5
-  uuid: ^3.0.7
-  animations: ^2.0.7
 
-  sqflite: ^2.2.6
-
-  # Support for SQL in the web. Run `dart run sqflite_common_ffi_web:setup` to setup
-  sqflite_common_ffi_web: ^0.3.3+3
-  sqflite_common_ffi: ^2.2.2
-  path_provider: ^2.0.14
+  # Other
+  go_router: ^6.2.0
+  async: ^2.10.0
+  flutter_svg: ^2.0.5
   permission_handler: ^10.2.0
-  share_plus: ^6.3.2
-  url_launcher: ^6.1.10
+  json_annotation: ^4.8.1
   fl_chart: ^0.62.0
-  file_picker: ^5.2.10
-  freezed_annotation: ^2.2.0
+  file_picker: ^5.3.0
+  share_plus: ^7.0.0
+  url_launcher: ^6.1.11
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^2.0.0
-
   build_runner: ^2.3.3
+  json_serializable: ^6.2.0
+  riverpod_generator: ^2.1.3
+  drift_dev: ^2.4.0
 
-  json_serializable: ^6.6.1
-  freezed: ^2.3.2
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-# The following section is specific to Flutter packages.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
-
-  generate: true
 
   assets:
     - assets/icons/avatars/
@@ -143,3 +107,8 @@ flutter:
         - asset: assets/fonts/Nunito/Nunito-ExtraLightItalic.ttf
           style: italic
           weight: 200
+
+scripts:
+  test: flutter test lib
+  build: flutter pub run build_runner build --delete-conflicting-outputs
+  watch: flutter pub run build_runner watch

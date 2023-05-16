@@ -1,5 +1,10 @@
 {
   "material-icon-theme.folders.associations": {
     "presentation": "views"
-  }
+  },
+  "files.exclude": {
+    "**/*.freezed.dart": true,
+    "**/*.g.dart": false
+  },
+  "cmake.configureOnOpen": false
 }

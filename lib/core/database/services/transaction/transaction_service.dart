@@ -1,107 +1,40 @@
-import 'package:finlytics/core/database/db.service.dart';
-import 'package:finlytics/core/enums/order_dir.dart';
+import 'package:collection/collection.dart';
+import 'package:drift/drift.dart';
+import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
-class MoneyTransactionService extends ChangeNotifier {
-  final _tableName = 'transactions';
+class TransactionService {
+  final DatabaseImpl db;
 
-  // --- CLASS DEPENDENCIES ---
-  MoneyTransactionService(this._dbService);
-  final DbService? _dbService;
+  TransactionService._(this.db);
+  static final TransactionService instance =
+      TransactionService._(DatabaseImpl.instance);
 
-  // --- CLASS IMPLEMENTATION ---
-
-  Future<void> insertMoneyTransaction(MoneyTransaction transaction) async {
-    final db = await _dbService!.database;
-
-    await db.insert(
-      _tableName,
-      transaction.toDB(),
-      conflictAlgorithm: ConflictAlgorithm.fail,
-    );
-
-    notifyListeners();
+  Future<int> insertTransaction(TransactionInDB account) {
+    return db.into(db.transactions).insert(account);
   }
 
-  Future<void> insertOrUpdateMoneyTransaction(
-      MoneyTransaction transaction) async {
-    final db = await _dbService!.database;
-
-    await db.insert(
-      _tableName,
-      transaction.toDB(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-
-    notifyListeners();
+  Future<int> deleteTransaction(String accountId) {
+    return (db.delete(db.transactions)
+          ..where((tbl) => tbl.id.equals(accountId)))
+        .go();
   }
 
-  Future<void> updateMoneyTransaction(MoneyTransaction transaction) async {
-    final db = await _dbService!.database;
+  Stream<List<MoneyTransaction>> getTransactions(
+      {Expression<bool> Function(
+              Transactions, Accounts, Accounts, Categories, Categories)?
+          predicate,
+      double? limit}) {
+    limit ??= -1;
 
-    await db.update(
-      _tableName,
-      transaction.toDB(),
-      where: 'id = ?',
-      whereArgs: [transaction.id],
-    );
-
-    notifyListeners();
+    return db
+        .getTransactionsWithFullData(predicate: predicate, limit: limit)
+        .watch();
   }
 
-  Future<void> deleteMoneyTransaction(String transactionID) async {
-    final db = await _dbService!.database;
-
-    await db.delete(
-      _tableName,
-      where: 'id = ?',
-      whereArgs: [transactionID],
-    );
-
-    notifyListeners();
-  }
-
-  Future<List<MoneyTransaction>> getMoneyTransactions({
-    String orderBy = 'date',
-    OrderDirection orderDir = OrderDirection.DESC,
-    DateTime? endDate,
-    DateTime? startDate,
-    double? minValue,
-    double? maxValue,
-  }) async {
-    final db = await _dbService!.database;
-
-    final whereStatement = [
-      if (endDate != null) 'date <= ?',
-      if (startDate != null) 'date >= ?',
-      if (maxValue != null) 'value <= ?',
-      if (minValue != null) 'value >= ?',
-    ];
-
-    final List<Map<String, dynamic>> maps = await db.query(_tableName,
-        where: whereStatement.isNotEmpty ? whereStatement.join(' AND ') : null,
-        whereArgs: [
-          if (endDate != null) endDate.toIso8601String(),
-          if (startDate != null) startDate.toIso8601String(),
-          if (maxValue != null) maxValue,
-          if (minValue != null) minValue,
-        ],
-        orderBy: '$orderBy ${orderDir.name}');
-
-    return [
-      for (var i = 0; i < maps.length; i++)
-        await MoneyTransaction.fromDB(maps[i])
-    ];
-  }
-
-  Future<MoneyTransaction?> getMoneyTransactionById(String id) async {
-    final db = await _dbService!.database;
-
-    final List<Map<String, dynamic>> maps =
-        await db.query(_tableName, where: 'id = ?', whereArgs: [id], limit: 1);
-
-    return maps.isEmpty ? null : MoneyTransaction.fromDB(maps.first);
+  Stream<MoneyTransaction?> getTransactionById(String id) {
+    return getTransactions(
+            predicate: (a, _, __, ___, ____) => a.id.equals(id), limit: 1)
+        .map((res) => res.firstOrNull);
   }
 }

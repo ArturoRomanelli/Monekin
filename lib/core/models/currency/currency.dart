@@ -1,9 +1,7 @@
+import 'package:finlytics/core/database/database_impl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Currency {
-  final String code;
-  final String symbol;
-
+class Currency extends CurrencyInDB {
   final String name;
 
   String get currencyIconPath =>
@@ -17,9 +15,5 @@ class Currency {
     );
   }
 
-  Currency({required this.code, required this.symbol, required this.name});
-
-  /// Convert a row of this entity in the database to this class
-  static Future<Currency> fromDB(Map<String, dynamic> data) async =>
-      Currency(code: data['code'], symbol: data['symbol'], name: data['name']);
+  Currency({required this.name, required super.code, required super.symbol});
 }

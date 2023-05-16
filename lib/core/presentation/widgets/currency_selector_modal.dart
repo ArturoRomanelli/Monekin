@@ -1,11 +1,10 @@
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/core/database/services/currency/currency.service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 class CurrencySelectorModal extends StatefulWidget {
   const CurrencySelectorModal(
@@ -30,10 +29,10 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
   void initState() {
     super.initState();
 
-    _currencyService = context.read<CurrencyService>();
+    _currencyService = CurrencyService.instance;
     _selectedCurrency = widget.preselectedCurrency;
 
-    _currencyService!.getCurrencies().then((value) {
+    _currencyService!.getCurrencies().first.then((value) {
       setState(() {
         _filteredCurrencies = value;
       });
@@ -98,9 +97,9 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
                   onChanged: (value) {
-                    context
-                        .read<CurrencyService>()
+                    CurrencyService.instance
                         .searchCurrencies(value)
+                        .first
                         .then((curr) {
                       setState(() {
                         _filteredCurrencies = curr;

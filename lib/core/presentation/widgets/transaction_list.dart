@@ -1,4 +1,5 @@
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -34,11 +35,11 @@ class TransactionListComponent extends StatelessWidget {
             title: Text(transaction.isIncomeOrExpense
                 ? transaction.category!.name
                 : 'Transfer'),
-            subtitle: transaction.text != null && transaction.text!.isNotEmpty
-                ? Text(transaction.text!)
+            subtitle: transaction.note != null && transaction.note!.isNotEmpty
+                ? Text(transaction.note!)
                 : null,
             trailing: Text(NumberFormat.simpleCurrency(
-                    name: transaction.account.currency.code, decimalDigits: 2)
+                    name: transaction.account.currencyId, decimalDigits: 2)
                 .format(transaction.value)),
             leading: Container(
               padding: const EdgeInsets.all(6),
@@ -49,9 +50,11 @@ class TransactionListComponent extends StatelessWidget {
                       : Theme.of(context).colorScheme.primary.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(6)),
               child: transaction.isIncomeOrExpense
-                  ? transaction.category!.icon.display(
-                      color: ColorHex.get(transaction.category!.color),
-                      size: 28)
+                  ? SupportedIconService.instance
+                      .getIconByID(transaction.category!.iconId)
+                      .display(
+                          color: ColorHex.get(transaction.category!.color!),
+                          size: 28)
                   : const Icon(Icons.swap_vert, size: 28),
             ),
             onTap: () {},

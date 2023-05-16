@@ -1,10 +1,9 @@
-import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class EditProfileModal extends StatefulWidget {
   const EditProfileModal({super.key});
@@ -37,15 +36,15 @@ class _EditProfileModalState extends State<EditProfileModal> {
   void initState() {
     super.initState();
 
-    final userSettingsService = context.read<UserSettingsService>();
+    final userSettingsService = UserSettingService.instance;
 
-    userSettingsService.getSetting(SettingKey.avatar).then((value) {
+    userSettingsService.getSetting(SettingKey.avatar).first.then((value) {
       setState(() {
         selectedAvatar = value;
       });
     });
 
-    userSettingsService.getSetting(SettingKey.userName).then((value) {
+    userSettingsService.getSetting(SettingKey.userName).first.then((value) {
       _nameController.value = TextEditingValue(text: value ?? '');
     });
   }
@@ -120,8 +119,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
 
-                        final userSettingsService =
-                            context.read<UserSettingsService>();
+                        final userSettingsService = UserSettingService.instance;
 
                         Future.wait([
                           userSettingsService.setSetting(

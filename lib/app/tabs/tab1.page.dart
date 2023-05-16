@@ -1,9 +1,7 @@
 import 'package:finlytics/app/accounts/accountForm.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
-import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
@@ -11,7 +9,6 @@ import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 import '../../core/presentation/widgets/user_avatar.dart';
 
@@ -81,10 +78,9 @@ class _Tab1PageState extends State<Tab1Page> {
                 Text(account.name, style: const TextStyle(fontSize: 16)),
                 Row(
                   children: [
-                    FutureBuilder(
+                    StreamBuilder(
                         initialData: 0.0,
-                        future: context
-                            .watch<AccountService>()
+                        stream: AccountService.instance
                             .getAccountMoney(account: account),
                         builder: (context, snapshot) {
                           return CurrencyDisplayer(
@@ -95,10 +91,9 @@ class _Tab1PageState extends State<Tab1Page> {
                     const SizedBox(
                       width: 12,
                     ),
-                    FutureBuilder(
+                    StreamBuilder(
                         initialData: 0.0,
-                        future: context
-                            .watch<AccountService>()
+                        stream: AccountService.instance
                             .getAccountsMoneyVariation(
                                 accounts: [account],
                                 startDate: dateRangeService.startDate,
@@ -154,16 +149,71 @@ class _Tab1PageState extends State<Tab1Page> {
     );
   }
 
+  Widget incomeOrExpenseIndicator(AccountDataFilter type) {
+    final Color color =
+        type == AccountDataFilter.income ? Colors.green : Colors.red;
+    final String text = type == AccountDataFilter.income ? 'Income' : 'Expense';
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 0.75,
+              color: color.withOpacity(0.8),
+            ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Icon(
+            Icons.arrow_upward,
+            color: color,
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(text),
+            StreamBuilder(
+                stream: AccountService.instance.getAccounts(),
+                builder: (context, accounts) {
+                  if (!accounts.hasData) {
+                    return const Skeleton(width: 20, height: 12);
+                  }
+
+                  return StreamBuilder(
+                      stream: AccountService.instance.getAccountsData(
+                        accountIds: accounts.data!.map((e) => e.id),
+                        startDate: dateRangeService.startDate,
+                        endDate: dateRangeService.endDate,
+                        accountDataFilter: type,
+                        convertToPreferredCurrency: true,
+                      ),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Skeleton(width: 20, height: 12);
+                        }
+
+                        return CurrencyDisplayer(
+                          amountToConvert: snapshot.data!,
+                          showDecimals: false,
+                        );
+                      });
+                })
+          ],
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    // Rebuild when a service variable change
-    context.select((ExchangeRateService p) => setState(() => {}));
-    context.select((DateRangeService p) => setState(() => {}));
-    context.select((MoneyTransactionService p) => setState(() => {}));
-
-    final accountService = context.watch<AccountService>();
+    final accountService = AccountService.instance;
 
     return Scaffold(
       appBar: AppBar(
@@ -196,9 +246,8 @@ class _Tab1PageState extends State<Tab1Page> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                FutureBuilder(
-                                    future: context
-                                        .watch<UserSettingsService>()
+                                StreamBuilder(
+                                    stream: UserSettingService.instance
                                         .getSetting(SettingKey.avatar),
                                     builder: (context, snapshot) {
                                       return UserAvatar(avatar: snapshot.data);
@@ -209,9 +258,8 @@ class _Tab1PageState extends State<Tab1Page> {
                                   children: [
                                     Text('Good evening,',
                                         style: TextStyle(fontSize: 12)),
-                                    FutureBuilder(
-                                        future: context
-                                            .watch<UserSettingsService>()
+                                    StreamBuilder(
+                                        stream: UserSettingService.instance
                                             .getSetting(SettingKey.userName),
                                         builder: (context, snapshot) {
                                           if (!snapshot.hasData) {
@@ -234,7 +282,9 @@ class _Tab1PageState extends State<Tab1Page> {
                             // - https://github.com/flutter/flutter/issues/115824
 
                             onPressed: () {
-                              DateRangeService.instance.openDateModal(context);
+                              DateRangeService.instance
+                                  .openDateModal(context)
+                                  .then((_) => setState(() {}));
                             },
                             label: Text(
                               'Este mes',
@@ -252,17 +302,17 @@ class _Tab1PageState extends State<Tab1Page> {
                       height: 32,
                       color: Colors.white.withOpacity(0.3),
                     ),
-                    FutureBuilder(
-                        future: accountService.getAccounts(),
+                    StreamBuilder(
+                        stream: accountService.getAccounts(),
                         builder: (context, accounts) {
                           if (!accounts.hasData) {
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Total balance',
+                              children: const [
+                                Text('Total balance',
                                     style: TextStyle(fontSize: 12)),
-                                const Skeleton(width: 70, height: 40),
+                                Skeleton(width: 70, height: 40),
                               ],
                             );
                           } else {
@@ -272,9 +322,10 @@ class _Tab1PageState extends State<Tab1Page> {
                               children: [
                                 const Text('Total balance',
                                     style: TextStyle(fontSize: 12)),
-                                FutureBuilder(
-                                    future: accountService.getAccountsMoney(
-                                        accounts: accounts.data!),
+                                StreamBuilder(
+                                    stream: accountService.getAccountsMoney(
+                                        accountIds:
+                                            accounts.data!.map((e) => e.id)),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         return CurrencyDisplayer(
@@ -287,8 +338,8 @@ class _Tab1PageState extends State<Tab1Page> {
                                             width: 70, height: 40);
                                       }
                                     }),
-                                FutureBuilder(
-                                    future: accountService
+                                StreamBuilder(
+                                    stream: accountService
                                         .getAccountsMoneyVariation(
                                             accounts: accounts.data!,
                                             startDate:
@@ -373,8 +424,8 @@ class _Tab1PageState extends State<Tab1Page> {
                   ),
                   SizedBox(
                     height: 90,
-                    child: FutureBuilder(
-                        future: accountService.getAccounts(),
+                    child: StreamBuilder(
+                        stream: accountService.getAccounts(),
                         builder: (context, accounts) {
                           if (!accounts.hasData) {
                             return const LinearProgressIndicator();
@@ -395,8 +446,8 @@ class _Tab1PageState extends State<Tab1Page> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  children: [
-                                    const Text('Gastos e ingresos',
+                                  children: const [
+                                    Text('Gastos e ingresos',
                                         style: TextStyle(fontSize: 18)),
                                   ],
                                 ),
@@ -405,124 +456,10 @@ class _Tab1PageState extends State<Tab1Page> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              width: 0.75,
-                                              color:
-                                                  Colors.green.withOpacity(0.8),
-                                            ),
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
-                                          child: const Icon(
-                                            Icons.arrow_upward,
-                                            color: Colors.green,
-                                            size: 18,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Income'),
-                                            FutureBuilder(
-                                                future: Future(() async {
-                                              final accounts =
-                                                  await accountService
-                                                      .getAccounts();
-
-                                              return await accountService
-                                                  .getAccountsData(
-                                                accounts: accounts,
-                                                startDate:
-                                                    dateRangeService.startDate,
-                                                endDate:
-                                                    dateRangeService.endDate,
-                                                accountDataFilter:
-                                                    AccountDataFilter.income,
-                                                convertToPreferredCurrency:
-                                                    true,
-                                              );
-                                            }), builder: (context, snapshot) {
-                                              if (!snapshot.hasData) {
-                                                return const Skeleton(
-                                                    width: 20, height: 12);
-                                              }
-
-                                              return CurrencyDisplayer(
-                                                amountToConvert: snapshot.data!,
-                                                showDecimals: false,
-                                              );
-                                            })
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              width: 0.75,
-                                              color:
-                                                  Colors.red.withOpacity(0.8),
-                                            ),
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
-                                          child: const Icon(
-                                            Icons.arrow_downward,
-                                            color: Colors.red,
-                                            size: 18,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Expense'),
-                                            FutureBuilder(
-                                                future: Future(() async {
-                                              final accounts =
-                                                  await accountService
-                                                      .getAccounts();
-
-                                              return await accountService
-                                                  .getAccountsData(
-                                                accounts: accounts,
-                                                startDate:
-                                                    dateRangeService.startDate,
-                                                endDate:
-                                                    dateRangeService.endDate,
-                                                accountDataFilter:
-                                                    AccountDataFilter.expense,
-                                                convertToPreferredCurrency:
-                                                    true,
-                                              );
-                                            }), builder: (context, snapshot) {
-                                              if (!snapshot.hasData) {
-                                                return const Skeleton(
-                                                    width: 20, height: 12);
-                                              }
-
-                                              return CurrencyDisplayer(
-                                                amountToConvert: snapshot.data!,
-                                                showDecimals: false,
-                                              );
-                                            })
-                                          ],
-                                        )
-                                      ],
-                                    )
+                                    incomeOrExpenseIndicator(
+                                        AccountDataFilter.income),
+                                    incomeOrExpenseIndicator(
+                                        AccountDataFilter.expense)
                                   ],
                                 )
                               ],

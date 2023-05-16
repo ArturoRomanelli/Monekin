@@ -1,18 +1,16 @@
-import 'package:finlytics/core/database/db.service.dart';
-import 'package:finlytics/core/database/services/category/categoryService.dart';
-import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
-import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/core/database/database_impl.dart';
 
-class Category {
-  final String id;
-  String name;
-  SupportedIcon icon;
+import '../../services/supported_icon/supported_icon_service.dart';
+import '../supported-icon/supported_icon.dart';
 
+class Category extends CategoryInDB {
   String? _color;
   String? _type;
-  Category? parentCategory;
 
+  @override
   String get color => _color ?? parentCategory!.color;
+
+  @override
   String get type => _type ?? parentCategory!.type;
 
   set color(String newColor) {
@@ -31,54 +29,35 @@ class Category {
     }
   }
 
-  bool get isMainCategory => parentCategory == null;
-  bool get isChildCategory => !isMainCategory;
-
-  Category._(
-      {required this.id,
-      required this.name,
-      required this.icon,
+  Category(
+      {required super.id,
+      required super.name,
+      required super.iconId,
       String? color,
       String? type,
-      this.parentCategory})
-      : assert((color != null && type != null) || parentCategory != null),
-        _color = color,
-        _type = type;
+      CategoryInDB? parentCategory})
+      : _color = color,
+        _type = type,
+        parentCategory =
+            parentCategory != null ? fromDB(parentCategory, null) : null,
+        super(parentCategoryID: parentCategory?.id);
 
-  Category.childCategory(
-      {required this.id,
-      required this.name,
-      required this.icon,
-      required this.parentCategory});
+  Category? parentCategory;
 
-  Category.mainCategory({
-    required this.id,
-    required this.name,
-    required this.icon,
-    required String color,
-    required String type,
-  })  : _color = color,
-        _type = type;
+  /// Returns whether the category is a main (or root) category or not
+  bool get isMainCategory => parentCategoryID == null;
 
-  /// Convert this entity to the format that it has in the database. This is usually a plain object, without nested data/objects.
-  Map<String, dynamic> toDB() => {
-        'id': id,
-        'name': name,
-        'icon': icon.id,
-        'type': _type,
-        'color': _color,
-        'parentCategoryID': parentCategory?.id,
-      };
+  /// Returns whether the category is a child of another category or not
+  bool get isChildCategory => !isMainCategory;
 
-  /// Convert a row of this entity in the database to this class
-  static Future<Category> fromDB(Map<String, dynamic> data) async => Category._(
-      id: data['id'],
-      name: data['name'],
-      icon: SupportedIconService.instance.getIconByID(data['icon']),
-      color: data['color'],
-      type: data['type'],
-      parentCategory: data['parentCategoryID'] != null
-          ? await CategoryService(DbService.instance)
-              .getCategoryById(data['parentCategoryID'])
-          : null);
+  SupportedIcon get icon => SupportedIconService.instance.getIconByID(iconId);
+
+  static Category fromDB(CategoryInDB cat, CategoryInDB? parentCategory) =>
+      Category(
+          id: cat.id,
+          name: cat.name,
+          iconId: cat.iconId,
+          parentCategory: parentCategory,
+          color: cat.color,
+          type: cat.type);
 }

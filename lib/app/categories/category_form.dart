@@ -1,12 +1,12 @@
 import 'package:finlytics/app/categories/subcategory_form.dart';
-import 'package:finlytics/core/database/services/category/categoryService.dart';
+import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryFormPage extends StatefulWidget {
@@ -81,9 +81,9 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   }
 
   void _fillForm() {
-    context
-        .read<CategoryService>()
+    CategoryService.instance
         .getMainCategories()
+        .first
         .then((categories) async {
       categoryToEdit =
           categories.firstWhere((cat) => cat.id == widget.categoryUUID);
@@ -118,8 +118,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             TextButton(
               child: const Text('Approve'),
               onPressed: () {
-                context
-                    .read<CategoryService>()
+                CategoryService.instance
                     .deleteCategory(categoryId)
                     .then((value) async {
                   if (categoryId == widget.categoryUUID) {
@@ -141,10 +140,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   makeMainCategory(Category category) {
     if (category.isMainCategory) return;
 
-    context.read<CategoryService>().updateCategory(Category.mainCategory(
+    CategoryService.instance.updateCategory(CategoryInDB(
         id: category.id,
         name: category.name,
-        icon: category.icon,
+        iconId: category.icon.id,
         color: categoryToEdit!.color,
         type: categoryToEdit!.type));
 
@@ -167,14 +166,15 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
 
   submitForm() {
     if (categoryToEdit != null) {
-      categoryToEdit!.color = _color;
-      categoryToEdit!.icon = _icon;
-      categoryToEdit!.name = _nameController.text;
+      categoryToEdit = Category(
+          id: categoryToEdit!.id,
+          name: _nameController.text,
+          iconId: _icon.id,
+          color: _color,
+          parentCategory: categoryToEdit!.parentCategory,
+          type: categoryToEdit!.type);
 
-      context
-          .read<CategoryService>()
-          .updateCategory(categoryToEdit!)
-          .then((value) {
+      CategoryService.instance.updateCategory(categoryToEdit!).then((value) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Categoría editada con exito')));
       }).catchError((error) {
@@ -182,12 +182,11 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
             .showSnackBar(SnackBar(content: Text(error.toString())));
       });
     } else {
-      context
-          .read<CategoryService>()
-          .insertCategory(Category.mainCategory(
+      CategoryService.instance
+          .insertCategory(CategoryInDB(
               id: const Uuid().v4(),
               name: _nameController.text,
-              icon: _icon,
+              iconId: _icon.id,
               type: _type,
               color: _color))
           .then((value) {
@@ -455,11 +454,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                         child: Text('Subcategories'),
                       ),
                     if (widget.categoryUUID != null)
-                      FutureBuilder(
+                      StreamBuilder(
                         initialData: const <Category>[],
-                        future: context
-                            .watch<CategoryService>()
-                            .getChildCategories(parentId: widget.categoryUUID),
+                        stream: CategoryService.instance
+                            .getChildCategories(parentId: widget.categoryUUID!),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
@@ -523,12 +521,11 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                         makeMainCategory(subcategory);
                                       } else if (value == 'edit') {
                                         openSubcategoryForm((name, icon) {
-                                          subcategory.icon = icon;
-                                          subcategory.name = name;
-
-                                          context
-                                              .read<CategoryService>()
-                                              .updateCategory(subcategory);
+                                          CategoryService.instance
+                                              .updateCategory(
+                                                  subcategory.copyWith(
+                                                      name: name,
+                                                      iconId: icon.id));
                                         });
                                       }
                                     },
@@ -546,12 +543,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                           leading: const Icon(Icons.add),
                           onTap: () {
                             openSubcategoryForm((name, icon) {
-                              context.read<CategoryService>().insertCategory(
-                                  Category.childCategory(
+                              CategoryService.instance.insertCategory(
+                                  CategoryInDB(
                                       id: const Uuid().v4(),
                                       name: name,
-                                      icon: icon,
-                                      parentCategory: categoryToEdit!));
+                                      iconId: icon.id,
+                                      parentCategoryID: categoryToEdit!.id));
                             });
                           },
                           title: const Text('Add subcategory'))

@@ -3,9 +3,8 @@ import 'package:finlytics/app/tabs/tab1.page.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
 import 'package:finlytics/app/tabs/tab3.page.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class TabsPage extends StatefulWidget {
   const TabsPage({super.key, this.currentPageIndex = 0});
@@ -90,14 +89,14 @@ class _TabsPageState extends State<TabsPage> {
       {required Widget widget,
       required BuildContext context,
       required int key}) {
-    final accountService = context.read<AccountService>();
+    final accountService = AccountService.instance;
 
     return Scaffold(
       body: widget,
       key: ValueKey<int>(key),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          if ((await accountService.getAccounts()).isEmpty) {
+          if ((await accountService.getAccounts().first).isEmpty) {
             _showShouldCreateAccountWarn();
 
             return;

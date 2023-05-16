@@ -1,7 +1,7 @@
 import 'package:finlytics/app/tabs/tabs.page.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
-import 'package:finlytics/core/database/services/currency/currency.service.dart';
-import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
+import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
@@ -13,7 +13,6 @@ import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class AccountFormPage extends StatefulWidget {
@@ -46,8 +45,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   bool showCurrencyExchangesWarn = false;
 
   getCurrencyExchange(Currency currency) {
-    context
-        .read<ExchangeRateService>()
+    ExchangeRateService.instance
         .getLastExchangeRateOf(currencyCode: currency.code)
         .then((value) {
       if (value != null) {
@@ -61,14 +59,14 @@ class _AccountFormPageState extends State<AccountFormPage> {
   }
 
   submitForm() async {
-    final accountService = context.read<AccountService>();
+    final accountService = AccountService.instance;
 
     double newBalance = double.parse(_balanceController.text);
 
     if (_accountToEdit != null) {
       newBalance = _accountToEdit!.iniValue +
           newBalance -
-          await accountService.getAccountMoney(account: _accountToEdit!);
+          await accountService.getAccountMoney(account: _accountToEdit!).first;
     }
 
     Account accountToSubmit = Account(
@@ -77,10 +75,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
       iniValue: newBalance,
       date: _openingDate,
       type: _type,
-      icon: _icon,
+      iconId: _icon.id,
       currency: _currency!,
       iban: _ibanController.text.isEmpty ? null : _ibanController.text,
-      text: _textController.text.isEmpty ? null : _textController.text,
+      description: _textController.text.isEmpty ? null : _textController.text,
       swift: _swiftController.text.isEmpty ? null : _swiftController.text,
     );
 
@@ -107,7 +105,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
     if (widget.accountUUID != null) {
       _fillForm();
     } else {
-      context.read<CurrencyService>().getUserPreferredCurrency().then((value) {
+      CurrencyService.instance.getUserPreferredCurrency().then((value) {
         setState(() {
           _currency = value;
         });
@@ -116,9 +114,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
   }
 
   void _fillForm() {
-    final accountService = context.read<AccountService>();
+    final accountService = AccountService.instance;
 
-    accountService.getAccountByID(widget.accountUUID!).then((value) {
+    accountService.getAccountById(widget.accountUUID!).first.then((value) {
       _accountToEdit = value;
 
       if (_accountToEdit == null) return;
@@ -126,16 +124,25 @@ class _AccountFormPageState extends State<AccountFormPage> {
       _nameController.text = _accountToEdit!.name;
       _ibanController.text = _accountToEdit!.iban ?? '';
       _swiftController.text = _accountToEdit!.swift ?? '';
-      _textController.text = _accountToEdit!.text ?? '';
+      _textController.text = _accountToEdit!.description ?? '';
 
       _openingDate = _accountToEdit!.date;
 
-      accountService.getAccountMoney(account: _accountToEdit!).then((value) {
+      accountService
+          .getAccountMoney(account: _accountToEdit!)
+          .first
+          .then((value) {
         _balanceController.text = value.toString();
       });
 
       _icon = _accountToEdit!.icon;
-      _currency = _accountToEdit!.currency;
+
+      CurrencyService.instance
+          .getCurrencyByCode(_accountToEdit!.currency.code)
+          .first
+          .then((value) {
+        _currency = value;
+      });
 
       setState(() {});
     });

@@ -1,0 +1,98 @@
+---- * WHEN CONVERTING TO .sql:
+---- * --- Remove the 'AS ....' after a table creation  
+---- * --- Convert DATETIME to TEXT
+
+CREATE TABLE IF NOT EXISTS currencies (
+    code TEXT NOT NULL PRIMARY KEY,
+    symbol TEXT NOT NULL
+) AS CurrencyInDB;
+
+CREATE TABLE IF NOT EXISTS exchangeRates (
+    date DATETIME NOT NULL,
+    currencyCode TEXT NOT NULL REFERENCES currencies(code) ON DELETE CASCADE ON UPDATE CASCADE,
+    exchangeRate REAL NOT NULL,
+    
+    PRIMARY KEY (date, currencyCode)
+) AS ExchangeRateInDB;
+
+CREATE TABLE IF NOT EXISTS currencyNames (
+    currencyCode TEXT NOT NULL PRIMARY KEY REFERENCES currencies(code) ON DELETE CASCADE ON UPDATE CASCADE,
+    en TEXT NOT NULL,
+    es TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS accounts (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    iniValue REAL NOT NULL,
+    date DATETIME NOT NULL,
+    description TEXT,
+    type TEXT NOT NULL,
+    iconId TEXT NOT NULL,
+    currencyId TEXT NOT NULL REFERENCES currencies(code) ON DELETE CASCADE ON UPDATE CASCADE,
+    iban TEXT,
+    swift TEXT
+) AS AccountInDB;
+
+CREATE TABLE IF NOT EXISTS categories (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    iconId TEXT NOT NULL,
+    color TEXT,
+    type TEXT,
+    parentCategoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+    --- Color and type are not needed in child categories. They are inherited from the parent 
+    CHECK ((parentCategoryID IS NULL) != (color IS NULL AND type IS NULL)),
+    CHECK ((color IS NULL) == (type IS NULL))
+) AS CategoryInDB;
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id TEXT NOT NULL PRIMARY KEY,
+  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  date DATETIME NOT NULL,
+  value REAL NOT NULL,
+  note TEXT,
+  status TEXT CHECK(status IN ('voided', 'pending', 'reconcilied', 'unreconcilied')),
+  categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  valueInDestiny REAL,
+  receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  isHidden BOOLEAN NOT NULL DEFAULT 0,
+
+  --- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
+  CHECK ((receivingAccountID IS NULL) != (categoryID IS NULL)),
+
+  --- valueInDestiny can not be defined for non-transfer transactions:
+  CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
+) AS TransactionInDB;
+
+--- Rules to generate transactions 
+CREATE TABLE IF NOT EXISTS recurrentRules (
+  id TEXT NOT NULL PRIMARY KEY,
+  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  nextPaymentDate DATETIME NOT NULL,
+  intervalPeriod TEXT NOT NULL,
+  intervalEach TEXT NOT NULL DEFAULT 1,
+  endDate DATETIME,
+  value REAL NOT NULL,
+  note TEXT,
+  categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  valueInDestiny REAL,
+  receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+  --- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
+  CHECK ((receivingAccountID IS NULL) != (categoryID IS NULL)),
+
+  --- valueInDestiny can not be defined for non-transfer transactions:
+  CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
+) AS RecurrentRuleInDB;
+
+CREATE TABLE IF NOT EXISTS userSettings (
+  settingKey TEXT NOT NULL PRIMARY KEY,
+  settingValue TEXT
+);
+
+CREATE TABLE IF NOT EXISTS appData (
+  appDataKey TEXT NOT NULL PRIMARY KEY,
+  appDataValue TEXT
+);

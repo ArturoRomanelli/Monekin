@@ -1,9 +1,8 @@
 import 'package:finlytics/app/categories/category_form.dart';
 import 'package:finlytics/app/categories/subcategory_selector.dart';
+import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/core/database/services/category/categoryService.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 enum CategoriesListMode {
   page,
@@ -125,8 +124,8 @@ class _CategoriesListState extends State<CategoriesList> {
               Tab(text: 'Incomes'),
               Tab(text: 'Expenses'),
             ]),
-            FutureBuilder(
-                future: context.watch<CategoryService>().getMainCategories(),
+            StreamBuilder(
+                stream: CategoryService.instance.getMainCategories(),
                 builder: (context, categories) {
                   if (!categories.hasData) {
                     return const LinearProgressIndicator();

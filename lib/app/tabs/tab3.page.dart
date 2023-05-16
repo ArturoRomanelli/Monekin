@@ -1,7 +1,7 @@
 import 'package:finlytics/app/tabs/widgets/balance_bar_chart.dart';
 import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
-import 'package:finlytics/core/database/services/account/accountService.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
@@ -9,7 +9,6 @@ import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/utils/date_getter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class Tab3Page extends StatefulWidget {
   const Tab3Page({Key? key}) : super(key: key);
@@ -34,7 +33,7 @@ class _Tab3PageState extends State<Tab3Page> {
 
     _pageController = PageController(initialPage: initialIndex);
 
-    final DateRangeService dateRangeService = context.read<DateRangeService>();
+    final DateRangeService dateRangeService = DateRangeService.instance;
 
     dateRangeService.getCurrentDateRange().then((value) {
       setState(() {
@@ -43,9 +42,70 @@ class _Tab3PageState extends State<Tab3Page> {
     });
   }
 
+  Widget incomeOrExpenseIndicator(
+      AccountDataFilter type, DateTime? startDate, DateTime? endDate) {
+    final Color color =
+        type == AccountDataFilter.income ? Colors.green : Colors.red;
+    final String text = type == AccountDataFilter.income ? 'Income' : 'Expense';
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 0.75,
+              color: color.withOpacity(0.8),
+            ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Icon(
+            Icons.arrow_upward,
+            color: color,
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(text),
+            StreamBuilder(
+                stream: AccountService.instance.getAccounts(),
+                builder: (context, accounts) {
+                  if (!accounts.hasData) {
+                    return const Skeleton(width: 20, height: 12);
+                  }
+
+                  return StreamBuilder(
+                      stream: AccountService.instance.getAccountsData(
+                        accountIds: accounts.data!.map((e) => e.id),
+                        startDate: startDate,
+                        endDate: endDate,
+                        accountDataFilter: type,
+                        convertToPreferredCurrency: true,
+                      ),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Skeleton(width: 20, height: 12);
+                        }
+
+                        return CurrencyDisplayer(
+                          amountToConvert: snapshot.data!,
+                          showDecimals: false,
+                        );
+                      });
+                })
+          ],
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final AccountService accountService = context.read<AccountService>();
+    final AccountService accountService = AccountService.instance;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Hello Tab 2'), elevation: 3, actions: [
@@ -120,8 +180,7 @@ class _Tab3PageState extends State<Tab3Page> {
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                final dateRanges = context
-                    .read<DateRangeService>()
+                final dateRanges = DateRangeService.instance
                     .getDateRange(index - initialIndex);
 
                 final DateTime? startDate = dateRanges[0];
@@ -148,110 +207,14 @@ class _Tab3PageState extends State<Tab3Page> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          width: 0.75,
-                                          color: Colors.green.withOpacity(0.8),
-                                        ),
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
-                                      child: const Icon(
-                                        Icons.arrow_upward,
-                                        color: Colors.green,
-                                        size: 18,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Income'),
-                                        FutureBuilder(future: Future(() async {
-                                          final accounts = await accountService
-                                              .getAccounts();
-
-                                          return await accountService
-                                              .getAccountsData(
-                                            accounts: accounts,
-                                            startDate: startDate,
-                                            endDate: endDate,
-                                            accountDataFilter:
-                                                AccountDataFilter.income,
-                                          );
-                                        }), builder: (context, snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return const Skeleton(
-                                                width: 20, height: 12);
-                                          }
-
-                                          return CurrencyDisplayer(
-                                            amountToConvert: snapshot.data!,
-                                            showDecimals: false,
-                                          );
-                                        })
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          width: 0.75,
-                                          color: Colors.red.withOpacity(0.8),
-                                        ),
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
-                                      child: const Icon(
-                                        Icons.arrow_downward,
-                                        color: Colors.red,
-                                        size: 18,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Expense'),
-                                        FutureBuilder(future: Future(() async {
-                                          final accounts = await accountService
-                                              .getAccounts();
-
-                                          return await accountService
-                                              .getAccountsData(
-                                            accounts: accounts,
-                                            startDate: startDate,
-                                            endDate: endDate,
-                                            accountDataFilter:
-                                                AccountDataFilter.expense,
-                                          );
-                                        }), builder: (context, snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return const Skeleton(
-                                                width: 20, height: 12);
-                                          }
-
-                                          return CurrencyDisplayer(
-                                            amountToConvert: snapshot.data!,
-                                            showDecimals: false,
-                                          );
-                                        })
-                                      ],
-                                    )
-                                  ],
-                                )
+                                incomeOrExpenseIndicator(
+                                    AccountDataFilter.income,
+                                    startDate,
+                                    endDate),
+                                incomeOrExpenseIndicator(
+                                    AccountDataFilter.expense,
+                                    startDate,
+                                    endDate),
                               ],
                             )
                           ],

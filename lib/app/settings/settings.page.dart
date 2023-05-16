@@ -1,12 +1,11 @@
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/currencies/currency_manager.dart';
 import 'package:finlytics/app/settings/edit_profile_modal.dart';
-import 'package:finlytics/core/database/db.service.dart';
-import 'package:finlytics/core/database/services/user-settings/user_settings.service.dart';
+import 'package:finlytics/core/database/backup/backup_database_service.dart';
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -67,7 +66,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
-    final settingService = context.watch<UserSettingsService>();
+    final settingService = UserSettingService.instance;
 
     return Scaffold(
         appBar: AppBar(
@@ -87,8 +86,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         });
                   },
                   title: Text('Edit profile'),
-                  subtitle: FutureBuilder(
-                      future: settingService.getSetting(SettingKey.userName),
+                  subtitle: StreamBuilder(
+                      stream: settingService.getSetting(SettingKey.userName),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return const Skeleton(width: 70, height: 12);
@@ -96,9 +95,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         return Text(snapshot.data!);
                       }),
-                  leading: FutureBuilder(
-                      future: context
-                          .watch<UserSettingsService>()
+                  leading: StreamBuilder(
+                      stream: UserSettingService.instance
                           .getSetting(SettingKey.avatar),
                       builder: (context, snapshot) {
                         return UserAvatar(avatar: snapshot.data);
@@ -136,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle: 'Export data',
                   icon: Icons.cloud_download_outlined,
                   onTap: () {
-                    DbService.instance
+                    BackupDatabaseService()
                         .downloadDatabaseFile(context)
                         .then((value) {
                       print('EEEEEEEEEEE');
@@ -151,7 +149,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       'Replace your current data with a new database file',
                   icon: Icons.cloud_upload_outlined,
                   onTap: () {
-                    DbService.instance.importDatabase().then((value) {
+                    BackupDatabaseService().importDatabase().then((value) {
                       print('EEEEEEEEEEE');
                     }).catchError((err) {
                       print(err);
@@ -168,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }),
               const Divider(indent: 70),
               createSettingItem(
-                  title: 'Share Finlytics',
+                  title: 'Share finlytics',
                   icon: Icons.share,
                   onTap: () {
                     Share.share(

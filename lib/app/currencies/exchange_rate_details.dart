@@ -1,10 +1,9 @@
 import 'package:finlytics/app/currencies/exchange_rate_form.dart';
+import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/core/models/exchangeRate/exchange_rate.dart';
-import 'package:finlytics/core/database/services/exchangeRates/exchange_rate.service.dart';
+import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ExchangeRateDetailsPage extends StatefulWidget {
   const ExchangeRateDetailsPage({super.key, required this.currency});
@@ -27,9 +26,9 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
   }
 
   getExchangeRates() {
-    context
-        .read<ExchangeRateService>()
+    ExchangeRateService.instance
         .getExchangeRatesOf(widget.currency.code)
+        .first
         .then((value) {
       setState(() {
         exchangeRates = value;
@@ -38,8 +37,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
   }
 
   deleteAllRates() {
-    context
-        .read<ExchangeRateService>()
+    ExchangeRateService.instance
         .deleteExchangeRates(currencyCode: widget.currency.code)
         .then((value) {
       Navigator.pop(context);

@@ -3087,6 +3087,7 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         predicate?.call(alias(this.categories, 'a'),
                 alias(this.categories, 'parentCategory')) ??
             const CustomExpression('(TRUE)'),
+        hasMultipleTables: true,
         startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedpredicate.amountOfVariables;
     return customSelect(
@@ -3106,44 +3107,6 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
           type: row.readNullable<String>('type'),
           parentCategory:
               await categories.mapFromRowOrNull(row, tablePrefix: 'nested_0'),
-        ));
-  }
-
-  Selectable<Category> getSubcategoriesWithFullData(
-      {required String parentCategoryId, required double limit}) {
-    return customSelect(
-        'SELECT a.*,"parentCategory"."id" AS "nested_0.id", "parentCategory"."name" AS "nested_0.name", "parentCategory"."iconId" AS "nested_0.iconId", "parentCategory"."color" AS "nested_0.color", "parentCategory"."type" AS "nested_0.type", "parentCategory"."parentCategoryID" AS "nested_0.parentCategoryID" FROM categories AS a LEFT JOIN categories AS parentCategory ON a.parentCategoryID = parentCategory.id WHERE a.parentCategoryID = ?1 LIMIT ?2',
-        variables: [
-          Variable<String>(parentCategoryId),
-          Variable<double>(limit)
-        ],
-        readsFrom: {
-          categories,
-        }).asyncMap((QueryRow row) async => Category(
-          id: row.read<String>('id'),
-          name: row.read<String>('name'),
-          iconId: row.read<String>('iconId'),
-          color: row.readNullable<String>('color'),
-          type: row.readNullable<String>('type'),
-          parentCategory:
-              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_0'),
-        ));
-  }
-
-  Selectable<Category> getMainCategoriesWithFullData({required double limit}) {
-    return customSelect(
-        'SELECT a.* FROM categories AS a WHERE a.parentCategoryID IS NULL LIMIT ?1',
-        variables: [
-          Variable<double>(limit)
-        ],
-        readsFrom: {
-          categories,
-        }).map((QueryRow row) => Category(
-          id: row.read<String>('id'),
-          name: row.read<String>('name'),
-          iconId: row.read<String>('iconId'),
-          color: row.readNullable<String>('color'),
-          type: row.readNullable<String>('type'),
         ));
   }
 

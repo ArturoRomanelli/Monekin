@@ -38,15 +38,16 @@ class CategoryService {
       {required String parentId, double? limit}) {
     limit ??= -1;
 
-    return db
-        .getSubcategoriesWithFullData(parentCategoryId: parentId, limit: limit)
-        .watch();
+    return getCategories(
+        predicate: (p0, p1) => p0.parentCategoryID.equals(parentId),
+        limit: limit);
   }
 
   Stream<List<Category>> getMainCategories({double? limit}) {
     limit ??= -1;
 
-    return db.getMainCategoriesWithFullData(limit: limit).watch();
+    return getCategories(
+        predicate: (p0, p1) => p0.parentCategoryID.isNull(), limit: limit);
   }
 
   Stream<Category?> getCategoryById(String id) {

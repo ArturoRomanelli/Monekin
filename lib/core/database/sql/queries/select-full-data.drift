@@ -40,20 +40,6 @@ getCategoriesWithFullData($predicate = TRUE, :limit AS NUMBER) WITH Category:
     WHERE $predicate 
     LIMIT :limit;
 
-getSubcategoriesWithFullData(:parentCategoryId AS TEXT, :limit AS NUMBER) WITH Category: 
-    SELECT a.*, parentCategory.**
-    FROM categories a 
-        LEFT JOIN categories parentCategory 
-        ON a.parentCategoryID = parentCategory.id 
-    WHERE a.parentCategoryID = :parentCategoryId 
-    LIMIT :limit;
-
-getMainCategoriesWithFullData(:limit AS NUMBER) WITH Category: 
-    SELECT a.*
-    FROM categories a 
-    WHERE a.parentCategoryID IS NULL
-    LIMIT :limit;
-
 getExchangeRates($predicate = TRUE, :limit AS NUMBER) WITH ExchangeRate:
     SELECT e.*, currency.**
     FROM exchangeRates e

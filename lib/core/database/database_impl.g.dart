@@ -69,7 +69,10 @@ class Currencies extends Table with TableInfo<Currencies, CurrencyInDB> {
 }
 
 class CurrencyInDB extends DataClass implements Insertable<CurrencyInDB> {
+  /// ISO 4217 currency code. Identifies a currency uniquely ([see more](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes))
   final String code;
+
+  /// Symbol to represent the currency
   final String symbol;
   const CurrencyInDB({required this.code, required this.symbol});
   @override
@@ -380,12 +383,16 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
 
 class AccountInDB extends DataClass implements Insertable<AccountInDB> {
   final String id;
+
+  /// Account name (unique among user accounts)
   final String name;
   final double iniValue;
   final DateTime date;
   final String? description;
   final String type;
   final String iconId;
+
+  /// ID of the currency used by this account and therefore all transactions contained in it
   final String currencyId;
   final String? iban;
   final String? swift;
@@ -815,9 +822,17 @@ class Categories extends Table with TableInfo<Categories, CategoryInDB> {
 
 class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
   final String id;
+
+  /// The name of the category
   final String name;
+
+  /// Id of the icon that represents this category
   final String iconId;
+
+  /// Color that will be used to represent this category in some screens. If null, the color of the parent's category will be used
   final String? color;
+
+  /// Type of the category. If null, the type of the parent's category will be used
   final String? type;
   final String? parentCategoryID;
   const CategoryInDB(

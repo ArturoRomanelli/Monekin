@@ -26,8 +26,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
 
   final TextEditingController _nameController = TextEditingController();
 
-  SupportedIcon _icon =
-      SupportedIconService.instance.getIconByID('question_mark');
+  SupportedIcon _icon = SupportedIconService.instance.defaultSupportedIcon;
 
   String _color = '000000';
   String _type = 'E';
@@ -82,11 +81,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
 
   void _fillForm() {
     CategoryService.instance
-        .getMainCategories()
+        .getCategoryById(widget.categoryUUID!)
         .first
-        .then((categories) async {
-      categoryToEdit =
-          categories.firstWhere((cat) => cat.id == widget.categoryUUID);
+        .then((category) async {
+      categoryToEdit = category;
 
       setState(() {
         _icon = categoryToEdit!.icon;
@@ -151,14 +149,18 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         const SnackBar(content: Text('Categoría creada con exito')));
   }
 
-  openSubcategoryForm(void Function(String, SupportedIcon) onSubmit) {
+  openSubcategoryForm(
+      {required void Function(String, SupportedIcon) onSubmit,
+      Category? subcategory}) {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
           return SubcategoryFormDialog(
+            name: subcategory?.name ?? '',
             color: Color(int.parse('0xff$_color')),
-            icon: SupportedIconService.instance.defaultSupportedIcon,
+            icon: subcategory?.icon ??
+                SupportedIconService.instance.defaultSupportedIcon,
             onSubmit: onSubmit,
           );
         });
@@ -372,7 +374,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                 const Text('Color')
                               ],
                             ))),
-
                     SizedBox(
                       height: 46,
                       child: ListView.builder(
@@ -428,25 +429,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     const SizedBox(
                       height: 20,
                     ),
-
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 16, vertical: 8),
-                    //   child: const Text("Tipo de categoría"),
-                    // ),
-                    // CheckboxListTile(
-                    //   title: const Text('Ingreso'),
-                    //   value: true,
-                    //   onChanged: (value) {},
-                    //   controlAffinity: ListTileControlAffinity.leading,
-                    // ),
-                    // CheckboxListTile(
-                    //   title: const Text('Gasto'),
-                    //   value: true,
-                    //   onChanged: (value) {},
-                    //   controlAffinity: ListTileControlAffinity.leading,
-                    // ),
-
                     if (widget.categoryUUID != null)
                       const Padding(
                         padding:
@@ -459,90 +441,91 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                         stream: CategoryService.instance
                             .getChildCategories(parentId: widget.categoryUUID!),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            final List<Category> childCategories =
-                                snapshot.data!;
-
-                            return Column(
-                                children: List.generate(childCategories.length,
-                                    (index) {
-                              final subcategory = childCategories[index];
-
-                              return ListTile(
-                                  leading: subcategory.icon
-                                      .display(color: ColorHex.get(_color)),
-                                  trailing: PopupMenuButton(
-                                    offset: const Offset(0, 48),
-                                    itemBuilder: (context) {
-                                      return <PopupMenuEntry<String>>[
-                                        const PopupMenuItem(
-                                            value: 'to_category',
-                                            child: ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              leading: Icon(Icons.login),
-                                              minLeadingWidth: 26,
-                                              title: Text('Make to category'),
-                                            )),
-                                        const PopupMenuDivider(),
-                                        const PopupMenuItem(
-                                            value: 'merge',
-                                            child: ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              leading: Icon(Icons.merge_type),
-                                              minLeadingWidth: 26,
-                                              title: Text(
-                                                  'Merge with another category'),
-                                            )),
-                                        const PopupMenuDivider(),
-                                        const PopupMenuItem(
-                                            value: 'edit',
-                                            child: ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              leading: Icon(Icons.edit),
-                                              minLeadingWidth: 26,
-                                              title: Text('Edit'),
-                                            )),
-                                        const PopupMenuDivider(),
-                                        const PopupMenuItem(
-                                            value: 'delete',
-                                            child: ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              leading: Icon(Icons.delete),
-                                              minLeadingWidth: 26,
-                                              title: Text('Delete'),
-                                            ))
-                                      ];
-                                    },
-                                    onSelected: (String value) {
-                                      if (value == 'delete') {
-                                        deleteCategory(subcategory.id);
-                                      } else if (value == 'to_category') {
-                                        makeMainCategory(subcategory);
-                                      } else if (value == 'edit') {
-                                        openSubcategoryForm((name, icon) {
-                                          CategoryService.instance
-                                              .updateCategory(
-                                                  subcategory.copyWith(
-                                                      name: name,
-                                                      iconId: icon.id));
-                                        });
-                                      }
-                                    },
-                                  ),
-                                  title: Text(subcategory.name));
-                            }));
+                          if (!snapshot.hasData) {
+                            return const LinearProgressIndicator();
                           }
 
-                          return const LinearProgressIndicator();
+                          final childCategories = snapshot.data!;
+
+                          return Column(
+                              children: List.generate(childCategories.length,
+                                  (index) {
+                            final subcategory = childCategories[index];
+
+                            return ListTile(
+                                leading: subcategory.icon
+                                    .display(color: ColorHex.get(_color)),
+                                trailing: PopupMenuButton(
+                                  offset: const Offset(0, 48),
+                                  itemBuilder: (context) {
+                                    return <PopupMenuEntry<String>>[
+                                      const PopupMenuItem(
+                                          value: 'to_category',
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: Icon(Icons.login),
+                                            minLeadingWidth: 26,
+                                            title: Text('Make to category'),
+                                          )),
+                                      const PopupMenuDivider(),
+                                      const PopupMenuItem(
+                                          value: 'merge',
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: Icon(Icons.merge_type),
+                                            minLeadingWidth: 26,
+                                            title: Text(
+                                                'Merge with another category'),
+                                          )),
+                                      const PopupMenuDivider(),
+                                      const PopupMenuItem(
+                                          value: 'edit',
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: Icon(Icons.edit),
+                                            minLeadingWidth: 26,
+                                            title: Text('Edit'),
+                                          )),
+                                      const PopupMenuDivider(),
+                                      const PopupMenuItem(
+                                          value: 'delete',
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: Icon(Icons.delete),
+                                            minLeadingWidth: 26,
+                                            title: Text('Delete'),
+                                          ))
+                                    ];
+                                  },
+                                  onSelected: (String value) {
+                                    if (value == 'delete') {
+                                      deleteCategory(subcategory.id);
+                                    } else if (value == 'to_category') {
+                                      makeMainCategory(subcategory);
+                                    } else if (value == 'edit') {
+                                      openSubcategoryForm(
+                                          subcategory: subcategory,
+                                          onSubmit: (name, icon) {
+                                            CategoryService.instance
+                                                .updateCategory(CategoryInDB(
+                                                    id: subcategory.id,
+                                                    name: name,
+                                                    iconId: icon.id,
+                                                    parentCategoryID:
+                                                        widget.categoryUUID!));
+                                          });
+                                    }
+                                  },
+                                ),
+                                title: Text(subcategory.name));
+                          }));
                         },
                       ),
-
                     if (widget.categoryUUID != null)
                       ListTile(
                           leading: const Icon(Icons.add),
                           onTap: () {
-                            openSubcategoryForm((name, icon) {
+                            openSubcategoryForm(onSubmit: (name, icon) {
                               CategoryService.instance.insertCategory(
                                   CategoryInDB(
                                       id: const Uuid().v4(),

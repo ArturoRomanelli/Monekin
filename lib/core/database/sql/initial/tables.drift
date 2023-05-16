@@ -3,7 +3,10 @@
 ---- * --- Convert DATETIME to TEXT
 
 CREATE TABLE IF NOT EXISTS currencies (
+    -- ISO 4217 currency code. Identifies a currency uniquely ([see more](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes))
     code TEXT NOT NULL PRIMARY KEY,
+
+    -- Symbol to represent the currency
     symbol TEXT NOT NULL
 ) AS CurrencyInDB;
 
@@ -23,22 +26,36 @@ CREATE TABLE IF NOT EXISTS currencyNames (
 
 CREATE TABLE IF NOT EXISTS accounts (
     id TEXT NOT NULL PRIMARY KEY,
+    
+    -- Account name (unique among user accounts)
     name TEXT UNIQUE NOT NULL,
+    
     iniValue REAL NOT NULL,
     date DATETIME NOT NULL,
     description TEXT,
     type TEXT NOT NULL,
     iconId TEXT NOT NULL,
+
+    -- ID of the currency used by this account and therefore all transactions contained in it
     currencyId TEXT NOT NULL REFERENCES currencies(code) ON DELETE CASCADE ON UPDATE CASCADE,
+    
     iban TEXT,
     swift TEXT
 ) AS AccountInDB;
 
 CREATE TABLE IF NOT EXISTS categories (
     id TEXT NOT NULL PRIMARY KEY,
+
+    -- The name of the category
     name TEXT UNIQUE NOT NULL,
+
+    -- Id of the icon that represents this category
     iconId TEXT NOT NULL,
+
+    -- Color that will be used to represent this category in some screens. If null, the color of the parent's category will be used
     color TEXT,
+
+    -- Type of the category. If null, the type of the parent's category will be used
     type TEXT,
     parentCategoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
 

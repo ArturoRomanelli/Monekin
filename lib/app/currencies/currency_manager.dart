@@ -4,7 +4,6 @@ import 'package:finlytics/core/database/services/currency/currency_service.dart'
 import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +20,6 @@ class CurrencyManagerPage extends StatefulWidget {
 class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
   Currency? _userCurrency;
 
-  List<ExchangeRate>? exchangeRates;
-
   @override
   void initState() {
     super.initState();
@@ -30,16 +27,6 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
     CurrencyService.instance.getUserPreferredCurrency().then((value) {
       setState(() {
         _userCurrency = value;
-      });
-    });
-
-    getExchangeRates();
-  }
-
-  getExchangeRates() {
-    ExchangeRateService.instance.getExchangeRates().then((value) {
-      setState(() {
-        exchangeRates = value;
       });
     });
   }
@@ -65,11 +52,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                       _userCurrency = newCurrency;
                     });
 
-                    ExchangeRateService.instance
-                        .deleteExchangeRates()
-                        .then((value) {
-                      getExchangeRates();
-                    });
+                    ExchangeRateService.instance.deleteExchangeRates();
                   },
                 );
 
@@ -139,81 +122,92 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                           builder: (context) {
                             return const ExchangeRateFormDialog();
                           });
-
-                      getExchangeRates();
                     },
                     child: const Text('Añadir'))
               ],
             ),
           ),
-          if (exchangeRates != null && exchangeRates!.isNotEmpty)
-            SingleChildScrollView(
-              child: ListView.separated(
-                itemCount: exchangeRates!.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final item = exchangeRates![index];
+          StreamBuilder(
+            stream: ExchangeRateService.instance.getExchangeRates(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const LinearProgressIndicator();
+              }
 
-                  return ListTile(
-                    minVerticalPadding: 8,
-                    leading: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: StreamBuilder(
+              if (snapshot.data!.isEmpty) {
+                // Data has loaded but is empty:
+                return const Expanded(
+                    child: EmptyIndicator(
+                        title: 'No hay registros',
+                        description:
+                            'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos'));
+              }
+
+              final exchangeRates = snapshot.data!;
+
+              return SingleChildScrollView(
+                child: ListView.separated(
+                  itemCount: exchangeRates.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final item = exchangeRates[index];
+
+                    return ListTile(
+                      minVerticalPadding: 8,
+                      leading: Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: StreamBuilder(
+                            stream: CurrencyService.instance
+                                .getCurrencyByCode(item.currencyCode),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const Skeleton(width: 42, height: 42);
+                              }
+
+                              return snapshot.data!.displayFlagIcon(size: 42);
+                            },
+                          )),
+                      title: Text(item.currency.code),
+                      subtitle: StreamBuilder(
                           stream: CurrencyService.instance
                               .getCurrencyByCode(item.currencyCode),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return const Skeleton(width: 42, height: 42);
+                              return const Skeleton(width: 40, height: 16);
                             }
 
-                            return snapshot.data!.displayFlagIcon(size: 42);
-                          },
-                        )),
-                    title: Text(item.currency.code),
-                    subtitle: StreamBuilder(
-                        stream: CurrencyService.instance
-                            .getCurrencyByCode(item.currencyCode),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Skeleton(width: 40, height: 16);
-                          }
+                            return Text(snapshot.data!.name);
+                          }),
+                      trailing: Text(item.exchangeRate.toString()),
+                      onTap: () async {
+                        final onTapContext = context;
 
-                          return Text(snapshot.data!.name);
-                        }),
-                    trailing: Text(item.exchangeRate.toString()),
-                    onTap: () async {
-                      final onTapContext = context;
+                        final currency = await CurrencyService.instance
+                            .getCurrencyByCode(item.currencyCode)
+                            .first;
 
-                      final currency = await CurrencyService.instance
-                          .getCurrencyByCode(item.currencyCode)
-                          .first;
+                        if (currency == null) return;
 
-                      if (currency == null) return;
-
-                      Navigator.push(
-                          onTapContext,
-                          MaterialPageRoute(
-                              builder: (context) => ExchangeRateDetailsPage(
-                                    currency: currency,
-                                  ))).whenComplete(() => getExchangeRates());
-                    },
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider(indent: 68);
-                },
-              ),
-            ),
-          if (exchangeRates != null && exchangeRates!.isEmpty)
-            const Expanded(
-                child: EmptyIndicator(
-                    title: 'No hay registros',
-                    description:
-                        'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos'))
+                        Navigator.push(
+                            onTapContext,
+                            MaterialPageRoute(
+                                builder: (context) => ExchangeRateDetailsPage(
+                                      currency: currency,
+                                    )));
+                      },
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(indent: 68);
+                  },
+                ),
+              );
+            },
+          )
         ],
       ),
     );

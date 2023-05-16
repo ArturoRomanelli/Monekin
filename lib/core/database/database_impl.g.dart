@@ -3139,7 +3139,7 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
 
   Selectable<ExchangeRate> getLastExchangeRates({required double limit}) {
     return customSelect(
-        'SELECT er.*,"currency"."code" AS "nested_0.code", "currency"."symbol" AS "nested_0.symbol" FROM exchangeRates AS er INNER JOIN currencies AS currency ON er.currencyCode = currency.code WHERE date = (SELECT MAX(unixepoch(date)) FROM exchangeRates WHERE currencyCode = er.currencyCode) ORDER BY currency.code LIMIT ?1',
+        'SELECT er.*,"currency"."code" AS "nested_0.code", "currency"."symbol" AS "nested_0.symbol" FROM exchangeRates AS er INNER JOIN currencies AS currency ON er.currencyCode = currency.code WHERE date = (SELECT MAX(date) FROM exchangeRates WHERE currencyCode = er.currencyCode) ORDER BY currency.code LIMIT ?1',
         variables: [
           Variable<double>(limit)
         ],

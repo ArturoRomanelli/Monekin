@@ -1,5 +1,5 @@
-import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:drift/drift.dart';
+import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 
 import '../../database_impl.dart';
 
@@ -25,10 +25,10 @@ class ExchangeRateService {
   }
 
   /// Get the last exchange rates for all the currencies that the user have in the list of exchange rates
-  getExchangeRates({double? limit}) {
+  Stream<List<ExchangeRate>> getExchangeRates({double? limit}) {
     limit ??= -1;
 
-    return db.getLastExchangeRates(limit: limit);
+    return db.getLastExchangeRates(limit: limit).watch();
   }
 
   /// Get all the exchange rates that a currency have in the app

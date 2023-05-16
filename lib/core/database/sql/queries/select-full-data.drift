@@ -55,7 +55,7 @@ getLastExchangeRates(:limit AS NUMBER) WITH ExchangeRate:
         INNER JOIN currencies currency
         ON er.currencyCode = currency.code
     WHERE date = (
-                    SELECT MAX(unixepoch(date)) 
+                    SELECT MAX(date) 
                         FROM exchangeRates
                     WHERE currencyCode = er.currencyCode
                 )

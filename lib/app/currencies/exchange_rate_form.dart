@@ -190,6 +190,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                   controller: rateController,
                                   validator: (value) => textFieldValidator(
                                       value,
+                                      isNumber: true,
                                       isRequired: true),
                                   autovalidateMode:
                                       AutovalidateMode.onUserInteraction,

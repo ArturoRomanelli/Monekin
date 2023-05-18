@@ -1,5 +1,6 @@
 import 'package:finlytics/app/accounts/accountForm.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
+import 'package:finlytics/app/tabs/circular_arc.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
@@ -135,9 +136,9 @@ class _Tab1PageState extends State<Tab1Page> {
                                 : accounts![index].id)))
               },
               child: (index == (accounts?.length ?? 0))
-                  ? Column(
+                  ? const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
+                      children: <Widget>[
                           Icon(Icons.add),
                           Text('Create account'),
                         ])
@@ -154,58 +155,61 @@ class _Tab1PageState extends State<Tab1Page> {
         type == AccountDataFilter.income ? Colors.green : Colors.red;
     final String text = type == AccountDataFilter.income ? 'Income' : 'Expense';
 
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 0.75,
-              color: color.withOpacity(0.8),
-            ),
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: Icon(
-            Icons.arrow_upward,
-            color: color,
-            size: 18,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(text),
-            StreamBuilder(
-                stream: AccountService.instance.getAccounts(),
-                builder: (context, accounts) {
-                  if (!accounts.hasData) {
-                    return const Skeleton(width: 20, height: 12);
-                  }
-
-                  return StreamBuilder(
-                      stream: AccountService.instance.getAccountsData(
-                        accountIds: accounts.data!.map((e) => e.id),
-                        startDate: dateRangeService.startDate,
-                        endDate: dateRangeService.endDate,
-                        accountDataFilter: type,
-                        convertToPreferredCurrency: true,
-                      ),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Skeleton(width: 20, height: 12);
+    return Flexible(
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.arrow_upward,
+                  color: color,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(text),
+                  StreamBuilder(
+                      stream: AccountService.instance.getAccounts(),
+                      builder: (context, accounts) {
+                        if (!accounts.hasData) {
+                          return const Skeleton(width: 26, height: 18);
                         }
 
-                        return CurrencyDisplayer(
-                          amountToConvert: snapshot.data!,
-                          showDecimals: false,
-                        );
-                      });
-                })
-          ],
-        )
-      ],
+                        return StreamBuilder(
+                            stream: AccountService.instance.getAccountsData(
+                              accountIds: accounts.data!.map((e) => e.id),
+                              startDate: dateRangeService.startDate,
+                              endDate: dateRangeService.endDate,
+                              accountDataFilter: type,
+                              convertToPreferredCurrency: true,
+                            ),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const Skeleton(width: 20, height: 12);
+                              }
+
+                              return CurrencyDisplayer(
+                                amountToConvert: snapshot.data!,
+                                textStyle: const TextStyle(fontSize: 18),
+                              );
+                            });
+                      })
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -217,32 +221,31 @@ class _Tab1PageState extends State<Tab1Page> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colors.primary,
         toolbarHeight: 0,
       ),
       body: Column(
         children: [
-          DefaultTextStyle.merge(
-            style: const TextStyle(color: Colors.white),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SettingsPage()));
-                            },
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SettingsPage()));
+                          },
+                          borderRadius: BorderRadius.circular(4),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -256,7 +259,7 @@ class _Tab1PageState extends State<Tab1Page> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Good evening,',
+                                    const Text('Good evening,',
                                         style: TextStyle(fontSize: 12)),
                                     StreamBuilder(
                                         stream: UserSettingService.instance
@@ -268,106 +271,86 @@ class _Tab1PageState extends State<Tab1Page> {
                                           }
 
                                           return Text(snapshot.data!,
-                                              style: TextStyle(fontSize: 18));
+                                              style: const TextStyle(
+                                                  fontSize: 18));
                                         }),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          ActionChip(
-                            // TODO: ActionChip not show ripple effect when a background color is applied.
-                            // This is a known issue of flutter, see:
-                            // - https://github.com/flutter/flutter/issues/73215
-                            // - https://github.com/flutter/flutter/issues/115824
+                        ),
+                        ActionChip(
+                          // TODO: ActionChip not show ripple effect when a background color is applied.
+                          // This is a known issue of flutter, see:
+                          // - https://github.com/flutter/flutter/issues/73215
+                          // - https://github.com/flutter/flutter/issues/115824
 
-                            onPressed: () {
-                              DateRangeService.instance
-                                  .openDateModal(context)
-                                  .then((_) => setState(() {}));
-                            },
-                            label: Text(
-                              'Este mes',
-                              style: TextStyle(color: colors.onPrimary),
-                            ),
-                            avatar: Icon(
-                              Icons.calendar_month,
-                              color: colors.onPrimary,
-                            ),
-                            side: BorderSide(color: colors.onPrimary),
-                            backgroundColor: Theme.of(context).primaryColor,
-                          )
-                        ]),
-                    Divider(
-                      height: 32,
-                      color: Colors.white.withOpacity(0.3),
-                    ),
-                    StreamBuilder(
-                        stream: accountService.getAccounts(),
-                        builder: (context, accounts) {
-                          if (!accounts.hasData) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text('Total balance',
-                                    style: TextStyle(fontSize: 12)),
-                                Skeleton(width: 70, height: 40),
-                              ],
-                            );
-                          } else {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Total balance',
-                                    style: TextStyle(fontSize: 12)),
-                                StreamBuilder(
-                                    stream: accountService.getAccountsMoney(
-                                        accountIds:
-                                            accounts.data!.map((e) => e.id)),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        return CurrencyDisplayer(
-                                            amountToConvert: snapshot.data!,
-                                            textStyle: const TextStyle(
-                                                fontSize: 40,
-                                                fontWeight: FontWeight.w600));
-                                      } else {
-                                        return const Skeleton(
-                                            width: 70, height: 40);
-                                      }
-                                    }),
-                                StreamBuilder(
-                                    stream: accountService
-                                        .getAccountsMoneyVariation(
-                                            accounts: accounts.data!,
-                                            startDate:
-                                                dateRangeService.startDate,
-                                            endDate: dateRangeService.endDate,
-                                            convertToPreferredCurrency: true),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData ||
-                                          dateRangeService.startDate == null ||
-                                          dateRangeService.endDate == null) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
-                                              color: snapshot.data != null
-                                                  ? snapshot.data! >= 0
-                                                      ? const Color.fromARGB(
-                                                          255, 230, 255, 230)
-                                                      : const Color.fromARGB(
-                                                          255, 255, 230, 230)
-                                                  : null,
-                                              borderRadius:
-                                                  BorderRadius.circular(4)),
-                                          child: const Skeleton(
-                                              height: 8, width: 70),
-                                        );
-                                      }
-
+                          onPressed: () {
+                            DateRangeService.instance
+                                .openDateModal(context)
+                                .then((_) => setState(() {}));
+                          },
+                          label: const Text(
+                            'Este mes',
+                          ),
+                          avatar: Icon(
+                            Icons.calendar_month,
+                            color: colors.onBackground,
+                          ),
+                        )
+                      ]),
+                  Divider(
+                    height: 32,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  StreamBuilder(
+                      stream: accountService.getAccounts(),
+                      builder: (context, accounts) {
+                        if (!accounts.hasData) {
+                          return const Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Total balance',
+                                  style: TextStyle(fontSize: 12)),
+                              Skeleton(width: 70, height: 40),
+                            ],
+                          );
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Total balance',
+                                  style: TextStyle(fontSize: 12)),
+                              StreamBuilder(
+                                  stream: accountService.getAccountsMoney(
+                                      accountIds:
+                                          accounts.data!.map((e) => e.id)),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return CurrencyDisplayer(
+                                          amountToConvert: snapshot.data!,
+                                          textStyle: const TextStyle(
+                                              fontSize: 40,
+                                              fontWeight: FontWeight.w600));
+                                    } else {
+                                      return const Skeleton(
+                                          width: 70, height: 40);
+                                    }
+                                  }),
+                              StreamBuilder(
+                                  stream:
+                                      accountService.getAccountsMoneyVariation(
+                                          accounts: accounts.data!,
+                                          startDate: dateRangeService.startDate,
+                                          endDate: dateRangeService.endDate,
+                                          convertToPreferredCurrency: true),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData ||
+                                        dateRangeService.startDate == null ||
+                                        dateRangeService.endDate == null) {
                                       return Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 6, vertical: 2),
@@ -381,16 +364,33 @@ class _Tab1PageState extends State<Tab1Page> {
                                                 : null,
                                             borderRadius:
                                                 BorderRadius.circular(4)),
-                                        child: TrendingValue(
-                                            percentage: snapshot.data!),
+                                        child: const Skeleton(
+                                            height: 8, width: 70),
                                       );
-                                    }),
-                              ],
-                            );
-                          }
-                        }),
-                  ],
-                ),
+                                    }
+
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                          color: snapshot.data != null
+                                              ? snapshot.data! >= 0
+                                                  ? const Color.fromARGB(
+                                                      255, 230, 255, 230)
+                                                  : const Color.fromARGB(
+                                                      255, 255, 230, 230)
+                                              : null,
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                      child: TrendingValue(
+                                          percentage: snapshot.data!),
+                                    );
+                                  }),
+                            ],
+                          );
+                        }
+                      }),
+                ],
               ),
             ),
           ),
@@ -398,8 +398,17 @@ class _Tab1PageState extends State<Tab1Page> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      children: [
+                        incomeOrExpenseIndicator(AccountDataFilter.income),
+                        incomeOrExpenseIndicator(AccountDataFilter.expense)
+                      ],
+                    ),
+                  ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -438,34 +447,41 @@ class _Tab1PageState extends State<Tab1Page> {
                     padding: const EdgeInsets.all(12),
                     child: Column(
                       children: [
+                        const Row(
+                          children: [
+                            Text('Salud financiera',
+                                style: TextStyle(fontSize: 14)),
+                          ],
+                        ),
                         Card(
                           elevation: 1,
+                          clipBehavior: Clip.hardEdge,
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: const [
-                                    Text('Gastos e ingresos',
-                                        style: TextStyle(fontSize: 18)),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    incomeOrExpenseIndicator(
-                                        AccountDataFilter.income),
-                                    incomeOrExpenseIndicator(
-                                        AccountDataFilter.expense)
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
+                              padding: EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                      flex: 3,
+                                      child: Text(
+                                          'lockjdf fdjivcfd cofd fdoinc c dfo fvdf vif fvofin v dfv nfdlknvklfvfd vfiofnvdf vdfnvfd vfdkbvdf vdfbvf')),
+                                  Flexible(
+                                      flex: 2,
+                                      child: LayoutBuilder(
+                                          builder: (context, constraints) {
+                                        print("cdukcdkjdc");
+                                        print(constraints.maxWidth);
+                                        print(constraints.maxHeight);
+                                        return CircularArc(
+                                          value: 0.2,
+                                          size: constraints.maxWidth * 0.45,
+                                        );
+                                      }))
+                                ],
+                              )),
                         ),
+                        const SizedBox(height: 16),
                         Card(
                           elevation: 1,
                           child: Column(

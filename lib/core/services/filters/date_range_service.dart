@@ -10,7 +10,7 @@ enum DateRange {
   custom,
 }
 
-class DateRangeService with ChangeNotifier {
+class DateRangeService {
   DateRangeService._();
 
   static final DateRangeService instance = DateRangeService._();
@@ -80,8 +80,32 @@ class DateRangeService with ChangeNotifier {
 
     startDate = newRanges[0];
     endDate = newRanges[1];
+  }
 
-    notifyListeners();
+  /// Returns a date with the first/last day of the current quaterly
+  _getQuaterlyDates() {
+    int startMonth = -1;
+    int endMonth = -1;
+
+    if (currentMonth < 3) {
+      startMonth = 0;
+      endMonth = 3;
+    } else if (currentMonth < 6) {
+      startMonth = 3;
+      endMonth = 6;
+    } else if (currentMonth < 9) {
+      startMonth = 6;
+      endMonth = 9;
+    } else if (currentMonth < 12) {
+      startMonth = 9;
+      endMonth = 12;
+    }
+
+    if (startMonth == -1 || endDate == -1) {
+      throw Exception("startMonth or endMonth not setted correctly");
+    }
+
+    return [DateTime(currentYear, startMonth), DateTime(currentYear, endMonth)];
   }
 
   /// Get the start and the end of the current selected period. Returns a list in the form `[startDate, endDate]`
@@ -98,9 +122,12 @@ class DateRangeService with ChangeNotifier {
       startDate = DateTime(currentYear, currentMonth, 1);
       endDate = DateTime(currentYear, currentMonth + 1, 1);
     } else if (selectedDateRange == DateRange.weekly) {
-// TODO
+      // TODO
     } else if (selectedDateRange == DateRange.quaterly) {
-// TODO
+      final quarters = _getQuaterlyDates();
+
+      startDate = quarters[0];
+      endDate = quarters[1];
     } else if (selectedDateRange == DateRange.infinite) {
       startDate = null;
       endDate = null;

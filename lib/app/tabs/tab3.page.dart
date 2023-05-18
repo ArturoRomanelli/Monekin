@@ -105,8 +105,6 @@ class _Tab3PageState extends State<Tab3Page> {
 
   @override
   Widget build(BuildContext context) {
-    final AccountService accountService = AccountService.instance;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Hello Tab 2'), elevation: 3, actions: [
         IconButton(
@@ -137,16 +135,20 @@ class _Tab3PageState extends State<Tab3Page> {
 
                 if (selectedTabDate == null) return Text(text);
 
-                if (DateRangeService.instance.selectedDateRange ==
-                    DateRange.monthly) {
+                final selectedDateRange =
+                    DateRangeService.instance.selectedDateRange;
+
+                if (selectedDateRange == DateRange.monthly) {
                   if (selectedTabDate!.year == currentYear) {
                     text = DateFormat.MMMM().format(selectedTabDate!);
                   } else {
                     text = DateFormat.yMMMM().format(selectedTabDate!);
                   }
-                } else if (DateRangeService.instance.selectedDateRange ==
-                    DateRange.annualy) {
+                } else if (selectedDateRange == DateRange.annualy) {
                   text = DateFormat.y().format(selectedTabDate!);
+                } else if (selectedDateRange == DateRange.quaterly) {
+                  text =
+                      "Q${(selectedTabDate!.month / 3).ceil()} - ${selectedTabDate!.year}";
                 }
 
                 return Text(text);
@@ -197,9 +199,9 @@ class _Tab3PageState extends State<Tab3Page> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            const Row(
                               children: [
-                                const Text('Gastos e ingresos',
+                                Text('Gastos e ingresos',
                                     style: TextStyle(fontSize: 18)),
                               ],
                             ),
@@ -263,7 +265,7 @@ class _Tab3PageState extends State<Tab3Page> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('By categories',
+                                      const Text('By categories',
                                           style: TextStyle(fontSize: 18)),
                                       PopupMenuButton(
                                         child: Chip(
@@ -285,8 +287,8 @@ class _Tab3PageState extends State<Tab3Page> {
                                           ),
                                         ),
                                         itemBuilder: (context) {
-                                          return <
-                                              PopupMenuEntry<TransactionType>>[
+                                          return <PopupMenuEntry<
+                                              TransactionType>>[
                                             const PopupMenuItem(
                                                 value: TransactionType.expense,
                                                 child: ListTile(

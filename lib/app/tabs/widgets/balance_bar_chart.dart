@@ -1,8 +1,10 @@
 import 'dart:math';
 
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:collection/collection.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/services/filters/date_range_service.dart';
+import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/core/utils/date_getter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -50,51 +52,108 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
     final accountService = AccountService.instance;
 
     final accounts = await accountService.getAccounts().first;
+    final accountsIds = accounts.map((event) => event.id);
 
-    for (final range in [
-      [1, 6],
-      [6, 10],
-      [10, 15],
-      [15, 20],
-      [20, 25],
-      [25, null]
-    ]) {
-      shortTitles.add(
-          "${range[0].toString()}-${range[1] != null ? range[1].toString() : ''}");
+    final selectedDateRange = DateRangeService.instance.selectedDateRange;
 
-      startDate = DateTime(startDate!.year, startDate.month, range[0]!);
+    if (selectedDateRange == DateRange.monthly) {
+      for (final range in [
+        [1, 6],
+        [6, 10],
+        [10, 15],
+        [15, 20],
+        [20, 25],
+        [25, null]
+      ]) {
+        shortTitles.add(
+            "${range[0].toString()}-${range[1] != null ? range[1].toString() : ''}");
 
-      DateTime endDate = DateTime(
-          startDate.year,
-          range[1] == null ? startDate.month + 1 : startDate.month,
-          range[1] ?? 1);
+        startDate = DateTime(startDate!.year, startDate.month, range[0]!);
 
-      longTitles.add(
-          '${DateFormat.MMMd().format(startDate)} - ${DateFormat.MMMd().format(endDate)}');
+        DateTime endDate = DateTime(
+            startDate.year,
+            range[1] == null ? startDate.month + 1 : startDate.month,
+            range[1] ?? 1);
 
-      final accountsIds = accounts.map((event) => event.id);
+        longTitles.add(
+            '${DateFormat.MMMd().format(startDate)} - ${DateFormat.MMMd().format(endDate)}');
 
-      income.add(await accountService
-          .getAccountsData(
-              accountIds: accountsIds,
-              accountDataFilter: AccountDataFilter.income,
-              startDate: startDate,
-              endDate: endDate)
-          .first);
-      expense.add(await accountService
-          .getAccountsData(
-              accountIds: accountsIds,
-              accountDataFilter: AccountDataFilter.expense,
-              startDate: startDate,
-              endDate: endDate)
-          .first);
-      balance.add(await accountService
-          .getAccountsData(
-              accountIds: accountsIds,
-              accountDataFilter: AccountDataFilter.balance,
-              startDate: startDate,
-              endDate: endDate)
-          .first);
+        final incomeToAdd = await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                accountDataFilter: AccountDataFilter.income,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+        final expenseToAdd = await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                accountDataFilter: AccountDataFilter.expense,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+        income.add(incomeToAdd);
+        expense.add(expenseToAdd);
+        balance.add(incomeToAdd + expenseToAdd);
+      }
+    } else if (selectedDateRange == DateRange.annualy) {
+      for (var i = 1; i <= 12; i++) {
+        final startDate = DateTime(currentYear, i);
+        final endDate = DateTime(currentYear, i + 1);
+
+        shortTitles.add(DateFormat.M().format(startDate));
+        longTitles.add(DateFormat.MMMM().format(startDate));
+
+        final incomeToAdd = await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                accountDataFilter: AccountDataFilter.income,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+        final expenseToAdd = await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                accountDataFilter: AccountDataFilter.expense,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+        income.add(incomeToAdd);
+        expense.add(expenseToAdd);
+        balance.add(incomeToAdd + expenseToAdd);
+      }
+    } else if (selectedDateRange == DateRange.quaterly) {
+      for (var i = startDate.month; i < startDate.month + 3; i++) {
+        final startDate = DateTime(currentYear, i);
+        final endDate = DateTime(currentYear, i + 1);
+
+        shortTitles.add(DateFormat.MMM().format(startDate));
+        longTitles.add(DateFormat.MMMM().format(startDate));
+
+        final incomeToAdd = await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                accountDataFilter: AccountDataFilter.income,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+        final expenseToAdd = await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                accountDataFilter: AccountDataFilter.expense,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+        income.add(incomeToAdd);
+        expense.add(expenseToAdd);
+        balance.add(incomeToAdd + expenseToAdd);
+      }
     }
 
     return IncomeExpenseChartDataItem(
@@ -153,14 +212,14 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
           future: getDataByPeriods(context, widget.startDate),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Column(
+              return const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircularProgressIndicator(),
+                      CircularProgressIndicator(),
                     ],
                   ),
                 ],

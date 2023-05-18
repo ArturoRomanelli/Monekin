@@ -34,7 +34,7 @@ class DatabaseImpl extends _$DatabaseImpl {
   static DatabaseImpl instance = DatabaseImpl._(
     dbName: 'database.db',
     inMemory: false,
-    logStatements: true,
+    logStatements: false,
   );
 
   final String dbName;

@@ -26,9 +26,11 @@ class IncomeExpenseChartDataItem {
 }
 
 class BalanceBarChart extends StatefulWidget {
-  const BalanceBarChart({super.key, required this.startDate});
+  const BalanceBarChart(
+      {super.key, required this.startDate, required this.dateRange});
 
   final DateTime? startDate;
+  final DateRange dateRange;
 
   @override
   State<BalanceBarChart> createState() => _BalanceBarChartState();
@@ -54,7 +56,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
     final accounts = await accountService.getAccounts().first;
     final accountsIds = accounts.map((event) => event.id);
 
-    final selectedDateRange = DateRangeService.instance.selectedDateRange;
+    final selectedDateRange = widget.dateRange;
 
     if (selectedDateRange == DateRange.monthly) {
       for (final range in [

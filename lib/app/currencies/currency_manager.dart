@@ -76,7 +76,6 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            minVerticalPadding: 8,
             leading: Container(
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
@@ -154,7 +153,6 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                     final item = exchangeRates[index];
 
                     return ListTile(
-                      minVerticalPadding: 8,
                       leading: Container(
                           clipBehavior: Clip.hardEdge,
                           decoration: BoxDecoration(

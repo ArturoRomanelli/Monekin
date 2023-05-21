@@ -3,15 +3,32 @@ import 'package:finlytics/core/database/database_impl.dart';
 import '../../services/supported_icon/supported_icon_service.dart';
 import '../supported-icon/supported_icon.dart';
 
+enum CategoryType {
+  /// This type of category only supports expenses
+  E,
+
+  /// This type of category only supports incomes
+  I,
+
+  /// This type of category supports incomes and expenses
+  B;
+
+  /// True if you can create income transactions in this category type
+  bool get isIncome => this == I || this == B;
+
+  /// True if you can create expense transactions in this category type
+  bool get isExpense => this == E || this == B;
+}
+
 class Category extends CategoryInDB {
   String? _color;
-  String? _type;
+  CategoryType? _type;
 
   @override
   String get color => _color ?? parentCategory!.color;
 
   @override
-  String get type => _type ?? parentCategory!.type;
+  CategoryType get type => _type ?? parentCategory!.type;
 
   set color(String newColor) {
     if (isMainCategory) {
@@ -21,7 +38,7 @@ class Category extends CategoryInDB {
     }
   }
 
-  set type(String newType) {
+  set type(CategoryType newType) {
     if (isMainCategory) {
       _type = newType;
     } else {
@@ -34,7 +51,7 @@ class Category extends CategoryInDB {
       required super.name,
       required super.iconId,
       String? color,
-      String? type,
+      CategoryType? type,
       CategoryInDB? parentCategory})
       : _color = color,
         _type = type,

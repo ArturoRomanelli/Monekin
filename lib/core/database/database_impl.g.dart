@@ -726,11 +726,12 @@ class Categories extends Table with TableInfo<Categories, CategoryInDB> {
       requiredDuringInsert: false,
       $customConstraints: '');
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
-  late final GeneratedColumn<String> type = GeneratedColumn<String>(
-      'type', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+  late final GeneratedColumnWithTypeConverter<CategoryType?, String> type =
+      GeneratedColumn<String>('type', aliasedName, true,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              $customConstraints: 'CHECK (status IN (\'E\', \'I\', \'B\'))')
+          .withConverter<CategoryType?>(Categories.$convertertypen);
   static const VerificationMeta _parentCategoryIDMeta =
       const VerificationMeta('parentCategoryID');
   late final GeneratedColumn<String> parentCategoryID = GeneratedColumn<String>(
@@ -772,10 +773,7 @@ class Categories extends Table with TableInfo<Categories, CategoryInDB> {
       context.handle(
           _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
     }
-    if (data.containsKey('type')) {
-      context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
-    }
+    context.handle(_typeMeta, const VerificationResult.success());
     if (data.containsKey('parentCategoryID')) {
       context.handle(
           _parentCategoryIDMeta,
@@ -799,8 +797,8 @@ class Categories extends Table with TableInfo<Categories, CategoryInDB> {
           .read(DriftSqlType.string, data['${effectivePrefix}iconId'])!,
       color: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}color']),
-      type: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}type']),
+      type: Categories.$convertertypen.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])),
       parentCategoryID: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}parentCategoryID']),
     );
@@ -811,6 +809,10 @@ class Categories extends Table with TableInfo<Categories, CategoryInDB> {
     return Categories(attachedDatabase, alias);
   }
 
+  static JsonTypeConverter2<CategoryType, String, String> $convertertype =
+      const EnumNameConverter<CategoryType>(CategoryType.values);
+  static JsonTypeConverter2<CategoryType?, String?, String?> $convertertypen =
+      JsonTypeConverter2.asNullable($convertertype);
   @override
   List<String> get customConstraints => const [
         'CHECK((parentCategoryID IS NULL)!=(color IS NULL AND type IS NULL))',
@@ -833,7 +835,7 @@ class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
   final String? color;
 
   /// Type of the category. If null, the type of the parent's category will be used
-  final String? type;
+  final CategoryType? type;
   final String? parentCategoryID;
   const CategoryInDB(
       {required this.id,
@@ -852,7 +854,8 @@ class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
       map['color'] = Variable<String>(color);
     }
     if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
+      final converter = Categories.$convertertypen;
+      map['type'] = Variable<String>(converter.toSql(type));
     }
     if (!nullToAbsent || parentCategoryID != null) {
       map['parentCategoryID'] = Variable<String>(parentCategoryID);
@@ -882,7 +885,8 @@ class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
       name: serializer.fromJson<String>(json['name']),
       iconId: serializer.fromJson<String>(json['iconId']),
       color: serializer.fromJson<String?>(json['color']),
-      type: serializer.fromJson<String?>(json['type']),
+      type: Categories.$convertertypen
+          .fromJson(serializer.fromJson<String?>(json['type'])),
       parentCategoryID: serializer.fromJson<String?>(json['parentCategoryID']),
     );
   }
@@ -894,7 +898,8 @@ class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
       'name': serializer.toJson<String>(name),
       'iconId': serializer.toJson<String>(iconId),
       'color': serializer.toJson<String?>(color),
-      'type': serializer.toJson<String?>(type),
+      'type':
+          serializer.toJson<String?>(Categories.$convertertypen.toJson(type)),
       'parentCategoryID': serializer.toJson<String?>(parentCategoryID),
     };
   }
@@ -904,7 +909,7 @@ class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
           String? name,
           String? iconId,
           Value<String?> color = const Value.absent(),
-          Value<String?> type = const Value.absent(),
+          Value<CategoryType?> type = const Value.absent(),
           Value<String?> parentCategoryID = const Value.absent()}) =>
       CategoryInDB(
         id: id ?? this.id,
@@ -949,7 +954,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryInDB> {
   final Value<String> name;
   final Value<String> iconId;
   final Value<String?> color;
-  final Value<String?> type;
+  final Value<CategoryType?> type;
   final Value<String?> parentCategoryID;
   final Value<int> rowid;
   const CategoriesCompanion({
@@ -997,7 +1002,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryInDB> {
       Value<String>? name,
       Value<String>? iconId,
       Value<String?>? color,
-      Value<String?>? type,
+      Value<CategoryType?>? type,
       Value<String?>? parentCategoryID,
       Value<int>? rowid}) {
     return CategoriesCompanion(
@@ -1027,7 +1032,8 @@ class CategoriesCompanion extends UpdateCompanion<CategoryInDB> {
       map['color'] = Variable<String>(color.value);
     }
     if (type.present) {
-      map['type'] = Variable<String>(type.value);
+      final converter = Categories.$convertertypen;
+      map['type'] = Variable<String>(converter.toSql(type.value));
     }
     if (parentCategoryID.present) {
       map['parentCategoryID'] = Variable<String>(parentCategoryID.value);
@@ -1091,12 +1097,13 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
       requiredDuringInsert: false,
       $customConstraints: '');
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-      'status', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints:
-          'CHECK (status IN (\'voided\', \'pending\', \'reconcilied\', \'unreconcilied\'))');
+  late final GeneratedColumnWithTypeConverter<TransactionStatus?,
+      String> status = GeneratedColumn<String>('status', aliasedName, true,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          $customConstraints:
+              'CHECK (status IN (\'voided\', \'pending\', \'reconcilied\', \'unreconcilied\'))')
+      .withConverter<TransactionStatus?>(Transactions.$converterstatusn);
   static const VerificationMeta _categoryIDMeta =
       const VerificationMeta('categoryID');
   late final GeneratedColumn<String> categoryID = GeneratedColumn<String>(
@@ -1177,10 +1184,7 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
       context.handle(
           _noteMeta, note.isAcceptableOrUnknown(data['note']!, _noteMeta));
     }
-    if (data.containsKey('status')) {
-      context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
-    }
+    context.handle(_statusMeta, const VerificationResult.success());
     if (data.containsKey('categoryID')) {
       context.handle(
           _categoryIDMeta,
@@ -1222,8 +1226,9 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
           .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
       note: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}note']),
-      status: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}status']),
+      status: Transactions.$converterstatusn.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])),
       categoryID: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}categoryID']),
       valueInDestiny: attachedDatabase.typeMapping
@@ -1240,6 +1245,11 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
     return Transactions(attachedDatabase, alias);
   }
 
+  static JsonTypeConverter2<TransactionStatus, String, String>
+      $converterstatus =
+      const EnumNameConverter<TransactionStatus>(TransactionStatus.values);
+  static JsonTypeConverter2<TransactionStatus?, String?, String?>
+      $converterstatusn = JsonTypeConverter2.asNullable($converterstatus);
   @override
   List<String> get customConstraints => const [
         'CHECK((receivingAccountID IS NULL)!=(categoryID IS NULL))',
@@ -1255,7 +1265,7 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   final DateTime date;
   final double value;
   final String? note;
-  final String? status;
+  final TransactionStatus? status;
   final String? categoryID;
   final double? valueInDestiny;
   final String? receivingAccountID;
@@ -1282,7 +1292,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       map['note'] = Variable<String>(note);
     }
     if (!nullToAbsent || status != null) {
-      map['status'] = Variable<String>(status);
+      final converter = Transactions.$converterstatusn;
+      map['status'] = Variable<String>(converter.toSql(status));
     }
     if (!nullToAbsent || categoryID != null) {
       map['categoryID'] = Variable<String>(categoryID);
@@ -1328,7 +1339,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       date: serializer.fromJson<DateTime>(json['date']),
       value: serializer.fromJson<double>(json['value']),
       note: serializer.fromJson<String?>(json['note']),
-      status: serializer.fromJson<String?>(json['status']),
+      status: Transactions.$converterstatusn
+          .fromJson(serializer.fromJson<String?>(json['status'])),
       categoryID: serializer.fromJson<String?>(json['categoryID']),
       valueInDestiny: serializer.fromJson<double?>(json['valueInDestiny']),
       receivingAccountID:
@@ -1345,7 +1357,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       'date': serializer.toJson<DateTime>(date),
       'value': serializer.toJson<double>(value),
       'note': serializer.toJson<String?>(note),
-      'status': serializer.toJson<String?>(status),
+      'status': serializer
+          .toJson<String?>(Transactions.$converterstatusn.toJson(status)),
       'categoryID': serializer.toJson<String?>(categoryID),
       'valueInDestiny': serializer.toJson<double?>(valueInDestiny),
       'receivingAccountID': serializer.toJson<String?>(receivingAccountID),
@@ -1359,7 +1372,7 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
           DateTime? date,
           double? value,
           Value<String?> note = const Value.absent(),
-          Value<String?> status = const Value.absent(),
+          Value<TransactionStatus?> status = const Value.absent(),
           Value<String?> categoryID = const Value.absent(),
           Value<double?> valueInDestiny = const Value.absent(),
           Value<String?> receivingAccountID = const Value.absent(),
@@ -1421,7 +1434,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   final Value<DateTime> date;
   final Value<double> value;
   final Value<String?> note;
-  final Value<String?> status;
+  final Value<TransactionStatus?> status;
   final Value<String?> categoryID;
   final Value<double?> valueInDestiny;
   final Value<String?> receivingAccountID;
@@ -1490,7 +1503,7 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
       Value<DateTime>? date,
       Value<double>? value,
       Value<String?>? note,
-      Value<String?>? status,
+      Value<TransactionStatus?>? status,
       Value<String?>? categoryID,
       Value<double?>? valueInDestiny,
       Value<String?>? receivingAccountID,
@@ -1530,7 +1543,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
       map['note'] = Variable<String>(note.value);
     }
     if (status.present) {
-      map['status'] = Variable<String>(status.value);
+      final converter = Transactions.$converterstatusn;
+      map['status'] = Variable<String>(converter.toSql(status.value));
     }
     if (categoryID.present) {
       map['categoryID'] = Variable<String>(categoryID.value);
@@ -3053,8 +3067,9 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
 
   Selectable<MoneyTransaction> getTransactionsWithFullData(
       {GetTransactionsWithFullData$predicate? predicate,
-      required double limit}) {
-    var $arrayStartIndex = 2;
+      GetTransactionsWithFullData$orderBy? orderBy,
+      required GetTransactionsWithFullData$limit limit}) {
+    var $arrayStartIndex = 1;
     final generatedpredicate = $write(
         predicate?.call(
                 alias(this.transactions, 't'),
@@ -3066,17 +3081,41 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         hasMultipleTables: true,
         startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedpredicate.amountOfVariables;
+    final generatedorderBy = $write(
+        orderBy?.call(
+                alias(this.transactions, 't'),
+                alias(this.accounts, 'a'),
+                alias(this.accounts, 'ra'),
+                alias(this.categories, 'c'),
+                alias(this.categories, 'pc')) ??
+            const OrderBy.nothing(),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedorderBy.amountOfVariables;
+    final generatedlimit = $write(
+        limit(
+            alias(this.transactions, 't'),
+            alias(this.accounts, 'a'),
+            alias(this.accounts, 'ra'),
+            alias(this.categories, 'c'),
+            alias(this.categories, 'pc')),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedlimit.amountOfVariables;
     return customSelect(
-        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","ra"."id" AS "nested_1.id", "ra"."name" AS "nested_1.name", "ra"."iniValue" AS "nested_1.iniValue", "ra"."date" AS "nested_1.date", "ra"."description" AS "nested_1.description", "ra"."type" AS "nested_1.type", "ra"."iconId" AS "nested_1.iconId", "ra"."currencyId" AS "nested_1.currencyId", "ra"."iban" AS "nested_1.iban", "ra"."swift" AS "nested_1.swift","c"."id" AS "nested_2.id", "c"."name" AS "nested_2.name", "c"."iconId" AS "nested_2.iconId", "c"."color" AS "nested_2.color", "c"."type" AS "nested_2.type", "c"."parentCategoryID" AS "nested_2.parentCategoryID","pc"."id" AS "nested_3.id", "pc"."name" AS "nested_3.name", "pc"."iconId" AS "nested_3.iconId", "pc"."color" AS "nested_3.color", "pc"."type" AS "nested_3.type", "pc"."parentCategoryID" AS "nested_3.parentCategoryID" FROM transactions AS t INNER JOIN accounts AS a ON t.accountID = a.id LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} LIMIT ?1',
+        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","ra"."id" AS "nested_1.id", "ra"."name" AS "nested_1.name", "ra"."iniValue" AS "nested_1.iniValue", "ra"."date" AS "nested_1.date", "ra"."description" AS "nested_1.description", "ra"."type" AS "nested_1.type", "ra"."iconId" AS "nested_1.iconId", "ra"."currencyId" AS "nested_1.currencyId", "ra"."iban" AS "nested_1.iban", "ra"."swift" AS "nested_1.swift","c"."id" AS "nested_2.id", "c"."name" AS "nested_2.name", "c"."iconId" AS "nested_2.iconId", "c"."color" AS "nested_2.color", "c"."type" AS "nested_2.type", "c"."parentCategoryID" AS "nested_2.parentCategoryID","pc"."id" AS "nested_3.id", "pc"."name" AS "nested_3.name", "pc"."iconId" AS "nested_3.iconId", "pc"."color" AS "nested_3.color", "pc"."type" AS "nested_3.type", "pc"."parentCategoryID" AS "nested_3.parentCategoryID" FROM transactions AS t INNER JOIN accounts AS a ON t.accountID = a.id LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
         variables: [
-          Variable<double>(limit),
-          ...generatedpredicate.introducedVariables
+          ...generatedpredicate.introducedVariables,
+          ...generatedorderBy.introducedVariables,
+          ...generatedlimit.introducedVariables
         ],
         readsFrom: {
           transactions,
           accounts,
           categories,
           ...generatedpredicate.watchedTables,
+          ...generatedorderBy.watchedTables,
+          ...generatedlimit.watchedTables,
         }).asyncMap((QueryRow row) async => MoneyTransaction(
           id: row.read<String>('id'),
           account: await accounts.mapFromRow(row, tablePrefix: 'nested_0'),
@@ -3084,7 +3123,9 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
           value: row.read<double>('value'),
           isHidden: row.read<bool>('isHidden'),
           note: row.readNullable<String>('note'),
-          status: row.readNullable<String>('status'),
+          status: NullAwareTypeConverter.wrapFromSql(
+              Transactions.$converterstatus,
+              row.readNullable<String>('status')),
           valueInDestiny: row.readNullable<double>('valueInDestiny'),
           receivingAccount:
               await accounts.mapFromRowOrNull(row, tablePrefix: 'nested_1'),
@@ -3119,7 +3160,8 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
           name: row.read<String>('name'),
           iconId: row.read<String>('iconId'),
           color: row.readNullable<String>('color'),
-          type: row.readNullable<String>('type'),
+          type: NullAwareTypeConverter.wrapFromSql(
+              Categories.$convertertype, row.readNullable<String>('type')),
           parentCategory:
               await categories.mapFromRowOrNull(row, tablePrefix: 'nested_0'),
         ));
@@ -3362,6 +3404,10 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
 typedef GetAccountsWithFullData$predicate = Expression<bool> Function(
     Accounts a, Currencies currency);
 typedef GetTransactionsWithFullData$predicate = Expression<bool> Function(
+    Transactions t, Accounts a, Accounts ra, Categories c, Categories pc);
+typedef GetTransactionsWithFullData$orderBy = OrderBy Function(
+    Transactions t, Accounts a, Accounts ra, Categories c, Categories pc);
+typedef GetTransactionsWithFullData$limit = Limit Function(
     Transactions t, Accounts a, Accounts ra, Categories c, Categories pc);
 typedef GetCategoriesWithFullData$predicate = Expression<bool> Function(
     Categories a, Categories parentCategory);

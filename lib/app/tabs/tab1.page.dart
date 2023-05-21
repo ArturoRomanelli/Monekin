@@ -1,13 +1,21 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/accountForm.dart';
+import 'package:finlytics/app/accounts/all_accounts_balance.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
+import 'package:finlytics/app/stats/fund_evolution.dart';
+import 'package:finlytics/app/tabs/card_with_header.dart';
 import 'package:finlytics/app/tabs/circular_arc.dart';
+import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/core/presentation/widgets/transaction_list.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
+import 'package:finlytics/core/services/finance_health_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -41,7 +49,7 @@ class _Tab1PageState extends State<Tab1Page> {
     },
   ];
 
-  final dateRangeService = DateRangeService.instance;
+  final dateRangeService = DateRangeService();
 
   @override
   void initState() {
@@ -287,7 +295,7 @@ class _Tab1PageState extends State<Tab1Page> {
                           // - https://github.com/flutter/flutter/issues/115824
 
                           onPressed: () {
-                            DateRangeService.instance
+                            dateRangeService
                                 .openDateModal(context)
                                 .then((_) => setState(() {}));
                           },
@@ -315,6 +323,7 @@ class _Tab1PageState extends State<Tab1Page> {
                               Text('Total balance',
                                   style: TextStyle(fontSize: 12)),
                               Skeleton(width: 70, height: 40),
+                              Skeleton(width: 30, height: 14),
                             ],
                           );
                         } else {
@@ -396,137 +405,243 @@ class _Tab1PageState extends State<Tab1Page> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Row(
                       children: [
                         incomeOrExpenseIndicator(AccountDataFilter.income),
                         incomeOrExpenseIndicator(AccountDataFilter.expense)
                       ],
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('My accounts'),
-                        TextButton(
-                          style: ButtonStyle(
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.transparent),
-                            splashFactory: NoSplash.splashFactory,
-                          ),
-                          onPressed: () => {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AccountFormPage()))
-                          },
-                          child: const Text('See all'),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 90,
-                    child: StreamBuilder(
-                        stream: accountService.getAccounts(),
-                        builder: (context, accounts) {
-                          if (!accounts.hasData) {
-                            return const LinearProgressIndicator();
-                          } else {
-                            return accountList(accounts.data);
-                          }
-                        }),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        const Row(
-                          children: [
-                            Text('Salud financiera',
-                                style: TextStyle(fontSize: 14)),
-                          ],
-                        ),
-                        Card(
-                          elevation: 1,
-                          clipBehavior: Clip.hardEdge,
-                          child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                      flex: 3,
-                                      child: Text(
-                                          'lockjdf fdjivcfd cofd fdoinc c dfo fvdf vif fvofin v dfv nfdlknvklfvfd vfiofnvdf vdfnvfd vfdkbvdf vdfbvf')),
-                                  Flexible(
-                                      flex: 2,
-                                      child: LayoutBuilder(
-                                          builder: (context, constraints) {
-                                        print("cdukcdkjdc");
-                                        print(constraints.maxWidth);
-                                        print(constraints.maxHeight);
-                                        return CircularArc(
-                                          value: 0.2,
-                                          size: constraints.maxWidth * 0.45,
-                                        );
-                                      }))
-                                ],
-                              )),
-                        ),
-                        const SizedBox(height: 16),
-                        Card(
-                          elevation: 1,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: const Text('Tools',
-                                      style: TextStyle(fontSize: 18))),
-                              ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: _tools.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  final item = _tools[index];
+                    const SizedBox(height: 16),
+                    CardWithHeader(
+                      title: 'Cuentas',
+                      onDetailsClick: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const AllAccountBalancePage()));
+                      },
+                      body: StreamBuilder(
+                          stream: accountService.getAccounts(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const LinearProgressIndicator();
+                            } else {
+                              final accounts = snapshot.data!;
 
-                                  return ListTile(
-                                    title: Text(item['label']),
-                                    leading: Icon(
-                                      item['icon'],
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    trailing: const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 14,
-                                    ),
-                                    onTap: () => {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  item['route']))
-                                    },
-                                  );
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 85)
-                      ],
+                              return ListView.separated(
+                                  padding: EdgeInsets.zero,
+                                  itemCount: accounts.length,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  separatorBuilder: (context, index) {
+                                    return const Divider(indent: 56);
+                                  },
+                                  itemBuilder: (context, index) {
+                                    final account = accounts[index];
+
+                                    return ListTile(
+                                      onTap: () => false,
+                                      leading: SizedBox(
+                                          height: 28,
+                                          width: 28,
+                                          child: SvgPicture.asset(
+                                            account.icon.urlToAssets,
+                                            fit: BoxFit.contain,
+                                          )),
+                                      trailing: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            StreamBuilder(
+                                                initialData: 0.0,
+                                                stream: AccountService.instance
+                                                    .getAccountMoney(
+                                                        account: account),
+                                                builder: (context, snapshot) {
+                                                  return CurrencyDisplayer(
+                                                    amountToConvert:
+                                                        snapshot.data!,
+                                                    currency: account.currency,
+                                                  );
+                                                }),
+                                            StreamBuilder(
+                                                initialData: 0.0,
+                                                stream: AccountService.instance
+                                                    .getAccountsMoneyVariation(
+                                                        accounts: [account],
+                                                        startDate:
+                                                            dateRangeService
+                                                                .startDate,
+                                                        endDate:
+                                                            dateRangeService
+                                                                .endDate,
+                                                        convertToPreferredCurrency:
+                                                            false),
+                                                builder: (context, snapshot) {
+                                                  return TrendingValue(
+                                                    percentage: snapshot.data!,
+                                                    decimalDigits: 0,
+                                                  );
+                                                }),
+                                          ]),
+                                      title: Text(account.name),
+                                    );
+                                  });
+                            }
+                          }),
                     ),
-                  ),
-                ],
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    CardWithHeader(
+                      title: 'Salud financiera',
+                      body: StreamBuilder(
+                          stream: accountService.getAccounts(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const LinearProgressIndicator();
+                            }
+
+                            final accounts = snapshot.data!;
+
+                            return Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: StreamBuilder(
+                                    stream: FinanceHealthService()
+                                        .getHealthyValue(
+                                            accounts: accounts,
+                                            startDate:
+                                                dateRangeService.startDate,
+                                            endDate: dateRangeService.endDate),
+                                    builder: (context, snapshot) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          if (snapshot.hasData)
+                                            Flexible(
+                                                flex: 3,
+                                                child: Text(
+                                                    'Genial! Tu salud financiera es buena. Visita la pestaña de análisis para ver como ahorrar aun mas!')),
+                                          if (!snapshot.hasData)
+                                            const Column(
+                                              children: [
+                                                Skeleton(width: 50, height: 12),
+                                                Skeleton(width: 50, height: 12),
+                                                Skeleton(width: 50, height: 12),
+                                                Skeleton(width: 50, height: 12),
+                                              ],
+                                            ),
+                                          const SizedBox(width: 24),
+                                          if (snapshot.hasData)
+                                            Flexible(
+                                                flex: 2,
+                                                child: LayoutBuilder(builder:
+                                                    (context, constraints) {
+                                                  return CircularArc(
+                                                    color: HSLColor.fromAHSL(
+                                                            1,
+                                                            snapshot.data!,
+                                                            1,
+                                                            0.35)
+                                                        .toColor(),
+                                                    value: snapshot.data! / 100,
+                                                    width: constraints.maxWidth,
+                                                  );
+                                                }))
+                                        ],
+                                      );
+                                    }));
+                          }),
+                    ),
+                    const SizedBox(height: 16),
+                    CardWithHeader(
+                        title: 'Gastos mas grandes',
+                        body: StreamBuilder(
+                          stream: TransactionService.instance.getTransactions(
+                            predicate: (p0, p1, p2, p3, p4) =>
+                                p0.value.isSmallerThanValue(0),
+                            limit: 5,
+                            orderBy: (p0, p1, p2, p3, p4) => drift.OrderBy([
+                              drift.OrderingTerm(
+                                  expression: p0.value,
+                                  mode: drift.OrderingMode.asc)
+                            ]),
+                          ),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const LinearProgressIndicator();
+                            }
+
+                            return TransactionListComponent(
+                              transactions: snapshot.data!,
+                              showGroupDivider: false,
+                            );
+                          },
+                        )),
+                    const SizedBox(height: 16),
+                    CardWithHeader(
+                        title: 'Tendencia de saldo',
+                        body: FundEvolutionLineChart(
+                          startDate: dateRangeService.startDate,
+                          endDate: dateRangeService.endDate,
+                        ),
+                        onDetailsClick: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const FundEvolutionPage()));
+                        }),
+                    Card(
+                      elevation: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              padding: const EdgeInsets.all(16),
+                              child: const Text('Tools',
+                                  style: TextStyle(fontSize: 18))),
+                          ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: _tools.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final item = _tools[index];
+
+                              return ListTile(
+                                title: Text(item['label']),
+                                leading: Icon(
+                                  item['icon'],
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                trailing: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 14,
+                                ),
+                                onTap: () => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => item['route']))
+                                },
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 85)
+                  ],
+                ),
               ),
             ),
           ),

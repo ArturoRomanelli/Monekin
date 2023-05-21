@@ -23,7 +23,6 @@ class _SettingsPageState extends State<SettingsPage> {
       required IconData icon,
       required Function() onTap}) {
     return ListTile(
-        minVerticalPadding: 8,
         title: Text(title),
         subtitle: subtitle != null ? Text(subtitle) : null,
         leading: Column(

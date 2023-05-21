@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show OrderBy, OrderingTerm, OrderingMode;
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
@@ -39,28 +40,34 @@ class _Tab2PageState extends State<Tab2Page> {
           Expanded(
             child: StreamBuilder(
               initialData: const <MoneyTransaction>[],
-              stream: TransactionService.instance.getTransactions(),
+              stream: TransactionService.instance.getTransactions(
+                orderBy: (p0, p1, p2, p3, p4) => OrderBy([
+                  OrderingTerm(expression: p0.date, mode: OrderingMode.desc)
+                ]),
+              ),
               builder: (context, snapshot) {
-                if (snapshot.data != null) {
-                  if (snapshot.data!.isEmpty) {
-                    return Column(
-                      children: const [
-                        Expanded(
-                            child: EmptyIndicator(
-                                title: 'Ops! Esto esta muy vacio',
-                                description:
-                                    'Añade una transacción pulsando el botón inferior para empezar a ver valores aquí')),
-                      ],
-                    );
-                  }
+                if (!snapshot.hasData) {
+                  return const LinearProgressIndicator();
+                }
 
-                  return SingleChildScrollView(
-                    child:
-                        TransactionListComponent(transactions: snapshot.data!),
+                final transactions = snapshot.data!;
+
+                if (transactions.isEmpty) {
+                  return const Column(
+                    children: [
+                      Expanded(
+                          child: EmptyIndicator(
+                              title: 'Ops! Esto esta muy vacio',
+                              description:
+                                  'Añade una transacción pulsando el botón inferior para empezar a ver valores aquí')),
+                    ],
                   );
                 }
 
-                return const LinearProgressIndicator();
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 80),
+                  child: TransactionListComponent(transactions: transactions),
+                );
               },
             ),
           ),

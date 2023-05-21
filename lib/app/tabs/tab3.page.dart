@@ -27,18 +27,16 @@ class _Tab3PageState extends State<Tab3Page> {
 
   TransactionType selectedTypeForCategoriesChart = TransactionType.expense;
 
+  final dateRangeService = DateRangeService();
+
   @override
   void initState() {
     super.initState();
 
     _pageController = PageController(initialPage: initialIndex);
 
-    final DateRangeService dateRangeService = DateRangeService.instance;
-
-    dateRangeService.getCurrentDateRange().then((value) {
-      setState(() {
-        selectedTabDate = value[0];
-      });
+    setState(() {
+      selectedTabDate = dateRangeService.getCurrentDateRange()[0];
     });
   }
 
@@ -110,7 +108,7 @@ class _Tab3PageState extends State<Tab3Page> {
         IconButton(
           icon: const Icon(Icons.calendar_month),
           onPressed: () async {
-            await DateRangeService.instance.openDateModal(context);
+            await dateRangeService.openDateModal(context);
             _pageController
                 .animateToPage(initialIndex,
                     duration: const Duration(milliseconds: 300),
@@ -135,8 +133,7 @@ class _Tab3PageState extends State<Tab3Page> {
 
                 if (selectedTabDate == null) return Text(text);
 
-                final selectedDateRange =
-                    DateRangeService.instance.selectedDateRange;
+                final selectedDateRange = dateRangeService.selectedDateRange;
 
                 if (selectedDateRange == DateRange.monthly) {
                   if (selectedTabDate!.year == currentYear) {
@@ -176,14 +173,14 @@ class _Tab3PageState extends State<Tab3Page> {
               controller: _pageController,
               itemCount: 10000,
               onPageChanged: (newPage) {
-                selectedTabDate = DateRangeService.instance
-                    .getDateRange(newPage - initialIndex)[0];
+                selectedTabDate =
+                    dateRangeService.getDateRange(newPage - initialIndex)[0];
 
                 setState(() {});
               },
               itemBuilder: (context, index) {
-                final dateRanges = DateRangeService.instance
-                    .getDateRange(index - initialIndex);
+                final dateRanges =
+                    dateRangeService.getDateRange(index - initialIndex);
 
                 final DateTime? startDate = dateRanges[0];
                 final DateTime? endDate = dateRanges[1];
@@ -241,6 +238,8 @@ class _Tab3PageState extends State<Tab3Page> {
                                   ),
                                   BalanceBarChart(
                                     startDate: startDate,
+                                    dateRange:
+                                        dateRangeService.selectedDateRange,
                                   )
                                 ],
                               ),

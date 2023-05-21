@@ -1,15 +1,23 @@
 import 'dart:math';
 
+import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CircularArc extends StatefulWidget {
-  const CircularArc({super.key, required this.value, required this.size})
+  const CircularArc(
+      {super.key,
+      required this.value,
+      required this.width,
+      required this.color})
       : assert(value < 1 && value > 0);
 
   /// Percentage of the arch to occupy. Must be a value between 0 and 1
   final double value;
 
-  final double size;
+  final double width;
+
+  final Color color;
 
   @override
   State<CircularArc> createState() => _CircularArcState();
@@ -22,12 +30,21 @@ class _CircularArcState extends State<CircularArc>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
+  }
 
+  @override
+  void dispose() {
+    animationController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final curvedAnimation =
         CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
 
@@ -38,35 +55,50 @@ class _CircularArcState extends State<CircularArc>
           });
 
     animationController.forward();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Stack(
       children: [
         CustomPaint(
-          size: Size(widget.size, widget.size),
-          painter: ProgressArc(null, true),
+          size: Size(widget.width, widget.width * 0.4),
+          painter: _CircularArcPainter(
+              null, true, widget.width * 0.45, widget.color),
         ),
         CustomPaint(
-          size: Size(widget.size, widget.size),
-          painter: ProgressArc(animation.value, false),
-        )
+          size: Size(widget.width, widget.width * 0.4),
+          painter: _CircularArcPainter(
+              animation.value, false, widget.width * 0.45, widget.color),
+        ),
+        Positioned.fill(
+          top: widget.width * 0.1,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Text(
+                NumberFormat.decimalPattern()
+                    .format((widget.value * 100).floor()),
+                style: TextStyle(
+                    fontSize: 32,
+                    color: widget.color.darken(),
+                    fontWeight: FontWeight.w800)),
+          ),
+        ),
       ],
     );
   }
 }
 
-class ProgressArc extends CustomPainter {
+class _CircularArcPainter extends CustomPainter {
   double? arc;
   bool isBackground;
 
-  ProgressArc(this.arc, this.isBackground);
+  Color color;
+
+  double radius;
+
+  _CircularArcPainter(this.arc, this.isBackground, this.radius, this.color);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromCircle(
-        center: size.bottomLeft(Offset.zero), radius: size.width);
+    final rect =
+        Rect.fromCircle(center: size.bottomCenter(Offset.zero), radius: radius);
 
     const startAngle = -pi;
 
@@ -75,7 +107,7 @@ class ProgressArc extends CustomPainter {
     const useCenter = false;
     final paint = Paint()
       ..strokeCap = StrokeCap.round
-      ..color = isBackground ? Colors.red.withOpacity(0.2) : Colors.red
+      ..color = isBackground ? color.withOpacity(0.2) : color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10;
 

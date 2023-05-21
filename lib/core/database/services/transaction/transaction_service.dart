@@ -20,15 +20,20 @@ class TransactionService {
         .go();
   }
 
-  Stream<List<MoneyTransaction>> getTransactions(
-      {Expression<bool> Function(
-              Transactions, Accounts, Accounts, Categories, Categories)?
-          predicate,
-      double? limit}) {
-    limit ??= -1;
-
+  Stream<List<MoneyTransaction>> getTransactions({
+    Expression<bool> Function(
+            Transactions, Accounts, Accounts, Categories, Categories)?
+        predicate,
+    OrderBy Function(Transactions, Accounts, Accounts, Categories, Categories)?
+        orderBy,
+    int? limit,
+    int? offset,
+  }) {
     return db
-        .getTransactionsWithFullData(predicate: predicate, limit: limit)
+        .getTransactionsWithFullData(
+            predicate: predicate,
+            orderBy: orderBy,
+            limit: (t, a, ra, c, pc) => Limit(limit ?? -1, offset))
         .watch();
   }
 

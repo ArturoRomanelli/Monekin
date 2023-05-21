@@ -1,5 +1,6 @@
-import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:collection/collection.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -23,11 +24,6 @@ class FundEvolutionLineChart extends StatefulWidget {
 }
 
 class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
-  List<Color> gradientColors = [
-    Colors.cyan,
-    Colors.blue,
-  ];
-
   Future<FundEvolutionChartDataItem?> getEvolutionData(
     BuildContext context,
   ) async {
@@ -63,19 +59,24 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
 
   @override
   Widget build(BuildContext context) {
+    List<Color> gradientColors = [
+      Theme.of(context).primaryColor,
+      Theme.of(context).primaryColor.lighten(0.3),
+    ];
+
     return SizedBox(
       height: 300,
       child: FutureBuilder(
           future: getEvolutionData(context),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Column(
+              return const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       CircularProgressIndicator(),
                     ],
                   ),
@@ -120,13 +121,26 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
                   sideTitles: SideTitles(showTitles: false),
                 ),
                 bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        snapshot.data!.labels[int.parse(meta.formattedValue)],
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w200),
+                      );
+                    },
+                  ),
                 ),
                 rightTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 46,
                     getTitlesWidget: (value, meta) {
+                      if (value == meta.max || value == meta.min) {
+                        return Container();
+                      }
+
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
                         child: Text(
@@ -153,9 +167,7 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
                       (index) => FlSpot(
                           index.toDouble(), snapshot.data!.balance[index])),
                   isCurved: true,
-                  gradient: LinearGradient(
-                    colors: gradientColors,
-                  ),
+                  color: gradientColors[0],
                   barWidth: 5,
                   isStrokeCapRound: true,
                   dotData: FlDotData(
@@ -164,6 +176,8 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
                   belowBarData: BarAreaData(
                     show: true,
                     gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: gradientColors
                           .map((color) => color.withOpacity(0.3))
                           .toList(),

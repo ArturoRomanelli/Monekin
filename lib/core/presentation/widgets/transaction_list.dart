@@ -1,13 +1,19 @@
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionListComponent extends StatelessWidget {
-  const TransactionListComponent({super.key, required this.transactions});
+  const TransactionListComponent(
+      {super.key, required this.transactions, this.showGroupDivider = true});
 
   final List<MoneyTransaction> transactions;
+
+  final bool showGroupDivider;
 
   Widget dateSeparator(DateTime date) {
     return Padding(
@@ -26,21 +32,52 @@ class TransactionListComponent extends StatelessWidget {
           if (transactions.isEmpty) return Container();
 
           if (index == 0) {
+            if (!showGroupDivider) return Container();
             return dateSeparator(transactions[0].date);
           }
 
           final transaction = transactions[index - 1];
 
           return ListTile(
-            title: Text(transaction.isIncomeOrExpense
-                ? transaction.category!.name
-                : 'Transfer'),
-            subtitle: transaction.note != null && transaction.note!.isNotEmpty
-                ? Text(transaction.note!)
-                : null,
-            trailing: Text(NumberFormat.simpleCurrency(
-                    name: transaction.account.currencyId, decimalDigits: 2)
-                .format(transaction.value)),
+            title: Row(
+              children: [
+                Text(transaction.isIncomeOrExpense
+                    ? transaction.category!.name
+                    : 'Transfer'),
+                const SizedBox(width: 4),
+                if (transaction.status == TransactionStatus.reconcilied)
+                  const Icon(
+                    Icons.check_circle,
+                    color: Color.fromARGB(255, 40, 110, 43),
+                    size: 12,
+                  )
+              ],
+            ),
+            subtitle: Text(
+              '${transaction.account.name} • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} ',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+            ),
+            trailing: StreamBuilder(
+              stream: CurrencyService.instance
+                  .getCurrencyByCode(transaction.account.currencyId),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Skeleton(width: 40, height: 12);
+                }
+
+                return CurrencyDisplayer(
+                  amountToConvert: transaction.value,
+                  currency: snapshot.data!,
+                  textStyle: TextStyle(
+                      color: transaction.type == TransactionType.income
+                          ? Colors.green
+                          : transaction.type == TransactionType.expense
+                              ? Colors.red
+                              : null,
+                      fontWeight: FontWeight.bold),
+                );
+              },
+            ),
             leading: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
@@ -68,9 +105,10 @@ class TransactionListComponent extends StatelessWidget {
             return Container();
           }
 
-          if (index >= 1 &&
-              DateUtils.isSameDay(
-                  transactions[index - 1].date, transactions[index].date)) {
+          if (!showGroupDivider ||
+              index >= 1 &&
+                  DateUtils.isSameDay(
+                      transactions[index - 1].date, transactions[index].date)) {
             return const Divider(indent: 68);
           }
 

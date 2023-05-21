@@ -92,7 +92,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       value:
           selectedCategory!.type == 'E' ? valueToNumber! * -1 : valueToNumber!,
       category: selectedCategory!,
-      status: status?.name,
+      status: status,
       isHidden: isHidden,
       note: noteController.text.isEmpty ? null : noteController.text,
     );

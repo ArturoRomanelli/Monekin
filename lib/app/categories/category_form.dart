@@ -29,7 +29,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   SupportedIcon _icon = SupportedIconService.instance.defaultSupportedIcon;
 
   String _color = '000000';
-  String _type = 'E';
+  CategoryType _type = CategoryType.E;
 
   final colorOptions = [
     'B71C1C',
@@ -344,18 +344,21 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                 const SizedBox(
                                   height: 14,
                                 ),
-                                DropdownButtonFormField<String>(
+                                DropdownButtonFormField<CategoryType>(
                                   decoration: const InputDecoration(
                                     labelText: 'Tipo de categoría *',
                                     border: OutlineInputBorder(),
                                   ),
                                   items: const [
                                     DropdownMenuItem(
-                                        value: 'I', child: Text('Income')),
+                                        value: CategoryType.I,
+                                        child: Text('Income')),
                                     DropdownMenuItem(
-                                        value: 'E', child: Text('Expense')),
+                                        value: CategoryType.E,
+                                        child: Text('Expense')),
                                     DropdownMenuItem(
-                                        value: 'B', child: Text('Both'))
+                                        value: CategoryType.B,
+                                        child: Text('Both'))
                                   ],
                                   value: _type,
                                   onChanged: widget.categoryUUID != null

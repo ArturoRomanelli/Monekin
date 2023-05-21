@@ -1,5 +1,6 @@
 import 'package:finlytics/core/utils/date_getter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 enum DateRange {
   weekly,
@@ -11,14 +12,21 @@ enum DateRange {
 }
 
 class DateRangeService {
-  DateRangeService._();
-
-  static final DateRangeService instance = DateRangeService._();
-
   DateRange selectedDateRange = DateRange.monthly;
 
   DateTime? startDate;
   DateTime? endDate;
+
+  DateRangeService() {
+    resetDateRanges();
+  }
+
+  void resetDateRanges() {
+    final newRanges = (getCurrentDateRange());
+
+    startDate = newRanges[0];
+    endDate = newRanges[1];
+  }
 
   Widget _buildDateButton(BuildContext context,
       {IconData? icon,
@@ -75,13 +83,6 @@ class DateRangeService {
     );
   }
 
-  Future<void> resetDateRanges() async {
-    final newRanges = (await getCurrentDateRange());
-
-    startDate = newRanges[0];
-    endDate = newRanges[1];
-  }
-
   /// Returns a date with the first/last day of the current quaterly
   _getQuaterlyDates() {
     int startMonth = -1;
@@ -102,14 +103,40 @@ class DateRangeService {
     }
 
     if (startMonth == -1 || endDate == -1) {
-      throw Exception("startMonth or endMonth not setted correctly");
+      throw Exception('startMonth or endMonth not setted correctly');
     }
 
     return [DateTime(currentYear, startMonth), DateTime(currentYear, endMonth)];
   }
 
-  /// Get the start and the end of the current selected period. Returns a list in the form `[startDate, endDate]`
-  Future<List<DateTime?>> getCurrentDateRange() async {
+  /// If [dateRange] is null, the current value of the selectedDateRange will be used
+  String getTextOfRange(
+      {required DateTime? startDate,
+      required DateTime? endDate,
+      DateRange? dateRange}) {
+    String text = '';
+
+    if (startDate == null || endDate == null) return 'Por siempre';
+
+    dateRange ??= selectedDateRange;
+
+    if (dateRange == DateRange.monthly) {
+      if (startDate.year == currentYear) {
+        text = DateFormat.MMMM().format(startDate);
+      } else {
+        text = DateFormat.yMMMM().format(startDate);
+      }
+    } else if (dateRange == DateRange.annualy) {
+      text = DateFormat.y().format(startDate);
+    } else if (dateRange == DateRange.quaterly) {
+      text = 'Q${(startDate.month / 3).ceil()} - ${startDate.year}';
+    }
+
+    return text;
+  }
+
+  /// Gets the current start and end date of the specified time range. That is, get the start and end date of this month, this month, this year...
+  List<DateTime?> getCurrentDateRange() {
     DateTime? startDate;
     DateTime? endDate;
 
@@ -136,15 +163,14 @@ class DateRangeService {
     return [startDate, endDate];
   }
 
-  /// Get a range parting of the current selected range and a multiplier. Giving a 1 in the multiplier param will give the next dateRange and giving a -1 the previous one.
+  /// Get a range parting of the current selected range and a multiplier. Giving a 1 in the multiplier param will give the next dateRange parting of the current [startDate,endDate] and giving a -1 the previous one.
   List<DateTime?> getDateRange(int multiplier) {
     if (startDate == null || endDate == null) {
-      // return null;
-      throw Exception("Can not get current dateRanges");
+      return [null, null];
     }
 
-    DateTime? startDateToReturn = null;
-    DateTime? endDateToReturn = null;
+    DateTime? startDateToReturn;
+    DateTime? endDateToReturn;
 
     if (selectedDateRange == DateRange.custom) {
       startDateToReturn = startDate!.add(
@@ -209,7 +235,8 @@ class DateRangeService {
               mainAxisSize: MainAxisSize.min,
               children: [
                 AppBar(
-                  title: Text("Hola"),
+                  title: Text('Select date range'),
+                  automaticallyImplyLeading: false,
                   elevation: 4,
                 ),
                 Container(
@@ -261,7 +288,7 @@ class DateRangeService {
 
     if (result != null && result != selectedDateRange) {
       selectedDateRange = result;
-      await resetDateRanges();
+      resetDateRanges();
     }
   }
 }

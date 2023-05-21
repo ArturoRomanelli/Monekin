@@ -21,12 +21,14 @@ class CategoriesList extends StatefulWidget {
 }
 
 class _CategoriesListState extends State<CategoriesList> {
-  Widget buildCategoryList(String type, List<Category> mainCategories) {
-    if (type != 'E' && type != 'I') throw Exception('Incorrect category type');
+  Widget buildCategoryList(CategoryType type, List<Category> mainCategories) {
+    if (type != CategoryType.E && type != CategoryType.I) {
+      throw Exception('Incorrect category type');
+    }
 
-    final categoriesToDisplay = (type == 'E'
-            ? mainCategories.where((cat) => cat.type == 'E' || cat.type == 'B')
-            : mainCategories.where((cat) => cat.type == 'I' || cat.type == 'B'))
+    final categoriesToDisplay = (type.isExpense
+            ? mainCategories.where((cat) => cat.type.isExpense)
+            : mainCategories.where((cat) => cat.type.isIncome))
         .toList();
 
     return ListView.builder(
@@ -132,8 +134,8 @@ class _CategoriesListState extends State<CategoriesList> {
                   } else {
                     return Expanded(
                       child: TabBarView(children: [
-                        buildCategoryList('I', categories.data!),
-                        buildCategoryList('E', categories.data!),
+                        buildCategoryList(CategoryType.I, categories.data!),
+                        buildCategoryList(CategoryType.E, categories.data!),
                       ]),
                     );
                   }

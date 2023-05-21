@@ -79,7 +79,7 @@ class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
         textBaseline: TextBaseline.alphabetic,
         children: [
           Text(parts[0], style: widget.textStyle),
-          if (widget.showDecimals) Text(decimalSep),
+          if (widget.showDecimals) Text(decimalSep, style: widget.textStyle),
           if (widget.showDecimals)
             Text(parts[1],
                 style: widget.textStyle.copyWith(

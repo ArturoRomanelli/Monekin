@@ -1,6 +1,10 @@
 ---- * WHEN CONVERTING TO .sql:
 ---- * --- Remove the 'AS ....' after a table creation  
----- * --- Convert DATETIME to TEXT
+---- * --- Convert DATETIME to TEXT, BOOL to INT and ENUMS to TEXT
+---- * --- Remove the imports 
+
+import './../../../models/transaction/transaction.dart';
+import './../../../models/category/category.dart';
 
 CREATE TABLE IF NOT EXISTS currencies (
     -- ISO 4217 currency code. Identifies a currency uniquely ([see more](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes))
@@ -56,7 +60,7 @@ CREATE TABLE IF NOT EXISTS categories (
     color TEXT,
 
     -- Type of the category. If null, the type of the parent's category will be used
-    type TEXT,
+    type ENUMNAME(CategoryType) CHECK(status IN ('E', 'I', 'B')),
     parentCategoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
     --- Color and type are not needed in child categories. They are inherited from the parent 
@@ -70,7 +74,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   date DATETIME NOT NULL,
   value REAL NOT NULL,
   note TEXT,
-  status TEXT CHECK(status IN ('voided', 'pending', 'reconcilied', 'unreconcilied')),
+  status ENUMNAME(TransactionStatus) CHECK(status IN ('voided', 'pending', 'reconcilied', 'unreconcilied')),
   categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
   valueInDestiny REAL,
   receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,

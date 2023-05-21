@@ -3,10 +3,15 @@ import 'package:intl/intl.dart';
 
 class TrendingValue extends StatelessWidget {
   const TrendingValue(
-      {super.key, required this.percentage, this.decimalDigits = 2});
+      {super.key,
+      required this.percentage,
+      this.decimalDigits = 2,
+      this.fontSize = 14});
 
   final double percentage;
   final int decimalDigits;
+
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,7 @@ class TrendingValue extends StatelessWidget {
       children: [
         Icon(
           percentage >= 0 ? Icons.trending_up : Icons.trending_down,
-          size: 18,
+          size: fontSize * (9 / 7),
           color: percentage >= 0 ? Colors.green : Colors.red,
         ),
         const SizedBox(width: 6),
@@ -23,7 +28,8 @@ class TrendingValue extends StatelessWidget {
           NumberFormat.decimalPercentPattern(decimalDigits: decimalDigits)
               .format(percentage),
           style: TextStyle(
-              fontSize: 14, color: percentage >= 0 ? Colors.green : Colors.red),
+              fontSize: fontSize,
+              color: percentage >= 0 ? Colors.green : Colors.red),
         )
       ],
     );

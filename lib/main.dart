@@ -17,6 +17,21 @@ class MyApp extends ConsumerWidget {
         theme: ThemeData(
             dividerTheme: const DividerThemeData(space: 0),
             colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),
+            listTileTheme: Theme.of(context).listTileTheme.copyWith(
+                  minVerticalPadding: 8,
+                  leadingAndTrailingTextStyle: Theme.of(context)
+                          .listTileTheme
+                          .leadingAndTrailingTextStyle
+                          ?.copyWith(fontSize: 16) ??
+                      TextStyle(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                          fontSize: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.fontSize ??
+                              14,
+                          fontFamily: 'Nunito'),
+                ),
             useMaterial3: true,
             fontFamily: 'Nunito'),
         home: const TabsPage());

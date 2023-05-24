@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class Skeleton extends StatelessWidget {
-  const Skeleton({Key? key, required this.width, required this.height})
+  const Skeleton(
+      {Key? key,
+      required this.width,
+      required this.height,
+      this.applyMarging = true})
       : super(key: key);
 
   final double width, height;
+  final bool applyMarging;
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +19,12 @@ class Skeleton extends StatelessWidget {
         Container(
           height: height,
           width: width,
+          margin: applyMarging
+              ? const EdgeInsets.symmetric(vertical: 2, horizontal: 0)
+              : null,
           decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(16)),
+              borderRadius: BorderRadius.circular(4)),
         ),
       ],
     );

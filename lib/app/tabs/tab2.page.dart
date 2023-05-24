@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart' show OrderBy, OrderingTerm, OrderingMode;
+import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
-import 'package:finlytics/core/presentation/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
 
 class Tab2Page extends StatefulWidget {
@@ -39,7 +39,6 @@ class _Tab2PageState extends State<Tab2Page> {
         children: [
           Expanded(
             child: StreamBuilder(
-              initialData: const <MoneyTransaction>[],
               stream: TransactionService.instance.getTransactions(
                 orderBy: (p0, p1, p2, p3, p4) => OrderBy([
                   OrderingTerm(expression: p0.date, mode: OrderingMode.desc)
@@ -66,7 +65,10 @@ class _Tab2PageState extends State<Tab2Page> {
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.only(bottom: 80),
-                  child: TransactionListComponent(transactions: transactions),
+                  child: TransactionListComponent(
+                    transactions: transactions,
+                    prevPage: const TabsPage(currentPageIndex: 1),
+                  ),
                 );
               },
             ),

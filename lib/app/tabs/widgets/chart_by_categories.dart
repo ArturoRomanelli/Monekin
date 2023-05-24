@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -25,10 +27,13 @@ class ChartByCategories extends StatefulWidget {
       {super.key,
       required this.startDate,
       required this.endDate,
-      required this.transactionsType});
+      this.showList = false,
+      this.transactionsType = TransactionType.expense});
 
   final DateTime? startDate;
   final DateTime? endDate;
+
+  final bool showList;
 
   final TransactionType transactionsType;
 
@@ -37,6 +42,8 @@ class ChartByCategories extends StatefulWidget {
 }
 
 class _ChartByCategoriesState extends State<ChartByCategories> {
+  int touchedIndex = -1;
+
   Future<List<ChartByCategoriesDataItem>?> getEvolutionData(
     BuildContext context,
   ) async {
@@ -88,6 +95,102 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
     return data;
   }
 
+  /// Returns a value between 0 and 100
+  double getElementPercentageInTotal(
+      double elementValue, List<ChartByCategoriesDataItem> items) {
+    return (elementValue /
+        items.map((e) => e.value).reduce((value, element) => value + element));
+  }
+
+  List<ChartByCategoriesDataItem> deleteUnimportantItems(
+      List<ChartByCategoriesDataItem> data) {
+    const limit = 0.05;
+
+    final unimportantItems = data.where(
+        (element) => getElementPercentageInTotal(element.value, data) < limit);
+
+    if (unimportantItems.length <= 1) return data;
+
+    final toReturn = data
+        .where((element) =>
+            getElementPercentageInTotal(element.value, data) >= limit)
+        .toList();
+
+    final toAdd = ChartByCategoriesDataItem(
+        value: 0,
+        transactions: [],
+        category: Category(
+            id: 'Other',
+            name: 'Other',
+            iconId: 'iconId',
+            type: CategoryType.B,
+            color: 'DEDEDE'));
+
+    for (var item in unimportantItems) {
+      toAdd.value += item.value;
+      toAdd.transactions = [...toAdd.transactions, ...item.transactions];
+    }
+
+    toReturn.add(toAdd);
+
+    return toReturn;
+  }
+
+  List<PieChartSectionData> showingSections(
+      List<ChartByCategoriesDataItem> data) {
+    return data.mapIndexed((index, element) {
+      final isTouched = index == touchedIndex;
+      final fontSize = isTouched ? 25.0 : 16.0;
+      final radius = isTouched ? 60.0 : 50.0;
+
+      final percentage = getElementPercentageInTotal(element.value, data);
+
+      return PieChartSectionData(
+        color: ColorHex.get(element.category.color),
+        value: percentage,
+        title: NumberFormat.percentPattern().format(percentage),
+        radius: radius,
+        titleStyle: TextStyle(
+          color: Colors.white,
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }).toList();
+  }
+
+  Widget indicator({
+    required Color color,
+    required String text,
+    required bool isSquare,
+    double size = 12,
+    Color? textColor,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 14,
+            color: textColor,
+          ),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -97,67 +200,98 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
           return const LinearProgressIndicator();
         }
 
-        return ListView.builder(
-          itemCount: snapshot.data!.length,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            final dataCategory = snapshot.data![index];
+        final filteredDataItems = deleteUnimportantItems(snapshot.data!);
 
-            const barRadius = BorderRadius.only(
-              topRight: Radius.circular(2),
-              bottomRight: Radius.circular(2),
-            );
-
-            return ListTile(
-              title: Text(dataCategory.category.name),
-              subtitle: Container(
-                  height: 12,
-                  width: double.infinity,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                      borderRadius: barRadius,
-                      color: ColorHex.get(dataCategory.category.color)
-                          .withOpacity(0.12)),
-                  child: FractionallySizedBox(
-                    widthFactor: dataCategory.value /
-                        snapshot.data!
-                            .map((e) => e.value)
-                            .reduce((value, element) => value + element),
-                    heightFactor: 1,
-                    alignment: FractionalOffset.centerLeft,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: barRadius,
-                        color: ColorHex.get(dataCategory.category.color),
-                      ),
-                    ),
-                  )),
-              leading: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                    color: ColorHex.get(dataCategory.category.color)
-                        .withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(6)),
-                child: dataCategory.category.icon.display(
-                    color: ColorHex.get(dataCategory.category.color), size: 28),
+        return Column(
+          children: [
+            SizedBox(
+              height: 250,
+              child: PieChart(
+                PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex = pieTouchResponse
+                            .touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 40,
+                  sections: showingSections(filteredDataItems),
+                ),
               ),
-              trailing: Container(
-                  width: 42,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: const BoxDecoration(),
-                  child: Text(
-                    NumberFormat.decimalPercentPattern().format(
-                      (dataCategory.value /
-                          snapshot.data!
-                              .map((e) => e.value)
-                              .reduce((value, element) => value + element)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
+              child: Wrap(
+                spacing: 10, // gap between adjacent cards
+                runSpacing: 2, // gap between lines
+                alignment: WrapAlignment.center,
+                children: filteredDataItems
+                    .map((e) => indicator(
+                        color: ColorHex.get(e.category.color),
+                        text: e.category.name,
+                        isSquare: false))
+                    .toList(),
+              ),
+            ),
+            if (widget.showList)
+              ListView.builder(
+                itemCount: snapshot.data!.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final dataCategory = snapshot.data![index];
+
+                  const barRadius = BorderRadius.only(
+                    topRight: Radius.circular(2),
+                    bottomRight: Radius.circular(2),
+                  );
+
+                  return ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(dataCategory.category.name),
+                        CurrencyDisplayer(amountToConvert: dataCategory.value)
+                      ],
                     ),
-                    textAlign: TextAlign.end,
-                  )),
-              onTap: () {},
-            );
-          },
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            '${dataCategory.transactions.length} transacciones'),
+                        Text(
+                            NumberFormat.decimalPercentPattern(decimalDigits: 2)
+                                .format(getElementPercentageInTotal(
+                                    dataCategory.value, snapshot.data!)))
+                      ],
+                    ),
+                    leading: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: ColorHex.get(dataCategory.category.color)
+                              .withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6)),
+                      child: dataCategory.category.icon.display(
+                          color: ColorHex.get(dataCategory.category.color),
+                          size: 28),
+                    ),
+                    onTap: () {},
+                  );
+                },
+              ),
+          ],
         );
       },
     );

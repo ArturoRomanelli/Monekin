@@ -10,13 +10,19 @@ class TransactionService {
   static final TransactionService instance =
       TransactionService._(DatabaseImpl.instance);
 
-  Future<int> insertTransaction(TransactionInDB account) {
-    return db.into(db.transactions).insert(account);
+  Future<int> insertTransaction(TransactionInDB transaction) {
+    return db.into(db.transactions).insert(transaction);
   }
 
-  Future<int> deleteTransaction(String accountId) {
+  Future<int> insertOrUpdateTransaction(TransactionInDB transaction) {
+    return db
+        .into(db.transactions)
+        .insert(transaction, mode: InsertMode.insertOrReplace);
+  }
+
+  Future<int> deleteTransaction(String transactionId) {
     return (db.delete(db.transactions)
-          ..where((tbl) => tbl.id.equals(accountId)))
+          ..where((tbl) => tbl.id.equals(transactionId)))
         .go();
   }
 

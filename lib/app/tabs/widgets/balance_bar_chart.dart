@@ -102,17 +102,17 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
       }
     } else if (selectedDateRange == DateRange.annualy) {
       for (var i = 1; i <= 12; i++) {
-        final startDate = DateTime(currentYear, i);
-        final endDate = DateTime(currentYear, i + 1);
+        final selStartDate = DateTime(startDate.year, i);
+        final endDate = DateTime(startDate.year, i + 1);
 
-        shortTitles.add(DateFormat.M().format(startDate));
-        longTitles.add(DateFormat.MMMM().format(startDate));
+        shortTitles.add(DateFormat.M().format(selStartDate));
+        longTitles.add(DateFormat.MMMM().format(selStartDate));
 
         final incomeToAdd = await accountService
             .getAccountsData(
                 accountIds: accountsIds,
                 accountDataFilter: AccountDataFilter.income,
-                startDate: startDate,
+                startDate: selStartDate,
                 endDate: endDate)
             .first;
 
@@ -120,7 +120,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
             .getAccountsData(
                 accountIds: accountsIds,
                 accountDataFilter: AccountDataFilter.expense,
-                startDate: startDate,
+                startDate: selStartDate,
                 endDate: endDate)
             .first;
 
@@ -175,6 +175,8 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
   }) {
     bool isTouched = touchedBarGroupIndex == x;
 
+    Radius radius = Radius.circular(width / 6);
+
     return BarChartGroupData(
       x: x,
       groupVertically: true,
@@ -185,9 +187,9 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               ? Colors.green.darken(0.1)
               : Colors.green,
           width: width,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(6),
-            topRight: Radius.circular(6),
+          borderRadius: BorderRadius.only(
+            topLeft: radius,
+            topRight: radius,
           ),
         ),
         BarChartRodData(
@@ -196,9 +198,9 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               ? Colors.red.darken(0.1)
               : Colors.red,
           width: width,
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(6),
-            bottomRight: Radius.circular(6),
+          borderRadius: BorderRadius.only(
+            bottomLeft: radius,
+            bottomRight: radius,
           ),
         )
       ],
@@ -282,7 +284,6 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                     getTitlesWidget: (value, meta) {
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
-                        space: 16,
                         child: Text(
                           snapshot.data!.shortTitles[value.toInt()],
                           style: const TextStyle(
@@ -292,7 +293,6 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                         ),
                       );
                     },
-                    reservedSize: 38,
                   ),
                 ),
                 rightTitles: AxisTitles(
@@ -321,14 +321,16 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                 ),
               ),
               borderData: FlBorderData(
-                show: false,
-              ),
+                  show: true,
+                  border: const Border(
+                      bottom: BorderSide(width: 1, color: Colors.black12))),
               gridData: FlGridData(
                 drawVerticalLine: false,
               ),
               barGroups: List.generate(snapshot.data!.income.length, (i) {
                 return makeGroupData(
-                    i, snapshot.data!.income[i], snapshot.data!.expense[i]);
+                    i, snapshot.data!.income[i], snapshot.data!.expense[i],
+                    width: 142 / snapshot.data!.income.length);
               }),
             ));
           }),

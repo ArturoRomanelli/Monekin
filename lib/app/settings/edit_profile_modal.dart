@@ -4,6 +4,7 @@ import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class EditProfileModal extends StatefulWidget {
   const EditProfileModal({super.key});
@@ -94,6 +95,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                     children: allAvatars
                         .map((e) => InkWell(
                               onTap: () {
+                                HapticFeedback.lightImpact();
                                 setState(() {
                                   selectedAvatar = e;
                                 });

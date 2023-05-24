@@ -1,19 +1,23 @@
+import 'package:finlytics/app/transactions/transaction_details.page.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionListComponent extends StatelessWidget {
   const TransactionListComponent(
-      {super.key, required this.transactions, this.showGroupDivider = true});
+      {super.key,
+      required this.transactions,
+      this.showGroupDivider = true,
+      required this.prevPage});
 
   final List<MoneyTransaction> transactions;
 
   final bool showGroupDivider;
+
+  final Widget prevPage;
 
   Widget dateSeparator(DateTime date) {
     return Padding(
@@ -78,23 +82,30 @@ class TransactionListComponent extends StatelessWidget {
                 );
               },
             ),
-            leading: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                  color: transaction.isIncomeOrExpense
-                      ? ColorHex.get(transaction.category!.color)
-                          .withOpacity(0.2)
-                      : Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(6)),
-              child: transaction.isIncomeOrExpense
-                  ? SupportedIconService.instance
-                      .getIconByID(transaction.category!.iconId)
-                      .display(
-                          color: ColorHex.get(transaction.category!.color!),
-                          size: 28)
-                  : const Icon(Icons.swap_vert, size: 28),
+            leading: Hero(
+              tag: 'transaction-icon-${transaction.id}',
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                    color: transaction.color(context).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6)),
+                child: transaction.isIncomeOrExpense
+                    ? transaction.category!.icon.display(
+                        color: transaction.color(context),
+                        size: 28,
+                      )
+                    : const Icon(Icons.swap_vert, size: 28),
+              ),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TransactionDetailsPage(
+                            transaction: transaction,
+                            prevPage: prevPage,
+                          )));
+            },
             onLongPress: () {},
           );
         },

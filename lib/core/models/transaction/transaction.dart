@@ -1,9 +1,34 @@
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/models/category/category.dart';
+import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:flutter/material.dart';
 
 enum TransactionType { income, expense, transfer }
 
-enum TransactionStatus { voided, pending, reconcilied, unreconcilied }
+enum TransactionStatus {
+  voided,
+  pending,
+  reconcilied,
+  unreconcilied;
+
+  IconData get icon {
+    if (this == voided) return Icons.block_rounded;
+    if (this == pending) return Icons.hourglass_full_rounded;
+    if (this == unreconcilied) return Icons.warning_rounded;
+    if (this == reconcilied) return Icons.check_circle_rounded;
+
+    return Icons.question_mark;
+  }
+
+  Color get color {
+    if (this == voided) return Colors.red;
+    if (this == pending) return Colors.amber;
+    if (this == unreconcilied) return Colors.amber;
+    if (this == reconcilied) return Colors.green;
+
+    return Colors.grey;
+  }
+}
 
 class MoneyTransaction extends TransactionInDB {
   Category? category;
@@ -54,6 +79,11 @@ class MoneyTransaction extends TransactionInDB {
 
   bool get isTransfer => receivingAccountID != null;
   bool get isIncomeOrExpense => categoryID != null;
+
+  /// Get the color that represent this category. Will be the category color when the transaction is an income or an expense, and the primary color of the app otherwise
+  Color color(context) => isIncomeOrExpense
+      ? ColorHex.get(category!.color)
+      : Theme.of(context).colorScheme.primary;
 
   TransactionType get type => isTransfer
       ? TransactionType.transfer

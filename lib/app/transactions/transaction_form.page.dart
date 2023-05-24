@@ -16,9 +16,10 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class TransactionFormPage extends StatefulWidget {
-  const TransactionFormPage({super.key, this.prevPage});
+  const TransactionFormPage({super.key, this.prevPage, this.transactionToEdit});
 
   final Widget? prevPage;
+  final MoneyTransaction? transactionToEdit;
 
   @override
   State<TransactionFormPage> createState() => _TransactionFormPageState();
@@ -40,6 +41,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   bool isHidden = false;
 
   TextEditingController noteController = TextEditingController();
+
+  bool get isEditMode => widget.transactionToEdit != null;
 
   Widget selector({
     required String title,
@@ -86,22 +89,28 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
     }
 
     final toPush = MoneyTransaction.incomeOrExpense(
-      id: const Uuid().v4(),
+      id: widget.transactionToEdit?.id ?? const Uuid().v4(),
       account: fromAccount!,
       date: date,
-      value:
-          selectedCategory!.type == 'E' ? valueToNumber! * -1 : valueToNumber!,
+      value: selectedCategory!.type.isExpense
+          ? valueToNumber! * -1
+          : valueToNumber!,
       category: selectedCategory!,
       status: status,
       isHidden: isHidden,
       note: noteController.text.isEmpty ? null : noteController.text,
     );
 
-    TransactionService.instance.insertTransaction(toPush).then((value) {
-      Navigator.push(
+    TransactionService.instance.insertOrUpdateTransaction(toPush).then((value) {
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => widget.prevPage ?? const Tab2Page()));
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(isEditMode
+              ? 'Transacción editada correctamente'
+              : 'Transacción creada correctamente')));
     }).catchError((error) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(error)));
@@ -112,18 +121,36 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   void initState() {
     super.initState();
 
-    AccountService.instance.getAccounts(limit: 1).first.then((acc) {
-      setState(() {
-        fromAccount = acc[0];
+    if (widget.transactionToEdit != null) {
+      fillForm(widget.transactionToEdit!);
+    } else {
+      AccountService.instance.getAccounts(limit: 1).first.then((acc) {
+        setState(() {
+          fromAccount = acc[0];
+        });
       });
+    }
+  }
+
+  fillForm(MoneyTransaction transaction) async {
+    fromAccount = await AccountService.instance
+        .getAccountById(transaction.accountID)
+        .first;
+
+    setState(() {
+      isHidden = transaction.isHidden;
+      date = transaction.date;
+      status = transaction.status;
+      selectedCategory = transaction.category;
     });
+    valueController.text = transaction.value.abs().toString();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add transaction'),
+        title: Text(isEditMode ? 'Edit transaction' : 'Add transaction'),
       ),
       persistentFooterButtons: [
         Container(

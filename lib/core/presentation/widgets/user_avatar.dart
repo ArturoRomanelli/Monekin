@@ -30,7 +30,7 @@ class UserAvatar extends StatelessWidget {
             color: colors.primaryContainer),
         child: Builder(builder: (context) {
           if (avatar == null) {
-            return const Skeleton(width: 36, height: 36);
+            return const Skeleton(width: 36, height: 36, applyMarging: false);
           }
 
           return SvgPicture.asset(

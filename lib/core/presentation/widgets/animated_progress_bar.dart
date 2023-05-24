@@ -21,44 +21,14 @@ class AnimatedProgressBar extends StatefulWidget {
   /// Color of the progress bar. Will be the primary color of the app if null
   final Color? color;
 
+  /// Animation duration in milliseconds
   final int animationDuration;
 
   @override
   State<AnimatedProgressBar> createState() => _AnimatedProgressBarState();
 }
 
-class _AnimatedProgressBarState extends State<AnimatedProgressBar>
-    with SingleTickerProviderStateMixin {
-  late Animation<double> animation;
-  late AnimationController animationController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    animationController = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: widget.animationDuration));
-
-    final curvedAnimation =
-        CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
-
-    animation =
-        Tween<double>(begin: 0, end: widget.value).animate(curvedAnimation)
-          ..addListener(() {
-            setState(() {});
-          });
-
-    animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-
-    super.dispose();
-  }
-
+class _AnimatedProgressBarState extends State<AnimatedProgressBar> {
   @override
   Widget build(BuildContext context) {
     var barRadius = BorderRadius.only(
@@ -68,22 +38,32 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
 
     final barColor = widget.color ?? Theme.of(context).primaryColor;
 
-    return Container(
-        height: widget.width,
-        width: double.infinity,
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-            borderRadius: barRadius, color: barColor.withOpacity(0.12)),
-        child: FractionallySizedBox(
-          widthFactor: animation.value,
-          heightFactor: 1,
-          alignment: FractionalOffset.centerLeft,
-          child: DecoratedBox(
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: widget.animationDuration),
+      curve: Curves.easeInOut,
+      tween: Tween<double>(
+        begin: 0,
+        end: widget.value,
+      ),
+      builder: (context, value, child) {
+        return Container(
+            height: widget.width,
+            width: double.infinity,
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              borderRadius: barRadius,
-              color: barColor,
-            ),
-          ),
-        ));
+                borderRadius: barRadius, color: barColor.withOpacity(0.12)),
+            child: FractionallySizedBox(
+              widthFactor: value,
+              heightFactor: 1,
+              alignment: FractionalOffset.centerLeft,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: barRadius,
+                  color: barColor,
+                ),
+              ),
+            ));
+      },
+    );
   }
 }

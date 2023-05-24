@@ -1,18 +1,27 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/accountForm.dart';
 import 'package:finlytics/app/accounts/all_accounts_balance.dart';
+import 'package:finlytics/app/categories/categories_list.dart';
+import 'package:finlytics/app/currencies/currency_manager.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
+import 'package:finlytics/app/stats/cash_flow.dart';
 import 'package:finlytics/app/stats/fund_evolution.dart';
+import 'package:finlytics/app/stats/movements_by_categories.dart';
 import 'package:finlytics/app/tabs/card_with_header.dart';
 import 'package:finlytics/app/tabs/circular_arc.dart';
+import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/tabs/widgets/balance_bar_chart_small.dart';
+import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/app/tabs/widgets/incomeOrExpenseCard.dart';
+import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/core/presentation/widgets/transaction_list.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/services/finance_health_service.dart';
@@ -31,16 +40,19 @@ class Tab1Page extends StatefulWidget {
 class _Tab1PageState extends State<Tab1Page> {
   final List<Map<String, dynamic>> _tools = [
     {
-      'icon': Icons.home,
-      'label': 'Home',
+      'icon': Icons.add_card,
+      'label': 'Add acc.',
+      'route': const AccountFormPage()
     },
     {
-      'icon': Icons.business,
-      'label': 'Business',
+      'icon': Icons.sell_outlined,
+      'label': 'Categories',
+      'route': const CategoriesList(mode: CategoriesListMode.page)
     },
     {
-      'icon': Icons.school,
-      'label': 'School',
+      'icon': Icons.currency_exchange,
+      'label': 'Currencies',
+      'route': const CurrencyManagerPage()
     },
     {
       'icon': Icons.settings_outlined,
@@ -51,9 +63,22 @@ class _Tab1PageState extends State<Tab1Page> {
 
   final dateRangeService = DateRangeService();
 
+  late Stream<List<MoneyTransaction>> _biggerExpensesStream;
+  late Stream<List<Account>> _accountsStream;
+
   @override
   void initState() {
     super.initState();
+
+    _biggerExpensesStream = TransactionService.instance.getTransactions(
+      predicate: (p0, p1, p2, p3, p4) => p0.value.isSmallerThanValue(0),
+      limit: 3,
+      orderBy: (p0, p1, p2, p3, p4) => drift.OrderBy([
+        drift.OrderingTerm(expression: p0.value, mode: drift.OrderingMode.asc)
+      ]),
+    );
+
+    _accountsStream = AccountService.instance.getAccounts();
 
     dateRangeService.resetDateRanges();
   }
@@ -155,69 +180,6 @@ class _Tab1PageState extends State<Tab1Page> {
           ),
         );
       },
-    );
-  }
-
-  Widget incomeOrExpenseIndicator(AccountDataFilter type) {
-    final Color color =
-        type == AccountDataFilter.income ? Colors.green : Colors.red;
-    final String text = type == AccountDataFilter.income ? 'Income' : 'Expense';
-
-    return Flexible(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.arrow_upward,
-                  color: color,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(text),
-                  StreamBuilder(
-                      stream: AccountService.instance.getAccounts(),
-                      builder: (context, accounts) {
-                        if (!accounts.hasData) {
-                          return const Skeleton(width: 26, height: 18);
-                        }
-
-                        return StreamBuilder(
-                            stream: AccountService.instance.getAccountsData(
-                              accountIds: accounts.data!.map((e) => e.id),
-                              startDate: dateRangeService.startDate,
-                              endDate: dateRangeService.endDate,
-                              accountDataFilter: type,
-                              convertToPreferredCurrency: true,
-                            ),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const Skeleton(width: 20, height: 12);
-                              }
-
-                              return CurrencyDisplayer(
-                                amountToConvert: snapshot.data!,
-                                textStyle: const TextStyle(fontSize: 18),
-                              );
-                            });
-                      })
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -346,55 +308,32 @@ class _Tab1PageState extends State<Tab1Page> {
                                               fontWeight: FontWeight.w600));
                                     } else {
                                       return const Skeleton(
-                                          width: 70, height: 40);
+                                          width: 90, height: 40);
                                     }
                                   }),
-                              StreamBuilder(
-                                  stream:
-                                      accountService.getAccountsMoneyVariation(
-                                          accounts: accounts.data!,
-                                          startDate: dateRangeService.startDate,
-                                          endDate: dateRangeService.endDate,
-                                          convertToPreferredCurrency: true),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData ||
-                                        dateRangeService.startDate == null ||
-                                        dateRangeService.endDate == null) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 6, vertical: 2),
-                                        decoration: BoxDecoration(
-                                            color: snapshot.data != null
-                                                ? snapshot.data! >= 0
-                                                    ? const Color.fromARGB(
-                                                        255, 230, 255, 230)
-                                                    : const Color.fromARGB(
-                                                        255, 255, 230, 230)
-                                                : null,
-                                            borderRadius:
-                                                BorderRadius.circular(4)),
-                                        child: const Skeleton(
-                                            height: 8, width: 70),
-                                      );
-                                    }
+                              if (dateRangeService.startDate != null &&
+                                  dateRangeService.endDate != null)
+                                StreamBuilder(
+                                    stream: accountService
+                                        .getAccountsMoneyVariation(
+                                            accounts: accounts.data!,
+                                            startDate:
+                                                dateRangeService.startDate,
+                                            endDate: dateRangeService.endDate,
+                                            convertToPreferredCurrency: true),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const Skeleton(
+                                            width: 52, height: 22);
+                                      }
 
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                          color: snapshot.data != null
-                                              ? snapshot.data! >= 0
-                                                  ? const Color.fromARGB(
-                                                      255, 230, 255, 230)
-                                                  : const Color.fromARGB(
-                                                      255, 255, 230, 230)
-                                              : null,
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      child: TrendingValue(
-                                          percentage: snapshot.data!),
-                                    );
-                                  }),
+                                      return TrendingValue(
+                                        percentage: snapshot.data!,
+                                        filled: true,
+                                        fontWeight: FontWeight.bold,
+                                        outlined: true,
+                                      );
+                                    }),
                             ],
                           );
                         }
@@ -411,8 +350,16 @@ class _Tab1PageState extends State<Tab1Page> {
                   children: [
                     Row(
                       children: [
-                        incomeOrExpenseIndicator(AccountDataFilter.income),
-                        incomeOrExpenseIndicator(AccountDataFilter.expense)
+                        IncomeOrExpenseCard(
+                          type: AccountDataFilter.income,
+                          startDate: dateRangeService.startDate,
+                          endDate: dateRangeService.endDate,
+                        ),
+                        IncomeOrExpenseCard(
+                          type: AccountDataFilter.expense,
+                          startDate: dateRangeService.startDate,
+                          endDate: dateRangeService.endDate,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -426,7 +373,7 @@ class _Tab1PageState extends State<Tab1Page> {
                                     const AllAccountBalancePage()));
                       },
                       body: StreamBuilder(
-                          stream: accountService.getAccounts(),
+                          stream: _accountsStream,
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const LinearProgressIndicator();
@@ -565,16 +512,7 @@ class _Tab1PageState extends State<Tab1Page> {
                     CardWithHeader(
                         title: 'Gastos mas grandes',
                         body: StreamBuilder(
-                          stream: TransactionService.instance.getTransactions(
-                            predicate: (p0, p1, p2, p3, p4) =>
-                                p0.value.isSmallerThanValue(0),
-                            limit: 5,
-                            orderBy: (p0, p1, p2, p3, p4) => drift.OrderBy([
-                              drift.OrderingTerm(
-                                  expression: p0.value,
-                                  mode: drift.OrderingMode.asc)
-                            ]),
-                          ),
+                          stream: _biggerExpensesStream,
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const LinearProgressIndicator();
@@ -582,6 +520,7 @@ class _Tab1PageState extends State<Tab1Page> {
 
                             return TransactionListComponent(
                               transactions: snapshot.data!,
+                              prevPage: const TabsPage(currentPageIndex: 0),
                               showGroupDivider: false,
                             );
                           },
@@ -600,43 +539,71 @@ class _Tab1PageState extends State<Tab1Page> {
                                   builder: (context) =>
                                       const FundEvolutionPage()));
                         }),
-                    Card(
-                      elevation: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              padding: const EdgeInsets.all(16),
-                              child: const Text('Tools',
-                                  style: TextStyle(fontSize: 18))),
-                          ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: _tools.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final item = _tools[index];
-
-                              return ListTile(
-                                title: Text(item['label']),
-                                leading: Icon(
-                                  item['icon'],
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                trailing: const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 14,
-                                ),
-                                onTap: () => {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => item['route']))
-                                },
-                              );
-                            },
-                          )
-                        ],
+                    const SizedBox(height: 16),
+                    CardWithHeader(
+                        title: 'Por categorías',
+                        body: ChartByCategories(
+                          startDate: dateRangeService.startDate,
+                          endDate: dateRangeService.endDate,
+                        ),
+                        onDetailsClick: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MovementsByCategoryPage()));
+                        }),
+                    const SizedBox(height: 16),
+                    CardWithHeader(
+                        title: 'Flujo de fondos',
+                        body: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, left: 16, right: 16),
+                          child: BalanceChartSmall(
+                              dateRangeService: dateRangeService),
+                        ),
+                        onDetailsClick: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CashFlowPage()));
+                        }),
+                    const SizedBox(height: 16),
+                    CardWithHeader(
+                      title: 'Enlaces rápidos',
+                      body: GridView.count(
+                        primary: false,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(16),
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 8,
+                        crossAxisCount: 4,
+                        children: _tools
+                            .map((item) => Column(
+                                  children: [
+                                    IconButton.filledTonal(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      item['route']));
+                                        },
+                                        icon: Icon(
+                                          item['icon'],
+                                          size: 32,
+                                          color: Theme.of(context).primaryColor,
+                                        )),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item['label'],
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300),
+                                    )
+                                  ],
+                                ))
+                            .toList(),
                       ),
                     ),
                     const SizedBox(height: 85)

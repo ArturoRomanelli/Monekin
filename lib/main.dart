@@ -19,6 +19,10 @@ class MyApp extends ConsumerWidget {
             colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),
             listTileTheme: Theme.of(context).listTileTheme.copyWith(
                   minVerticalPadding: 8,
+                  subtitleTextStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      fontFamily: 'Nunito'),
                   leadingAndTrailingTextStyle: Theme.of(context)
                           .listTileTheme
                           .leadingAndTrailingTextStyle

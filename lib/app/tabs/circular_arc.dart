@@ -23,64 +23,45 @@ class CircularArc extends StatefulWidget {
   State<CircularArc> createState() => _CircularArcState();
 }
 
-class _CircularArcState extends State<CircularArc>
-    with SingleTickerProviderStateMixin {
-  late Animation<double> animation;
-  late AnimationController animationController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-
-    super.dispose();
-  }
-
+class _CircularArcState extends State<CircularArc> {
   @override
   Widget build(BuildContext context) {
-    final curvedAnimation =
-        CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
-
-    animation =
-        Tween<double>(begin: 0, end: pi * widget.value).animate(curvedAnimation)
-          ..addListener(() {
-            setState(() {});
-          });
-
-    animationController.forward();
-    return Stack(
-      children: [
-        CustomPaint(
-          size: Size(widget.width, widget.width * 0.4),
-          painter: _CircularArcPainter(
-              null, true, widget.width * 0.45, widget.color),
-        ),
-        CustomPaint(
-          size: Size(widget.width, widget.width * 0.4),
-          painter: _CircularArcPainter(
-              animation.value, false, widget.width * 0.45, widget.color),
-        ),
-        Positioned.fill(
-          top: widget.width * 0.1,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Text(
-                NumberFormat.decimalPattern()
-                    .format((widget.value * 100).floor()),
-                style: TextStyle(
-                    fontSize: 32,
-                    color: widget.color.darken(),
-                    fontWeight: FontWeight.w800)),
-          ),
-        ),
-      ],
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 2000),
+      curve: Curves.easeInOut,
+      tween: Tween<double>(
+        begin: 0,
+        end: pi * widget.value,
+      ),
+      builder: (context, value, child) {
+        return Stack(
+          children: [
+            CustomPaint(
+              size: Size(widget.width, widget.width * 0.4),
+              painter: _CircularArcPainter(
+                  null, true, widget.width * 0.45, widget.color),
+            ),
+            CustomPaint(
+              size: Size(widget.width, widget.width * 0.4),
+              painter: _CircularArcPainter(
+                  value, false, widget.width * 0.45, widget.color),
+            ),
+            Positioned.fill(
+              top: widget.width * 0.1,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                    NumberFormat.decimalPattern()
+                        .format((widget.value * 100).floor()),
+                    style: TextStyle(
+                        fontSize: 32,
+                        color: widget.color.darken(),
+                        fontWeight: FontWeight.w800)),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

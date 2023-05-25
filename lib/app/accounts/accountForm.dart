@@ -8,6 +8,7 @@ import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
 import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
+import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
@@ -163,9 +164,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       persistentFooterButtons: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          width: double.infinity,
+        PersistentFooterButton(
           child: FilledButton.icon(
             onPressed: () {
               if (_formKey.currentState!.validate()) {

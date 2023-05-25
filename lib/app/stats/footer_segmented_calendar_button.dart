@@ -1,3 +1,4 @@
+import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,9 +52,7 @@ class _FooterSegmentedCalendarButtonState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      width: double.infinity,
+    return PersistentFooterButton(
       child: Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,

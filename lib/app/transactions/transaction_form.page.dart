@@ -9,6 +9,7 @@ import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
+import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
@@ -153,11 +154,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
         title: Text(isEditMode ? 'Edit transaction' : 'Add transaction'),
       ),
       persistentFooterButtons: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          width: double.infinity,
-          margin:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        PersistentFooterButton(
           child: FilledButton.icon(
             onPressed: () {
               if (_formKey.currentState!.validate()) {

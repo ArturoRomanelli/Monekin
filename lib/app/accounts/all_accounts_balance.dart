@@ -6,6 +6,7 @@ import 'package:finlytics/core/database/services/currency/currency_service.dart'
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -76,9 +77,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
     return Scaffold(
       appBar: AppBar(title: Text('Mis cuentas')),
       persistentFooterButtons: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          width: double.infinity,
+        PersistentFooterButton(
           child: FilledButton.icon(
             onPressed: () {
               Navigator.push(

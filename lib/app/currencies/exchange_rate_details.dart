@@ -2,6 +2,7 @@ import 'package:finlytics/app/currencies/exchange_rate_form.dart';
 import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
+import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -146,9 +147,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
           ))
       ]),
       persistentFooterButtons: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          width: double.infinity,
+        PersistentFooterButton(
           child: FilledButton.icon(
             onPressed: () async {
               await showModalBottomSheet(

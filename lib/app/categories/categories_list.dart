@@ -2,6 +2,7 @@ import 'package:finlytics/app/categories/category_form.dart';
 import 'package:finlytics/app/categories/subcategory_selector.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
+import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:flutter/material.dart';
 
 enum CategoriesListMode {
@@ -104,9 +105,7 @@ class _CategoriesListState extends State<CategoriesList> {
         ),
         persistentFooterButtons: widget.mode == CategoriesListMode.page
             ? [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  width: double.infinity,
+                PersistentFooterButton(
                   child: FilledButton.icon(
                     onPressed: () {
                       Navigator.push(

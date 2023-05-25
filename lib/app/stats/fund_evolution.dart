@@ -1,7 +1,9 @@
 import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
 import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
@@ -21,6 +23,9 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
   late DateTime? currentEndDate;
   late DateRange? currentDateRange;
 
+  /// If null, will get the stats for all the accounts of the user
+  List<Account>? accountsToFilter;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +42,27 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
     final accountService = AccountService.instance;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Evolución del saldo")),
+      appBar: AppBar(
+        title: const Text("Evolución del saldo"),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                final modalRes = await showModalBottomSheet<TransactionFilters>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => FilterSheetModal(
+                        preselectedFilter:
+                            TransactionFilters(accounts: accountsToFilter)));
+
+                if (modalRes != null) {
+                  setState(() {
+                    accountsToFilter = modalRes.accounts;
+                  });
+                }
+              },
+              icon: const Icon(Icons.filter_alt_outlined))
+        ],
+      ),
       persistentFooterButtons: [
         FooterSegmentedCalendarButton(
           onDateRangeChanged: (newStartDate, newEndDate, newDateRange) {
@@ -57,8 +82,8 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
             children: [
               StreamBuilder(
                   stream: accountService.getAccounts(),
-                  builder: (context, accounts) {
-                    if (!accounts.hasData) {
+                  builder: (context, accountsSnapshot) {
+                    if (!accountsSnapshot.hasData) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +96,9 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
                         ],
                       );
                     } else {
+                      final accounts =
+                          accountsToFilter ?? accountsSnapshot.data!;
+
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +108,7 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
                               style: const TextStyle(fontSize: 12)),
                           StreamBuilder(
                               stream: accountService.getAccountsMoney(
-                                  accountIds: accounts.data!.map((e) => e.id),
+                                  accountIds: accounts.map((e) => e.id),
                                   date: currentEndDate),
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
@@ -98,7 +126,7 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
                             StreamBuilder(
                                 stream:
                                     accountService.getAccountsMoneyVariation(
-                                        accounts: accounts.data!,
+                                        accounts: accounts,
                                         startDate: currentStartDate,
                                         endDate: currentEndDate,
                                         convertToPreferredCurrency: true),
@@ -122,7 +150,10 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
               const SizedBox(height: 16),
               Builder(builder: (context) {
                 return FundEvolutionLineChart(
-                    startDate: currentStartDate, endDate: currentEndDate);
+                  startDate: currentStartDate,
+                  endDate: currentEndDate,
+                  accountsFilter: accountsToFilter,
+                );
               }),
             ],
           ),

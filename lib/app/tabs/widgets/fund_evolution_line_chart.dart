@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,15 @@ class FundEvolutionChartDataItem {
 
 class FundEvolutionLineChart extends StatefulWidget {
   const FundEvolutionLineChart(
-      {super.key, required this.startDate, required this.endDate});
+      {super.key,
+      required this.startDate,
+      required this.endDate,
+      this.accountsFilter});
 
   final DateTime? startDate;
   final DateTime? endDate;
+
+  final List<Account>? accountsFilter;
 
   @override
   State<FundEvolutionLineChart> createState() => _FundEvolutionLineChartState();
@@ -34,7 +40,8 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
 
     final accountService = AccountService.instance;
 
-    final accounts = await accountService.getAccounts().first;
+    final accounts =
+        widget.accountsFilter ?? await accountService.getAccounts().first;
 
     DateTime currentDay = DateTime(
         widget.startDate!.year, widget.startDate!.month, widget.startDate!.day);

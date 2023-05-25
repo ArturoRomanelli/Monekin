@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
@@ -28,7 +29,8 @@ class ChartByCategories extends StatefulWidget {
       required this.startDate,
       required this.endDate,
       this.showList = false,
-      this.transactionsType = TransactionType.expense});
+      this.transactionsType = TransactionType.expense,
+      this.accountsToFilter});
 
   final DateTime? startDate;
   final DateTime? endDate;
@@ -36,6 +38,9 @@ class ChartByCategories extends StatefulWidget {
   final bool showList;
 
   final TransactionType transactionsType;
+
+  /// If null, will get the stats for all the accounts of the user
+  final List<Account>? accountsToFilter;
 
   @override
   State<ChartByCategories> createState() => _ChartByCategoriesState();
@@ -55,12 +60,15 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     final transactions = await transactionService
         .getTransactions(
-          predicate: (t, p1, p2, p3, p4, p5, p6) =>
+          predicate: (t, acc, p2, p3, p4, p5, p6) =>
               (widget.startDate != null
                   ? t.date.isBiggerThanValue(widget.startDate!)
                   : t.id.isNotNull()) &
               (widget.endDate != null
                   ? t.date.isSmallerThanValue(widget.endDate!)
+                  : t.id.isNotNull()) &
+              (widget.accountsToFilter != null
+                  ? t.accountID.isIn(widget.accountsToFilter!.map((e) => e.id))
                   : t.id.isNotNull()) &
               (widget.transactionsType == TransactionType.income
                   ? t.value.isBiggerOrEqualValue(0)
@@ -252,11 +260,6 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final dataCategory = snapshot.data![index];
-
-                  const barRadius = BorderRadius.only(
-                    topRight: Radius.circular(2),
-                    bottomRight: Radius.circular(2),
-                  );
 
                   return ListTile(
                     title: Row(

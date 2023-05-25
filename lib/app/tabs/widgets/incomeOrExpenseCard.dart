@@ -1,4 +1,5 @@
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,15 @@ class IncomeOrExpenseCard extends StatelessWidget {
       {super.key,
       required this.type,
       required this.startDate,
-      required this.endDate});
+      required this.endDate,
+      this.accountsToFilter});
 
   final AccountDataFilter type;
   final DateTime? startDate;
   final DateTime? endDate;
+
+  /// If null, will get the stats for all the accounts of the user
+  final List<Account>? accountsToFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +50,9 @@ class IncomeOrExpenseCard extends StatelessWidget {
                 children: [
                   Text(text),
                   StreamBuilder(
-                      stream: AccountService.instance.getAccounts(),
+                      stream: accountsToFilter != null
+                          ? Stream.value(accountsToFilter)
+                          : AccountService.instance.getAccounts(),
                       builder: (context, accounts) {
                         if (!accounts.hasData) {
                           return const Skeleton(width: 26, height: 18);

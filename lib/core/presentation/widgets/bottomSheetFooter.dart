@@ -9,6 +9,8 @@ class BottomSheetFooter extends StatefulWidget {
 
   final String submitText;
   final IconData submitIcon;
+
+  /// Function to trigger when the main button is pressed. The main button will be disabled if this function is null
   final void Function()? onSaved;
 
   @override

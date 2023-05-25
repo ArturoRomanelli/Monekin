@@ -1,6 +1,8 @@
 import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
 import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,9 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
   late DateTime? currentEndDate;
   late DateRange? currentDateRange;
 
+  /// If null, will get the stats for all the accounts of the user
+  List<Account>? accountsToFilter;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +40,27 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Movimientos por categoría")),
+      appBar: AppBar(
+        title: const Text("Movimientos por categoría"),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                final modalRes = await showModalBottomSheet<TransactionFilters>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => FilterSheetModal(
+                        preselectedFilter:
+                            TransactionFilters(accounts: accountsToFilter)));
+
+                if (modalRes != null) {
+                  setState(() {
+                    accountsToFilter = modalRes.accounts;
+                  });
+                }
+              },
+              icon: const Icon(Icons.filter_alt_outlined))
+        ],
+      ),
       persistentFooterButtons: [
         FooterSegmentedCalendarButton(
           onDateRangeChanged: (newStartDate, newEndDate, newDateRange) {
@@ -76,7 +101,8 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
                 startDate: currentStartDate,
                 endDate: currentEndDate,
                 showList: true,
-                transactionsType: transactionsType),
+                transactionsType: transactionsType,
+                accountsToFilter: accountsToFilter),
           ],
         ),
       ),

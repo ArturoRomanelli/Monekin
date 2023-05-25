@@ -107,8 +107,10 @@ class _AccountSelectorState extends State<AccountSelector> {
                         ListView(shrinkWrap: true, children: [
                           const SizedBox(height: 14),
                           BottomSheetFooter(
-                              onSaved: () =>
-                                  Navigator.of(context).pop(selectedAccounts))
+                              onSaved: selectedAccounts.isNotEmpty
+                                  ? () => Navigator.of(context)
+                                      .pop(selectedAccounts)
+                                  : null)
                         ])
                     ],
                   );

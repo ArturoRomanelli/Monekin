@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:finlytics/core/utils/date_getter.dart';
@@ -27,10 +28,16 @@ class IncomeExpenseChartDataItem {
 
 class BalanceBarChart extends StatefulWidget {
   const BalanceBarChart(
-      {super.key, required this.startDate, required this.dateRange});
+      {super.key,
+      required this.startDate,
+      required this.dateRange,
+      this.accountsToFilter});
 
   final DateTime? startDate;
   final DateRange dateRange;
+
+  /// If null, will get the stats for all the accounts of the user
+  final List<Account>? accountsToFilter;
 
   @override
   State<BalanceBarChart> createState() => _BalanceBarChartState();
@@ -53,7 +60,8 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
 
     final accountService = AccountService.instance;
 
-    final accounts = await accountService.getAccounts().first;
+    final accounts =
+        widget.accountsToFilter ?? await accountService.getAccounts().first;
     final accountsIds = accounts.map((event) => event.id);
 
     final selectedDateRange = widget.dateRange;

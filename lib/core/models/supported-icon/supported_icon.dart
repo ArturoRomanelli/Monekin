@@ -29,4 +29,14 @@ class SupportedIcon {
           color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
     );
   }
+
+  /// Display the icon surrounded by a filled container in any widget
+  Widget displayFilled({required Color color, double size = 22}) {
+    return Container(
+        padding: EdgeInsets.all(size / (22 / 6)),
+        decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(size / (22 / 6))),
+        child: display(size: size, color: color));
+  }
 }

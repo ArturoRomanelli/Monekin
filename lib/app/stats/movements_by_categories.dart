@@ -1,5 +1,6 @@
 import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
 import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
+import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,8 @@ class MovementsByCategoryPage extends StatefulWidget {
 
 class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
   final dateRangeService = DateRangeService();
+
+  TransactionType transactionsType = TransactionType.expense;
 
   late DateTime? currentStartDate;
   late DateTime? currentEndDate;
@@ -45,10 +48,37 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
         )
       ],
       body: SingleChildScrollView(
-        child: ChartByCategories(
-            startDate: currentStartDate,
-            endDate: currentEndDate,
-            showList: true),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: SegmentedButton(
+                segments: const <ButtonSegment>[
+                  ButtonSegment(
+                    value: TransactionType.expense,
+                    label: Text('Gastos'),
+                  ),
+                  ButtonSegment(
+                    value: TransactionType.income,
+                    label: Text('Ingresos'),
+                  ),
+                ],
+                showSelectedIcon: false,
+                selected: {transactionsType},
+                onSelectionChanged: (newSelection) {
+                  setState(() {
+                    transactionsType = newSelection.first;
+                  });
+                },
+              ),
+            ),
+            ChartByCategories(
+                startDate: currentStartDate,
+                endDate: currentEndDate,
+                showList: true,
+                transactionsType: transactionsType),
+          ],
+        ),
       ),
     );
   }

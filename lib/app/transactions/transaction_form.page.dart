@@ -65,17 +65,10 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: title,
-          icon: const Icon(Icons.category),
           suffixIcon: const Icon(Icons.arrow_drop_down),
           prefixIcon: Container(
-            margin: const EdgeInsets.only(left: 6),
-            child: Container(
-                padding: const EdgeInsets.all(6),
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: iconColor.withOpacity(0.2)),
-                child: icon.display(color: iconColor)),
+            margin: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+            child: icon.displayFilled(color: iconColor),
           ),
         ));
   }

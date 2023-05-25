@@ -1,8 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class AccountSelector extends StatefulWidget {
@@ -64,21 +64,15 @@ class _AccountSelectorState extends State<AccountSelector> {
                 if (allAccounts != null) {
                   return Column(
                     children: [
-                      if (!widget.allowMultiSelection)
-                        ...List.generate(allAccounts!.length, (index) {
-                          final account = allAccounts![index];
+                      ...List.generate(allAccounts!.length, (index) {
+                        final account = allAccounts![index];
 
+                        if (!widget.allowMultiSelection) {
                           return RadioListTile(
                             value: account.id,
                             title: Text(account.name),
-                            secondary: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  color: colors.primary.withOpacity(0.2)),
-                              child:
-                                  account.icon.display(color: colors.primary),
-                            ),
+                            secondary: account.icon
+                                .displayFilled(color: colors.primary),
                             groupValue: selectedAccounts.firstOrNull?.id,
                             onChanged: (value) {
                               setState(() {
@@ -88,7 +82,34 @@ class _AccountSelectorState extends State<AccountSelector> {
                               });
                             },
                           );
-                        })
+                        } else {
+                          return CheckboxListTile(
+                            value: selectedAccounts
+                                .map((e) => e.id)
+                                .contains(account.id),
+                            title: Text(account.name),
+                            secondary: account.icon
+                                .displayFilled(color: colors.primary),
+                            onChanged: (value) {
+                              if (value == true) {
+                                selectedAccounts.add(account);
+                              } else {
+                                selectedAccounts.removeWhere(
+                                    (element) => element.id == account.id);
+                              }
+
+                              setState(() {});
+                            },
+                          );
+                        }
+                      }),
+                      if (widget.allowMultiSelection)
+                        ListView(shrinkWrap: true, children: [
+                          const SizedBox(height: 14),
+                          BottomSheetFooter(
+                              onSaved: () =>
+                                  Navigator.of(context).pop(selectedAccounts))
+                        ])
                     ],
                   );
                 } else {
@@ -98,7 +119,6 @@ class _AccountSelectorState extends State<AccountSelector> {
               const SizedBox(height: 22),
             ],
           ),
-          if (widget.allowMultiSelection) BottomSheetFooter(onSaved: () {})
         ]),
       ),
     );

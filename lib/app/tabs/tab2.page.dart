@@ -40,7 +40,7 @@ class _Tab2PageState extends State<Tab2Page> {
           Expanded(
             child: StreamBuilder(
               stream: TransactionService.instance.getTransactions(
-                orderBy: (p0, p1, p2, p3, p4) => OrderBy([
+                orderBy: (p0, p1, p2, p3, p4, p5, p6) => OrderBy([
                   OrderingTerm(expression: p0.date, mode: OrderingMode.desc)
                 ]),
               ),

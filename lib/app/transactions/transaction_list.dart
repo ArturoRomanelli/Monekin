@@ -1,9 +1,7 @@
 import 'package:finlytics/app/transactions/transaction_details.page.dart';
-import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_UIActions_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -83,26 +81,16 @@ class TransactionListComponent extends StatelessWidget {
               '${transaction.account.name} • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} ',
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
             ),
-            trailing: StreamBuilder(
-              stream: CurrencyService.instance
-                  .getCurrencyByCode(transaction.account.currencyId),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Skeleton(width: 40, height: 12);
-                }
-
-                return CurrencyDisplayer(
-                  amountToConvert: transaction.value,
-                  currency: snapshot.data!,
-                  textStyle: TextStyle(
-                      color: transaction.type == TransactionType.income
-                          ? Colors.green
-                          : transaction.type == TransactionType.expense
-                              ? Colors.red
-                              : null,
-                      fontWeight: FontWeight.bold),
-                );
-              },
+            trailing: CurrencyDisplayer(
+              amountToConvert: transaction.value,
+              currency: transaction.account.currency,
+              textStyle: TextStyle(
+                  color: transaction.type == TransactionType.income
+                      ? Colors.green
+                      : transaction.type == TransactionType.expense
+                          ? Colors.red
+                          : null,
+                  fontWeight: FontWeight.bold),
             ),
             leading: Hero(
               tag: 'transaction-icon-${transaction.id}',

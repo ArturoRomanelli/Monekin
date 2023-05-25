@@ -3074,7 +3074,9 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         predicate?.call(
                 alias(this.transactions, 't'),
                 alias(this.accounts, 'a'),
+                alias(this.currencies, 'accountCurrency'),
                 alias(this.accounts, 'ra'),
+                alias(this.currencies, 'receivingAccountCurrency'),
                 alias(this.categories, 'c'),
                 alias(this.categories, 'pc')) ??
             const CustomExpression('(TRUE)'),
@@ -3085,7 +3087,9 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         orderBy?.call(
                 alias(this.transactions, 't'),
                 alias(this.accounts, 'a'),
+                alias(this.currencies, 'accountCurrency'),
                 alias(this.accounts, 'ra'),
+                alias(this.currencies, 'receivingAccountCurrency'),
                 alias(this.categories, 'c'),
                 alias(this.categories, 'pc')) ??
             const OrderBy.nothing(),
@@ -3096,14 +3100,16 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         limit(
             alias(this.transactions, 't'),
             alias(this.accounts, 'a'),
+            alias(this.currencies, 'accountCurrency'),
             alias(this.accounts, 'ra'),
+            alias(this.currencies, 'receivingAccountCurrency'),
             alias(this.categories, 'c'),
             alias(this.categories, 'pc')),
         hasMultipleTables: true,
         startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedlimit.amountOfVariables;
     return customSelect(
-        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","ra"."id" AS "nested_1.id", "ra"."name" AS "nested_1.name", "ra"."iniValue" AS "nested_1.iniValue", "ra"."date" AS "nested_1.date", "ra"."description" AS "nested_1.description", "ra"."type" AS "nested_1.type", "ra"."iconId" AS "nested_1.iconId", "ra"."currencyId" AS "nested_1.currencyId", "ra"."iban" AS "nested_1.iban", "ra"."swift" AS "nested_1.swift","c"."id" AS "nested_2.id", "c"."name" AS "nested_2.name", "c"."iconId" AS "nested_2.iconId", "c"."color" AS "nested_2.color", "c"."type" AS "nested_2.type", "c"."parentCategoryID" AS "nested_2.parentCategoryID","pc"."id" AS "nested_3.id", "pc"."name" AS "nested_3.name", "pc"."iconId" AS "nested_3.iconId", "pc"."color" AS "nested_3.color", "pc"."type" AS "nested_3.type", "pc"."parentCategoryID" AS "nested_3.parentCategoryID" FROM transactions AS t INNER JOIN accounts AS a ON t.accountID = a.id LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
+        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","accountCurrency"."code" AS "nested_1.code", "accountCurrency"."symbol" AS "nested_1.symbol","receivingAccountCurrency"."code" AS "nested_2.code", "receivingAccountCurrency"."symbol" AS "nested_2.symbol","ra"."id" AS "nested_3.id", "ra"."name" AS "nested_3.name", "ra"."iniValue" AS "nested_3.iniValue", "ra"."date" AS "nested_3.date", "ra"."description" AS "nested_3.description", "ra"."type" AS "nested_3.type", "ra"."iconId" AS "nested_3.iconId", "ra"."currencyId" AS "nested_3.currencyId", "ra"."iban" AS "nested_3.iban", "ra"."swift" AS "nested_3.swift","c"."id" AS "nested_4.id", "c"."name" AS "nested_4.name", "c"."iconId" AS "nested_4.iconId", "c"."color" AS "nested_4.color", "c"."type" AS "nested_4.type", "c"."parentCategoryID" AS "nested_4.parentCategoryID","pc"."id" AS "nested_5.id", "pc"."name" AS "nested_5.name", "pc"."iconId" AS "nested_5.iconId", "pc"."color" AS "nested_5.color", "pc"."type" AS "nested_5.type", "pc"."parentCategoryID" AS "nested_5.parentCategoryID" FROM transactions AS t INNER JOIN accounts AS a ON t.accountID = a.id INNER JOIN currencies AS accountCurrency ON a.currencyId = accountCurrency.code LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id INNER JOIN currencies AS receivingAccountCurrency ON a.currencyId = receivingAccountCurrency.code LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
         variables: [
           ...generatedpredicate.introducedVariables,
           ...generatedorderBy.introducedVariables,
@@ -3112,13 +3118,13 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         readsFrom: {
           transactions,
           accounts,
+          currencies,
           categories,
           ...generatedpredicate.watchedTables,
           ...generatedorderBy.watchedTables,
           ...generatedlimit.watchedTables,
         }).asyncMap((QueryRow row) async => MoneyTransaction(
           id: row.read<String>('id'),
-          account: await accounts.mapFromRow(row, tablePrefix: 'nested_0'),
           date: row.read<DateTime>('date'),
           value: row.read<double>('value'),
           isHidden: row.read<bool>('isHidden'),
@@ -3127,12 +3133,17 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
               Transactions.$converterstatus,
               row.readNullable<String>('status')),
           valueInDestiny: row.readNullable<double>('valueInDestiny'),
+          account: await accounts.mapFromRow(row, tablePrefix: 'nested_0'),
           receivingAccount:
-              await accounts.mapFromRowOrNull(row, tablePrefix: 'nested_1'),
+              await accounts.mapFromRowOrNull(row, tablePrefix: 'nested_3'),
+          accountCurrency:
+              await currencies.mapFromRow(row, tablePrefix: 'nested_1'),
+          receivingAccountCurrency:
+              await currencies.mapFromRow(row, tablePrefix: 'nested_2'),
           category:
-              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_2'),
+              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_4'),
           parentCategory:
-              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_3'),
+              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_5'),
         ));
   }
 
@@ -3404,11 +3415,29 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
 typedef GetAccountsWithFullData$predicate = Expression<bool> Function(
     Accounts a, Currencies currency);
 typedef GetTransactionsWithFullData$predicate = Expression<bool> Function(
-    Transactions t, Accounts a, Accounts ra, Categories c, Categories pc);
+    Transactions t,
+    Accounts a,
+    Currencies accountCurrency,
+    Accounts ra,
+    Currencies receivingAccountCurrency,
+    Categories c,
+    Categories pc);
 typedef GetTransactionsWithFullData$orderBy = OrderBy Function(
-    Transactions t, Accounts a, Accounts ra, Categories c, Categories pc);
+    Transactions t,
+    Accounts a,
+    Currencies accountCurrency,
+    Accounts ra,
+    Currencies receivingAccountCurrency,
+    Categories c,
+    Categories pc);
 typedef GetTransactionsWithFullData$limit = Limit Function(
-    Transactions t, Accounts a, Accounts ra, Categories c, Categories pc);
+    Transactions t,
+    Accounts a,
+    Currencies accountCurrency,
+    Accounts ra,
+    Currencies receivingAccountCurrency,
+    Categories c,
+    Categories pc);
 typedef GetCategoriesWithFullData$predicate = Expression<bool> Function(
     Categories a, Categories parentCategory);
 typedef GetExchangeRates$predicate = Expression<bool> Function(

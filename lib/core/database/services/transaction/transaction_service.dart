@@ -28,24 +28,42 @@ class TransactionService {
 
   Stream<List<MoneyTransaction>> getTransactions({
     Expression<bool> Function(
-            Transactions, Accounts, Accounts, Categories, Categories)?
+            Transactions transaction,
+            Accounts account,
+            Currencies accountCurrency,
+            Accounts receivingAccount,
+            Currencies receivingAccountCurrency,
+            Categories c,
+            Categories)?
         predicate,
-    OrderBy Function(Transactions, Accounts, Accounts, Categories, Categories)?
+    OrderBy Function(
+            Transactions transaction,
+            Accounts account,
+            Currencies accountCurrency,
+            Accounts receivingAccount,
+            Currencies receivingAccountCurrency,
+            Categories c,
+            Categories)?
         orderBy,
     int? limit,
     int? offset,
   }) {
     return db
         .getTransactionsWithFullData(
-            predicate: predicate,
-            orderBy: orderBy,
-            limit: (t, a, ra, c, pc) => Limit(limit ?? -1, offset))
+          predicate: predicate,
+          orderBy: orderBy,
+          limit: (t, a, accountCurrency, ra, receivingAccountCurrency, c, pc) =>
+              Limit(limit ?? -1, offset),
+        )
         .watch();
   }
 
   Stream<MoneyTransaction?> getTransactionById(String id) {
     return getTransactions(
-            predicate: (a, _, __, ___, ____) => a.id.equals(id), limit: 1)
+            predicate: (transaction, account, accountCurrency, receivingAccount,
+                    receivingAccountCurrency, c, p6) =>
+                transaction.id.equals(id),
+            limit: 1)
         .map((res) => res.firstOrNull);
   }
 }

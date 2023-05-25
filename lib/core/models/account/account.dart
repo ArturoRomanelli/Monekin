@@ -21,4 +21,16 @@ class Account extends AccountInDB {
   CurrencyInDB currency;
 
   SupportedIcon get icon => SupportedIconService.instance.getIconByID(iconId);
+
+  static Account fromDB(AccountInDB account, CurrencyInDB currency) => Account(
+      id: account.id,
+      currency: currency,
+      iniValue: account.iniValue,
+      date: account.date,
+      description: account.description,
+      iban: account.iban,
+      swift: account.swift,
+      name: account.name,
+      iconId: account.iconId,
+      type: account.type);
 }

@@ -48,6 +48,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   getCurrencyExchange(Currency currency) {
     ExchangeRateService.instance
         .getLastExchangeRateOf(currencyCode: currency.code)
+        .first
         .then((value) {
       if (value != null) {
         showCurrencyExchangesWarn = false;
@@ -142,7 +143,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
           .getCurrencyByCode(_accountToEdit!.currency.code)
           .first
           .then((value) {
-        _currency = value;
+        setState(() {
+          _currency = value;
+        });
       });
 
       setState(() {});

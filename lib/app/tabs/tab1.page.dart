@@ -71,10 +71,12 @@ class _Tab1PageState extends State<Tab1Page> {
     super.initState();
 
     _biggerExpensesStream = TransactionService.instance.getTransactions(
-      predicate: (p0, p1, p2, p3, p4) => p0.value.isSmallerThanValue(0),
+      predicate: (transaction, p1, p2, p3, p4, p5, p6) =>
+          transaction.value.isSmallerThanValue(0),
       limit: 3,
-      orderBy: (p0, p1, p2, p3, p4) => drift.OrderBy([
-        drift.OrderingTerm(expression: p0.value, mode: drift.OrderingMode.asc)
+      orderBy: (transaction, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
+        drift.OrderingTerm(
+            expression: transaction.value, mode: drift.OrderingMode.asc)
       ]),
     );
 
@@ -306,10 +308,10 @@ class _Tab1PageState extends State<Tab1Page> {
                                           textStyle: const TextStyle(
                                               fontSize: 40,
                                               fontWeight: FontWeight.w600));
-                                    } else {
-                                      return const Skeleton(
-                                          width: 90, height: 40);
                                     }
+
+                                    return const Skeleton(
+                                        width: 90, height: 40);
                                   }),
                               if (dateRangeService.startDate != null &&
                                   dateRangeService.endDate != null)
@@ -392,7 +394,13 @@ class _Tab1PageState extends State<Tab1Page> {
                                     final account = accounts[index];
 
                                     return ListTile(
-                                      onTap: () => false,
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AccountFormPage(
+                                                    accountUUID: account.id,
+                                                  ))),
                                       leading: SizedBox(
                                           height: 28,
                                           width: 28,

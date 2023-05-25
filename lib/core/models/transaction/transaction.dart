@@ -1,4 +1,5 @@
 import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
@@ -32,23 +33,30 @@ enum TransactionStatus {
 
 class MoneyTransaction extends TransactionInDB {
   Category? category;
-  AccountInDB account;
-  AccountInDB? receivingAccount;
+  Account account;
+  Account? receivingAccount;
 
   MoneyTransaction({
     required super.id,
-    required this.account,
     required super.date,
     required super.value,
     required super.isHidden,
     super.note,
     super.status,
     super.valueInDestiny,
-    this.receivingAccount,
+    required AccountInDB account,
+    AccountInDB? receivingAccount,
+    required CurrencyInDB accountCurrency,
+    CurrencyInDB? receivingAccountCurrency,
     CategoryInDB? category,
     CategoryInDB? parentCategory,
   })  : category =
             category != null ? Category.fromDB(category, parentCategory) : null,
+        account = Account.fromDB(account, accountCurrency),
+        receivingAccount =
+            receivingAccount != null && receivingAccountCurrency != null
+                ? Account.fromDB(receivingAccount, receivingAccountCurrency)
+                : null,
         super(
             accountID: account.id,
             categoryID: category?.id,

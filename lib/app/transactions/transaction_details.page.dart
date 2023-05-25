@@ -106,6 +106,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                     children: [
                       CurrencyDisplayer(
                         amountToConvert: widget.transaction.value,
+                        currency: widget.transaction.account.currency,
                         textStyle: const TextStyle(
                           fontSize: 34,
                           fontWeight: FontWeight.w600,

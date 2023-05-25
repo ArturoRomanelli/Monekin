@@ -35,8 +35,9 @@ class AllAccountBalancePage extends StatefulWidget {
 Stream<List<AccountWithMoney>> getAccountsWithMoney() {
   final accounts = AccountService.instance.getAccounts();
   final balances = accounts.asyncMap((accountList) => Future.wait(
-      accountList.map((account) =>
-          AccountService.instance.getAccountMoney(account: account).first)));
+      accountList.map((account) => AccountService.instance
+          .getAccountMoney(account: account, convertToPreferredCurrency: true)
+          .first)));
 
   return Rx.combineLatest2(accounts, balances, (accounts, balances) {
     final toReturn = accounts

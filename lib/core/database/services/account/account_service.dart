@@ -58,12 +58,17 @@ class AccountService {
       AS excRate ON accounts.currencyId = excRate.currencyCode
     ''';
 
-  /// Get the amount of money (in the account currency) that an account have in a certain period of time, specified in the [date] param. If the [date] param is null, it will return the money of the account right now.
-  Stream<double> getAccountMoney({required Account account, DateTime? date}) {
+  /// Get the amount of money that an account have in a certain period of time, specified in the [date] param. If the [date] param is null, it will return the money of the account right now.
+  ///
+  /// By default, the returned amount will be in the account currency
+  Stream<double> getAccountMoney(
+      {required Account account,
+      DateTime? date,
+      bool convertToPreferredCurrency = false}) {
     return getAccountsMoney(
         accountIds: [account.id],
         date: date,
-        convertToPreferredCurrency: false);
+        convertToPreferredCurrency: convertToPreferredCurrency);
   }
 
   Stream<double> getAccountsMoney(

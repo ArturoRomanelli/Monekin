@@ -55,19 +55,19 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     final transactions = await transactionService
         .getTransactions(
-          predicate: (p0, p1, p2, p3, p4) =>
+          predicate: (t, p1, p2, p3, p4, p5, p6) =>
               (widget.startDate != null
-                  ? p0.date.isBiggerThanValue(widget.startDate!)
-                  : p0.id.isNotNull()) &
+                  ? t.date.isBiggerThanValue(widget.startDate!)
+                  : t.id.isNotNull()) &
               (widget.endDate != null
-                  ? p0.date.isSmallerThanValue(widget.endDate!)
-                  : p0.id.isNotNull()) &
+                  ? t.date.isSmallerThanValue(widget.endDate!)
+                  : t.id.isNotNull()) &
               (widget.transactionsType == TransactionType.income
-                  ? p0.value.isBiggerOrEqualValue(0)
-                  : p0.id.isNotNull()) &
+                  ? t.value.isBiggerOrEqualValue(0)
+                  : t.id.isNotNull()) &
               (widget.transactionsType == TransactionType.expense
-                  ? p0.value.isSmallerOrEqualValue(0)
-                  : p0.id.isNotNull()),
+                  ? t.value.isSmallerOrEqualValue(0)
+                  : t.id.isNotNull()),
         )
         .first;
 

@@ -44,7 +44,8 @@ class ExchangeRateService {
   }
 
   /// Get the last exchange rate before a specified date, for a given currency. If the date is not provided, the current date is used
-  getLastExchangeRateOf({required String currencyCode, DateTime? date}) {
+  Stream<ExchangeRate?> getLastExchangeRateOf(
+      {required String currencyCode, DateTime? date}) {
     date ??= DateTime.now();
 
     return db
@@ -53,6 +54,6 @@ class ExchangeRateService {
                 e.currencyCode.equals(currencyCode) &
                 e.date.isSmallerOrEqualValue(date!),
             limit: 1)
-        .watch();
+        .watchSingleOrNull();
   }
 }

@@ -1,13 +1,55 @@
+import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+class TransactionDetailAction {
+  final String label;
+  final IconData icon;
+
+  final void Function() onClick;
+
+  TransactionDetailAction({
+    required this.label,
+    required this.icon,
+    required this.onClick,
+  });
+}
+
 class TransactionUIActionService {
   final TransactionService transactionService = TransactionService.instance;
 
   TransactionUIActionService();
+
+  List<TransactionDetailAction> transactionDetailsActions(BuildContext context,
+      {required MoneyTransaction transaction, Widget? prevPage}) {
+    return [
+      TransactionDetailAction(
+          label: 'Edit',
+          icon: Icons.edit,
+          onClick: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TransactionFormPage(
+                        prevPage: prevPage,
+                        transactionToEdit: transaction,
+                      )))),
+      TransactionDetailAction(
+          label: 'Clone',
+          icon: Icons.control_point_duplicate,
+          onClick: () => TransactionUIActionService()
+              .cloneTransactionWithAlertAndSnackBar(context,
+                  transaction: transaction, returnPage: prevPage)),
+      TransactionDetailAction(
+          label: 'Delete',
+          icon: Icons.delete,
+          onClick: () => TransactionUIActionService()
+              .deleteTransactionWithAlertAndSnackBar(context,
+                  transactionId: transaction.id, returnPage: prevPage))
+    ];
+  }
 
   deleteTransactionWithAlertAndSnackBar(BuildContext context,
       {required String transactionId, Widget? returnPage}) {
@@ -30,6 +72,8 @@ class TransactionUIActionService {
                         context,
                         MaterialPageRoute(builder: (context) => returnPage),
                         (Route<dynamic> route) => false);
+                  } else {
+                    Navigator.pop(context);
                   }
 
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -78,6 +122,8 @@ class TransactionUIActionService {
                         context,
                         MaterialPageRoute(builder: (context) => returnPage),
                         (Route<dynamic> route) => false);
+                  } else {
+                    Navigator.pop(context);
                   }
 
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -1,5 +1,6 @@
 import 'package:finlytics/app/transactions/transaction_details.page.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_UIActions_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
@@ -18,6 +19,27 @@ class TransactionListComponent extends StatelessWidget {
   final bool showGroupDivider;
 
   final Widget prevPage;
+
+  showTransactionActions(BuildContext context, MoneyTransaction transaction) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        clipBehavior: Clip.hardEdge,
+        builder: (context) {
+          return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: (TransactionUIActionService()
+                  .transactionDetailsActions(context, transaction: transaction)
+                  .map((e) => ListTile(
+                        leading: Icon(e.icon),
+                        title: Text(e.label),
+                        onTap: () {
+                          Navigator.pop(context);
+                          e.onClick();
+                        },
+                      ))).toList());
+        });
+  }
 
   Widget dateSeparator(DateTime date) {
     return Padding(
@@ -106,7 +128,7 @@ class TransactionListComponent extends StatelessWidget {
                             prevPage: prevPage,
                           )));
             },
-            onLongPress: () {},
+            onLongPress: () => showTransactionActions(context, transaction),
           );
         },
         separatorBuilder: (context, index) {

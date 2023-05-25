@@ -1,5 +1,4 @@
 import 'package:finlytics/app/tabs/card_with_header.dart';
-import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_UIActions_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
@@ -88,32 +87,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final transactionDetailsActions = [
-      TransactionDetailAction(
-          label: 'Edit',
-          icon: Icons.edit,
-          onClick: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TransactionFormPage(
-                        prevPage: widget.prevPage,
-                        transactionToEdit: widget.transaction,
-                      )))),
-      TransactionDetailAction(
-          label: 'Clone',
-          icon: Icons.control_point_duplicate,
-          onClick: () => TransactionUIActionService()
-              .cloneTransactionWithAlertAndSnackBar(context,
-                  transaction: widget.transaction,
-                  returnPage: widget.prevPage)),
-      TransactionDetailAction(
-          label: 'Delete',
-          icon: Icons.delete,
-          onClick: () => TransactionUIActionService()
-              .deleteTransactionWithAlertAndSnackBar(context,
-                  transactionId: widget.transaction.id,
-                  returnPage: widget.prevPage))
-    ];
+    final transactionDetailsActions = TransactionUIActionService()
+        .transactionDetailsActions(context,
+            transaction: widget.transaction, prevPage: widget.prevPage);
 
     return Scaffold(
       appBar: AppBar(),

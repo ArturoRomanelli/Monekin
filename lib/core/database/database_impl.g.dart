@@ -730,7 +730,7 @@ class Categories extends Table with TableInfo<Categories, CategoryInDB> {
       GeneratedColumn<String>('type', aliasedName, true,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
-              $customConstraints: 'CHECK (status IN (\'E\', \'I\', \'B\'))')
+              $customConstraints: 'CHECK (type IN (\'E\', \'I\', \'B\'))')
           .withConverter<CategoryType?>(Categories.$convertertypen);
   static const VerificationMeta _parentCategoryIDMeta =
       const VerificationMeta('parentCategoryID');
@@ -836,6 +836,8 @@ class CategoryInDB extends DataClass implements Insertable<CategoryInDB> {
 
   /// Type of the category. If null, the type of the parent's category will be used
   final CategoryType? type;
+
+  /// Parent category of this category (if any)
   final String? parentCategoryID;
   const CategoryInDB(
       {required this.id,
@@ -1090,9 +1092,15 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
       type: DriftSqlType.double,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _noteMeta = const VerificationMeta('note');
-  late final GeneratedColumn<String> note = GeneratedColumn<String>(
-      'note', aliasedName, true,
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       $customConstraints: '');
@@ -1141,7 +1149,8 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
         accountID,
         date,
         value,
-        note,
+        title,
+        notes,
         status,
         categoryID,
         valueInDestiny,
@@ -1180,9 +1189,13 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
     } else if (isInserting) {
       context.missing(_valueMeta);
     }
-    if (data.containsKey('note')) {
+    if (data.containsKey('title')) {
       context.handle(
-          _noteMeta, note.isAcceptableOrUnknown(data['note']!, _noteMeta));
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
     context.handle(_statusMeta, const VerificationResult.success());
     if (data.containsKey('categoryID')) {
@@ -1224,8 +1237,10 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       value: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
-      note: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}note']),
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title']),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
       status: Transactions.$converterstatusn.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}status'])),
@@ -1262,9 +1277,18 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
 class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   final String id;
   final String accountID;
+
+  /// Date on which the payment of this transaction was made
   final DateTime date;
+
+  /// Monetary amount related to this transaction, in the currency of its account
   final double value;
-  final String? note;
+
+  /// Title or main label of this transaction. If not defined, the category name is used normally as fallback
+  final String? title;
+
+  /// Some description, notes or extra info about the transaction.
+  final String? notes;
   final TransactionStatus? status;
   final String? categoryID;
   final double? valueInDestiny;
@@ -1275,7 +1299,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       required this.accountID,
       required this.date,
       required this.value,
-      this.note,
+      this.title,
+      this.notes,
       this.status,
       this.categoryID,
       this.valueInDestiny,
@@ -1288,8 +1313,11 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
     map['accountID'] = Variable<String>(accountID);
     map['date'] = Variable<DateTime>(date);
     map['value'] = Variable<double>(value);
-    if (!nullToAbsent || note != null) {
-      map['note'] = Variable<String>(note);
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
     }
     if (!nullToAbsent || status != null) {
       final converter = Transactions.$converterstatusn;
@@ -1314,7 +1342,10 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       accountID: Value(accountID),
       date: Value(date),
       value: Value(value),
-      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      title:
+          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
       status:
           status == null && nullToAbsent ? const Value.absent() : Value(status),
       categoryID: categoryID == null && nullToAbsent
@@ -1338,7 +1369,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       accountID: serializer.fromJson<String>(json['accountID']),
       date: serializer.fromJson<DateTime>(json['date']),
       value: serializer.fromJson<double>(json['value']),
-      note: serializer.fromJson<String?>(json['note']),
+      title: serializer.fromJson<String?>(json['title']),
+      notes: serializer.fromJson<String?>(json['notes']),
       status: Transactions.$converterstatusn
           .fromJson(serializer.fromJson<String?>(json['status'])),
       categoryID: serializer.fromJson<String?>(json['categoryID']),
@@ -1356,7 +1388,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
       'accountID': serializer.toJson<String>(accountID),
       'date': serializer.toJson<DateTime>(date),
       'value': serializer.toJson<double>(value),
-      'note': serializer.toJson<String?>(note),
+      'title': serializer.toJson<String?>(title),
+      'notes': serializer.toJson<String?>(notes),
       'status': serializer
           .toJson<String?>(Transactions.$converterstatusn.toJson(status)),
       'categoryID': serializer.toJson<String?>(categoryID),
@@ -1371,7 +1404,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
           String? accountID,
           DateTime? date,
           double? value,
-          Value<String?> note = const Value.absent(),
+          Value<String?> title = const Value.absent(),
+          Value<String?> notes = const Value.absent(),
           Value<TransactionStatus?> status = const Value.absent(),
           Value<String?> categoryID = const Value.absent(),
           Value<double?> valueInDestiny = const Value.absent(),
@@ -1382,7 +1416,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
         accountID: accountID ?? this.accountID,
         date: date ?? this.date,
         value: value ?? this.value,
-        note: note.present ? note.value : this.note,
+        title: title.present ? title.value : this.title,
+        notes: notes.present ? notes.value : this.notes,
         status: status.present ? status.value : this.status,
         categoryID: categoryID.present ? categoryID.value : this.categoryID,
         valueInDestiny:
@@ -1399,7 +1434,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
           ..write('accountID: $accountID, ')
           ..write('date: $date, ')
           ..write('value: $value, ')
-          ..write('note: $note, ')
+          ..write('title: $title, ')
+          ..write('notes: $notes, ')
           ..write('status: $status, ')
           ..write('categoryID: $categoryID, ')
           ..write('valueInDestiny: $valueInDestiny, ')
@@ -1410,8 +1446,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   }
 
   @override
-  int get hashCode => Object.hash(id, accountID, date, value, note, status,
-      categoryID, valueInDestiny, receivingAccountID, isHidden);
+  int get hashCode => Object.hash(id, accountID, date, value, title, notes,
+      status, categoryID, valueInDestiny, receivingAccountID, isHidden);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1420,7 +1456,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
           other.accountID == this.accountID &&
           other.date == this.date &&
           other.value == this.value &&
-          other.note == this.note &&
+          other.title == this.title &&
+          other.notes == this.notes &&
           other.status == this.status &&
           other.categoryID == this.categoryID &&
           other.valueInDestiny == this.valueInDestiny &&
@@ -1433,7 +1470,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   final Value<String> accountID;
   final Value<DateTime> date;
   final Value<double> value;
-  final Value<String?> note;
+  final Value<String?> title;
+  final Value<String?> notes;
   final Value<TransactionStatus?> status;
   final Value<String?> categoryID;
   final Value<double?> valueInDestiny;
@@ -1445,7 +1483,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
     this.accountID = const Value.absent(),
     this.date = const Value.absent(),
     this.value = const Value.absent(),
-    this.note = const Value.absent(),
+    this.title = const Value.absent(),
+    this.notes = const Value.absent(),
     this.status = const Value.absent(),
     this.categoryID = const Value.absent(),
     this.valueInDestiny = const Value.absent(),
@@ -1458,7 +1497,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
     required String accountID,
     required DateTime date,
     required double value,
-    this.note = const Value.absent(),
+    this.title = const Value.absent(),
+    this.notes = const Value.absent(),
     this.status = const Value.absent(),
     this.categoryID = const Value.absent(),
     this.valueInDestiny = const Value.absent(),
@@ -1474,7 +1514,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
     Expression<String>? accountID,
     Expression<DateTime>? date,
     Expression<double>? value,
-    Expression<String>? note,
+    Expression<String>? title,
+    Expression<String>? notes,
     Expression<String>? status,
     Expression<String>? categoryID,
     Expression<double>? valueInDestiny,
@@ -1487,7 +1528,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
       if (accountID != null) 'accountID': accountID,
       if (date != null) 'date': date,
       if (value != null) 'value': value,
-      if (note != null) 'note': note,
+      if (title != null) 'title': title,
+      if (notes != null) 'notes': notes,
       if (status != null) 'status': status,
       if (categoryID != null) 'categoryID': categoryID,
       if (valueInDestiny != null) 'valueInDestiny': valueInDestiny,
@@ -1502,7 +1544,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
       Value<String>? accountID,
       Value<DateTime>? date,
       Value<double>? value,
-      Value<String?>? note,
+      Value<String?>? title,
+      Value<String?>? notes,
       Value<TransactionStatus?>? status,
       Value<String?>? categoryID,
       Value<double?>? valueInDestiny,
@@ -1514,7 +1557,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
       accountID: accountID ?? this.accountID,
       date: date ?? this.date,
       value: value ?? this.value,
-      note: note ?? this.note,
+      title: title ?? this.title,
+      notes: notes ?? this.notes,
       status: status ?? this.status,
       categoryID: categoryID ?? this.categoryID,
       valueInDestiny: valueInDestiny ?? this.valueInDestiny,
@@ -1539,8 +1583,11 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
     if (value.present) {
       map['value'] = Variable<double>(value.value);
     }
-    if (note.present) {
-      map['note'] = Variable<String>(note.value);
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
     }
     if (status.present) {
       final converter = Transactions.$converterstatusn;
@@ -1571,7 +1618,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
           ..write('accountID: $accountID, ')
           ..write('date: $date, ')
           ..write('value: $value, ')
-          ..write('note: $note, ')
+          ..write('title: $title, ')
+          ..write('notes: $notes, ')
           ..write('status: $status, ')
           ..write('categoryID: $categoryID, ')
           ..write('valueInDestiny: $valueInDestiny, ')
@@ -2501,9 +2549,15 @@ class RecurrentRules extends Table
       type: DriftSqlType.double,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _noteMeta = const VerificationMeta('note');
-  late final GeneratedColumn<String> note = GeneratedColumn<String>(
-      'note', aliasedName, true,
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       $customConstraints: '');
@@ -2539,7 +2593,8 @@ class RecurrentRules extends Table
         intervalEach,
         endDate,
         value,
-        note,
+        title,
+        notes,
         categoryID,
         valueInDestiny,
         receivingAccountID
@@ -2596,9 +2651,13 @@ class RecurrentRules extends Table
     } else if (isInserting) {
       context.missing(_valueMeta);
     }
-    if (data.containsKey('note')) {
+    if (data.containsKey('title')) {
       context.handle(
-          _noteMeta, note.isAcceptableOrUnknown(data['note']!, _noteMeta));
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
     if (data.containsKey('categoryID')) {
       context.handle(
@@ -2641,8 +2700,10 @@ class RecurrentRules extends Table
           .read(DriftSqlType.dateTime, data['${effectivePrefix}endDate']),
       value: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
-      note: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}note']),
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title']),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
       categoryID: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}categoryID']),
       valueInDestiny: attachedDatabase.typeMapping
@@ -2674,8 +2735,15 @@ class RecurrentRuleInDB extends DataClass
   final String intervalPeriod;
   final String intervalEach;
   final DateTime? endDate;
+
+  /// Monetary amount related to this transaction, in the currency of its account
   final double value;
-  final String? note;
+
+  /// Title or main label of this transaction. If not defined, the category name is used normally as fallback
+  final String? title;
+
+  /// Some description, notes or extra info about the transaction.
+  final String? notes;
   final String? categoryID;
   final double? valueInDestiny;
   final String? receivingAccountID;
@@ -2687,7 +2755,8 @@ class RecurrentRuleInDB extends DataClass
       required this.intervalEach,
       this.endDate,
       required this.value,
-      this.note,
+      this.title,
+      this.notes,
       this.categoryID,
       this.valueInDestiny,
       this.receivingAccountID});
@@ -2703,8 +2772,11 @@ class RecurrentRuleInDB extends DataClass
       map['endDate'] = Variable<DateTime>(endDate);
     }
     map['value'] = Variable<double>(value);
-    if (!nullToAbsent || note != null) {
-      map['note'] = Variable<String>(note);
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
     }
     if (!nullToAbsent || categoryID != null) {
       map['categoryID'] = Variable<String>(categoryID);
@@ -2729,7 +2801,10 @@ class RecurrentRuleInDB extends DataClass
           ? const Value.absent()
           : Value(endDate),
       value: Value(value),
-      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      title:
+          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
       categoryID: categoryID == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryID),
@@ -2753,7 +2828,8 @@ class RecurrentRuleInDB extends DataClass
       intervalEach: serializer.fromJson<String>(json['intervalEach']),
       endDate: serializer.fromJson<DateTime?>(json['endDate']),
       value: serializer.fromJson<double>(json['value']),
-      note: serializer.fromJson<String?>(json['note']),
+      title: serializer.fromJson<String?>(json['title']),
+      notes: serializer.fromJson<String?>(json['notes']),
       categoryID: serializer.fromJson<String?>(json['categoryID']),
       valueInDestiny: serializer.fromJson<double?>(json['valueInDestiny']),
       receivingAccountID:
@@ -2771,7 +2847,8 @@ class RecurrentRuleInDB extends DataClass
       'intervalEach': serializer.toJson<String>(intervalEach),
       'endDate': serializer.toJson<DateTime?>(endDate),
       'value': serializer.toJson<double>(value),
-      'note': serializer.toJson<String?>(note),
+      'title': serializer.toJson<String?>(title),
+      'notes': serializer.toJson<String?>(notes),
       'categoryID': serializer.toJson<String?>(categoryID),
       'valueInDestiny': serializer.toJson<double?>(valueInDestiny),
       'receivingAccountID': serializer.toJson<String?>(receivingAccountID),
@@ -2786,7 +2863,8 @@ class RecurrentRuleInDB extends DataClass
           String? intervalEach,
           Value<DateTime?> endDate = const Value.absent(),
           double? value,
-          Value<String?> note = const Value.absent(),
+          Value<String?> title = const Value.absent(),
+          Value<String?> notes = const Value.absent(),
           Value<String?> categoryID = const Value.absent(),
           Value<double?> valueInDestiny = const Value.absent(),
           Value<String?> receivingAccountID = const Value.absent()}) =>
@@ -2798,7 +2876,8 @@ class RecurrentRuleInDB extends DataClass
         intervalEach: intervalEach ?? this.intervalEach,
         endDate: endDate.present ? endDate.value : this.endDate,
         value: value ?? this.value,
-        note: note.present ? note.value : this.note,
+        title: title.present ? title.value : this.title,
+        notes: notes.present ? notes.value : this.notes,
         categoryID: categoryID.present ? categoryID.value : this.categoryID,
         valueInDestiny:
             valueInDestiny.present ? valueInDestiny.value : this.valueInDestiny,
@@ -2816,7 +2895,8 @@ class RecurrentRuleInDB extends DataClass
           ..write('intervalEach: $intervalEach, ')
           ..write('endDate: $endDate, ')
           ..write('value: $value, ')
-          ..write('note: $note, ')
+          ..write('title: $title, ')
+          ..write('notes: $notes, ')
           ..write('categoryID: $categoryID, ')
           ..write('valueInDestiny: $valueInDestiny, ')
           ..write('receivingAccountID: $receivingAccountID')
@@ -2833,7 +2913,8 @@ class RecurrentRuleInDB extends DataClass
       intervalEach,
       endDate,
       value,
-      note,
+      title,
+      notes,
       categoryID,
       valueInDestiny,
       receivingAccountID);
@@ -2848,7 +2929,8 @@ class RecurrentRuleInDB extends DataClass
           other.intervalEach == this.intervalEach &&
           other.endDate == this.endDate &&
           other.value == this.value &&
-          other.note == this.note &&
+          other.title == this.title &&
+          other.notes == this.notes &&
           other.categoryID == this.categoryID &&
           other.valueInDestiny == this.valueInDestiny &&
           other.receivingAccountID == this.receivingAccountID);
@@ -2862,7 +2944,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
   final Value<String> intervalEach;
   final Value<DateTime?> endDate;
   final Value<double> value;
-  final Value<String?> note;
+  final Value<String?> title;
+  final Value<String?> notes;
   final Value<String?> categoryID;
   final Value<double?> valueInDestiny;
   final Value<String?> receivingAccountID;
@@ -2875,7 +2958,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
     this.intervalEach = const Value.absent(),
     this.endDate = const Value.absent(),
     this.value = const Value.absent(),
-    this.note = const Value.absent(),
+    this.title = const Value.absent(),
+    this.notes = const Value.absent(),
     this.categoryID = const Value.absent(),
     this.valueInDestiny = const Value.absent(),
     this.receivingAccountID = const Value.absent(),
@@ -2889,7 +2973,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
     this.intervalEach = const Value.absent(),
     this.endDate = const Value.absent(),
     required double value,
-    this.note = const Value.absent(),
+    this.title = const Value.absent(),
+    this.notes = const Value.absent(),
     this.categoryID = const Value.absent(),
     this.valueInDestiny = const Value.absent(),
     this.receivingAccountID = const Value.absent(),
@@ -2907,7 +2992,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
     Expression<String>? intervalEach,
     Expression<DateTime>? endDate,
     Expression<double>? value,
-    Expression<String>? note,
+    Expression<String>? title,
+    Expression<String>? notes,
     Expression<String>? categoryID,
     Expression<double>? valueInDestiny,
     Expression<String>? receivingAccountID,
@@ -2921,7 +3007,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
       if (intervalEach != null) 'intervalEach': intervalEach,
       if (endDate != null) 'endDate': endDate,
       if (value != null) 'value': value,
-      if (note != null) 'note': note,
+      if (title != null) 'title': title,
+      if (notes != null) 'notes': notes,
       if (categoryID != null) 'categoryID': categoryID,
       if (valueInDestiny != null) 'valueInDestiny': valueInDestiny,
       if (receivingAccountID != null) 'receivingAccountID': receivingAccountID,
@@ -2937,7 +3024,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
       Value<String>? intervalEach,
       Value<DateTime?>? endDate,
       Value<double>? value,
-      Value<String?>? note,
+      Value<String?>? title,
+      Value<String?>? notes,
       Value<String?>? categoryID,
       Value<double?>? valueInDestiny,
       Value<String?>? receivingAccountID,
@@ -2950,7 +3038,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
       intervalEach: intervalEach ?? this.intervalEach,
       endDate: endDate ?? this.endDate,
       value: value ?? this.value,
-      note: note ?? this.note,
+      title: title ?? this.title,
+      notes: notes ?? this.notes,
       categoryID: categoryID ?? this.categoryID,
       valueInDestiny: valueInDestiny ?? this.valueInDestiny,
       receivingAccountID: receivingAccountID ?? this.receivingAccountID,
@@ -2982,8 +3071,11 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
     if (value.present) {
       map['value'] = Variable<double>(value.value);
     }
-    if (note.present) {
-      map['note'] = Variable<String>(note.value);
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
     }
     if (categoryID.present) {
       map['categoryID'] = Variable<String>(categoryID.value);
@@ -3010,7 +3102,8 @@ class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
           ..write('intervalEach: $intervalEach, ')
           ..write('endDate: $endDate, ')
           ..write('value: $value, ')
-          ..write('note: $note, ')
+          ..write('title: $title, ')
+          ..write('notes: $notes, ')
           ..write('categoryID: $categoryID, ')
           ..write('valueInDestiny: $valueInDestiny, ')
           ..write('receivingAccountID: $receivingAccountID, ')
@@ -3128,7 +3221,8 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
           date: row.read<DateTime>('date'),
           value: row.read<double>('value'),
           isHidden: row.read<bool>('isHidden'),
-          note: row.readNullable<String>('note'),
+          notes: row.readNullable<String>('notes'),
+          title: row.readNullable<String>('title'),
           status: NullAwareTypeConverter.wrapFromSql(
               Transactions.$converterstatus,
               row.readNullable<String>('status')),

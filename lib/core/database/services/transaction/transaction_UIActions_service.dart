@@ -112,7 +112,8 @@ class TransactionUIActionService {
                         value: transaction.value,
                         isHidden: transaction.isHidden,
                         categoryID: transaction.categoryID,
-                        note: transaction.note,
+                        notes: transaction.notes,
+                        title: transaction.title,
                         receivingAccountID: transaction.receivingAccountID,
                         status: transaction.status,
                         valueInDestiny: transaction.valueInDestiny))

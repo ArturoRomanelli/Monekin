@@ -60,7 +60,9 @@ CREATE TABLE IF NOT EXISTS categories (
     color TEXT,
 
     -- Type of the category. If null, the type of the parent's category will be used
-    type ENUMNAME(CategoryType) CHECK(status IN ('E', 'I', 'B')),
+    type ENUMNAME(CategoryType) CHECK(type IN ('E', 'I', 'B')),
+
+    -- Parent category of this category (if any)
     parentCategoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
     --- Color and type are not needed in child categories. They are inherited from the parent 
@@ -71,23 +73,33 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS transactions (
   id TEXT NOT NULL PRIMARY KEY,
   accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  
+  -- Date on which the payment of this transaction was made
   date DATETIME NOT NULL,
+
+  -- Monetary amount related to this transaction, in the currency of its account
   value REAL NOT NULL,
-  note TEXT,
+
+  -- Title or main label of this transaction. If not defined, the category name is used normally as fallback
+  title TEXT,
+
+  -- Some description, notes or extra info about the transaction.
+  notes TEXT,
+
   status ENUMNAME(TransactionStatus) CHECK(status IN ('voided', 'pending', 'reconcilied', 'unreconcilied')),
   categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
   valueInDestiny REAL,
   receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
   isHidden BOOLEAN NOT NULL DEFAULT 0,
 
-  --- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
+  -- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
   CHECK ((receivingAccountID IS NULL) != (categoryID IS NULL)),
 
-  --- valueInDestiny can not be defined for non-transfer transactions:
+  -- valueInDestiny can not be defined for non-transfer transactions:
   CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
 ) AS TransactionInDB;
 
---- Rules to generate transactions 
+-- Rules to generate transactions 
 CREATE TABLE IF NOT EXISTS recurrentRules (
   id TEXT NOT NULL PRIMARY KEY,
   accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -95,16 +107,24 @@ CREATE TABLE IF NOT EXISTS recurrentRules (
   intervalPeriod TEXT NOT NULL,
   intervalEach TEXT NOT NULL DEFAULT 1,
   endDate DATETIME,
+
+  -- Monetary amount related to this transaction, in the currency of its account
   value REAL NOT NULL,
-  note TEXT,
+
+  -- Title or main label of this transaction. If not defined, the category name is used normally as fallback
+  title TEXT,
+
+  -- Some description, notes or extra info about the transaction.
+  notes TEXT,
+
   categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
   valueInDestiny REAL,
   receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
-  --- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
+  -- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
   CHECK ((receivingAccountID IS NULL) != (categoryID IS NULL)),
 
-  --- valueInDestiny can not be defined for non-transfer transactions:
+  -- valueInDestiny can not be defined for non-transfer transactions:
   CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
 ) AS RecurrentRuleInDB;
 

@@ -41,7 +41,8 @@ class MoneyTransaction extends TransactionInDB {
     required super.date,
     required super.value,
     required super.isHidden,
-    super.note,
+    super.notes,
+    super.title,
     super.status,
     super.valueInDestiny,
     required AccountInDB account,
@@ -67,7 +68,8 @@ class MoneyTransaction extends TransactionInDB {
     required this.account,
     required super.date,
     required super.value,
-    super.note,
+    super.notes,
+    super.title,
     super.isHidden = false,
     super.status,
     required this.category,
@@ -78,7 +80,8 @@ class MoneyTransaction extends TransactionInDB {
       required this.account,
       required super.date,
       required super.value,
-      super.note,
+      super.notes,
+      super.title,
       super.isHidden = false,
       super.status,
       required this.receivingAccount,
@@ -87,6 +90,9 @@ class MoneyTransaction extends TransactionInDB {
 
   bool get isTransfer => receivingAccountID != null;
   bool get isIncomeOrExpense => categoryID != null;
+
+  String get displayName =>
+      title ?? (isIncomeOrExpense ? category!.name : 'Transfer');
 
   /// Get the color that represent this category. Will be the category color when the transaction is an income or an expense, and the primary color of the app otherwise
   Color color(context) => isIncomeOrExpense

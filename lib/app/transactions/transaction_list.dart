@@ -65,9 +65,7 @@ class TransactionListComponent extends StatelessWidget {
           return ListTile(
             title: Row(
               children: [
-                Text(transaction.isIncomeOrExpense
-                    ? transaction.category!.name
-                    : 'Transfer'),
+                Text(transaction.displayName),
                 const SizedBox(width: 4),
                 if (transaction.status == TransactionStatus.reconcilied)
                   const Icon(

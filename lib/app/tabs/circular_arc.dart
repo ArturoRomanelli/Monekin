@@ -10,7 +10,7 @@ class CircularArc extends StatefulWidget {
       required this.value,
       required this.width,
       required this.color})
-      : assert(value < 1 && value > 0);
+      : assert(value < 1 && value >= 0);
 
   /// Percentage of the arch to occupy. Must be a value between 0 and 1
   final double value;

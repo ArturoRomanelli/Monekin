@@ -64,10 +64,10 @@ class CategoryService {
           name: category['names']['es'],
           iconId: category['icon'],
           color: category['color'],
-          type: category['type']);
+          type: CategoryType.values.byName(category['type']));
 
       await db.customStatement(
-          "INSERT INTO categories(id, name, iconId, color, type) VALUES ('${categoryToPush.id}', '${categoryToPush.name}', '${categoryToPush.iconId}', '${categoryToPush.color}', '${categoryToPush.type}')");
+          "INSERT INTO categories(id, name, iconId, color, type) VALUES ('${categoryToPush.id}', '${categoryToPush.name}', '${categoryToPush.iconId}', '${categoryToPush.color}', '${categoryToPush.type?.name}')");
 
       if (category['subcategories'] != null) {
         for (final subcategory in category['subcategories']) {

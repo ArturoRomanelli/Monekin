@@ -41,7 +41,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   TransactionStatus? status;
   bool isHidden = false;
 
-  TextEditingController noteController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
   bool get isEditMode => widget.transactionToEdit != null;
 
@@ -92,7 +93,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       category: selectedCategory!,
       status: status,
       isHidden: isHidden,
-      note: noteController.text.isEmpty ? null : noteController.text,
+      notes: notesController.text.isEmpty ? null : notesController.text,
+      title: titleController.text.isEmpty ? null : titleController.text,
     );
 
     TransactionService.instance.insertOrUpdateTransaction(toPush).then((value) {
@@ -137,6 +139,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       status = transaction.status;
       selectedCategory = transaction.category;
     });
+
+    notesController.text = transaction.notes ?? '';
+    titleController.text = transaction.title ?? '';
     valueController.text = transaction.value.abs().toString();
   }
 
@@ -249,7 +254,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                             context: context,
                             builder: (context) {
                               return const ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
+                                borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(20)),
                                 child: Scaffold(
                                   body: Column(
@@ -303,14 +308,12 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      minLines: 2,
-                      maxLines: 10,
-                      controller:
-                          noteController, //editing controller of this TextField
+                      controller: titleController,
+                      maxLength: 15,
                       decoration: const InputDecoration(
-                        labelText: 'Nota',
-                        hintText: 'Description',
-                        alignLabelWithHint: true,
+                        labelText: 'Titulo de la transacción',
+                        hintText:
+                            'Si no se especifica, se usará el nombre de la categoría',
                         icon: Icon(Icons.text_fields),
                         border: OutlineInputBorder(),
                       ),
@@ -326,39 +329,56 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                 children: [
                   Padding(
                       padding: const EdgeInsets.all(16),
-                      child: DropdownButtonFormField(
-                        value: status,
-                        decoration: const InputDecoration(
-                          labelText: 'Status',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                            value: null,
-                            child: Text('Ninguno'),
+                      child: Column(
+                        children: [
+                          DropdownButtonFormField(
+                            value: status,
+                            decoration: const InputDecoration(
+                              labelText: 'Status',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: null,
+                                child: Text('Ninguno'),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionStatus.voided,
+                                child: Text('Nulo'),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionStatus.pending,
+                                child: Text('Pendiente'),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionStatus.reconcilied,
+                                child: Text('Reconciliado'),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionStatus.unreconcilied,
+                                child: Text('No reconciliado'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                status = value;
+                              });
+                            },
                           ),
-                          DropdownMenuItem(
-                            value: TransactionStatus.voided,
-                            child: Text('Nulo'),
-                          ),
-                          DropdownMenuItem(
-                            value: TransactionStatus.pending,
-                            child: Text('Pendiente'),
-                          ),
-                          DropdownMenuItem(
-                            value: TransactionStatus.reconcilied,
-                            child: Text('Reconciliado'),
-                          ),
-                          DropdownMenuItem(
-                            value: TransactionStatus.unreconcilied,
-                            child: Text('No reconciliado'),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            minLines: 2,
+                            maxLines: 10,
+                            controller: notesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Notas',
+                              alignLabelWithHint: true,
+                              hintText:
+                                  'Escribe información extra acerca de esta transacción',
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ],
-                        onChanged: (value) {
-                          setState(() {
-                            status = value;
-                          });
-                        },
                       )),
                   SwitchListTile(
                     value: isHidden,

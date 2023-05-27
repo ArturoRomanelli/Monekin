@@ -2,7 +2,6 @@ import 'package:finlytics/app/tabs/card_with_header.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_UIActions_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -113,8 +112,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                         ),
                       ),
                       Text(
-                        widget.transaction.note ??
-                            widget.transaction.category!.name,
+                        widget.transaction.displayName,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -158,42 +156,68 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       children: [
                         ListTile(
                           //contentPadding: const EdgeInsets.all(2),
-                          title: Text('Cuenta'),
-
-                          subtitle: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SupportedIconService.instance
-                                  .getIconByID(
-                                      widget.transaction.account.iconId)
-                                  .display(size: 16),
-                              const SizedBox(width: 4),
-                              Text(widget.transaction.account.name),
+                              Text('Cuenta'),
+                              Chip(
+                                  label: Text(widget.transaction.account.name),
+                                  padding: const EdgeInsets.all(2),
+                                  labelStyle: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                  side: BorderSide(
+                                      color: Theme.of(context).primaryColor),
+                                  backgroundColor: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.12),
+                                  avatar: CircleAvatar(
+                                    backgroundColor: Colors.transparent,
+                                    child: widget.transaction.account.icon
+                                        .display(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                  )),
                             ],
                           ),
                         ),
                         const Divider(indent: 12),
                         ListTile(
                           //contentPadding: const EdgeInsets.all(2),
-                          title: Text('Category'),
-                          subtitle: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SupportedIconService.instance
-                                  .getIconByID(
-                                      widget.transaction.category!.iconId)
-                                  .display(size: 16),
-                              const SizedBox(width: 4),
-                              Text(widget.transaction.category!.name),
+                              Text('Category'),
+                              Chip(
+                                  label:
+                                      Text(widget.transaction.category!.name),
+                                  padding: const EdgeInsets.all(2),
+                                  labelStyle: TextStyle(
+                                      color: widget.transaction
+                                          .color(context)
+                                          .darken()),
+                                  side: BorderSide(
+                                      color: widget.transaction
+                                          .color(context)
+                                          .darken()),
+                                  backgroundColor: widget.transaction
+                                      .color(context)
+                                      .withOpacity(0.12),
+                                  avatar: CircleAvatar(
+                                    backgroundColor: Colors.transparent,
+                                    child: widget.transaction.category!.icon
+                                        .display(
+                                            color: widget.transaction
+                                                .color(context)),
+                                  )),
                             ],
                           ),
                         ),
-                        if (widget.transaction.note != null)
+                        if (widget.transaction.notes != null)
                           const Divider(indent: 12),
-                        if (widget.transaction.note != null)
+                        if (widget.transaction.notes != null)
                           ListTile(
                             title: Text("Note"),
-                            subtitle: Text(widget.transaction.note!),
+                            subtitle: Text(widget.transaction.notes!),
                           )
                       ]),
                 ),

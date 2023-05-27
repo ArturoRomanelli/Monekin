@@ -1,11 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class ChartByCategories extends StatefulWidget {
       required this.endDate,
       this.showList = false,
       this.transactionsType = TransactionType.expense,
-      this.accountsToFilter});
+      this.filters});
 
   final DateTime? startDate;
   final DateTime? endDate;
@@ -39,8 +40,7 @@ class ChartByCategories extends StatefulWidget {
 
   final TransactionType transactionsType;
 
-  /// If null, will get the stats for all the accounts of the user
-  final List<Account>? accountsToFilter;
+  final TransactionFilters? filters;
 
   @override
   State<ChartByCategories> createState() => _ChartByCategoriesState();
@@ -60,22 +60,24 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     final transactions = await transactionService
         .getTransactions(
-          predicate: (t, acc, p2, p3, p4, p5, p6) =>
-              (widget.startDate != null
-                  ? t.date.isBiggerThanValue(widget.startDate!)
-                  : t.id.isNotNull()) &
-              (widget.endDate != null
-                  ? t.date.isSmallerThanValue(widget.endDate!)
-                  : t.id.isNotNull()) &
-              (widget.accountsToFilter != null
-                  ? t.accountID.isIn(widget.accountsToFilter!.map((e) => e.id))
-                  : t.id.isNotNull()) &
-              (widget.transactionsType == TransactionType.income
-                  ? t.value.isBiggerOrEqualValue(0)
-                  : t.id.isNotNull()) &
-              (widget.transactionsType == TransactionType.expense
-                  ? t.value.isSmallerOrEqualValue(0)
-                  : t.id.isNotNull()),
+          predicate: (t, acc, p2, p3, p4, transCategory, p6) =>
+              DatabaseImpl.instance.buildExpr([
+            if (widget.startDate != null)
+              t.date.isBiggerThanValue(widget.startDate!),
+            if (widget.endDate != null)
+              t.date.isSmallerThanValue(widget.endDate!),
+            if (widget.filters?.accounts != null)
+              t.accountID.isIn(widget.filters!.accounts!.map((e) => e.id)),
+            if (widget.filters?.categories != null)
+              transCategory.id
+                      .isIn(widget.filters!.categories!.map((e) => e.id)) |
+                  transCategory.parentCategoryID
+                      .isIn(widget.filters!.categories!.map((e) => e.id)),
+            if (widget.transactionsType == TransactionType.income)
+              t.value.isBiggerOrEqualValue(0),
+            if (widget.transactionsType == TransactionType.expense)
+              t.value.isSmallerOrEqualValue(0)
+          ]),
         )
         .first;
 

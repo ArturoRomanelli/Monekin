@@ -248,13 +248,13 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               await showModalBottomSheet<List<Category>>(
                             context: context,
                             builder: (context) {
-                              return ClipRRect(
+                              return const ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(20)),
                                 child: Scaffold(
                                   body: Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
+                                    children: [
                                       BottomSheetHeader(),
                                       Expanded(
                                         child: CategoriesList(

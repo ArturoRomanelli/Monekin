@@ -1,8 +1,7 @@
 import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
-import 'package:finlytics/app/tabs/widgets/balance_bar_chart.dart';
-import 'package:finlytics/app/tabs/widgets/incomeOrExpenseCard.dart';
+import 'package:finlytics/app/stats/widgets/balance_bar_chart.dart';
+import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +20,7 @@ class _CashFlowPageState extends State<CashFlowPage> {
   late DateTime? currentEndDate;
   late DateRange currentDateRange;
 
-  /// If null, will get the stats for all the accounts of the user
-  List<Account>? accountsToFilter;
+  TransactionFilters filters = TransactionFilters();
 
   @override
   void initState() {
@@ -46,13 +44,12 @@ class _CashFlowPageState extends State<CashFlowPage> {
                 final modalRes = await showModalBottomSheet<TransactionFilters>(
                     context: context,
                     isScrollControlled: true,
-                    builder: (context) => FilterSheetModal(
-                        preselectedFilter:
-                            TransactionFilters(accounts: accountsToFilter)));
+                    builder: (context) =>
+                        FilterSheetModal(preselectedFilter: filters));
 
                 if (modalRes != null) {
                   setState(() {
-                    accountsToFilter = modalRes.accounts;
+                    filters = modalRes;
                   });
                 }
               },
@@ -82,13 +79,13 @@ class _CashFlowPageState extends State<CashFlowPage> {
                     type: AccountDataFilter.income,
                     startDate: currentStartDate,
                     endDate: currentEndDate,
-                    accountsToFilter: accountsToFilter,
+                    filters: filters,
                   ),
                   IncomeOrExpenseCard(
                     type: AccountDataFilter.expense,
                     startDate: currentStartDate,
                     endDate: currentEndDate,
-                    accountsToFilter: accountsToFilter,
+                    filters: filters,
                   ),
                 ],
               ),
@@ -96,7 +93,7 @@ class _CashFlowPageState extends State<CashFlowPage> {
               BalanceBarChart(
                   startDate: currentStartDate,
                   dateRange: currentDateRange,
-                  accountsToFilter: accountsToFilter)
+                  filters: filters)
             ],
           ),
         ),

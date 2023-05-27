@@ -117,6 +117,7 @@ class AccountService {
   Stream<double> getAccountsData(
       {required Iterable<String> accountIds,
       required AccountDataFilter accountDataFilter,
+      Iterable<String>? categoriesIds,
       DateTime? endDate,
       DateTime? startDate,
       bool convertToPreferredCurrency = true}) {
@@ -131,6 +132,7 @@ class AccountService {
                           accountID
                     FROM transactions
                     WHERE isHidden = 0      
+                    ${categoriesIds != null ? ' AND transactions.categoryID IN (${List.filled(categoriesIds.length, '?').join(', ')}) ' : ''} 
                     ${endDate != null ? ' AND date <= ?' : ''} 
                     ${startDate != null ? ' AND date >= ?' : ''} 
                     ${accountDataFilter == AccountDataFilter.expense ? 'AND value < 0' : ''} 
@@ -143,6 +145,8 @@ class AccountService {
           db.accounts,
           if (convertToPreferredCurrency) db.exchangeRates
         }, variables: [
+          if (categoriesIds != null)
+            for (var id in categoriesIds) Variable.withString(id),
           if (endDate != null) Variable.withDateTime(endDate),
           if (startDate != null) Variable.withDateTime(startDate),
           if (endDate != null && convertToPreferredCurrency)

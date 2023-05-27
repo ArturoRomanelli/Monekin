@@ -1,6 +1,6 @@
-import 'package:finlytics/app/tabs/widgets/balance_bar_chart.dart';
-import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
-import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/app/stats/widgets/balance_bar_chart.dart';
+import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
+import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';

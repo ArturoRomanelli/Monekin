@@ -1,9 +1,11 @@
 import 'package:finlytics/app/accounts/account_selector.dart';
+import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class TransactionFilters {
@@ -14,9 +16,14 @@ class TransactionFilters {
 }
 
 class FilterSheetModal extends StatefulWidget {
-  const FilterSheetModal({super.key, required this.preselectedFilter});
+  const FilterSheetModal(
+      {super.key,
+      required this.preselectedFilter,
+      this.showCategoryFilter = true});
 
   final TransactionFilters preselectedFilter;
+
+  final bool showCategoryFilter;
 
   @override
   State<FilterSheetModal> createState() => _FilterSheetModalState();
@@ -76,6 +83,10 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                     child: Column(
                       children: [
+                        /* ---------------------------------- */
+                        /* -------- ACCOUNT SELECTOR -------- */
+                        /* ---------------------------------- */
+
                         StreamBuilder(
                             stream: AccountService.instance.getAccounts(),
                             builder: (context, snapshot) {
@@ -121,6 +132,61 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                     }
                                   });
                             }),
+                        if (widget.showCategoryFilter)
+                          const SizedBox(height: 16),
+
+                        /* ---------------------------------- */
+                        /* -------- CATEGORY SELECTOR ------- */
+                        /* ---------------------------------- */
+
+                        if (widget.showCategoryFilter)
+                          StreamBuilder(
+                              stream:
+                                  CategoryService.instance.getMainCategories(),
+                              builder: (context, snapshot) {
+                                return selector(
+                                    title: 'Categories',
+                                    inputValue:
+                                        filtersToReturn.categories == null ||
+                                                (snapshot.hasData &&
+                                                    filtersToReturn.categories!
+                                                            .length ==
+                                                        snapshot.data!.length)
+                                            ? 'All categories'
+                                            : filtersToReturn.categories
+                                                ?.map((e) => e.name)
+                                                .join(', '),
+                                    onClick: () async {
+                                      final modalRes =
+                                          await showModalBottomSheet<
+                                              List<Category>>(
+                                        context: context,
+                                        builder: (context) {
+                                          return CategoriesList(
+                                            mode: CategoriesListMode
+                                                .modalSelectMultiCategory,
+                                            selectedCategories:
+                                                filtersToReturn.categories ??
+                                                    (snapshot.hasData
+                                                        ? [...snapshot.data!]
+                                                        : []),
+                                          );
+                                        },
+                                      );
+
+                                      if (modalRes != null &&
+                                          modalRes.isNotEmpty) {
+                                        setState(() {
+                                          filtersToReturn.categories =
+                                              snapshot.hasData &&
+                                                      modalRes.length ==
+                                                          snapshot.data!.length
+                                                  ? null
+                                                  : modalRes;
+                                        });
+                                      }
+                                    });
+                              }),
                       ],
                     ),
                   ),

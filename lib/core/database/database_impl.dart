@@ -31,7 +31,7 @@ class DatabaseImpl extends _$DatabaseImpl {
     required this.logStatements,
   }) : super(_openConnection(dbName, logStatements: logStatements));
 
-  static DatabaseImpl instance = DatabaseImpl._(
+  static final DatabaseImpl instance = DatabaseImpl._(
     dbName: 'database.db',
     inMemory: false,
     logStatements: false,
@@ -95,6 +95,21 @@ class DatabaseImpl extends _$DatabaseImpl {
         print('Database tables created!');
       },
     );
+  }
+
+  /// Return a WHERE clause expression that is the equivalent to the conjunction of some expressions. If no expressions are passed, the WHERE clause will have no effect.
+  Expression<bool> buildExpr(List<Expression<bool>> expressions) {
+    if (expressions.isEmpty) return const CustomExpression('(TRUE)');
+
+    Expression<bool> toReturn = expressions.first;
+
+    for (var i = 1; i < expressions.length; i++) {
+      final exprToPush = expressions[i];
+
+      toReturn = toReturn & exprToPush;
+    }
+
+    return toReturn;
   }
 }
 

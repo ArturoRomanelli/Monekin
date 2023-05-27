@@ -1,6 +1,6 @@
 import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
 
@@ -10,14 +10,13 @@ class IncomeOrExpenseCard extends StatelessWidget {
       required this.type,
       required this.startDate,
       required this.endDate,
-      this.accountsToFilter});
+      this.filters});
 
   final AccountDataFilter type;
   final DateTime? startDate;
   final DateTime? endDate;
 
-  /// If null, will get the stats for all the accounts of the user
-  final List<Account>? accountsToFilter;
+  final TransactionFilters? filters;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +49,8 @@ class IncomeOrExpenseCard extends StatelessWidget {
                 children: [
                   Text(text),
                   StreamBuilder(
-                      stream: accountsToFilter != null
-                          ? Stream.value(accountsToFilter)
+                      stream: filters?.accounts != null
+                          ? Stream.value(filters?.accounts)
                           : AccountService.instance.getAccounts(),
                       builder: (context, accounts) {
                         if (!accounts.hasData) {
@@ -61,6 +60,8 @@ class IncomeOrExpenseCard extends StatelessWidget {
                         return StreamBuilder(
                             stream: AccountService.instance.getAccountsData(
                               accountIds: accounts.data!.map((e) => e.id),
+                              categoriesIds:
+                                  filters?.categories?.map((e) => e.id),
                               startDate: startDate,
                               endDate: endDate,
                               accountDataFilter: type,

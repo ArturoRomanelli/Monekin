@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:finlytics/core/utils/date_getter.dart';
@@ -31,13 +31,12 @@ class BalanceBarChart extends StatefulWidget {
       {super.key,
       required this.startDate,
       required this.dateRange,
-      this.accountsToFilter});
+      this.filters});
 
   final DateTime? startDate;
   final DateRange dateRange;
 
-  /// If null, will get the stats for all the accounts of the user
-  final List<Account>? accountsToFilter;
+  final TransactionFilters? filters;
 
   @override
   State<BalanceBarChart> createState() => _BalanceBarChartState();
@@ -61,10 +60,30 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
     final accountService = AccountService.instance;
 
     final accounts =
-        widget.accountsToFilter ?? await accountService.getAccounts().first;
+        widget.filters?.accounts ?? await accountService.getAccounts().first;
     final accountsIds = accounts.map((event) => event.id);
 
     final selectedDateRange = widget.dateRange;
+
+    getIncomeData(DateTime? startDate, DateTime? endDate) async =>
+        await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                categoriesIds: widget.filters?.categories?.map((e) => e.id),
+                accountDataFilter: AccountDataFilter.income,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
+
+    getExpenseData(DateTime? startDate, DateTime? endDate) async =>
+        await accountService
+            .getAccountsData(
+                accountIds: accountsIds,
+                categoriesIds: widget.filters?.categories?.map((e) => e.id),
+                accountDataFilter: AccountDataFilter.expense,
+                startDate: startDate,
+                endDate: endDate)
+            .first;
 
     if (selectedDateRange == DateRange.monthly) {
       for (final range in [
@@ -88,21 +107,8 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         longTitles.add(
             '${DateFormat.MMMd().format(startDate)} - ${DateFormat.MMMd().format(endDate)}');
 
-        final incomeToAdd = await accountService
-            .getAccountsData(
-                accountIds: accountsIds,
-                accountDataFilter: AccountDataFilter.income,
-                startDate: startDate,
-                endDate: endDate)
-            .first;
-
-        final expenseToAdd = await accountService
-            .getAccountsData(
-                accountIds: accountsIds,
-                accountDataFilter: AccountDataFilter.expense,
-                startDate: startDate,
-                endDate: endDate)
-            .first;
+        final incomeToAdd = await getIncomeData(startDate, endDate);
+        final expenseToAdd = await getExpenseData(startDate, endDate);
 
         income.add(incomeToAdd);
         expense.add(expenseToAdd);
@@ -116,21 +122,8 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         shortTitles.add(DateFormat.M().format(selStartDate));
         longTitles.add(DateFormat.MMMM().format(selStartDate));
 
-        final incomeToAdd = await accountService
-            .getAccountsData(
-                accountIds: accountsIds,
-                accountDataFilter: AccountDataFilter.income,
-                startDate: selStartDate,
-                endDate: endDate)
-            .first;
-
-        final expenseToAdd = await accountService
-            .getAccountsData(
-                accountIds: accountsIds,
-                accountDataFilter: AccountDataFilter.expense,
-                startDate: selStartDate,
-                endDate: endDate)
-            .first;
+        final incomeToAdd = await getIncomeData(selStartDate, endDate);
+        final expenseToAdd = await getExpenseData(selStartDate, endDate);
 
         income.add(incomeToAdd);
         expense.add(expenseToAdd);
@@ -144,21 +137,8 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         shortTitles.add(DateFormat.MMM().format(startDate));
         longTitles.add(DateFormat.MMMM().format(startDate));
 
-        final incomeToAdd = await accountService
-            .getAccountsData(
-                accountIds: accountsIds,
-                accountDataFilter: AccountDataFilter.income,
-                startDate: startDate,
-                endDate: endDate)
-            .first;
-
-        final expenseToAdd = await accountService
-            .getAccountsData(
-                accountIds: accountsIds,
-                accountDataFilter: AccountDataFilter.expense,
-                startDate: startDate,
-                endDate: endDate)
-            .first;
+        final incomeToAdd = await getIncomeData(startDate, endDate);
+        final expenseToAdd = await getExpenseData(startDate, endDate);
 
         income.add(incomeToAdd);
         expense.add(expenseToAdd);

@@ -1,6 +1,5 @@
 import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
-import 'package:finlytics/app/tabs/widgets/chart_by_categories.dart';
-import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
@@ -23,8 +22,7 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
   late DateTime? currentEndDate;
   late DateRange? currentDateRange;
 
-  /// If null, will get the stats for all the accounts of the user
-  List<Account>? accountsToFilter;
+  TransactionFilters filters = TransactionFilters();
 
   @override
   void initState() {
@@ -48,13 +46,12 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
                 final modalRes = await showModalBottomSheet<TransactionFilters>(
                     context: context,
                     isScrollControlled: true,
-                    builder: (context) => FilterSheetModal(
-                        preselectedFilter:
-                            TransactionFilters(accounts: accountsToFilter)));
+                    builder: (context) =>
+                        FilterSheetModal(preselectedFilter: filters));
 
                 if (modalRes != null) {
                   setState(() {
-                    accountsToFilter = modalRes.accounts;
+                    filters = modalRes;
                   });
                 }
               },
@@ -102,7 +99,7 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
                 endDate: currentEndDate,
                 showList: true,
                 transactionsType: transactionsType,
-                accountsToFilter: accountsToFilter),
+                filters: filters),
           ],
         ),
       ),

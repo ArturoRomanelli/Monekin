@@ -1,8 +1,10 @@
-import 'package:drift/drift.dart' show OrderBy, OrderingTerm, OrderingMode;
+import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/tabs/tabs.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
+import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:flutter/material.dart';
 
 class Tab2Page extends StatefulWidget {
@@ -13,6 +15,8 @@ class Tab2Page extends StatefulWidget {
 }
 
 class _Tab2PageState extends State<Tab2Page> {
+  TransactionFilters filters = TransactionFilters();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,11 +27,21 @@ class _Tab2PageState extends State<Tab2Page> {
           elevation: 4,
           actions: [
             IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // Do something
-              },
-            ),
+                onPressed: () async {
+                  final modalRes =
+                      await showModalBottomSheet<TransactionFilters>(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) =>
+                              FilterSheetModal(preselectedFilter: filters));
+
+                  if (modalRes != null) {
+                    setState(() {
+                      filters = modalRes;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.filter_alt_outlined)),
             IconButton(
               icon: const Icon(Icons.more_vert),
               onPressed: () {
@@ -40,8 +54,19 @@ class _Tab2PageState extends State<Tab2Page> {
           Expanded(
             child: StreamBuilder(
               stream: TransactionService.instance.getTransactions(
-                orderBy: (p0, p1, p2, p3, p4, p5, p6) => OrderBy([
-                  OrderingTerm(expression: p0.date, mode: OrderingMode.desc)
+                predicate: (t, account, accountCurrency, receivingAccount,
+                        receivingAccountCurrency, c, p6) =>
+                    DatabaseImpl.instance.buildExpr([
+                  if (filters.accounts != null)
+                    t.accountID.isIn(filters.accounts!.map((e) => e.id)),
+                  if (filters.categories != null)
+                    c.id.isIn(filters.categories!.map((e) => e.id)) |
+                        c.parentCategoryID
+                            .isIn(filters.categories!.map((e) => e.id)),
+                ]),
+                orderBy: (p0, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
+                  drift.OrderingTerm(
+                      expression: p0.date, mode: drift.OrderingMode.desc)
                 ]),
               ),
               builder: (context, snapshot) {

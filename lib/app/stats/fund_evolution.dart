@@ -1,5 +1,5 @@
 import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
-import 'package:finlytics/app/tabs/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
@@ -51,8 +51,10 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
                     context: context,
                     isScrollControlled: true,
                     builder: (context) => FilterSheetModal(
-                        preselectedFilter:
-                            TransactionFilters(accounts: accountsToFilter)));
+                          showCategoryFilter: false,
+                          preselectedFilter:
+                              TransactionFilters(accounts: accountsToFilter),
+                        ));
 
                 if (modalRes != null) {
                   setState(() {

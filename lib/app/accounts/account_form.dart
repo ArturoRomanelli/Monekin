@@ -1,3 +1,4 @@
+import 'package:finlytics/app/accounts/account_type_selector.dart';
 import 'package:finlytics/app/tabs/tabs.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
@@ -17,10 +18,13 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class AccountFormPage extends StatefulWidget {
-  const AccountFormPage({Key? key, this.accountUUID}) : super(key: key);
+  const AccountFormPage({Key? key, this.account, this.prevPage})
+      : super(key: key);
 
   /// Account UUID to edit (if any)
-  final String? accountUUID;
+  final Account? account;
+
+  final Widget? prevPage;
 
   @override
   State<AccountFormPage> createState() => _AccountFormPageState();
@@ -35,7 +39,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _balanceController = TextEditingController();
 
-  final _type = '';
+  AccountType _type = AccountType.normal;
   SupportedIcon _icon = SupportedIconService.instance.defaultSupportedIcon;
   Currency? _currency;
 
@@ -65,6 +69,12 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
     double newBalance = double.parse(_balanceController.text);
 
+    navigateBack() => Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => widget.prevPage ?? const TabsPage()),
+        (Route<dynamic> route) => false);
+
     if (_accountToEdit != null) {
       newBalance = _accountToEdit!.iniValue +
           newBalance -
@@ -84,19 +94,14 @@ class _AccountFormPageState extends State<AccountFormPage> {
       swift: _swiftController.text.isEmpty ? null : _swiftController.text,
     );
 
-    final navigateBack = Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const TabsPage()),
-        (Route<dynamic> route) => false);
-
     if (_accountToEdit != null) {
-      accountService
+      await accountService
           .updateAccount(accountToSubmit)
-          .then((value) => {navigateBack});
+          .then((value) => {navigateBack()});
     } else {
-      accountService
+      await accountService
           .insertAccount(accountToSubmit)
-          .then((value) => {navigateBack});
+          .then((value) => {navigateBack()});
     }
   }
 
@@ -104,7 +109,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
   void initState() {
     super.initState();
 
-    if (widget.accountUUID != null) {
+    if (widget.account != null) {
+      _accountToEdit = widget.account;
       _fillForm();
     } else {
       CurrencyService.instance.getUserPreferredCurrency().then((value) {
@@ -118,38 +124,36 @@ class _AccountFormPageState extends State<AccountFormPage> {
   void _fillForm() {
     final accountService = AccountService.instance;
 
-    accountService.getAccountById(widget.accountUUID!).first.then((value) {
-      _accountToEdit = value;
+    if (_accountToEdit == null) return;
 
-      if (_accountToEdit == null) return;
+    _nameController.text = _accountToEdit!.name;
+    _ibanController.text = _accountToEdit!.iban ?? '';
+    _swiftController.text = _accountToEdit!.swift ?? '';
+    _textController.text = _accountToEdit!.description ?? '';
 
-      _nameController.text = _accountToEdit!.name;
-      _ibanController.text = _accountToEdit!.iban ?? '';
-      _swiftController.text = _accountToEdit!.swift ?? '';
-      _textController.text = _accountToEdit!.description ?? '';
+    _openingDate = _accountToEdit!.date;
 
-      _openingDate = _accountToEdit!.date;
+    _type = _accountToEdit!.type;
 
-      accountService
-          .getAccountMoney(account: _accountToEdit!)
-          .first
-          .then((value) {
-        _balanceController.text = value.toString();
-      });
-
-      _icon = _accountToEdit!.icon;
-
-      CurrencyService.instance
-          .getCurrencyByCode(_accountToEdit!.currency.code)
-          .first
-          .then((value) {
-        setState(() {
-          _currency = value;
-        });
-      });
-
-      setState(() {});
+    accountService
+        .getAccountMoney(account: _accountToEdit!)
+        .first
+        .then((value) {
+      _balanceController.text = value.toString();
     });
+
+    _icon = _accountToEdit!.icon;
+
+    CurrencyService.instance
+        .getCurrencyByCode(_accountToEdit!.currency.code)
+        .first
+        .then((value) {
+      setState(() {
+        _currency = value;
+      });
+    });
+
+    setState(() {});
   }
 
   @override
@@ -182,11 +186,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
         )
       ],
       appBar: AppBar(
-        title: Text(
-            widget.accountUUID != null ? 'Edit account' : 'Create Account'),
+        title: Text(widget.account != null ? 'Edit account' : 'Create Account'),
         elevation: 2,
       ),
-      body: widget.accountUUID != null && _accountToEdit == null
+      body: widget.account != null && _accountToEdit == null
           ? const LinearProgressIndicator()
           : SingleChildScrollView(
               child: Container(
@@ -253,7 +256,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       TextFormField(
                         controller: _balanceController,
                         decoration: InputDecoration(
-                          labelText: widget.accountUUID != null
+                          labelText: widget.account != null
                               ? 'Current balance *'
                               : 'Initial balance *',
                           hintText: 'Ex.: 200',
@@ -338,7 +341,14 @@ class _AccountFormPageState extends State<AccountFormPage> {
                             ),
                           ),
                         ),
-                      const SizedBox(height: 12),
+                      if (_accountToEdit == null) const SizedBox(height: 12),
+                      if (_accountToEdit == null)
+                        AccountTypeSelector(onSelected: (newType) {
+                          setState(() {
+                            _type = newType;
+                          });
+                        }),
+                      const SizedBox(height: 16),
                       SingleExpansionPanel(
                         child: Column(
                           children: [

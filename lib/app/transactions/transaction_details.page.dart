@@ -1,7 +1,7 @@
 import 'package:finlytics/app/tabs/card_with_header.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_UIActions_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +86,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final transactionDetailsActions = TransactionUIActionService()
+    final transactionDetailsActions = TransactionViewActionService()
         .transactionDetailsActions(context,
             transaction: widget.transaction, prevPage: widget.prevPage);
 

@@ -5,6 +5,7 @@
 
 import './../../../models/transaction/transaction.dart';
 import './../../../models/category/category.dart';
+import './../../../models/account/account.dart';
 
 CREATE TABLE IF NOT EXISTS currencies (
     -- ISO 4217 currency code. Identifies a currency uniquely ([see more](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes))
@@ -35,9 +36,13 @@ CREATE TABLE IF NOT EXISTS accounts (
     name TEXT UNIQUE NOT NULL,
     
     iniValue REAL NOT NULL,
+
+    -- Date of creation of this account
     date DATETIME NOT NULL,
+
     description TEXT,
-    type TEXT NOT NULL,
+    type ENUMNAME(AccountType) NOT NULL CHECK(type IN ('normal', 'saving')),
+    
     iconId TEXT NOT NULL,
 
     -- ID of the currency used by this account and therefore all transactions contained in it

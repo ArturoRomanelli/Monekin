@@ -1,7 +1,7 @@
 import 'package:finlytics/app/transactions/transaction_details.page.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_UIActions_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +26,7 @@ class TransactionListComponent extends StatelessWidget {
         builder: (context) {
           return Column(
               mainAxisSize: MainAxisSize.min,
-              children: (TransactionUIActionService()
+              children: (TransactionViewActionService()
                   .transactionDetailsActions(context, transaction: transaction)
                   .map((e) => ListTile(
                         leading: Icon(e.icon),

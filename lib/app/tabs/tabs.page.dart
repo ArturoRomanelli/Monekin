@@ -1,4 +1,4 @@
-import 'package:finlytics/app/accounts/accountForm.dart';
+import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/tabs/tab1.page.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
 import 'package:finlytics/app/tabs/tab3.page.dart';

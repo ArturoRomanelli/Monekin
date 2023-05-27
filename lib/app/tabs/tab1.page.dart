@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' as drift;
-import 'package:finlytics/app/accounts/accountForm.dart';
+import 'package:finlytics/app/accounts/account_details.dart';
+import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/accounts/all_accounts_balance.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/currencies/currency_manager.dart';
@@ -26,7 +27,6 @@ import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/services/finance_health_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/presentation/widgets/user_avatar.dart';
 
@@ -83,106 +83,6 @@ class _Tab1PageState extends State<Tab1Page> {
     _accountsStream = AccountService.instance.getAccounts();
 
     dateRangeService.resetDateRanges();
-  }
-
-  Widget accountItemInSwiper(Account account) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: Colors.transparent, width: 2),
-              ),
-              child: SizedBox(
-                  height: 28,
-                  width: 28,
-                  child: SvgPicture.asset(
-                    account.icon.urlToAssets,
-                    fit: BoxFit.contain,
-                  ))),
-          const SizedBox(
-            width: 10,
-          ),
-          Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(account.name, style: const TextStyle(fontSize: 16)),
-                Row(
-                  children: [
-                    StreamBuilder(
-                        initialData: 0.0,
-                        stream: AccountService.instance
-                            .getAccountMoney(account: account),
-                        builder: (context, snapshot) {
-                          return CurrencyDisplayer(
-                            amountToConvert: snapshot.data!,
-                            currency: account.currency,
-                          );
-                        }),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    StreamBuilder(
-                        initialData: 0.0,
-                        stream: AccountService.instance
-                            .getAccountsMoneyVariation(
-                                accounts: [account],
-                                startDate: dateRangeService.startDate,
-                                endDate: dateRangeService.endDate,
-                                convertToPreferredCurrency: false),
-                        builder: (context, snapshot) {
-                          return TrendingValue(
-                              percentage: snapshot.data!, decimalDigits: 0);
-                        }),
-                  ],
-                )
-              ]),
-        ],
-      ),
-    );
-  }
-
-  Widget accountList(List<Account>? accounts) {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      itemCount: (accounts?.length ?? 0) + 1,
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          margin: EdgeInsets.only(left: index == 0 ? 12 : 2),
-          width: 250.0,
-          child: Card(
-            elevation: 2,
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () async => {
-                await Future.delayed(const Duration(milliseconds: 200)),
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AccountFormPage(
-                            accountUUID: (index == (accounts?.length ?? 0))
-                                ? null
-                                : accounts![index].id)))
-              },
-              child: (index == (accounts?.length ?? 0))
-                  ? const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                          Icon(Icons.add),
-                          Text('Create account'),
-                        ])
-                  : accountItemInSwiper(accounts![index]),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -253,11 +153,6 @@ class _Tab1PageState extends State<Tab1Page> {
                           ),
                         ),
                         ActionChip(
-                          // TODO: ActionChip not show ripple effect when a background color is applied.
-                          // This is a known issue of flutter, see:
-                          // - https://github.com/flutter/flutter/issues/73215
-                          // - https://github.com/flutter/flutter/issues/115824
-
                           onPressed: () {
                             dateRangeService
                                 .openDateModal(context)
@@ -398,16 +293,13 @@ class _Tab1PageState extends State<Tab1Page> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  AccountFormPage(
-                                                    accountUUID: account.id,
+                                                  AccountDetailsPage(
+                                                    account: account,
                                                   ))),
-                                      leading: SizedBox(
-                                          height: 28,
-                                          width: 28,
-                                          child: SvgPicture.asset(
-                                            account.icon.urlToAssets,
-                                            fit: BoxFit.contain,
-                                          )),
+                                      leading: Hero(
+                                          tag: 'account-icon-${account.id}',
+                                          child:
+                                              account.icon.display(size: 22)),
                                       trailing: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,

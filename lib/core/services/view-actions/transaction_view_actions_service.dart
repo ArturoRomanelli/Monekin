@@ -2,31 +2,19 @@ import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/utils/list_tile_action_item.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class TransactionDetailAction {
-  final String label;
-  final IconData icon;
-
-  final void Function() onClick;
-
-  TransactionDetailAction({
-    required this.label,
-    required this.icon,
-    required this.onClick,
-  });
-}
-
-class TransactionUIActionService {
+class TransactionViewActionService {
   final TransactionService transactionService = TransactionService.instance;
 
-  TransactionUIActionService();
+  TransactionViewActionService();
 
-  List<TransactionDetailAction> transactionDetailsActions(BuildContext context,
+  List<ListTileActionItem> transactionDetailsActions(BuildContext context,
       {required MoneyTransaction transaction, Widget? prevPage}) {
     return [
-      TransactionDetailAction(
+      ListTileActionItem(
           label: 'Edit',
           icon: Icons.edit,
           onClick: () => Navigator.push(
@@ -36,16 +24,16 @@ class TransactionUIActionService {
                         prevPage: prevPage,
                         transactionToEdit: transaction,
                       )))),
-      TransactionDetailAction(
+      ListTileActionItem(
           label: 'Clone',
           icon: Icons.control_point_duplicate,
-          onClick: () => TransactionUIActionService()
+          onClick: () => TransactionViewActionService()
               .cloneTransactionWithAlertAndSnackBar(context,
                   transaction: transaction, returnPage: prevPage)),
-      TransactionDetailAction(
+      ListTileActionItem(
           label: 'Delete',
           icon: Icons.delete,
-          onClick: () => TransactionUIActionService()
+          onClick: () => TransactionViewActionService()
               .deleteTransactionWithAlertAndSnackBar(context,
                   transactionId: transaction.id, returnPage: prevPage))
     ];

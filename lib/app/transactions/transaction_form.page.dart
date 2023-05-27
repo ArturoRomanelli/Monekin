@@ -129,11 +129,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   }
 
   fillForm(MoneyTransaction transaction) async {
-    fromAccount = await AccountService.instance
-        .getAccountById(transaction.accountID)
-        .first;
-
     setState(() {
+      fromAccount = transaction.account;
       isHidden = transaction.isHidden;
       date = transaction.date;
       status = transaction.status;

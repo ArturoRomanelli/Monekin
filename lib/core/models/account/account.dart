@@ -1,6 +1,35 @@
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
+import 'package:flutter/material.dart';
+
+enum AccountType {
+  /// A normal type of account The default type
+  normal,
+
+  /// This type of accounts can not have transactions. You only can add and withdraw money from it from other accounts
+  saving;
+
+  IconData get icon {
+    if (this == normal) {
+      return Icons.wallet;
+    } else if (this == saving) {
+      return Icons.savings;
+    }
+
+    return Icons.question_mark;
+  }
+
+  String get title {
+    if (this == normal) {
+      return 'Normal';
+    } else if (this == saving) {
+      return 'Savings';
+    }
+
+    return '';
+  }
+}
 
 class Account extends AccountInDB {
   Account(

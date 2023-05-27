@@ -230,11 +230,13 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
       requiredDuringInsert: false,
       $customConstraints: '');
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
-  late final GeneratedColumn<String> type = GeneratedColumn<String>(
-      'type', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+  late final GeneratedColumnWithTypeConverter<AccountType, String> type =
+      GeneratedColumn<String>('type', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: true,
+              $customConstraints:
+                  'NOT NULL CHECK (type IN (\'normal\', \'saving\'))')
+          .withConverter<AccountType>(Accounts.$convertertype);
   static const VerificationMeta _iconIdMeta = const VerificationMeta('iconId');
   late final GeneratedColumn<String> iconId = GeneratedColumn<String>(
       'iconId', aliasedName, false,
@@ -312,12 +314,7 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
           description.isAcceptableOrUnknown(
               data['description']!, _descriptionMeta));
     }
-    if (data.containsKey('type')) {
-      context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
-    } else if (isInserting) {
-      context.missing(_typeMeta);
-    }
+    context.handle(_typeMeta, const VerificationResult.success());
     if (data.containsKey('iconId')) {
       context.handle(_iconIdMeta,
           iconId.isAcceptableOrUnknown(data['iconId']!, _iconIdMeta));
@@ -359,8 +356,8 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
-      type: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
+      type: Accounts.$convertertype.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])!),
       iconId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}iconId'])!,
       currencyId: attachedDatabase.typeMapping
@@ -377,6 +374,8 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
     return Accounts(attachedDatabase, alias);
   }
 
+  static JsonTypeConverter2<AccountType, String, String> $convertertype =
+      const EnumNameConverter<AccountType>(AccountType.values);
   @override
   bool get dontWriteConstraints => true;
 }
@@ -387,9 +386,11 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
   /// Account name (unique among user accounts)
   final String name;
   final double iniValue;
+
+  /// Date of creation of this account
   final DateTime date;
   final String? description;
-  final String type;
+  final AccountType type;
   final String iconId;
 
   /// ID of the currency used by this account and therefore all transactions contained in it
@@ -417,7 +418,10 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    map['type'] = Variable<String>(type);
+    {
+      final converter = Accounts.$convertertype;
+      map['type'] = Variable<String>(converter.toSql(type));
+    }
     map['iconId'] = Variable<String>(iconId);
     map['currencyId'] = Variable<String>(currencyId);
     if (!nullToAbsent || iban != null) {
@@ -456,7 +460,8 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
       iniValue: serializer.fromJson<double>(json['iniValue']),
       date: serializer.fromJson<DateTime>(json['date']),
       description: serializer.fromJson<String?>(json['description']),
-      type: serializer.fromJson<String>(json['type']),
+      type: Accounts.$convertertype
+          .fromJson(serializer.fromJson<String>(json['type'])),
       iconId: serializer.fromJson<String>(json['iconId']),
       currencyId: serializer.fromJson<String>(json['currencyId']),
       iban: serializer.fromJson<String?>(json['iban']),
@@ -472,7 +477,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
       'iniValue': serializer.toJson<double>(iniValue),
       'date': serializer.toJson<DateTime>(date),
       'description': serializer.toJson<String?>(description),
-      'type': serializer.toJson<String>(type),
+      'type': serializer.toJson<String>(Accounts.$convertertype.toJson(type)),
       'iconId': serializer.toJson<String>(iconId),
       'currencyId': serializer.toJson<String>(currencyId),
       'iban': serializer.toJson<String?>(iban),
@@ -486,7 +491,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
           double? iniValue,
           DateTime? date,
           Value<String?> description = const Value.absent(),
-          String? type,
+          AccountType? type,
           String? iconId,
           String? currencyId,
           Value<String?> iban = const Value.absent(),
@@ -545,7 +550,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
   final Value<double> iniValue;
   final Value<DateTime> date;
   final Value<String?> description;
-  final Value<String> type;
+  final Value<AccountType> type;
   final Value<String> iconId;
   final Value<String> currencyId;
   final Value<String?> iban;
@@ -570,7 +575,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
     required double iniValue,
     required DateTime date,
     this.description = const Value.absent(),
-    required String type,
+    required AccountType type,
     required String iconId,
     required String currencyId,
     this.iban = const Value.absent(),
@@ -617,7 +622,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
       Value<double>? iniValue,
       Value<DateTime>? date,
       Value<String?>? description,
-      Value<String>? type,
+      Value<AccountType>? type,
       Value<String>? iconId,
       Value<String>? currencyId,
       Value<String?>? iban,
@@ -657,7 +662,8 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
       map['description'] = Variable<String>(description.value);
     }
     if (type.present) {
-      map['type'] = Variable<String>(type.value);
+      final converter = Accounts.$convertertype;
+      map['type'] = Variable<String>(converter.toSql(type.value));
     }
     if (iconId.present) {
       map['iconId'] = Variable<String>(iconId.value);
@@ -3149,7 +3155,7 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
           name: row.read<String>('name'),
           iniValue: row.read<double>('iniValue'),
           date: row.read<DateTime>('date'),
-          type: row.read<String>('type'),
+          type: Accounts.$convertertype.fromSql(row.read<String>('type')),
           iconId: row.read<String>('iconId'),
           currency: await currencies.mapFromRow(row, tablePrefix: 'nested_0'),
           description: row.readNullable<String>('description'),

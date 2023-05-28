@@ -143,6 +143,7 @@ class AccountService {
         WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})   
       """, readsFrom: {
           db.accounts,
+          db.transactions,
           if (convertToPreferredCurrency) db.exchangeRates
         }, variables: [
           if (categoriesIds != null)

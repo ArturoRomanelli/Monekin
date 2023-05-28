@@ -85,6 +85,100 @@ class _Tab1PageState extends State<Tab1Page> {
     dateRangeService.resetDateRanges();
   }
 
+  Widget buildAccountList(List<Account> accounts) {
+    return Builder(
+      builder: (context) {
+        if (accounts.isEmpty) {
+          return Column(
+            children: [
+              Center(
+                child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Aun no hay cuentas creadas',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Empieza a usar toda la magia de Finlytics. Crea al menos una cuenta para empezar a añadir tranacciones.',
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        FilledButton(
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AccountFormPage())),
+                            child: Text('Crear cuenta'))
+                      ],
+                    )),
+              )
+            ],
+          );
+        }
+
+        return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: accounts.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) {
+              return const Divider(indent: 56);
+            },
+            itemBuilder: (context, index) {
+              final account = accounts[index];
+
+              return ListTile(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AccountDetailsPage(
+                              account: account,
+                              prevPage: const TabsPage(),
+                            ))),
+                leading: Hero(
+                    tag: 'account-icon-${account.id}',
+                    child: account.icon.display(size: 22)),
+                trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      StreamBuilder(
+                          initialData: 0.0,
+                          stream: AccountService.instance
+                              .getAccountMoney(account: account),
+                          builder: (context, snapshot) {
+                            return CurrencyDisplayer(
+                              amountToConvert: snapshot.data!,
+                              currency: account.currency,
+                            );
+                          }),
+                      StreamBuilder(
+                          initialData: 0.0,
+                          stream: AccountService.instance
+                              .getAccountsMoneyVariation(
+                                  accounts: [account],
+                                  startDate: dateRangeService.startDate,
+                                  endDate: dateRangeService.endDate,
+                                  convertToPreferredCurrency: false),
+                          builder: (context, snapshot) {
+                            return TrendingValue(
+                              percentage: snapshot.data!,
+                              decimalDigits: 0,
+                            );
+                          }),
+                    ]),
+                title: Text(account.name),
+              );
+            });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
@@ -260,90 +354,30 @@ class _Tab1PageState extends State<Tab1Page> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    CardWithHeader(
-                      title: 'Cuentas',
-                      onDetailsClick: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AllAccountBalancePage()));
-                      },
-                      body: StreamBuilder(
-                          stream: _accountsStream,
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return const LinearProgressIndicator();
-                            } else {
-                              final accounts = snapshot.data!;
+                    StreamBuilder(
+                        stream: _accountsStream,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return CardWithHeader(
+                                title: 'Accounts',
+                                body: const LinearProgressIndicator());
+                          } else {
+                            final accounts = snapshot.data!;
 
-                              return ListView.separated(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: accounts.length,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  separatorBuilder: (context, index) {
-                                    return const Divider(indent: 56);
-                                  },
-                                  itemBuilder: (context, index) {
-                                    final account = accounts[index];
-
-                                    return ListTile(
-                                      onTap: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AccountDetailsPage(
-                                                    account: account,
-                                                  ))),
-                                      leading: Hero(
-                                          tag: 'account-icon-${account.id}',
-                                          child:
-                                              account.icon.display(size: 22)),
-                                      trailing: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            StreamBuilder(
-                                                initialData: 0.0,
-                                                stream: AccountService.instance
-                                                    .getAccountMoney(
-                                                        account: account),
-                                                builder: (context, snapshot) {
-                                                  return CurrencyDisplayer(
-                                                    amountToConvert:
-                                                        snapshot.data!,
-                                                    currency: account.currency,
-                                                  );
-                                                }),
-                                            StreamBuilder(
-                                                initialData: 0.0,
-                                                stream: AccountService.instance
-                                                    .getAccountsMoneyVariation(
-                                                        accounts: [account],
-                                                        startDate:
-                                                            dateRangeService
-                                                                .startDate,
-                                                        endDate:
-                                                            dateRangeService
-                                                                .endDate,
-                                                        convertToPreferredCurrency:
-                                                            false),
-                                                builder: (context, snapshot) {
-                                                  return TrendingValue(
-                                                    percentage: snapshot.data!,
-                                                    decimalDigits: 0,
-                                                  );
-                                                }),
-                                          ]),
-                                      title: Text(account.name),
-                                    );
-                                  });
-                            }
-                          }),
-                    ),
+                            return CardWithHeader(
+                                title: 'Accounts',
+                                onDetailsClick: accounts.isEmpty
+                                    ? null
+                                    : () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const AllAccountBalancePage()));
+                                      },
+                                body: buildAccountList(accounts));
+                          }
+                        }),
                     const SizedBox(
                       height: 16,
                     ),

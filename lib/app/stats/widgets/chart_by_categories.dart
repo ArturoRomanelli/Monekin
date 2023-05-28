@@ -148,6 +148,17 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
   List<PieChartSectionData> showingSections(
       List<ChartByCategoriesDataItem> data) {
+    if (data.isEmpty) {
+      return [
+        PieChartSectionData(
+          color: Colors.grey.withOpacity(0.175),
+          value: 100,
+          radius: 50,
+          showTitle: false,
+        )
+      ];
+    }
+
     return data.mapIndexed((index, element) {
       final isTouched = index == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
@@ -216,31 +227,46 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
           children: [
             SizedBox(
               height: 250,
-              child: PieChart(
-                PieChartData(
-                  pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          touchedIndex = -1;
-                          return;
-                        }
-                        touchedIndex = pieTouchResponse
-                            .touchedSection!.touchedSectionIndex;
-                      });
-                    },
+              child: Stack(
+                children: <Widget>[
+                  PieChart(
+                    PieChartData(
+                      pieTouchData: PieTouchData(
+                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                          setState(() {
+                            if (!event.isInterestedForInteractions ||
+                                pieTouchResponse == null ||
+                                pieTouchResponse.touchedSection == null) {
+                              touchedIndex = -1;
+                              return;
+                            }
+                            touchedIndex = pieTouchResponse
+                                .touchedSection!.touchedSectionIndex;
+                          });
+                        },
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      sectionsSpace: 0,
+                      centerSpaceRadius: 40,
+                      sections: showingSections(filteredDataItems),
+                    ),
                   ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  sectionsSpace: 0,
-                  centerSpaceRadius: 40,
-                  sections: showingSections(filteredDataItems),
-                ),
+                  if (snapshot.data!.isEmpty)
+                    const Positioned.fill(
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text("Datos insuficientes")),
+                    ),
+                ],
               ),
             ),
+
+            /* ----------------------------- */
+            /* ------- CHART LEGEND -------- */
+            /* ----------------------------- */
+
             Padding(
               padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
               child: Wrap(
@@ -255,6 +281,11 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                     .toList(),
               ),
             ),
+
+            /* ----------------------------- */
+            /* ------ Info in a list ------- */
+            /* ----------------------------- */
+
             if (widget.showList)
               ListView.builder(
                 itemCount: snapshot.data!.length,

@@ -13,21 +13,23 @@ class EmptyIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            'assets/icons/page_states/empty_state.svg',
-            height: 200,
-            width: 200,
-            //colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
-          ),
+          LayoutBuilder(builder: (context, constraints) {
+            return SvgPicture.asset(
+              'assets/icons/page_states/empty_state.svg',
+              height: constraints.maxWidth * 0.5,
+              width: constraints.maxWidth * 0.5,
+              //colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            );
+          }),
           Text(
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             description,
             textAlign: TextAlign.center,

@@ -26,13 +26,18 @@ class AccountService {
         .go();
   }
 
-  Stream<List<Account>> getAccounts(
-      {Expression<bool> Function(Accounts, Currencies)? predicate,
-      double? limit}) {
-    limit ??= -1;
-
+  Stream<List<Account>> getAccounts({
+    Expression<bool> Function(Accounts acc, Currencies curr)? predicate,
+    OrderBy Function(Accounts acc, Currencies curr)? orderBy,
+    int? limit,
+    int? offset,
+  }) {
     return db
-        .getAccountsWithFullData(predicate: predicate, limit: limit)
+        .getAccountsWithFullData(
+          predicate: predicate,
+          orderBy: orderBy,
+          limit: (a, currency) => Limit(limit ?? -1, offset),
+        )
         .watch();
   }
 
@@ -41,7 +46,8 @@ class AccountService {
         .map((res) => res.firstOrNull);
   }
 
-  String _joinAccountAndRate(DateTime? date) => '''
+  String _joinAccountAndRate(DateTime? date, {String columnName = 'excRate'}) =>
+      '''
     LEFT JOIN
       (
           SELECT currencyCode,
@@ -55,7 +61,7 @@ class AccountService {
                         )
             ORDER BY currencyCode
       )
-      AS excRate ON accounts.currencyId = excRate.currencyCode
+      AS $columnName ON accounts.currencyId = excRate.currencyCode
     ''';
 
   /// Get the amount of money that an account have in a certain period of time, specified in the [date] param. If the [date] param is null, it will return the money of the account right now.
@@ -77,6 +83,7 @@ class AccountService {
       bool convertToPreferredCurrency = true}) {
     date ??= DateTime.now();
 
+    // Get the accounts initial balance (converted to the preferred currency if necessary). Later we should get the balance of the accounts
     final initialBalanceQuery = db
         .customSelect(
           """
@@ -121,24 +128,50 @@ class AccountService {
       DateTime? endDate,
       DateTime? startDate,
       bool convertToPreferredCurrency = true}) {
+    String transactionWhereStatement = """
+        isHidden = 0      
+        ${categoriesIds != null ? ' AND transactions.categoryID IN (${List.filled(categoriesIds.length, '?').join(', ')}) ' : ''} 
+        ${endDate != null ? ' AND date <= ?' : ''} 
+        ${startDate != null ? ' AND date >= ?' : ''} 
+        ${accountDataFilter == AccountDataFilter.expense ? ' AND value < 0 AND receivingAccountID IS NULL' : ''} 
+        ${accountDataFilter == AccountDataFilter.income ? ' AND value > 0 AND receivingAccountID IS NULL' : ''}
+      """;
+
+    List<Variable<Object>> transactionWhereArgs = [
+      if (categoriesIds != null)
+        for (var id in categoriesIds) Variable.withString(id),
+      if (endDate != null) Variable.withDateTime(endDate),
+      if (startDate != null) Variable.withDateTime(startDate),
+    ];
+
     return db
         .customSelect("""
-        SELECT COALESCE(SUM(t.value ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}), 0) 
+        SELECT (COALESCE(SUM(t.value ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}), 0) + 
+          COALESCE(SUM(tr.value ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}), 0)) 
         AS balance
           FROM accounts
               LEFT JOIN
               (
-                  SELECT value,
-                          accountID
+                  SELECT CASE
+                          WHEN receivingAccountID IS NOT NULL THEN (value * -1)
+                          ELSE value
+                          END as value,
+                        accountID
                     FROM transactions
-                    WHERE isHidden = 0      
-                    ${categoriesIds != null ? ' AND transactions.categoryID IN (${List.filled(categoriesIds.length, '?').join(', ')}) ' : ''} 
-                    ${endDate != null ? ' AND date <= ?' : ''} 
-                    ${startDate != null ? ' AND date >= ?' : ''} 
-                    ${accountDataFilter == AccountDataFilter.expense ? 'AND value < 0' : ''} 
-                    ${accountDataFilter == AccountDataFilter.income ? 'AND value > 0' : ''} 
+                    WHERE $transactionWhereStatement
               )
               AS t ON accounts.id = t.accountID
+              LEFT JOIN
+              (
+                  SELECT CASE
+                          WHEN receivingAccountID IS NOT NULL THEN (COALESCE(valueInDestiny, value))
+                          ELSE value
+                          END as value,
+                        receivingAccountID
+                    FROM transactions
+                    WHERE $transactionWhereStatement
+              )
+              AS tr ON accounts.id = tr.receivingAccountID
               ${convertToPreferredCurrency ? _joinAccountAndRate(endDate) : ''}
         WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})   
       """, readsFrom: {
@@ -146,10 +179,8 @@ class AccountService {
           db.transactions,
           if (convertToPreferredCurrency) db.exchangeRates
         }, variables: [
-          if (categoriesIds != null)
-            for (var id in categoriesIds) Variable.withString(id),
-          if (endDate != null) Variable.withDateTime(endDate),
-          if (startDate != null) Variable.withDateTime(startDate),
+          ...transactionWhereArgs,
+          ...transactionWhereArgs,
           if (endDate != null && convertToPreferredCurrency)
             Variable.withDateTime(endDate),
           for (var id in accountIds) Variable.withString(id)

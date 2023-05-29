@@ -317,8 +317,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
                       const SizedBox(height: 12),
                       if (showCurrencyExchangesWarn)
                         Card(
-                          color: Colors.amber[50],
+                          color: Colors.amber.withOpacity(0.2),
                           elevation: 0,
+                          margin: const EdgeInsets.all(0),
                           child: Padding(
                             padding: const EdgeInsets.all(8),
                             child: Row(
@@ -333,8 +334,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                   child: Text(
                                     'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes',
                                     style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w300),
+                                        fontSize: 12.25,
+                                        fontWeight: FontWeight.w400),
                                   ),
                                 ),
                               ],

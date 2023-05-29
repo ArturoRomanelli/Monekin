@@ -108,9 +108,17 @@ CREATE TABLE IF NOT EXISTS transactions (
 CREATE TABLE IF NOT EXISTS recurrentRules (
   id TEXT NOT NULL PRIMARY KEY,
   accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  
+  -- Date of the next scheduled payment
   nextPaymentDate DATETIME NOT NULL,
+  
+  -- The time range with which new transactions to be paid will appear (weekly, monthly...)
   intervalPeriod TEXT NOT NULL,
+
+  -- Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
   intervalEach TEXT NOT NULL DEFAULT 1,
+
+  -- Date until which payments will continue to appear
   endDate DATETIME,
 
   -- Monetary amount related to this transaction, in the currency of its account

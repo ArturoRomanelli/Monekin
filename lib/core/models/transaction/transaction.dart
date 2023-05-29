@@ -4,6 +4,8 @@ import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 
+enum TransactionPeriodicity { week, month, year }
+
 enum TransactionType { income, expense, transfer }
 
 enum TransactionStatus {

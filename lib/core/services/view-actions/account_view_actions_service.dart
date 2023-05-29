@@ -1,4 +1,5 @@
 import 'package:finlytics/app/accounts/account_form.dart';
+import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/utils/list_tile_action_item.dart';
@@ -21,6 +22,17 @@ class AccountViewActionService {
                   builder: (context) => AccountFormPage(
                         prevPage: prevPage,
                         account: account,
+                      )))),
+      ListTileActionItem(
+          label: 'New transfer',
+          icon: Icons.swap_vert_rounded,
+          onClick: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TransactionFormPage(
+                        prevPage: prevPage,
+                        fromAccount: account,
+                        mode: TransactionFormMode.transfer,
                       )))),
       ListTileActionItem(
           label: 'Delete',

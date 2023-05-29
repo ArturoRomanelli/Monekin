@@ -10,13 +10,14 @@ import './../../../models/category/category.dart';
 import './../../../models/exchange-rate/exchange_rate.dart';
 import './../../../models/transaction/transaction.dart';
 
-getAccountsWithFullData($predicate = TRUE, :limit AS NUMBER) WITH Account: 
+getAccountsWithFullData($predicate = TRUE) WITH Account: 
     SELECT a.*, currency.** 
     FROM accounts a 
         INNER JOIN currencies currency 
         ON a.currencyId = currency.code 
     WHERE $predicate 
-    LIMIT :limit;
+    ORDER BY $orderBy
+    LIMIT $limit;
 
 getTransactionsWithFullData($predicate = TRUE) WITH MoneyTransaction: 
     SELECT t.*, a.** as account, accountCurrency.**, receivingAccountCurrency.**, ra.** as receivingAccount, c.** as category, pc.** as parentCategory

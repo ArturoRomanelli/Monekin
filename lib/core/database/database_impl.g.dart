@@ -2737,9 +2737,17 @@ class RecurrentRuleInDB extends DataClass
     implements Insertable<RecurrentRuleInDB> {
   final String id;
   final String accountID;
+
+  /// Date of the next scheduled payment
   final DateTime nextPaymentDate;
+
+  /// The time range with which new transactions to be paid will appear (weekly, monthly...)
   final String intervalPeriod;
+
+  /// Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
   final String intervalEach;
+
+  /// Date until which payments will continue to appear
   final DateTime? endDate;
 
   /// Monetary amount related to this transaction, in the currency of its account
@@ -3131,8 +3139,10 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
   late final AppData appData = AppData(this);
   late final RecurrentRules recurrentRules = RecurrentRules(this);
   Selectable<Account> getAccountsWithFullData(
-      {GetAccountsWithFullData$predicate? predicate, required double limit}) {
-    var $arrayStartIndex = 2;
+      {GetAccountsWithFullData$predicate? predicate,
+      GetAccountsWithFullData$orderBy? orderBy,
+      required GetAccountsWithFullData$limit limit}) {
+    var $arrayStartIndex = 1;
     final generatedpredicate = $write(
         predicate?.call(alias(this.accounts, 'a'),
                 alias(this.currencies, 'currency')) ??
@@ -3140,16 +3150,31 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         hasMultipleTables: true,
         startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedpredicate.amountOfVariables;
+    final generatedorderBy = $write(
+        orderBy?.call(alias(this.accounts, 'a'),
+                alias(this.currencies, 'currency')) ??
+            const OrderBy.nothing(),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedorderBy.amountOfVariables;
+    final generatedlimit = $write(
+        limit(alias(this.accounts, 'a'), alias(this.currencies, 'currency')),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedlimit.amountOfVariables;
     return customSelect(
-        'SELECT a.*,"currency"."code" AS "nested_0.code", "currency"."symbol" AS "nested_0.symbol" FROM accounts AS a INNER JOIN currencies AS currency ON a.currencyId = currency.code WHERE ${generatedpredicate.sql} LIMIT ?1',
+        'SELECT a.*,"currency"."code" AS "nested_0.code", "currency"."symbol" AS "nested_0.symbol" FROM accounts AS a INNER JOIN currencies AS currency ON a.currencyId = currency.code WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
         variables: [
-          Variable<double>(limit),
-          ...generatedpredicate.introducedVariables
+          ...generatedpredicate.introducedVariables,
+          ...generatedorderBy.introducedVariables,
+          ...generatedlimit.introducedVariables
         ],
         readsFrom: {
           accounts,
           currencies,
           ...generatedpredicate.watchedTables,
+          ...generatedorderBy.watchedTables,
+          ...generatedlimit.watchedTables,
         }).asyncMap((QueryRow row) async => Account(
           id: row.read<String>('id'),
           name: row.read<String>('name'),
@@ -3513,6 +3538,10 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
 }
 
 typedef GetAccountsWithFullData$predicate = Expression<bool> Function(
+    Accounts a, Currencies currency);
+typedef GetAccountsWithFullData$orderBy = OrderBy Function(
+    Accounts a, Currencies currency);
+typedef GetAccountsWithFullData$limit = Limit Function(
     Accounts a, Currencies currency);
 typedef GetTransactionsWithFullData$predicate = Expression<bool> Function(
     Transactions t,

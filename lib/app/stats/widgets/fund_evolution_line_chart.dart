@@ -174,6 +174,7 @@ class _FundEvolutionLineChartState extends State<FundEvolutionLineChart> {
                       (index) => FlSpot(
                           index.toDouble(), snapshot.data!.balance[index])),
                   isCurved: true,
+                  curveSmoothness: 0.025,
                   color: gradientColors[0],
                   barWidth: 5,
                   isStrokeCapRound: true,

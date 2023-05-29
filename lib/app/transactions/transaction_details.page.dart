@@ -186,10 +186,15 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Category'),
+                              Text(widget.transaction.isIncomeOrExpense
+                                  ? 'Category'
+                                  : 'Cuenta de destino'),
                               Chip(
-                                  label:
-                                      Text(widget.transaction.category!.name),
+                                  label: Text(
+                                      widget.transaction.isIncomeOrExpense
+                                          ? widget.transaction.category!.name
+                                          : widget.transaction.receivingAccount!
+                                              .name),
                                   padding: const EdgeInsets.all(2),
                                   labelStyle: TextStyle(
                                       color: widget.transaction
@@ -204,10 +209,16 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                       .withOpacity(0.12),
                                   avatar: CircleAvatar(
                                     backgroundColor: Colors.transparent,
-                                    child: widget.transaction.category!.icon
-                                        .display(
-                                            color: widget.transaction
-                                                .color(context)),
+                                    child: widget.transaction.isIncomeOrExpense
+                                        ? widget.transaction.category!.icon
+                                            .display(
+                                                color: widget.transaction
+                                                    .color(context))
+                                        : widget
+                                            .transaction.receivingAccount!.icon
+                                            .display(
+                                                color: widget.transaction
+                                                    .color(context)),
                                   )),
                             ],
                           ),

@@ -23,6 +23,9 @@ class TransactionViewActionService {
                   builder: (context) => TransactionFormPage(
                         prevPage: prevPage,
                         transactionToEdit: transaction,
+                        mode: transaction.isIncomeOrExpense
+                            ? TransactionFormMode.incomeOrExpense
+                            : TransactionFormMode.transfer,
                       )))),
       ListTileActionItem(
           label: 'Clone',

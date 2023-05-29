@@ -62,6 +62,7 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
         .getTransactions(
           predicate: (t, acc, p2, p3, p4, transCategory, p6) =>
               DatabaseImpl.instance.buildExpr([
+            t.receivingAccountID.isNull(),
             if (widget.startDate != null)
               t.date.isBiggerThanValue(widget.startDate!),
             if (widget.endDate != null)

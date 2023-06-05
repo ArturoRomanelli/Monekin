@@ -1,20 +1,15 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/utils/get_download_path.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class BackupDatabaseService {
   DatabaseImpl db = DatabaseImpl.instance;
 
   Future<void> downloadDatabaseFile(BuildContext context) async {
     final messeger = ScaffoldMessenger.of(context);
-    final status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
 
     List<int> dbFileInBytes = await File(await db.databasePath).readAsBytes();
 

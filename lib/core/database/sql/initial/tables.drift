@@ -77,11 +77,12 @@ CREATE TABLE IF NOT EXISTS categories (
 
 CREATE TABLE IF NOT EXISTS transactions (
   id TEXT NOT NULL PRIMARY KEY,
-  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
   
   -- Date on which the payment of this transaction was made
   date DATETIME NOT NULL,
 
+  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  
   -- Monetary amount related to this transaction, in the currency of its account
   value REAL NOT NULL,
 
@@ -107,19 +108,25 @@ CREATE TABLE IF NOT EXISTS transactions (
 -- Rules to generate transactions 
 CREATE TABLE IF NOT EXISTS recurrentRules (
   id TEXT NOT NULL PRIMARY KEY,
-  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  
+   
   -- Date of the next scheduled payment
   nextPaymentDate DATETIME NOT NULL,
   
   -- The time range with which new transactions to be paid will appear (weekly, monthly...)
-  intervalPeriod TEXT NOT NULL,
+  intervalPeriod ENUMNAME(TransactionPeriodicity) NOT NULL CHECK(intervalPeriod IN ('day','week','month','year')),
 
   -- Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
-  intervalEach TEXT NOT NULL DEFAULT 1,
+  intervalEach INTEGER NOT NULL DEFAULT 1,
 
-  -- Date until which payments will continue to appear
+  -- Date until which payments will continue to appear. If this field or the `remainingTransactions` field is not specified, the recurring transaction will never end.
   endDate DATETIME,
+
+  -- Number of payments remaining. This value must dicrease by one in the case a new payment is done within this rule. If this field or the `endDate` field is not specified, the recurring transaction will never end.
+  remainingTransactions INTEGER,
+
+  /* --------------- COMMON ATTRIBUTES WITH transactions --------------- */
+  
+  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
   -- Monetary amount related to this transaction, in the currency of its account
   value REAL NOT NULL,

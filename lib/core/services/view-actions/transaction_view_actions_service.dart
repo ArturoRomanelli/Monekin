@@ -1,5 +1,6 @@
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/utils/list_tile_action_item.dart';
@@ -8,11 +9,15 @@ import 'package:uuid/uuid.dart';
 
 class TransactionViewActionService {
   final TransactionService transactionService = TransactionService.instance;
+  final RecurrentRuleService recurrentTransactionService =
+      RecurrentRuleService.instance;
 
   TransactionViewActionService();
 
   List<ListTileActionItem> transactionDetailsActions(BuildContext context,
       {required MoneyTransaction transaction, Widget? prevPage}) {
+    final isRecurrent = transaction is MoneyRecurrentRule;
+
     return [
       ListTileActionItem(
           label: 'Edit',
@@ -27,23 +32,28 @@ class TransactionViewActionService {
                             ? TransactionFormMode.incomeOrExpense
                             : TransactionFormMode.transfer,
                       )))),
-      ListTileActionItem(
-          label: 'Clone',
-          icon: Icons.control_point_duplicate,
-          onClick: () => TransactionViewActionService()
-              .cloneTransactionWithAlertAndSnackBar(context,
-                  transaction: transaction, returnPage: prevPage)),
+      if (transaction is! MoneyRecurrentRule)
+        ListTileActionItem(
+            label: 'Clone',
+            icon: Icons.control_point_duplicate,
+            onClick: () => TransactionViewActionService()
+                .cloneTransactionWithAlertAndSnackBar(context,
+                    transaction: transaction, returnPage: prevPage)),
       ListTileActionItem(
           label: 'Delete',
           icon: Icons.delete,
           onClick: () => TransactionViewActionService()
               .deleteTransactionWithAlertAndSnackBar(context,
-                  transactionId: transaction.id, returnPage: prevPage))
+                  transactionId: transaction.id,
+                  returnPage: prevPage,
+                  isRecurrent: isRecurrent))
     ];
   }
 
   deleteTransactionWithAlertAndSnackBar(BuildContext context,
-      {required String transactionId, Widget? returnPage}) {
+      {required String transactionId,
+      Widget? returnPage,
+      bool isRecurrent = false}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -55,14 +65,25 @@ class TransactionViewActionService {
             TextButton(
               child: const Text('Yes, continue'),
               onPressed: () {
-                transactionService
-                    .deleteTransaction(transactionId)
-                    .then((value) {
+                Future<int> call = isRecurrent
+                    ? recurrentTransactionService
+                        .deleteRecurrentRule(transactionId)
+                    : transactionService.deleteTransaction(transactionId);
+
+                call.then((value) {
+                  if (value == 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('No se ha podido eliminar el registro')));
+
+                    return;
+                  }
+
                   if (returnPage != null) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => returnPage),
-                        (Route<dynamic> route) => false);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => returnPage));
                   } else {
                     Navigator.pop(context);
                   }

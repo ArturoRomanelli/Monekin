@@ -21,22 +21,49 @@ class TransactionDetailAction {
 
 class TransactionDetailsPage extends StatefulWidget {
   const TransactionDetailsPage(
-      {super.key, required this.transaction, required this.prevPage});
+      {super.key,
+      required this.transaction,
+      required this.prevPage,
+      this.recurrentMode = false});
 
   final MoneyTransaction transaction;
 
   /// Widget to navigate if the transaction is removed
   final Widget prevPage;
 
+  /// If true, it will display some info about the recurrency of a transaction
+  final bool recurrentMode;
+
   @override
   State<TransactionDetailsPage> createState() => _TransactionDetailsPageState();
 }
 
 class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
-  Widget statusDisplayer(TransactionStatus status) {
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.recurrentMode && widget.transaction is! MoneyRecurrentRule) {
+      throw Exception(
+          'A single/normal transaction can not be passed when recurrentMode is true');
+    }
+  }
+
+  Widget statusDisplayer(MoneyTransaction transaction) {
+    if (transaction.status == null && transaction is! MoneyRecurrentRule) {
+      throw Exception('Error');
+    }
+
+    final bool showRecurrencyStatus =
+        (transaction is MoneyRecurrentRule) && widget.recurrentMode;
+
+    final color = showRecurrencyStatus
+        ? Theme.of(context).primaryColor
+        : transaction.status!.color;
+
     return Card(
       elevation: 1,
-      color: status.color.lighten(0.425),
+      color: color.lighten(0.385),
       clipBehavior: Clip.hardEdge,
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -47,34 +74,52 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Transacción reconciliada',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w700)),
                 Icon(
-                  status.icon,
+                  showRecurrencyStatus
+                      ? Icons.repeat_rounded
+                      : transaction.status?.icon,
                   size: 26,
-                  color: status.color.darken(0.2),
+                  color: color.darken(0.2),
                 )
               ],
             ),
           ),
-          Divider(color: status.color.lighten(0.325)),
+          Divider(color: color.lighten(0.25)),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
                 Text(
-                    "Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco"),
-                if (status == TransactionStatus.pending)
+                    'Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco'),
+                if (transaction.status == TransactionStatus.pending)
                   const SizedBox(height: 12),
-                if (status == TransactionStatus.pending)
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () => false,
-                      child: Text("Pagar"),
-                      style: FilledButton.styleFrom(
-                          backgroundColor: status.color.darken(0.2)),
-                    ),
+                if (transaction.status == TransactionStatus.pending)
+                  Row(
+                    children: [
+                      if (widget.transaction is MoneyRecurrentRule) ...[
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => false,
+                            child: Text('Saltar pago'),
+                            style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: color.darken(0.2)),
+                                backgroundColor: Colors.white.withOpacity(0.6),
+                                foregroundColor: color.darken(0.2)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () => false,
+                          child: Text('Pagar'),
+                          style: FilledButton.styleFrom(
+                              backgroundColor: color.darken(0.2)),
+                        ),
+                      ),
+                    ],
                   ),
               ],
             ),
@@ -118,11 +163,29 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
-                        DateFormat.yMMMMd()
-                            .add_Hm()
-                            .format(widget.transaction.date),
-                      )
+                      if (!widget.recurrentMode)
+                        Text(
+                          DateFormat.yMMMMd()
+                              .add_Hm()
+                              .format(widget.transaction.date),
+                        )
+                      else
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.repeat_rounded,
+                              size: 14,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${(widget.transaction as MoneyRecurrentRule).recurrencyData.formText} ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                   Hero(
@@ -145,8 +208,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                 ],
               ),
               const SizedBox(height: 24),
-              if (widget.transaction.status != null)
-                statusDisplayer(widget.transaction.status!),
+              if (widget.transaction.status != null ||
+                  widget.transaction is MoneyRecurrentRule)
+                statusDisplayer(widget.transaction),
               CardWithHeader(
                 title: 'Datos',
                 body: SizedBox(
@@ -227,7 +291,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           const Divider(indent: 12),
                         if (widget.transaction.notes != null)
                           ListTile(
-                            title: Text("Note"),
+                            title: Text('Note'),
                             subtitle: Text(widget.transaction.notes!),
                           )
                       ]),
@@ -236,32 +300,47 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               const SizedBox(height: 16),
               CardWithHeader(
                 title: 'Acciones rápidas',
-                body: GridView.count(
-                  primary: false,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(16),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 8,
-                  crossAxisCount: 4,
-                  children: transactionDetailsActions
-                      .map((item) => Column(
-                            children: [
-                              IconButton.filledTonal(
-                                  onPressed: item.onClick,
-                                  icon: Icon(
-                                    item.icon,
-                                    size: 32,
-                                    color: Theme.of(context).primaryColor,
-                                  )),
-                              const SizedBox(height: 4),
-                              Text(
-                                item.label,
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w300),
-                              )
-                            ],
-                          ))
-                      .toList(),
+                body: Column(
+                  children: [
+                    GridView.count(
+                      primary: false,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(16),
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 8,
+                      crossAxisCount: 4,
+                      children: transactionDetailsActions
+                          .map((item) => Column(
+                                children: [
+                                  IconButton.filledTonal(
+                                      onPressed: item.onClick,
+                                      icon: Icon(
+                                        item.icon,
+                                        size: 32,
+                                        color: Theme.of(context).primaryColor,
+                                      )),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    item.label,
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w300),
+                                  )
+                                ],
+                              ))
+                          .toList(),
+                    ),
+                    if (!widget.recurrentMode &&
+                        (widget.transaction is MoneyRecurrentRule))
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          '* Esta transacción ha sido autogenerada a raiz de una regla recurrente. Por ello, al editar o eliminarla afectarás a todas las futuras transacciones que se puedan generar con esta regla',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w300),
+                        ),
+                      )
+                  ],
                 ),
               ),
             ],

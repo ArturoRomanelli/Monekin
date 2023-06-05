@@ -2,6 +2,7 @@ import 'package:finlytics/app/transactions/transaction_details.page.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
+import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -10,11 +11,15 @@ class TransactionListComponent extends StatelessWidget {
       {super.key,
       required this.transactions,
       this.showGroupDivider = true,
+      this.showRecurrentInfo = false,
       required this.prevPage});
 
   final List<MoneyTransaction> transactions;
 
   final bool showGroupDivider;
+
+  /// Display info about the periodicity of the recurrent transactions, and the days to the next payment
+  final bool showRecurrentInfo;
 
   final Widget prevPage;
 
@@ -67,17 +72,44 @@ class TransactionListComponent extends StatelessWidget {
               children: [
                 Text(transaction.displayName),
                 const SizedBox(width: 4),
-                if (transaction.status == TransactionStatus.reconcilied)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Color.fromARGB(255, 40, 110, 43),
+                if (transaction.status != null && !showRecurrentInfo)
+                  Icon(
+                    transaction.status!.icon,
+                    color: transaction.status!.color.darken(0.1),
                     size: 12,
                   )
               ],
             ),
-            subtitle: Text(
-              '${transaction.account.name} • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} ',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${transaction.account.name} • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} ',
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w300),
+                ),
+                if (transaction is MoneyRecurrentRule && showRecurrentInfo) ...[
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.repeat_rounded,
+                        size: 14,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "In ${transaction.date.difference(DateTime.now()).inDays} days",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                ]
+              ],
             ),
             trailing: CurrencyDisplayer(
               amountToConvert: transaction.value,
@@ -112,6 +144,7 @@ class TransactionListComponent extends StatelessWidget {
                       builder: (context) => TransactionDetailsPage(
                             transaction: transaction,
                             prevPage: prevPage,
+                            recurrentMode: showRecurrentInfo,
                           )));
             },
             onLongPress: () => showTransactionActions(context, transaction),

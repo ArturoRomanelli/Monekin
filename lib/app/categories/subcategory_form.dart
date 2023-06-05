@@ -117,7 +117,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) =>
-                                textFieldValidator(value, isRequired: true),
+                                fieldValidator(value, isRequired: true),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             textInputAction: TextInputAction.next,

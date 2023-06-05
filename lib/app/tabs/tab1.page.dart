@@ -1,9 +1,7 @@
-import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/account_details.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/accounts/all_accounts_balance.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
-import 'package:finlytics/app/currencies/currency_manager.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
 import 'package:finlytics/app/stats/cash_flow.dart';
 import 'package:finlytics/app/stats/fund_evolution.dart';
@@ -15,12 +13,9 @@ import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
 import 'package:finlytics/app/tabs/card_with_header.dart';
 import 'package:finlytics/app/tabs/circular_arc.dart';
 import 'package:finlytics/app/tabs/tabs.page.dart';
-import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
@@ -29,6 +24,7 @@ import 'package:finlytics/core/services/finance_health_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/user_avatar.dart';
+import '../transactions/recurrent-transactions.dart';
 
 class Tab1Page extends StatefulWidget {
   const Tab1Page({Key? key}) : super(key: key);
@@ -50,9 +46,9 @@ class _Tab1PageState extends State<Tab1Page> {
       'route': const CategoriesList(mode: CategoriesListMode.page)
     },
     {
-      'icon': Icons.currency_exchange,
-      'label': 'Currencies',
-      'route': const CurrencyManagerPage()
+      'icon': Icons.repeat_rounded,
+      'label': 'Trans. recurrents',
+      'route': const RecurrentTransactionPage()
     },
     {
       'icon': Icons.settings_outlined,
@@ -63,22 +59,11 @@ class _Tab1PageState extends State<Tab1Page> {
 
   final dateRangeService = DateRangeService();
 
-  late Stream<List<MoneyTransaction>> _biggerExpensesStream;
   late Stream<List<Account>> _accountsStream;
 
   @override
   void initState() {
     super.initState();
-
-    _biggerExpensesStream = TransactionService.instance.getTransactions(
-      predicate: (transaction, p1, p2, p3, p4, p5, p6) =>
-          transaction.value.isSmallerThanValue(0),
-      limit: 3,
-      orderBy: (transaction, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
-        drift.OrderingTerm(
-            expression: transaction.value, mode: drift.OrderingMode.asc)
-      ]),
-    );
 
     _accountsStream = AccountService.instance.getAccounts();
 
@@ -444,23 +429,6 @@ class _Tab1PageState extends State<Tab1Page> {
                     ),
                     const SizedBox(height: 16),
                     CardWithHeader(
-                        title: 'Gastos mas grandes',
-                        body: StreamBuilder(
-                          stream: _biggerExpensesStream,
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return const LinearProgressIndicator();
-                            }
-
-                            return TransactionListComponent(
-                              transactions: snapshot.data!,
-                              prevPage: const TabsPage(currentPageIndex: 0),
-                              showGroupDivider: false,
-                            );
-                          },
-                        )),
-                    const SizedBox(height: 16),
-                    CardWithHeader(
                         title: 'Tendencia de saldo',
                         body: FundEvolutionLineChart(
                           startDate: dateRangeService.startDate,
@@ -531,6 +499,8 @@ class _Tab1PageState extends State<Tab1Page> {
                                     const SizedBox(height: 4),
                                     Text(
                                       item['label'],
+                                      overflow: TextOverflow.fade,
+                                      softWrap: false,
                                       style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w300),

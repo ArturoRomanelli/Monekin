@@ -242,7 +242,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                 border: OutlineInputBorder(),
                               ),
                               validator: (value) =>
-                                  textFieldValidator(value, isRequired: true),
+                                  fieldValidator(value, isRequired: true),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               textInputAction: TextInputAction.next,
@@ -263,8 +263,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.number,
-                        validator: (value) => textFieldValidator(value,
-                            isNumber: true, isRequired: true),
+                        validator: (value) => fieldValidator(value,
+                            validator: ValidatorType.double, isRequired: true),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         textInputAction: TextInputAction.next,
                       ),

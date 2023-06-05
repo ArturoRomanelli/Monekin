@@ -82,7 +82,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) =>
-                          textFieldValidator(value, isRequired: true),
+                          fieldValidator(value, isRequired: true),
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       textInputAction: TextInputAction.done,
                     ),

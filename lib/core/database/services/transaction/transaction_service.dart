@@ -26,28 +26,28 @@ class TransactionService {
         .go();
   }
 
-  Stream<List<MoneyTransaction>> getTransactions({
-    Expression<bool> Function(
-            Transactions transaction,
-            Accounts account,
-            Currencies accountCurrency,
-            Accounts receivingAccount,
-            Currencies receivingAccountCurrency,
-            Categories c,
-            Categories)?
-        predicate,
-    OrderBy Function(
-            Transactions transaction,
-            Accounts account,
-            Currencies accountCurrency,
-            Accounts receivingAccount,
-            Currencies receivingAccountCurrency,
-            Categories c,
-            Categories)?
-        orderBy,
-    int? limit,
-    int? offset,
-  }) {
+  Stream<List<MoneyTransaction>> getTransactions(
+      {Expression<bool> Function(
+              Transactions transaction,
+              Accounts account,
+              Currencies accountCurrency,
+              Accounts receivingAccount,
+              Currencies receivingAccountCurrency,
+              Categories c,
+              Categories)?
+          predicate,
+      OrderBy Function(
+              Transactions transaction,
+              Accounts account,
+              Currencies accountCurrency,
+              Accounts receivingAccount,
+              Currencies receivingAccountCurrency,
+              Categories c,
+              Categories)?
+          orderBy,
+      int? limit,
+      int? offset,
+      bool includeTransactionsFromRecurrent = true}) {
     return db
         .getTransactionsWithFullData(
           predicate: predicate,

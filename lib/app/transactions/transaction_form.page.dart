@@ -1,7 +1,9 @@
 import 'package:finlytics/app/accounts/account_selector.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
+import 'package:finlytics/app/transactions/widgets/interval_selector_help.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
@@ -18,24 +20,23 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/database/database_impl.dart';
+
 enum TransactionFormMode { transfer, incomeOrExpense }
 
-enum RuleUntilMode { infinity, date, nTimes }
-
 class TransactionFormPage extends StatefulWidget {
-  const TransactionFormPage(
-      {super.key,
-      this.prevPage,
-      this.transactionToEdit,
-      this.mode = TransactionFormMode.incomeOrExpense,
-      this.fromAccount,
-      this.toAccount,
-      this.recurringMode = false});
+  const TransactionFormPage({
+    super.key,
+    this.prevPage,
+    this.transactionToEdit,
+    this.mode = TransactionFormMode.incomeOrExpense,
+    this.fromAccount,
+    this.toAccount,
+  });
 
   final Widget? prevPage;
   final MoneyTransaction? transactionToEdit;
   final TransactionFormMode mode;
-  final bool recurringMode;
 
   final Account? fromAccount;
   final Account? toAccount;
@@ -69,12 +70,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
 
   bool get isEditMode => widget.transactionToEdit != null;
 
-  late bool recurringMode;
-
-  TransactionPeriodicity intervalPeriod = TransactionPeriodicity.month;
-  int intervalEach = 1;
-  RuleUntilMode ruleUntilMode = RuleUntilMode.infinity;
-  DateTime? endDateOfRecurring;
+  RecurrencyData recurrentRule = const RecurrencyData.noRepeat();
 
   Widget selector({
     required String title,
@@ -90,7 +86,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
         controller:
             TextEditingController(text: inputValue ?? 'Sin especificar'),
         readOnly: true,
-        validator: (_) => textFieldValidator(inputValue, isRequired: true),
+        validator: (_) => fieldValidator(inputValue, isRequired: true),
         onTap: () => onClick(),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
@@ -114,36 +110,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       return;
     }
 
-    late MoneyTransaction toPush;
-
-    if (widget.mode == TransactionFormMode.incomeOrExpense) {
-      toPush = MoneyTransaction.incomeOrExpense(
-        id: widget.transactionToEdit?.id ?? const Uuid().v4(),
-        account: fromAccount!,
-        date: date,
-        value: selectedCategory!.type.isExpense
-            ? valueToNumber! * -1
-            : valueToNumber!,
-        category: selectedCategory!,
-        status: status,
-        isHidden: isHidden,
-        notes: notesController.text.isEmpty ? null : notesController.text,
-        title: titleController.text.isEmpty ? null : titleController.text,
-      );
-    } else {
-      toPush = MoneyTransaction.transfer(
-          id: widget.transactionToEdit?.id ?? const Uuid().v4(),
-          account: fromAccount!,
-          receivingAccount: toAccount!,
-          date: date,
-          value: valueToNumber!,
-          status: status,
-          isHidden: isHidden,
-          notes: notesController.text.isEmpty ? null : notesController.text,
-          title: titleController.text.isEmpty ? null : titleController.text);
-    }
-
-    TransactionService.instance.insertOrUpdateTransaction(toPush).then((value) {
+    onSuccess() {
+      Navigator.pop(context);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -153,17 +121,86 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           content: Text(isEditMode
               ? 'Transacción editada correctamente'
               : 'Transacción creada correctamente')));
-    }).catchError((error) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error)));
-    });
+    }
+
+    if (recurrentRule.isNoRecurrent) {
+      late MoneyTransaction toPush;
+
+      if (widget.mode == TransactionFormMode.incomeOrExpense) {
+        toPush = MoneyTransaction.incomeOrExpense(
+          id: widget.transactionToEdit?.id ?? const Uuid().v4(),
+          account: fromAccount!,
+          date: date,
+          value: selectedCategory!.type.isExpense
+              ? valueToNumber! * -1
+              : valueToNumber!,
+          category: selectedCategory!,
+          status: status,
+          isHidden: isHidden,
+          notes: notesController.text.isEmpty ? null : notesController.text,
+          title: titleController.text.isEmpty ? null : titleController.text,
+        );
+      } else {
+        toPush = MoneyTransaction.transfer(
+            id: widget.transactionToEdit?.id ?? const Uuid().v4(),
+            account: fromAccount!,
+            receivingAccount: toAccount!,
+            date: date,
+            value: valueToNumber!,
+            status: status,
+            isHidden: isHidden,
+            notes: notesController.text.isEmpty ? null : notesController.text,
+            title: titleController.text.isEmpty ? null : titleController.text);
+      }
+
+      TransactionService.instance
+          .insertOrUpdateTransaction(toPush)
+          .then((value) {
+        onSuccess();
+      }).catchError((error) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error)));
+      });
+    } else {
+      RecurrentRuleInDB toPush = RecurrentRuleInDB(
+          id: widget.transactionToEdit?.id ?? const Uuid().v4(),
+          nextPaymentDate: date,
+          intervalPeriod: recurrentRule.intervalPeriod!,
+          intervalEach: recurrentRule.intervalEach!,
+          endDate: recurrentRule.ruleRecurrentLimit?.endDate,
+          remainingTransactions:
+              recurrentRule.ruleRecurrentLimit?.remainingIterations,
+          accountID: fromAccount!.id,
+          receivingAccountID: widget.mode == TransactionFormMode.transfer
+              ? toAccount!.id
+              : null,
+          categoryID: widget.mode == TransactionFormMode.incomeOrExpense
+              ? selectedCategory!.id
+              : null,
+          valueInDestiny: widget.mode == TransactionFormMode.transfer
+              ? valueInDestinyToNumber!
+              : null,
+          notes: notesController.text.isEmpty ? null : notesController.text,
+          title: titleController.text.isEmpty ? null : titleController.text,
+          value: widget.mode == TransactionFormMode.incomeOrExpense &&
+                  selectedCategory!.type.isExpense
+              ? valueToNumber! * -1
+              : valueToNumber!);
+
+      RecurrentRuleService.instance
+          .insertOrUpdateRecurrentRule(toPush)
+          .then((value) {
+        onSuccess();
+      }).catchError((error) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error)));
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-
-    recurringMode = widget.recurringMode;
 
     if (widget.transactionToEdit != null) {
       fillForm(widget.transactionToEdit!);
@@ -248,10 +285,10 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               : null),
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        final defaultNumberValidatorResult = textFieldValidator(
+                        final defaultNumberValidatorResult = fieldValidator(
                             value,
                             isRequired: true,
-                            isNumber: true);
+                            validator: ValidatorType.double);
 
                         if (defaultNumberValidatorResult != null) {
                           return defaultNumberValidatorResult;
@@ -362,44 +399,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               });
                             }
                           }),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: titleController,
-                      maxLength: 15,
-                      decoration: const InputDecoration(
-                        labelText: 'Titulo de la transacción',
-                        hintText:
-                            'Si no se especifica, se usará el nombre de la categoría',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: SegmentedButton(
-                          segments: const [
-                            ButtonSegment(
-                                value: false,
-                                label: Text(
-                                  'Transacción unica',
-                                  softWrap: false,
-                                  overflow: TextOverflow.fade,
-                                )),
-                            ButtonSegment(
-                                value: true,
-                                label: Text(
-                                  'Transacción recurrente',
-                                  softWrap: false,
-                                  overflow: TextOverflow.fade,
-                                )),
-                          ],
-                          selected: {
-                            recurringMode
-                          },
-                          onSelectionChanged: (value) => setState(() {
-                                recurringMode = value.first;
-                              })),
-                    ),
                     const SizedBox(height: 24),
                     TextFormField(
                       controller: TextEditingController(
@@ -423,108 +422,50 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         });
                       },
                     ),
-                    if (recurringMode) const SizedBox(height: 16),
-                    if (recurringMode)
-                      Row(
-                        children: [
-                          Flexible(
-                              flex: 1,
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  labelText: 'Cada *',
-                                  border: OutlineInputBorder(),
-                                ),
-                                keyboardType: TextInputType.number,
-                              )),
-                          const SizedBox(width: 12),
-                          Flexible(
-                            flex: 2,
-                            child: DropdownButtonFormField(
-                              value: intervalPeriod,
-                              decoration: const InputDecoration(
-                                labelText: 'Periodicidad *',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: List.generate(
-                                  TransactionPeriodicity.values.length,
-                                  (index) => DropdownMenuItem(
-                                      value:
-                                          TransactionPeriodicity.values[index],
-                                      child: Text(TransactionPeriodicity
-                                          .values[index].name))),
-                              onChanged: (value) {
-                                if (value == null) return;
-                                setState(() {
-                                  intervalPeriod = value;
-                                });
+                    if (!(widget.transactionToEdit != null &&
+                        widget.transactionToEdit is! MoneyRecurrentRule)) ...[
+                      const SizedBox(height: 16),
+                      TextField(
+                          controller: TextEditingController(
+                              text: recurrentRule.formText),
+                          readOnly: true,
+                          onTap: () async {
+                            final res = await showDialog<RecurrencyData?>(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 0),
+                                  clipBehavior: Clip.hardEdge,
+                                  content: IntervalSelectorHelp(
+                                      selectedRecurrentRule: recurrentRule),
+                                );
                               },
-                            ),
-                          ),
-                        ],
+                            );
+
+                            if (res == null) return;
+
+                            setState(() {
+                              recurrentRule = res;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Repeat",
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                          ))
+                    ],
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: titleController,
+                      maxLength: 15,
+                      decoration: const InputDecoration(
+                        labelText: 'Titulo de la transacción',
+                        hintText:
+                            'Si no se especifica, se usará el nombre de la categoría',
+                        border: OutlineInputBorder(),
                       ),
-                    if (recurringMode) const SizedBox(height: 16),
-                    if (recurringMode)
-                      Row(
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: DropdownButtonFormField(
-                              value: ruleUntilMode,
-                              decoration: const InputDecoration(
-                                labelText: 'Hasta *',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: List.generate(
-                                  RuleUntilMode.values.length,
-                                  (index) => DropdownMenuItem(
-                                      value: RuleUntilMode.values[index],
-                                      child: Text(
-                                          RuleUntilMode.values[index].name))),
-                              onChanged: (value) {
-                                if (value == null) return;
-                                if (value == RuleUntilMode.infinity) {
-                                  endDateOfRecurring = null;
-                                }
-
-                                setState(() {
-                                  ruleUntilMode = value;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Flexible(
-                            flex: 2,
-                            child: TextFormField(
-                              controller: TextEditingController(
-                                  text: endDateOfRecurring == null
-                                      ? ''
-                                      : DateFormat.yMMMMd()
-                                          .add_Hm()
-                                          .format(endDateOfRecurring!)),
-                              decoration: const InputDecoration(
-                                labelText: 'Fecha hasta *',
-                                border: OutlineInputBorder(),
-                              ),
-                              enabled: ruleUntilMode != RuleUntilMode.infinity,
-                              readOnly: true,
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: date,
-                                    firstDate: DateTime(1700),
-                                    lastDate: DateTime(2099));
-
-                                if (pickedDate == null) return;
-
-                                setState(() {
-                                  endDateOfRecurring = pickedDate;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      )
+                    ),
                   ],
                 ),
               ),
@@ -562,9 +503,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               });
                             },
                           ),
-                          if (widget.mode == TransactionFormMode.transfer)
+                          if (widget.mode == TransactionFormMode.transfer) ...[
                             const SizedBox(height: 16),
-                          if (widget.mode == TransactionFormMode.transfer)
                             TextFormField(
                               controller: valueInDestinyController,
                               decoration: InputDecoration(
@@ -585,8 +525,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               keyboardType: TextInputType.number,
                               validator: (value) {
                                 final defaultNumberValidatorResult =
-                                    textFieldValidator(value,
-                                        isRequired: false, isNumber: true);
+                                    fieldValidator(value,
+                                        isRequired: false,
+                                        validator: ValidatorType.double);
 
                                 if (defaultNumberValidatorResult != null) {
                                   return defaultNumberValidatorResult;
@@ -607,13 +548,11 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                 setState(() {});
                               },
                             ),
+                          ],
                           if (widget.mode == TransactionFormMode.transfer &&
                               valueToNumber != null &&
-                              valueInDestinyToNumber == null)
+                              valueInDestinyToNumber == null) ...[
                             const SizedBox(height: 16),
-                          if (widget.mode == TransactionFormMode.transfer &&
-                              valueToNumber != null &&
-                              valueInDestinyToNumber == null)
                             Card(
                               color: Theme.of(context)
                                   .primaryColor
@@ -642,6 +581,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                 ),
                               ),
                             ),
+                          ],
                           const SizedBox(height: 16),
                           TextFormField(
                             minLines: 2,

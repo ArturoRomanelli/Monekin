@@ -1078,6 +1078,12 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL PRIMARY KEY');
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+      'date', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _accountIDMeta =
       const VerificationMeta('accountID');
   late final GeneratedColumn<String> accountID = GeneratedColumn<String>(
@@ -1086,12 +1092,6 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
       requiredDuringInsert: true,
       $customConstraints:
           'NOT NULL REFERENCES accounts(id)ON UPDATE CASCADE ON DELETE CASCADE');
-  static const VerificationMeta _dateMeta = const VerificationMeta('date');
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
   static const VerificationMeta _valueMeta = const VerificationMeta('value');
   late final GeneratedColumn<double> value = GeneratedColumn<double>(
       'value', aliasedName, false,
@@ -1152,8 +1152,8 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        accountID,
         date,
+        accountID,
         value,
         title,
         notes,
@@ -1177,17 +1177,17 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
-    if (data.containsKey('accountID')) {
-      context.handle(_accountIDMeta,
-          accountID.isAcceptableOrUnknown(data['accountID']!, _accountIDMeta));
-    } else if (isInserting) {
-      context.missing(_accountIDMeta);
-    }
     if (data.containsKey('date')) {
       context.handle(
           _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
     } else if (isInserting) {
       context.missing(_dateMeta);
+    }
+    if (data.containsKey('accountID')) {
+      context.handle(_accountIDMeta,
+          accountID.isAcceptableOrUnknown(data['accountID']!, _accountIDMeta));
+    } else if (isInserting) {
+      context.missing(_accountIDMeta);
     }
     if (data.containsKey('value')) {
       context.handle(
@@ -1237,10 +1237,10 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
     return TransactionInDB(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      accountID: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}accountID'])!,
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      accountID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}accountID'])!,
       value: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
       title: attachedDatabase.typeMapping
@@ -1282,10 +1282,10 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
 
 class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   final String id;
-  final String accountID;
 
   /// Date on which the payment of this transaction was made
   final DateTime date;
+  final String accountID;
 
   /// Monetary amount related to this transaction, in the currency of its account
   final double value;
@@ -1302,8 +1302,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   final bool isHidden;
   const TransactionInDB(
       {required this.id,
-      required this.accountID,
       required this.date,
+      required this.accountID,
       required this.value,
       this.title,
       this.notes,
@@ -1316,8 +1316,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
-    map['accountID'] = Variable<String>(accountID);
     map['date'] = Variable<DateTime>(date);
+    map['accountID'] = Variable<String>(accountID);
     map['value'] = Variable<double>(value);
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
@@ -1345,8 +1345,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   TransactionsCompanion toCompanion(bool nullToAbsent) {
     return TransactionsCompanion(
       id: Value(id),
-      accountID: Value(accountID),
       date: Value(date),
+      accountID: Value(accountID),
       value: Value(value),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
@@ -1372,8 +1372,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TransactionInDB(
       id: serializer.fromJson<String>(json['id']),
-      accountID: serializer.fromJson<String>(json['accountID']),
       date: serializer.fromJson<DateTime>(json['date']),
+      accountID: serializer.fromJson<String>(json['accountID']),
       value: serializer.fromJson<double>(json['value']),
       title: serializer.fromJson<String?>(json['title']),
       notes: serializer.fromJson<String?>(json['notes']),
@@ -1391,8 +1391,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'accountID': serializer.toJson<String>(accountID),
       'date': serializer.toJson<DateTime>(date),
+      'accountID': serializer.toJson<String>(accountID),
       'value': serializer.toJson<double>(value),
       'title': serializer.toJson<String?>(title),
       'notes': serializer.toJson<String?>(notes),
@@ -1407,8 +1407,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
 
   TransactionInDB copyWith(
           {String? id,
-          String? accountID,
           DateTime? date,
+          String? accountID,
           double? value,
           Value<String?> title = const Value.absent(),
           Value<String?> notes = const Value.absent(),
@@ -1419,8 +1419,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
           bool? isHidden}) =>
       TransactionInDB(
         id: id ?? this.id,
-        accountID: accountID ?? this.accountID,
         date: date ?? this.date,
+        accountID: accountID ?? this.accountID,
         value: value ?? this.value,
         title: title.present ? title.value : this.title,
         notes: notes.present ? notes.value : this.notes,
@@ -1437,8 +1437,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   String toString() {
     return (StringBuffer('TransactionInDB(')
           ..write('id: $id, ')
-          ..write('accountID: $accountID, ')
           ..write('date: $date, ')
+          ..write('accountID: $accountID, ')
           ..write('value: $value, ')
           ..write('title: $title, ')
           ..write('notes: $notes, ')
@@ -1452,15 +1452,15 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
   }
 
   @override
-  int get hashCode => Object.hash(id, accountID, date, value, title, notes,
+  int get hashCode => Object.hash(id, date, accountID, value, title, notes,
       status, categoryID, valueInDestiny, receivingAccountID, isHidden);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is TransactionInDB &&
           other.id == this.id &&
-          other.accountID == this.accountID &&
           other.date == this.date &&
+          other.accountID == this.accountID &&
           other.value == this.value &&
           other.title == this.title &&
           other.notes == this.notes &&
@@ -1473,8 +1473,8 @@ class TransactionInDB extends DataClass implements Insertable<TransactionInDB> {
 
 class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   final Value<String> id;
-  final Value<String> accountID;
   final Value<DateTime> date;
+  final Value<String> accountID;
   final Value<double> value;
   final Value<String?> title;
   final Value<String?> notes;
@@ -1486,8 +1486,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   final Value<int> rowid;
   const TransactionsCompanion({
     this.id = const Value.absent(),
-    this.accountID = const Value.absent(),
     this.date = const Value.absent(),
+    this.accountID = const Value.absent(),
     this.value = const Value.absent(),
     this.title = const Value.absent(),
     this.notes = const Value.absent(),
@@ -1500,8 +1500,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   });
   TransactionsCompanion.insert({
     required String id,
-    required String accountID,
     required DateTime date,
+    required String accountID,
     required double value,
     this.title = const Value.absent(),
     this.notes = const Value.absent(),
@@ -1512,13 +1512,13 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
     this.isHidden = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
-        accountID = Value(accountID),
         date = Value(date),
+        accountID = Value(accountID),
         value = Value(value);
   static Insertable<TransactionInDB> custom({
     Expression<String>? id,
-    Expression<String>? accountID,
     Expression<DateTime>? date,
+    Expression<String>? accountID,
     Expression<double>? value,
     Expression<String>? title,
     Expression<String>? notes,
@@ -1531,8 +1531,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (accountID != null) 'accountID': accountID,
       if (date != null) 'date': date,
+      if (accountID != null) 'accountID': accountID,
       if (value != null) 'value': value,
       if (title != null) 'title': title,
       if (notes != null) 'notes': notes,
@@ -1547,8 +1547,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
 
   TransactionsCompanion copyWith(
       {Value<String>? id,
-      Value<String>? accountID,
       Value<DateTime>? date,
+      Value<String>? accountID,
       Value<double>? value,
       Value<String?>? title,
       Value<String?>? notes,
@@ -1560,8 +1560,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
       Value<int>? rowid}) {
     return TransactionsCompanion(
       id: id ?? this.id,
-      accountID: accountID ?? this.accountID,
       date: date ?? this.date,
+      accountID: accountID ?? this.accountID,
       value: value ?? this.value,
       title: title ?? this.title,
       notes: notes ?? this.notes,
@@ -1580,11 +1580,11 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
-    if (accountID.present) {
-      map['accountID'] = Variable<String>(accountID.value);
-    }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
+    }
+    if (accountID.present) {
+      map['accountID'] = Variable<String>(accountID.value);
     }
     if (value.present) {
       map['value'] = Variable<double>(value.value);
@@ -1621,8 +1621,8 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
   String toString() {
     return (StringBuffer('TransactionsCompanion(')
           ..write('id: $id, ')
-          ..write('accountID: $accountID, ')
           ..write('date: $date, ')
+          ..write('accountID: $accountID, ')
           ..write('value: $value, ')
           ..write('title: $title, ')
           ..write('notes: $notes, ')
@@ -1631,6 +1631,693 @@ class TransactionsCompanion extends UpdateCompanion<TransactionInDB> {
           ..write('valueInDestiny: $valueInDestiny, ')
           ..write('receivingAccountID: $receivingAccountID, ')
           ..write('isHidden: $isHidden, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class RecurrentRules extends Table
+    with TableInfo<RecurrentRules, RecurrentRuleInDB> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  RecurrentRules(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL PRIMARY KEY');
+  static const VerificationMeta _nextPaymentDateMeta =
+      const VerificationMeta('nextPaymentDate');
+  late final GeneratedColumn<DateTime> nextPaymentDate =
+      GeneratedColumn<DateTime>('nextPaymentDate', aliasedName, false,
+          type: DriftSqlType.dateTime,
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL');
+  static const VerificationMeta _intervalPeriodMeta =
+      const VerificationMeta('intervalPeriod');
+  late final GeneratedColumnWithTypeConverter<TransactionPeriodicity,
+      String> intervalPeriod = GeneratedColumn<String>(
+          'intervalPeriod', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: true,
+          $customConstraints:
+              'NOT NULL CHECK (intervalPeriod IN (\'day\', \'week\', \'month\', \'year\'))')
+      .withConverter<TransactionPeriodicity>(
+          RecurrentRules.$converterintervalPeriod);
+  static const VerificationMeta _intervalEachMeta =
+      const VerificationMeta('intervalEach');
+  late final GeneratedColumn<int> intervalEach = GeneratedColumn<int>(
+      'intervalEach', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL DEFAULT 1',
+      defaultValue: const CustomExpression('1'));
+  static const VerificationMeta _endDateMeta =
+      const VerificationMeta('endDate');
+  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
+      'endDate', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _remainingTransactionsMeta =
+      const VerificationMeta('remainingTransactions');
+  late final GeneratedColumn<int> remainingTransactions = GeneratedColumn<int>(
+      'remainingTransactions', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _accountIDMeta =
+      const VerificationMeta('accountID');
+  late final GeneratedColumn<String> accountID = GeneratedColumn<String>(
+      'accountID', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints:
+          'NOT NULL REFERENCES accounts(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  late final GeneratedColumn<double> value = GeneratedColumn<double>(
+      'value', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _categoryIDMeta =
+      const VerificationMeta('categoryID');
+  late final GeneratedColumn<String> categoryID = GeneratedColumn<String>(
+      'categoryID', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints:
+          'REFERENCES categories(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  static const VerificationMeta _valueInDestinyMeta =
+      const VerificationMeta('valueInDestiny');
+  late final GeneratedColumn<double> valueInDestiny = GeneratedColumn<double>(
+      'valueInDestiny', aliasedName, true,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _receivingAccountIDMeta =
+      const VerificationMeta('receivingAccountID');
+  late final GeneratedColumn<String> receivingAccountID =
+      GeneratedColumn<String>('receivingAccountID', aliasedName, true,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          $customConstraints:
+              'REFERENCES accounts(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        nextPaymentDate,
+        intervalPeriod,
+        intervalEach,
+        endDate,
+        remainingTransactions,
+        accountID,
+        value,
+        title,
+        notes,
+        categoryID,
+        valueInDestiny,
+        receivingAccountID
+      ];
+  @override
+  String get aliasedName => _alias ?? 'recurrentRules';
+  @override
+  String get actualTableName => 'recurrentRules';
+  @override
+  VerificationContext validateIntegrity(Insertable<RecurrentRuleInDB> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('nextPaymentDate')) {
+      context.handle(
+          _nextPaymentDateMeta,
+          nextPaymentDate.isAcceptableOrUnknown(
+              data['nextPaymentDate']!, _nextPaymentDateMeta));
+    } else if (isInserting) {
+      context.missing(_nextPaymentDateMeta);
+    }
+    context.handle(_intervalPeriodMeta, const VerificationResult.success());
+    if (data.containsKey('intervalEach')) {
+      context.handle(
+          _intervalEachMeta,
+          intervalEach.isAcceptableOrUnknown(
+              data['intervalEach']!, _intervalEachMeta));
+    }
+    if (data.containsKey('endDate')) {
+      context.handle(_endDateMeta,
+          endDate.isAcceptableOrUnknown(data['endDate']!, _endDateMeta));
+    }
+    if (data.containsKey('remainingTransactions')) {
+      context.handle(
+          _remainingTransactionsMeta,
+          remainingTransactions.isAcceptableOrUnknown(
+              data['remainingTransactions']!, _remainingTransactionsMeta));
+    }
+    if (data.containsKey('accountID')) {
+      context.handle(_accountIDMeta,
+          accountID.isAcceptableOrUnknown(data['accountID']!, _accountIDMeta));
+    } else if (isInserting) {
+      context.missing(_accountIDMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('categoryID')) {
+      context.handle(
+          _categoryIDMeta,
+          categoryID.isAcceptableOrUnknown(
+              data['categoryID']!, _categoryIDMeta));
+    }
+    if (data.containsKey('valueInDestiny')) {
+      context.handle(
+          _valueInDestinyMeta,
+          valueInDestiny.isAcceptableOrUnknown(
+              data['valueInDestiny']!, _valueInDestinyMeta));
+    }
+    if (data.containsKey('receivingAccountID')) {
+      context.handle(
+          _receivingAccountIDMeta,
+          receivingAccountID.isAcceptableOrUnknown(
+              data['receivingAccountID']!, _receivingAccountIDMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RecurrentRuleInDB map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecurrentRuleInDB(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      nextPaymentDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}nextPaymentDate'])!,
+      intervalPeriod: RecurrentRules.$converterintervalPeriod.fromSql(
+          attachedDatabase.typeMapping.read(
+              DriftSqlType.string, data['${effectivePrefix}intervalPeriod'])!),
+      intervalEach: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}intervalEach'])!,
+      endDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}endDate']),
+      remainingTransactions: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}remainingTransactions']),
+      accountID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}accountID'])!,
+      value: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title']),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      categoryID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}categoryID']),
+      valueInDestiny: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}valueInDestiny']),
+      receivingAccountID: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}receivingAccountID']),
+    );
+  }
+
+  @override
+  RecurrentRules createAlias(String alias) {
+    return RecurrentRules(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<TransactionPeriodicity, String, String>
+      $converterintervalPeriod =
+      const EnumNameConverter<TransactionPeriodicity>(
+          TransactionPeriodicity.values);
+  @override
+  List<String> get customConstraints => const [
+        'CHECK((receivingAccountID IS NULL)!=(categoryID IS NULL))',
+        'CHECK(categoryID IS NULL OR valueInDestiny IS NULL)'
+      ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class RecurrentRuleInDB extends DataClass
+    implements Insertable<RecurrentRuleInDB> {
+  final String id;
+
+  /// Date of the next scheduled payment
+  final DateTime nextPaymentDate;
+
+  /// The time range with which new transactions to be paid will appear (weekly, monthly...)
+  final TransactionPeriodicity intervalPeriod;
+
+  /// Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
+  final int intervalEach;
+
+  /// Date until which payments will continue to appear. If this field or the `remainingTransactions` field is not specified, the recurring transaction will never end.
+  final DateTime? endDate;
+
+  /// Number of payments remaining. This value must dicrease by one in the case a new payment is done within this rule. If this field or the `endDate` field is not specified, the recurring transaction will never end.
+  final int? remainingTransactions;
+
+  /// --------------- COMMON ATTRIBUTES WITH transactions ---------------
+  final String accountID;
+
+  /// Monetary amount related to this transaction, in the currency of its account
+  final double value;
+
+  /// Title or main label of this transaction. If not defined, the category name is used normally as fallback
+  final String? title;
+
+  /// Some description, notes or extra info about the transaction.
+  final String? notes;
+  final String? categoryID;
+  final double? valueInDestiny;
+  final String? receivingAccountID;
+  const RecurrentRuleInDB(
+      {required this.id,
+      required this.nextPaymentDate,
+      required this.intervalPeriod,
+      required this.intervalEach,
+      this.endDate,
+      this.remainingTransactions,
+      required this.accountID,
+      required this.value,
+      this.title,
+      this.notes,
+      this.categoryID,
+      this.valueInDestiny,
+      this.receivingAccountID});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['nextPaymentDate'] = Variable<DateTime>(nextPaymentDate);
+    {
+      final converter = RecurrentRules.$converterintervalPeriod;
+      map['intervalPeriod'] = Variable<String>(converter.toSql(intervalPeriod));
+    }
+    map['intervalEach'] = Variable<int>(intervalEach);
+    if (!nullToAbsent || endDate != null) {
+      map['endDate'] = Variable<DateTime>(endDate);
+    }
+    if (!nullToAbsent || remainingTransactions != null) {
+      map['remainingTransactions'] = Variable<int>(remainingTransactions);
+    }
+    map['accountID'] = Variable<String>(accountID);
+    map['value'] = Variable<double>(value);
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || categoryID != null) {
+      map['categoryID'] = Variable<String>(categoryID);
+    }
+    if (!nullToAbsent || valueInDestiny != null) {
+      map['valueInDestiny'] = Variable<double>(valueInDestiny);
+    }
+    if (!nullToAbsent || receivingAccountID != null) {
+      map['receivingAccountID'] = Variable<String>(receivingAccountID);
+    }
+    return map;
+  }
+
+  RecurrentRulesCompanion toCompanion(bool nullToAbsent) {
+    return RecurrentRulesCompanion(
+      id: Value(id),
+      nextPaymentDate: Value(nextPaymentDate),
+      intervalPeriod: Value(intervalPeriod),
+      intervalEach: Value(intervalEach),
+      endDate: endDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endDate),
+      remainingTransactions: remainingTransactions == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remainingTransactions),
+      accountID: Value(accountID),
+      value: Value(value),
+      title:
+          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      categoryID: categoryID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryID),
+      valueInDestiny: valueInDestiny == null && nullToAbsent
+          ? const Value.absent()
+          : Value(valueInDestiny),
+      receivingAccountID: receivingAccountID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receivingAccountID),
+    );
+  }
+
+  factory RecurrentRuleInDB.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecurrentRuleInDB(
+      id: serializer.fromJson<String>(json['id']),
+      nextPaymentDate: serializer.fromJson<DateTime>(json['nextPaymentDate']),
+      intervalPeriod: RecurrentRules.$converterintervalPeriod
+          .fromJson(serializer.fromJson<String>(json['intervalPeriod'])),
+      intervalEach: serializer.fromJson<int>(json['intervalEach']),
+      endDate: serializer.fromJson<DateTime?>(json['endDate']),
+      remainingTransactions:
+          serializer.fromJson<int?>(json['remainingTransactions']),
+      accountID: serializer.fromJson<String>(json['accountID']),
+      value: serializer.fromJson<double>(json['value']),
+      title: serializer.fromJson<String?>(json['title']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      categoryID: serializer.fromJson<String?>(json['categoryID']),
+      valueInDestiny: serializer.fromJson<double?>(json['valueInDestiny']),
+      receivingAccountID:
+          serializer.fromJson<String?>(json['receivingAccountID']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'nextPaymentDate': serializer.toJson<DateTime>(nextPaymentDate),
+      'intervalPeriod': serializer.toJson<String>(
+          RecurrentRules.$converterintervalPeriod.toJson(intervalPeriod)),
+      'intervalEach': serializer.toJson<int>(intervalEach),
+      'endDate': serializer.toJson<DateTime?>(endDate),
+      'remainingTransactions': serializer.toJson<int?>(remainingTransactions),
+      'accountID': serializer.toJson<String>(accountID),
+      'value': serializer.toJson<double>(value),
+      'title': serializer.toJson<String?>(title),
+      'notes': serializer.toJson<String?>(notes),
+      'categoryID': serializer.toJson<String?>(categoryID),
+      'valueInDestiny': serializer.toJson<double?>(valueInDestiny),
+      'receivingAccountID': serializer.toJson<String?>(receivingAccountID),
+    };
+  }
+
+  RecurrentRuleInDB copyWith(
+          {String? id,
+          DateTime? nextPaymentDate,
+          TransactionPeriodicity? intervalPeriod,
+          int? intervalEach,
+          Value<DateTime?> endDate = const Value.absent(),
+          Value<int?> remainingTransactions = const Value.absent(),
+          String? accountID,
+          double? value,
+          Value<String?> title = const Value.absent(),
+          Value<String?> notes = const Value.absent(),
+          Value<String?> categoryID = const Value.absent(),
+          Value<double?> valueInDestiny = const Value.absent(),
+          Value<String?> receivingAccountID = const Value.absent()}) =>
+      RecurrentRuleInDB(
+        id: id ?? this.id,
+        nextPaymentDate: nextPaymentDate ?? this.nextPaymentDate,
+        intervalPeriod: intervalPeriod ?? this.intervalPeriod,
+        intervalEach: intervalEach ?? this.intervalEach,
+        endDate: endDate.present ? endDate.value : this.endDate,
+        remainingTransactions: remainingTransactions.present
+            ? remainingTransactions.value
+            : this.remainingTransactions,
+        accountID: accountID ?? this.accountID,
+        value: value ?? this.value,
+        title: title.present ? title.value : this.title,
+        notes: notes.present ? notes.value : this.notes,
+        categoryID: categoryID.present ? categoryID.value : this.categoryID,
+        valueInDestiny:
+            valueInDestiny.present ? valueInDestiny.value : this.valueInDestiny,
+        receivingAccountID: receivingAccountID.present
+            ? receivingAccountID.value
+            : this.receivingAccountID,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('RecurrentRuleInDB(')
+          ..write('id: $id, ')
+          ..write('nextPaymentDate: $nextPaymentDate, ')
+          ..write('intervalPeriod: $intervalPeriod, ')
+          ..write('intervalEach: $intervalEach, ')
+          ..write('endDate: $endDate, ')
+          ..write('remainingTransactions: $remainingTransactions, ')
+          ..write('accountID: $accountID, ')
+          ..write('value: $value, ')
+          ..write('title: $title, ')
+          ..write('notes: $notes, ')
+          ..write('categoryID: $categoryID, ')
+          ..write('valueInDestiny: $valueInDestiny, ')
+          ..write('receivingAccountID: $receivingAccountID')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      nextPaymentDate,
+      intervalPeriod,
+      intervalEach,
+      endDate,
+      remainingTransactions,
+      accountID,
+      value,
+      title,
+      notes,
+      categoryID,
+      valueInDestiny,
+      receivingAccountID);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecurrentRuleInDB &&
+          other.id == this.id &&
+          other.nextPaymentDate == this.nextPaymentDate &&
+          other.intervalPeriod == this.intervalPeriod &&
+          other.intervalEach == this.intervalEach &&
+          other.endDate == this.endDate &&
+          other.remainingTransactions == this.remainingTransactions &&
+          other.accountID == this.accountID &&
+          other.value == this.value &&
+          other.title == this.title &&
+          other.notes == this.notes &&
+          other.categoryID == this.categoryID &&
+          other.valueInDestiny == this.valueInDestiny &&
+          other.receivingAccountID == this.receivingAccountID);
+}
+
+class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
+  final Value<String> id;
+  final Value<DateTime> nextPaymentDate;
+  final Value<TransactionPeriodicity> intervalPeriod;
+  final Value<int> intervalEach;
+  final Value<DateTime?> endDate;
+  final Value<int?> remainingTransactions;
+  final Value<String> accountID;
+  final Value<double> value;
+  final Value<String?> title;
+  final Value<String?> notes;
+  final Value<String?> categoryID;
+  final Value<double?> valueInDestiny;
+  final Value<String?> receivingAccountID;
+  final Value<int> rowid;
+  const RecurrentRulesCompanion({
+    this.id = const Value.absent(),
+    this.nextPaymentDate = const Value.absent(),
+    this.intervalPeriod = const Value.absent(),
+    this.intervalEach = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.remainingTransactions = const Value.absent(),
+    this.accountID = const Value.absent(),
+    this.value = const Value.absent(),
+    this.title = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.categoryID = const Value.absent(),
+    this.valueInDestiny = const Value.absent(),
+    this.receivingAccountID = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RecurrentRulesCompanion.insert({
+    required String id,
+    required DateTime nextPaymentDate,
+    required TransactionPeriodicity intervalPeriod,
+    this.intervalEach = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.remainingTransactions = const Value.absent(),
+    required String accountID,
+    required double value,
+    this.title = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.categoryID = const Value.absent(),
+    this.valueInDestiny = const Value.absent(),
+    this.receivingAccountID = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        nextPaymentDate = Value(nextPaymentDate),
+        intervalPeriod = Value(intervalPeriod),
+        accountID = Value(accountID),
+        value = Value(value);
+  static Insertable<RecurrentRuleInDB> custom({
+    Expression<String>? id,
+    Expression<DateTime>? nextPaymentDate,
+    Expression<String>? intervalPeriod,
+    Expression<int>? intervalEach,
+    Expression<DateTime>? endDate,
+    Expression<int>? remainingTransactions,
+    Expression<String>? accountID,
+    Expression<double>? value,
+    Expression<String>? title,
+    Expression<String>? notes,
+    Expression<String>? categoryID,
+    Expression<double>? valueInDestiny,
+    Expression<String>? receivingAccountID,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (nextPaymentDate != null) 'nextPaymentDate': nextPaymentDate,
+      if (intervalPeriod != null) 'intervalPeriod': intervalPeriod,
+      if (intervalEach != null) 'intervalEach': intervalEach,
+      if (endDate != null) 'endDate': endDate,
+      if (remainingTransactions != null)
+        'remainingTransactions': remainingTransactions,
+      if (accountID != null) 'accountID': accountID,
+      if (value != null) 'value': value,
+      if (title != null) 'title': title,
+      if (notes != null) 'notes': notes,
+      if (categoryID != null) 'categoryID': categoryID,
+      if (valueInDestiny != null) 'valueInDestiny': valueInDestiny,
+      if (receivingAccountID != null) 'receivingAccountID': receivingAccountID,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RecurrentRulesCompanion copyWith(
+      {Value<String>? id,
+      Value<DateTime>? nextPaymentDate,
+      Value<TransactionPeriodicity>? intervalPeriod,
+      Value<int>? intervalEach,
+      Value<DateTime?>? endDate,
+      Value<int?>? remainingTransactions,
+      Value<String>? accountID,
+      Value<double>? value,
+      Value<String?>? title,
+      Value<String?>? notes,
+      Value<String?>? categoryID,
+      Value<double?>? valueInDestiny,
+      Value<String?>? receivingAccountID,
+      Value<int>? rowid}) {
+    return RecurrentRulesCompanion(
+      id: id ?? this.id,
+      nextPaymentDate: nextPaymentDate ?? this.nextPaymentDate,
+      intervalPeriod: intervalPeriod ?? this.intervalPeriod,
+      intervalEach: intervalEach ?? this.intervalEach,
+      endDate: endDate ?? this.endDate,
+      remainingTransactions:
+          remainingTransactions ?? this.remainingTransactions,
+      accountID: accountID ?? this.accountID,
+      value: value ?? this.value,
+      title: title ?? this.title,
+      notes: notes ?? this.notes,
+      categoryID: categoryID ?? this.categoryID,
+      valueInDestiny: valueInDestiny ?? this.valueInDestiny,
+      receivingAccountID: receivingAccountID ?? this.receivingAccountID,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (nextPaymentDate.present) {
+      map['nextPaymentDate'] = Variable<DateTime>(nextPaymentDate.value);
+    }
+    if (intervalPeriod.present) {
+      final converter = RecurrentRules.$converterintervalPeriod;
+      map['intervalPeriod'] =
+          Variable<String>(converter.toSql(intervalPeriod.value));
+    }
+    if (intervalEach.present) {
+      map['intervalEach'] = Variable<int>(intervalEach.value);
+    }
+    if (endDate.present) {
+      map['endDate'] = Variable<DateTime>(endDate.value);
+    }
+    if (remainingTransactions.present) {
+      map['remainingTransactions'] = Variable<int>(remainingTransactions.value);
+    }
+    if (accountID.present) {
+      map['accountID'] = Variable<String>(accountID.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<double>(value.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (categoryID.present) {
+      map['categoryID'] = Variable<String>(categoryID.value);
+    }
+    if (valueInDestiny.present) {
+      map['valueInDestiny'] = Variable<double>(valueInDestiny.value);
+    }
+    if (receivingAccountID.present) {
+      map['receivingAccountID'] = Variable<String>(receivingAccountID.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecurrentRulesCompanion(')
+          ..write('id: $id, ')
+          ..write('nextPaymentDate: $nextPaymentDate, ')
+          ..write('intervalPeriod: $intervalPeriod, ')
+          ..write('intervalEach: $intervalEach, ')
+          ..write('endDate: $endDate, ')
+          ..write('remainingTransactions: $remainingTransactions, ')
+          ..write('accountID: $accountID, ')
+          ..write('value: $value, ')
+          ..write('title: $title, ')
+          ..write('notes: $notes, ')
+          ..write('categoryID: $categoryID, ')
+          ..write('valueInDestiny: $valueInDestiny, ')
+          ..write('receivingAccountID: $receivingAccountID, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2500,644 +3187,17 @@ class AppDataCompanion extends UpdateCompanion<AppDataData> {
   }
 }
 
-class RecurrentRules extends Table
-    with TableInfo<RecurrentRules, RecurrentRuleInDB> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  RecurrentRules(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
-  static const VerificationMeta _accountIDMeta =
-      const VerificationMeta('accountID');
-  late final GeneratedColumn<String> accountID = GeneratedColumn<String>(
-      'accountID', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints:
-          'NOT NULL REFERENCES accounts(id)ON UPDATE CASCADE ON DELETE CASCADE');
-  static const VerificationMeta _nextPaymentDateMeta =
-      const VerificationMeta('nextPaymentDate');
-  late final GeneratedColumn<DateTime> nextPaymentDate =
-      GeneratedColumn<DateTime>('nextPaymentDate', aliasedName, false,
-          type: DriftSqlType.dateTime,
-          requiredDuringInsert: true,
-          $customConstraints: 'NOT NULL');
-  static const VerificationMeta _intervalPeriodMeta =
-      const VerificationMeta('intervalPeriod');
-  late final GeneratedColumn<String> intervalPeriod = GeneratedColumn<String>(
-      'intervalPeriod', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _intervalEachMeta =
-      const VerificationMeta('intervalEach');
-  late final GeneratedColumn<String> intervalEach = GeneratedColumn<String>(
-      'intervalEach', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL DEFAULT 1',
-      defaultValue: const CustomExpression('1'));
-  static const VerificationMeta _endDateMeta =
-      const VerificationMeta('endDate');
-  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
-      'endDate', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _valueMeta = const VerificationMeta('value');
-  late final GeneratedColumn<double> value = GeneratedColumn<double>(
-      'value', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _titleMeta = const VerificationMeta('title');
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-      'notes', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _categoryIDMeta =
-      const VerificationMeta('categoryID');
-  late final GeneratedColumn<String> categoryID = GeneratedColumn<String>(
-      'categoryID', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints:
-          'REFERENCES categories(id)ON UPDATE CASCADE ON DELETE CASCADE');
-  static const VerificationMeta _valueInDestinyMeta =
-      const VerificationMeta('valueInDestiny');
-  late final GeneratedColumn<double> valueInDestiny = GeneratedColumn<double>(
-      'valueInDestiny', aliasedName, true,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _receivingAccountIDMeta =
-      const VerificationMeta('receivingAccountID');
-  late final GeneratedColumn<String> receivingAccountID =
-      GeneratedColumn<String>('receivingAccountID', aliasedName, true,
-          type: DriftSqlType.string,
-          requiredDuringInsert: false,
-          $customConstraints:
-              'REFERENCES accounts(id)ON UPDATE CASCADE ON DELETE CASCADE');
-  @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        accountID,
-        nextPaymentDate,
-        intervalPeriod,
-        intervalEach,
-        endDate,
-        value,
-        title,
-        notes,
-        categoryID,
-        valueInDestiny,
-        receivingAccountID
-      ];
-  @override
-  String get aliasedName => _alias ?? 'recurrentRules';
-  @override
-  String get actualTableName => 'recurrentRules';
-  @override
-  VerificationContext validateIntegrity(Insertable<RecurrentRuleInDB> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('accountID')) {
-      context.handle(_accountIDMeta,
-          accountID.isAcceptableOrUnknown(data['accountID']!, _accountIDMeta));
-    } else if (isInserting) {
-      context.missing(_accountIDMeta);
-    }
-    if (data.containsKey('nextPaymentDate')) {
-      context.handle(
-          _nextPaymentDateMeta,
-          nextPaymentDate.isAcceptableOrUnknown(
-              data['nextPaymentDate']!, _nextPaymentDateMeta));
-    } else if (isInserting) {
-      context.missing(_nextPaymentDateMeta);
-    }
-    if (data.containsKey('intervalPeriod')) {
-      context.handle(
-          _intervalPeriodMeta,
-          intervalPeriod.isAcceptableOrUnknown(
-              data['intervalPeriod']!, _intervalPeriodMeta));
-    } else if (isInserting) {
-      context.missing(_intervalPeriodMeta);
-    }
-    if (data.containsKey('intervalEach')) {
-      context.handle(
-          _intervalEachMeta,
-          intervalEach.isAcceptableOrUnknown(
-              data['intervalEach']!, _intervalEachMeta));
-    }
-    if (data.containsKey('endDate')) {
-      context.handle(_endDateMeta,
-          endDate.isAcceptableOrUnknown(data['endDate']!, _endDateMeta));
-    }
-    if (data.containsKey('value')) {
-      context.handle(
-          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
-    } else if (isInserting) {
-      context.missing(_valueMeta);
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
-    }
-    if (data.containsKey('categoryID')) {
-      context.handle(
-          _categoryIDMeta,
-          categoryID.isAcceptableOrUnknown(
-              data['categoryID']!, _categoryIDMeta));
-    }
-    if (data.containsKey('valueInDestiny')) {
-      context.handle(
-          _valueInDestinyMeta,
-          valueInDestiny.isAcceptableOrUnknown(
-              data['valueInDestiny']!, _valueInDestinyMeta));
-    }
-    if (data.containsKey('receivingAccountID')) {
-      context.handle(
-          _receivingAccountIDMeta,
-          receivingAccountID.isAcceptableOrUnknown(
-              data['receivingAccountID']!, _receivingAccountIDMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  RecurrentRuleInDB map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return RecurrentRuleInDB(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      accountID: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}accountID'])!,
-      nextPaymentDate: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}nextPaymentDate'])!,
-      intervalPeriod: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}intervalPeriod'])!,
-      intervalEach: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}intervalEach'])!,
-      endDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}endDate']),
-      value: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
-      title: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}title']),
-      notes: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
-      categoryID: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}categoryID']),
-      valueInDestiny: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}valueInDestiny']),
-      receivingAccountID: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}receivingAccountID']),
-    );
-  }
-
-  @override
-  RecurrentRules createAlias(String alias) {
-    return RecurrentRules(attachedDatabase, alias);
-  }
-
-  @override
-  List<String> get customConstraints => const [
-        'CHECK((receivingAccountID IS NULL)!=(categoryID IS NULL))',
-        'CHECK(categoryID IS NULL OR valueInDestiny IS NULL)'
-      ];
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class RecurrentRuleInDB extends DataClass
-    implements Insertable<RecurrentRuleInDB> {
-  final String id;
-  final String accountID;
-
-  /// Date of the next scheduled payment
-  final DateTime nextPaymentDate;
-
-  /// The time range with which new transactions to be paid will appear (weekly, monthly...)
-  final String intervalPeriod;
-
-  /// Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
-  final String intervalEach;
-
-  /// Date until which payments will continue to appear
-  final DateTime? endDate;
-
-  /// Monetary amount related to this transaction, in the currency of its account
-  final double value;
-
-  /// Title or main label of this transaction. If not defined, the category name is used normally as fallback
-  final String? title;
-
-  /// Some description, notes or extra info about the transaction.
-  final String? notes;
-  final String? categoryID;
-  final double? valueInDestiny;
-  final String? receivingAccountID;
-  const RecurrentRuleInDB(
-      {required this.id,
-      required this.accountID,
-      required this.nextPaymentDate,
-      required this.intervalPeriod,
-      required this.intervalEach,
-      this.endDate,
-      required this.value,
-      this.title,
-      this.notes,
-      this.categoryID,
-      this.valueInDestiny,
-      this.receivingAccountID});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['accountID'] = Variable<String>(accountID);
-    map['nextPaymentDate'] = Variable<DateTime>(nextPaymentDate);
-    map['intervalPeriod'] = Variable<String>(intervalPeriod);
-    map['intervalEach'] = Variable<String>(intervalEach);
-    if (!nullToAbsent || endDate != null) {
-      map['endDate'] = Variable<DateTime>(endDate);
-    }
-    map['value'] = Variable<double>(value);
-    if (!nullToAbsent || title != null) {
-      map['title'] = Variable<String>(title);
-    }
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    if (!nullToAbsent || categoryID != null) {
-      map['categoryID'] = Variable<String>(categoryID);
-    }
-    if (!nullToAbsent || valueInDestiny != null) {
-      map['valueInDestiny'] = Variable<double>(valueInDestiny);
-    }
-    if (!nullToAbsent || receivingAccountID != null) {
-      map['receivingAccountID'] = Variable<String>(receivingAccountID);
-    }
-    return map;
-  }
-
-  RecurrentRulesCompanion toCompanion(bool nullToAbsent) {
-    return RecurrentRulesCompanion(
-      id: Value(id),
-      accountID: Value(accountID),
-      nextPaymentDate: Value(nextPaymentDate),
-      intervalPeriod: Value(intervalPeriod),
-      intervalEach: Value(intervalEach),
-      endDate: endDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(endDate),
-      value: Value(value),
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
-      notes:
-          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
-      categoryID: categoryID == null && nullToAbsent
-          ? const Value.absent()
-          : Value(categoryID),
-      valueInDestiny: valueInDestiny == null && nullToAbsent
-          ? const Value.absent()
-          : Value(valueInDestiny),
-      receivingAccountID: receivingAccountID == null && nullToAbsent
-          ? const Value.absent()
-          : Value(receivingAccountID),
-    );
-  }
-
-  factory RecurrentRuleInDB.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return RecurrentRuleInDB(
-      id: serializer.fromJson<String>(json['id']),
-      accountID: serializer.fromJson<String>(json['accountID']),
-      nextPaymentDate: serializer.fromJson<DateTime>(json['nextPaymentDate']),
-      intervalPeriod: serializer.fromJson<String>(json['intervalPeriod']),
-      intervalEach: serializer.fromJson<String>(json['intervalEach']),
-      endDate: serializer.fromJson<DateTime?>(json['endDate']),
-      value: serializer.fromJson<double>(json['value']),
-      title: serializer.fromJson<String?>(json['title']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      categoryID: serializer.fromJson<String?>(json['categoryID']),
-      valueInDestiny: serializer.fromJson<double?>(json['valueInDestiny']),
-      receivingAccountID:
-          serializer.fromJson<String?>(json['receivingAccountID']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'accountID': serializer.toJson<String>(accountID),
-      'nextPaymentDate': serializer.toJson<DateTime>(nextPaymentDate),
-      'intervalPeriod': serializer.toJson<String>(intervalPeriod),
-      'intervalEach': serializer.toJson<String>(intervalEach),
-      'endDate': serializer.toJson<DateTime?>(endDate),
-      'value': serializer.toJson<double>(value),
-      'title': serializer.toJson<String?>(title),
-      'notes': serializer.toJson<String?>(notes),
-      'categoryID': serializer.toJson<String?>(categoryID),
-      'valueInDestiny': serializer.toJson<double?>(valueInDestiny),
-      'receivingAccountID': serializer.toJson<String?>(receivingAccountID),
-    };
-  }
-
-  RecurrentRuleInDB copyWith(
-          {String? id,
-          String? accountID,
-          DateTime? nextPaymentDate,
-          String? intervalPeriod,
-          String? intervalEach,
-          Value<DateTime?> endDate = const Value.absent(),
-          double? value,
-          Value<String?> title = const Value.absent(),
-          Value<String?> notes = const Value.absent(),
-          Value<String?> categoryID = const Value.absent(),
-          Value<double?> valueInDestiny = const Value.absent(),
-          Value<String?> receivingAccountID = const Value.absent()}) =>
-      RecurrentRuleInDB(
-        id: id ?? this.id,
-        accountID: accountID ?? this.accountID,
-        nextPaymentDate: nextPaymentDate ?? this.nextPaymentDate,
-        intervalPeriod: intervalPeriod ?? this.intervalPeriod,
-        intervalEach: intervalEach ?? this.intervalEach,
-        endDate: endDate.present ? endDate.value : this.endDate,
-        value: value ?? this.value,
-        title: title.present ? title.value : this.title,
-        notes: notes.present ? notes.value : this.notes,
-        categoryID: categoryID.present ? categoryID.value : this.categoryID,
-        valueInDestiny:
-            valueInDestiny.present ? valueInDestiny.value : this.valueInDestiny,
-        receivingAccountID: receivingAccountID.present
-            ? receivingAccountID.value
-            : this.receivingAccountID,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('RecurrentRuleInDB(')
-          ..write('id: $id, ')
-          ..write('accountID: $accountID, ')
-          ..write('nextPaymentDate: $nextPaymentDate, ')
-          ..write('intervalPeriod: $intervalPeriod, ')
-          ..write('intervalEach: $intervalEach, ')
-          ..write('endDate: $endDate, ')
-          ..write('value: $value, ')
-          ..write('title: $title, ')
-          ..write('notes: $notes, ')
-          ..write('categoryID: $categoryID, ')
-          ..write('valueInDestiny: $valueInDestiny, ')
-          ..write('receivingAccountID: $receivingAccountID')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      id,
-      accountID,
-      nextPaymentDate,
-      intervalPeriod,
-      intervalEach,
-      endDate,
-      value,
-      title,
-      notes,
-      categoryID,
-      valueInDestiny,
-      receivingAccountID);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is RecurrentRuleInDB &&
-          other.id == this.id &&
-          other.accountID == this.accountID &&
-          other.nextPaymentDate == this.nextPaymentDate &&
-          other.intervalPeriod == this.intervalPeriod &&
-          other.intervalEach == this.intervalEach &&
-          other.endDate == this.endDate &&
-          other.value == this.value &&
-          other.title == this.title &&
-          other.notes == this.notes &&
-          other.categoryID == this.categoryID &&
-          other.valueInDestiny == this.valueInDestiny &&
-          other.receivingAccountID == this.receivingAccountID);
-}
-
-class RecurrentRulesCompanion extends UpdateCompanion<RecurrentRuleInDB> {
-  final Value<String> id;
-  final Value<String> accountID;
-  final Value<DateTime> nextPaymentDate;
-  final Value<String> intervalPeriod;
-  final Value<String> intervalEach;
-  final Value<DateTime?> endDate;
-  final Value<double> value;
-  final Value<String?> title;
-  final Value<String?> notes;
-  final Value<String?> categoryID;
-  final Value<double?> valueInDestiny;
-  final Value<String?> receivingAccountID;
-  final Value<int> rowid;
-  const RecurrentRulesCompanion({
-    this.id = const Value.absent(),
-    this.accountID = const Value.absent(),
-    this.nextPaymentDate = const Value.absent(),
-    this.intervalPeriod = const Value.absent(),
-    this.intervalEach = const Value.absent(),
-    this.endDate = const Value.absent(),
-    this.value = const Value.absent(),
-    this.title = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.categoryID = const Value.absent(),
-    this.valueInDestiny = const Value.absent(),
-    this.receivingAccountID = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  RecurrentRulesCompanion.insert({
-    required String id,
-    required String accountID,
-    required DateTime nextPaymentDate,
-    required String intervalPeriod,
-    this.intervalEach = const Value.absent(),
-    this.endDate = const Value.absent(),
-    required double value,
-    this.title = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.categoryID = const Value.absent(),
-    this.valueInDestiny = const Value.absent(),
-    this.receivingAccountID = const Value.absent(),
-    this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        accountID = Value(accountID),
-        nextPaymentDate = Value(nextPaymentDate),
-        intervalPeriod = Value(intervalPeriod),
-        value = Value(value);
-  static Insertable<RecurrentRuleInDB> custom({
-    Expression<String>? id,
-    Expression<String>? accountID,
-    Expression<DateTime>? nextPaymentDate,
-    Expression<String>? intervalPeriod,
-    Expression<String>? intervalEach,
-    Expression<DateTime>? endDate,
-    Expression<double>? value,
-    Expression<String>? title,
-    Expression<String>? notes,
-    Expression<String>? categoryID,
-    Expression<double>? valueInDestiny,
-    Expression<String>? receivingAccountID,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (accountID != null) 'accountID': accountID,
-      if (nextPaymentDate != null) 'nextPaymentDate': nextPaymentDate,
-      if (intervalPeriod != null) 'intervalPeriod': intervalPeriod,
-      if (intervalEach != null) 'intervalEach': intervalEach,
-      if (endDate != null) 'endDate': endDate,
-      if (value != null) 'value': value,
-      if (title != null) 'title': title,
-      if (notes != null) 'notes': notes,
-      if (categoryID != null) 'categoryID': categoryID,
-      if (valueInDestiny != null) 'valueInDestiny': valueInDestiny,
-      if (receivingAccountID != null) 'receivingAccountID': receivingAccountID,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  RecurrentRulesCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? accountID,
-      Value<DateTime>? nextPaymentDate,
-      Value<String>? intervalPeriod,
-      Value<String>? intervalEach,
-      Value<DateTime?>? endDate,
-      Value<double>? value,
-      Value<String?>? title,
-      Value<String?>? notes,
-      Value<String?>? categoryID,
-      Value<double?>? valueInDestiny,
-      Value<String?>? receivingAccountID,
-      Value<int>? rowid}) {
-    return RecurrentRulesCompanion(
-      id: id ?? this.id,
-      accountID: accountID ?? this.accountID,
-      nextPaymentDate: nextPaymentDate ?? this.nextPaymentDate,
-      intervalPeriod: intervalPeriod ?? this.intervalPeriod,
-      intervalEach: intervalEach ?? this.intervalEach,
-      endDate: endDate ?? this.endDate,
-      value: value ?? this.value,
-      title: title ?? this.title,
-      notes: notes ?? this.notes,
-      categoryID: categoryID ?? this.categoryID,
-      valueInDestiny: valueInDestiny ?? this.valueInDestiny,
-      receivingAccountID: receivingAccountID ?? this.receivingAccountID,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (accountID.present) {
-      map['accountID'] = Variable<String>(accountID.value);
-    }
-    if (nextPaymentDate.present) {
-      map['nextPaymentDate'] = Variable<DateTime>(nextPaymentDate.value);
-    }
-    if (intervalPeriod.present) {
-      map['intervalPeriod'] = Variable<String>(intervalPeriod.value);
-    }
-    if (intervalEach.present) {
-      map['intervalEach'] = Variable<String>(intervalEach.value);
-    }
-    if (endDate.present) {
-      map['endDate'] = Variable<DateTime>(endDate.value);
-    }
-    if (value.present) {
-      map['value'] = Variable<double>(value.value);
-    }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (categoryID.present) {
-      map['categoryID'] = Variable<String>(categoryID.value);
-    }
-    if (valueInDestiny.present) {
-      map['valueInDestiny'] = Variable<double>(valueInDestiny.value);
-    }
-    if (receivingAccountID.present) {
-      map['receivingAccountID'] = Variable<String>(receivingAccountID.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('RecurrentRulesCompanion(')
-          ..write('id: $id, ')
-          ..write('accountID: $accountID, ')
-          ..write('nextPaymentDate: $nextPaymentDate, ')
-          ..write('intervalPeriod: $intervalPeriod, ')
-          ..write('intervalEach: $intervalEach, ')
-          ..write('endDate: $endDate, ')
-          ..write('value: $value, ')
-          ..write('title: $title, ')
-          ..write('notes: $notes, ')
-          ..write('categoryID: $categoryID, ')
-          ..write('valueInDestiny: $valueInDestiny, ')
-          ..write('receivingAccountID: $receivingAccountID, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
 abstract class _$DatabaseImpl extends GeneratedDatabase {
   _$DatabaseImpl(QueryExecutor e) : super(e);
   late final Currencies currencies = Currencies(this);
   late final Accounts accounts = Accounts(this);
   late final Categories categories = Categories(this);
   late final Transactions transactions = Transactions(this);
+  late final RecurrentRules recurrentRules = RecurrentRules(this);
   late final ExchangeRates exchangeRates = ExchangeRates(this);
   late final CurrencyNames currencyNames = CurrencyNames(this);
   late final UserSettings userSettings = UserSettings(this);
   late final AppData appData = AppData(this);
-  late final RecurrentRules recurrentRules = RecurrentRules(this);
   Selectable<Account> getAccountsWithFullData(
       {GetAccountsWithFullData$predicate? predicate,
       GetAccountsWithFullData$orderBy? orderBy,
@@ -3272,6 +3332,90 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         ));
   }
 
+  Selectable<MoneyRecurrentRule> getRecurrentRulesWithFullData(
+      {GetRecurrentRulesWithFullData$predicate? predicate,
+      GetRecurrentRulesWithFullData$orderBy? orderBy,
+      required GetRecurrentRulesWithFullData$limit limit}) {
+    var $arrayStartIndex = 1;
+    final generatedpredicate = $write(
+        predicate?.call(
+                alias(this.recurrentRules, 't'),
+                alias(this.accounts, 'a'),
+                alias(this.currencies, 'accountCurrency'),
+                alias(this.accounts, 'ra'),
+                alias(this.currencies, 'receivingAccountCurrency'),
+                alias(this.categories, 'c'),
+                alias(this.categories, 'pc')) ??
+            const CustomExpression('(TRUE)'),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedpredicate.amountOfVariables;
+    final generatedorderBy = $write(
+        orderBy?.call(
+                alias(this.recurrentRules, 't'),
+                alias(this.accounts, 'a'),
+                alias(this.currencies, 'accountCurrency'),
+                alias(this.accounts, 'ra'),
+                alias(this.currencies, 'receivingAccountCurrency'),
+                alias(this.categories, 'c'),
+                alias(this.categories, 'pc')) ??
+            const OrderBy.nothing(),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedorderBy.amountOfVariables;
+    final generatedlimit = $write(
+        limit(
+            alias(this.recurrentRules, 't'),
+            alias(this.accounts, 'a'),
+            alias(this.currencies, 'accountCurrency'),
+            alias(this.accounts, 'ra'),
+            alias(this.currencies, 'receivingAccountCurrency'),
+            alias(this.categories, 'c'),
+            alias(this.categories, 'pc')),
+        hasMultipleTables: true,
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedlimit.amountOfVariables;
+    return customSelect(
+        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","accountCurrency"."code" AS "nested_1.code", "accountCurrency"."symbol" AS "nested_1.symbol","receivingAccountCurrency"."code" AS "nested_2.code", "receivingAccountCurrency"."symbol" AS "nested_2.symbol","ra"."id" AS "nested_3.id", "ra"."name" AS "nested_3.name", "ra"."iniValue" AS "nested_3.iniValue", "ra"."date" AS "nested_3.date", "ra"."description" AS "nested_3.description", "ra"."type" AS "nested_3.type", "ra"."iconId" AS "nested_3.iconId", "ra"."currencyId" AS "nested_3.currencyId", "ra"."iban" AS "nested_3.iban", "ra"."swift" AS "nested_3.swift","c"."id" AS "nested_4.id", "c"."name" AS "nested_4.name", "c"."iconId" AS "nested_4.iconId", "c"."color" AS "nested_4.color", "c"."type" AS "nested_4.type", "c"."parentCategoryID" AS "nested_4.parentCategoryID","pc"."id" AS "nested_5.id", "pc"."name" AS "nested_5.name", "pc"."iconId" AS "nested_5.iconId", "pc"."color" AS "nested_5.color", "pc"."type" AS "nested_5.type", "pc"."parentCategoryID" AS "nested_5.parentCategoryID" FROM recurrentRules AS t INNER JOIN accounts AS a ON t.accountID = a.id INNER JOIN currencies AS accountCurrency ON a.currencyId = accountCurrency.code LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id INNER JOIN currencies AS receivingAccountCurrency ON a.currencyId = receivingAccountCurrency.code LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
+        variables: [
+          ...generatedpredicate.introducedVariables,
+          ...generatedorderBy.introducedVariables,
+          ...generatedlimit.introducedVariables
+        ],
+        readsFrom: {
+          recurrentRules,
+          accounts,
+          currencies,
+          categories,
+          ...generatedpredicate.watchedTables,
+          ...generatedorderBy.watchedTables,
+          ...generatedlimit.watchedTables,
+        }).asyncMap((QueryRow row) async => MoneyRecurrentRule(
+          id: row.read<String>('id'),
+          nextPaymentDate: row.read<DateTime>('nextPaymentDate'),
+          value: row.read<double>('value'),
+          account: await accounts.mapFromRow(row, tablePrefix: 'nested_0'),
+          accountCurrency:
+              await currencies.mapFromRow(row, tablePrefix: 'nested_1'),
+          category:
+              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_4'),
+          notes: row.readNullable<String>('notes'),
+          parentCategory:
+              await categories.mapFromRowOrNull(row, tablePrefix: 'nested_5'),
+          receivingAccount:
+              await accounts.mapFromRowOrNull(row, tablePrefix: 'nested_3'),
+          receivingAccountCurrency:
+              await currencies.mapFromRow(row, tablePrefix: 'nested_2'),
+          title: row.readNullable<String>('title'),
+          valueInDestiny: row.readNullable<double>('valueInDestiny'),
+          intervalPeriod: RecurrentRules.$converterintervalPeriod
+              .fromSql(row.read<String>('intervalPeriod')),
+          intervalEach: row.read<int>('intervalEach'),
+          endDate: row.readNullable<DateTime>('endDate'),
+          remainingTransactions: row.readNullable<int>('remainingTransactions'),
+        ));
+  }
+
   Selectable<Category> getCategoriesWithFullData(
       {GetCategoriesWithFullData$predicate? predicate, required double limit}) {
     var $arrayStartIndex = 2;
@@ -3395,11 +3539,11 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         accounts,
         categories,
         transactions,
+        recurrentRules,
         exchangeRates,
         currencyNames,
         userSettings,
-        appData,
-        recurrentRules
+        appData
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -3461,6 +3605,48 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
             ],
           ),
           WritePropagation(
+            on: TableUpdateQuery.onTableName('accounts',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('recurrentRules', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('accounts',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('recurrentRules', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('categories',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('recurrentRules', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('categories',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('recurrentRules', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('accounts',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('recurrentRules', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('accounts',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('recurrentRules', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
             on: TableUpdateQuery.onTableName('currencies',
                 limitUpdateKind: UpdateKind.delete),
             result: [
@@ -3486,48 +3672,6 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
                 limitUpdateKind: UpdateKind.update),
             result: [
               TableUpdate('currencyNames', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('accounts',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('recurrentRules', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('accounts',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('recurrentRules', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('categories',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('recurrentRules', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('categories',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('recurrentRules', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('accounts',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('recurrentRules', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('accounts',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('recurrentRules', kind: UpdateKind.update),
             ],
           ),
         ],
@@ -3561,6 +3705,30 @@ typedef GetTransactionsWithFullData$orderBy = OrderBy Function(
     Categories pc);
 typedef GetTransactionsWithFullData$limit = Limit Function(
     Transactions t,
+    Accounts a,
+    Currencies accountCurrency,
+    Accounts ra,
+    Currencies receivingAccountCurrency,
+    Categories c,
+    Categories pc);
+typedef GetRecurrentRulesWithFullData$predicate = Expression<bool> Function(
+    RecurrentRules t,
+    Accounts a,
+    Currencies accountCurrency,
+    Accounts ra,
+    Currencies receivingAccountCurrency,
+    Categories c,
+    Categories pc);
+typedef GetRecurrentRulesWithFullData$orderBy = OrderBy Function(
+    RecurrentRules t,
+    Accounts a,
+    Currencies accountCurrency,
+    Accounts ra,
+    Currencies receivingAccountCurrency,
+    Categories c,
+    Categories pc);
+typedef GetRecurrentRulesWithFullData$limit = Limit Function(
+    RecurrentRules t,
     Accounts a,
     Currencies accountCurrency,
     Accounts ra,

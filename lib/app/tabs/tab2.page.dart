@@ -1,11 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/tabs/tabs.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Tab2Page extends StatefulWidget {
   const Tab2Page({Key? key}) : super(key: key);
@@ -53,21 +56,45 @@ class _Tab2PageState extends State<Tab2Page> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: TransactionService.instance.getTransactions(
-                predicate: (t, account, accountCurrency, receivingAccount,
-                        receivingAccountCurrency, c, p6) =>
-                    DatabaseImpl.instance.buildExpr([
-                  if (filters.accounts != null)
-                    t.accountID.isIn(filters.accounts!.map((e) => e.id)),
-                  if (filters.categories != null)
-                    c.id.isIn(filters.categories!.map((e) => e.id)) |
-                        c.parentCategoryID
-                            .isIn(filters.categories!.map((e) => e.id)),
-                ]),
-                orderBy: (p0, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
-                  drift.OrderingTerm(
-                      expression: p0.date, mode: drift.OrderingMode.desc)
-                ]),
+              stream: Rx.combineLatest2(
+                // Get normal transactions:
+                TransactionService.instance.getTransactions(
+                  predicate: (t, account, accountCurrency, receivingAccount,
+                          receivingAccountCurrency, c, p6) =>
+                      DatabaseImpl.instance.buildExpr([
+                    if (filters.accounts != null)
+                      t.accountID.isIn(filters.accounts!.map((e) => e.id)),
+                    if (filters.categories != null)
+                      c.id.isIn(filters.categories!.map((e) => e.id)) |
+                          c.parentCategoryID
+                              .isIn(filters.categories!.map((e) => e.id)),
+                  ]),
+                  orderBy: (p0, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
+                    drift.OrderingTerm(
+                        expression: p0.date, mode: drift.OrderingMode.desc)
+                  ]),
+                ),
+
+                // Get recurrent transactions:
+                RecurrentRuleService.instance.getRecurrentRules(
+                  predicate: (t, account, accountCurrency, receivingAccount,
+                          receivingAccountCurrency, c, p6) =>
+                      DatabaseImpl.instance.buildExpr([
+                    if (filters.accounts != null)
+                      t.accountID.isIn(filters.accounts!.map((e) => e.id)),
+                    if (filters.categories != null)
+                      c.id.isIn(filters.categories!.map((e) => e.id)) |
+                          c.parentCategoryID
+                              .isIn(filters.categories!.map((e) => e.id)),
+                  ]),
+                  orderBy: (p0, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
+                    drift.OrderingTerm(
+                        expression: p0.nextPaymentDate,
+                        mode: drift.OrderingMode.desc)
+                  ]),
+                ),
+                (res1, res2) =>
+                    (res1 + res2).sorted((a, b) => b.date.compareTo(a.date)),
               ),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -79,6 +106,8 @@ class _Tab2PageState extends State<Tab2Page> {
                 }
 
                 final transactions = snapshot.data!;
+
+                print(transactions.map((e) => '${e.id}-${e.displayName}'));
 
                 if (transactions.isEmpty) {
                   return const Column(

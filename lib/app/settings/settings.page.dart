@@ -1,10 +1,12 @@
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/currencies/currency_manager.dart';
+import 'package:finlytics/app/settings/advanced_settings_page.dart';
 import 'package:finlytics/app/settings/edit_profile_modal.dart';
 import 'package:finlytics/core/database/backup/backup_database_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -64,12 +66,13 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     final settingService = UserSettingService.instance;
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Settings'),
+          title: Text(t.settings.title),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -84,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           return EditProfileModal();
                         });
                   },
-                  title: Text('Edit profile'),
+                  title: Text(t.settings.edit_profile),
                   subtitle: StreamBuilder(
                       stream: settingService.getSetting(SettingKey.userName),
                       builder: (context, snapshot) {
@@ -101,10 +104,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         return UserAvatar(avatar: snapshot.data);
                       })),
               const SizedBox(height: 12),
-              createListSeparator('General settings'),
+              createListSeparator(t.settings.general.display),
               createSettingItem(
                   title: 'Categories',
-                  subtitle: 'Crea y edita categorias a tu gusto',
+                  subtitle: t.settings.general.categories_descr,
                   icon: Icons.sell_outlined,
                   onTap: () => {
                         Navigator.push(
@@ -126,11 +129,23 @@ class _SettingsPageState extends State<SettingsPage> {
                                 builder: (context) =>
                                     const CurrencyManagerPage()))
                       }),
+              const Divider(indent: 70),
+              createSettingItem(
+                  title: t.settings.general.other,
+                  subtitle: t.settings.general.other_descr,
+                  icon: Icons.build_outlined,
+                  onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const AdvancedSettingsPage()))
+                      }),
               const SizedBox(height: 22),
-              createListSeparator('Data'),
+              createListSeparator(t.settings.data.display),
               createSettingItem(
                   title: 'Export',
-                  subtitle: 'Export data',
+                  subtitle: t.settings.data.export_descr,
                   icon: Icons.cloud_download_outlined,
                   onTap: () {
                     BackupDatabaseService()
@@ -143,9 +158,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   }),
               const Divider(indent: 70),
               createSettingItem(
-                  title: 'Import Database',
-                  subtitle:
-                      'Replace your current data with a new database file',
+                  title: t.settings.data.import,
+                  subtitle: t.settings.data.import_descr,
                   icon: Icons.cloud_upload_outlined,
                   onTap: () {
                     BackupDatabaseService().importDatabase().then((value) {
@@ -154,10 +168,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       print(err);
                     });
                   }),
-              createListSeparator('Help us'),
+              createListSeparator(t.settings.help_us.display),
               createSettingItem(
-                  title: 'Rate us',
-                  subtitle: 'Any review is welcome!',
+                  title: t.settings.help_us.rate_us,
+                  subtitle: t.settings.help_us.rate_us_descr,
                   icon: Icons.star_rate_outlined,
                   onTap: () async {
                     openURL(context,
@@ -165,7 +179,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }),
               const Divider(indent: 70),
               createSettingItem(
-                  title: 'Share finlytics',
+                  title: t.settings.help_us.share,
                   icon: Icons.share,
                   onTap: () {
                     Share.share(
@@ -173,7 +187,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }),
               const Divider(indent: 70),
               createSettingItem(
-                  title: 'Report bugs, leave suggestions...',
+                  title: t.settings.help_us.report,
                   icon: Icons.rate_review_outlined,
                   onTap: () async {
                     openURL(context,

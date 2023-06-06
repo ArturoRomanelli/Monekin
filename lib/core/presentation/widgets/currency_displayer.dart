@@ -51,7 +51,8 @@ class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
 
   @override
   Widget build(BuildContext context) {
-    final String decimalSep = numberFormatSymbols['en']?.DECIMAL_SEP;
+    final String decimalSep =
+        numberFormatSymbols[Intl.defaultLocale]?.DECIMAL_SEP;
     final valueFontSize = widget.textStyle.fontSize ?? 16;
 
     return Builder(builder: (context) {

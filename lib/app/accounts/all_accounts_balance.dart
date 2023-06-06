@@ -8,6 +8,7 @@ import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -75,8 +76,10 @@ List<CurrencyWithMoney> getCurrenciesWithMoney(
 class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: Text('Mis cuentas')),
+      appBar: AppBar(title: Text(t.tabs.tab1.account_resume.display)),
       persistentFooterButtons: [
         PersistentFooterButton(
           child: FilledButton.icon(
@@ -108,7 +111,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text('Saldo por cuentas'),
+                    child: Text(t.tabs.tab1.account_resume.balance_by_account),
                   ),
                   ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
@@ -146,7 +149,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text('Saldo por divisas'),
+                    child: Text(t.tabs.tab1.account_resume.balance_by_currency),
                   ),
                   Builder(builder: (context) {
                     final currenciesWithMoney =

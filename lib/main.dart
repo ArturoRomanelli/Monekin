@@ -1,9 +1,15 @@
 import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  WidgetsFlutterBinding.ensureInitialized();
+  LocaleSettings.useDeviceLocale();
+
+  runApp(ProviderScope(child: TranslationProvider(child: const MyApp())));
 }
 
 class MyApp extends ConsumerWidget {
@@ -11,9 +17,15 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Get the language of the Intl in each rebuild of the TranslationProvider:
+    Intl.defaultLocale = LocaleSettings.currentLocale.languageTag;
+
     return MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
+        locale: TranslationProvider.of(context).flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: ThemeData(
             dividerTheme: const DividerThemeData(space: 0),
             colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),

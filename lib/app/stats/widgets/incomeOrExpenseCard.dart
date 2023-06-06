@@ -2,6 +2,7 @@ import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class IncomeOrExpenseCard extends StatelessWidget {
@@ -20,10 +21,12 @@ class IncomeOrExpenseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     final isIncome = type == AccountDataFilter.income;
 
     final Color color = isIncome ? Colors.green : Colors.red;
-    final String text = isIncome ? 'Income' : 'Expense';
+    final String text = isIncome ? t.general.income : t.general.expense;
 
     return Flexible(
       child: Card(

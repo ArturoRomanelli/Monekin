@@ -1,4 +1,5 @@
 import 'package:finlytics/core/utils/date_getter.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,7 +9,47 @@ enum DateRange {
   quaterly,
   annualy,
   infinite,
-  custom,
+  custom;
+
+  String currentText(BuildContext context) {
+    final t = Translations.of(context);
+
+    if (this == weekly) {
+      return t.general.time.current.weekly;
+    } else if (this == monthly) {
+      return t.general.time.current.monthly;
+    } else if (this == quaterly) {
+      return t.general.time.current.quaterly;
+    } else if (this == annualy) {
+      return t.general.time.current.annualy;
+    } else if (this == infinite) {
+      return t.general.time.current.infinite;
+    } else if (this == custom) {
+      return t.general.time.current.custom;
+    }
+
+    return '';
+  }
+
+  String rangeText(BuildContext context) {
+    final t = Translations.of(context);
+
+    if (this == weekly) {
+      return t.general.time.weekly;
+    } else if (this == monthly) {
+      return t.general.time.monthly;
+    } else if (this == quaterly) {
+      return t.general.time.quaterly;
+    } else if (this == annualy) {
+      return t.general.time.annualy;
+    } else if (this == infinite) {
+      return t.general.time.infinite;
+    } else if (this == custom) {
+      return t.general.time.custom;
+    }
+
+    return '';
+  }
 }
 
 class DateRangeService {
@@ -30,7 +71,6 @@ class DateRangeService {
 
   Widget _buildDateButton(BuildContext context,
       {IconData? icon,
-      required String label,
       required DateRange dateRange,
       String? iconText,
       required int index}) {
@@ -75,7 +115,7 @@ class DateRangeService {
                 ),
               if (icon != null) Icon(icon, size: 25),
               const SizedBox(height: 4),
-              Text(label)
+              Text(dateRange.rangeText(context))
             ],
           ),
         ),
@@ -222,6 +262,8 @@ class DateRangeService {
   }
 
   Future<void> openDateModal(BuildContext context) async {
+    final t = Translations.of(context);
+
     final result = await showDialog<DateRange>(
       context: context,
       builder: (context) {
@@ -247,36 +289,42 @@ class DateRangeService {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        _buildDateButton(context,
-                            index: 0,
-                            icon: Icons.calendar_month,
-                            dateRange: DateRange.custom,
-                            label: 'Custom'),
-                        _buildDateButton(context,
-                            index: 1,
-                            icon: Icons.all_inclusive,
-                            dateRange: DateRange.infinite,
-                            label: 'Always'),
-                        _buildDateButton(context,
-                            dateRange: DateRange.annualy,
-                            index: 2,
-                            iconText: '365',
-                            label: 'Annualy'),
-                        _buildDateButton(context,
-                            dateRange: DateRange.quaterly,
-                            index: 3,
-                            iconText: '90',
-                            label: 'Quaterly'),
-                        _buildDateButton(context,
-                            dateRange: DateRange.monthly,
-                            index: 4,
-                            iconText: '30',
-                            label: 'Monthly'),
-                        _buildDateButton(context,
-                            dateRange: DateRange.weekly,
-                            index: 5,
-                            iconText: '7',
-                            label: 'Weekly'),
+                        _buildDateButton(
+                          context,
+                          index: 0,
+                          icon: Icons.calendar_month,
+                          dateRange: DateRange.custom,
+                        ),
+                        _buildDateButton(
+                          context,
+                          index: 1,
+                          icon: Icons.all_inclusive,
+                          dateRange: DateRange.infinite,
+                        ),
+                        _buildDateButton(
+                          context,
+                          dateRange: DateRange.annualy,
+                          index: 2,
+                          iconText: '365',
+                        ),
+                        _buildDateButton(
+                          context,
+                          dateRange: DateRange.quaterly,
+                          index: 3,
+                          iconText: '90',
+                        ),
+                        _buildDateButton(
+                          context,
+                          dateRange: DateRange.monthly,
+                          index: 4,
+                          iconText: '30',
+                        ),
+                        _buildDateButton(
+                          context,
+                          dateRange: DateRange.weekly,
+                          index: 5,
+                          iconText: '7',
+                        ),
                       ],
                     )),
               ],

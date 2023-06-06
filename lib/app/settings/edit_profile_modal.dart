@@ -3,6 +3,7 @@ import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -53,6 +54,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -68,7 +70,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Edit profile',
+                    t.settings.edit_profile,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 22),

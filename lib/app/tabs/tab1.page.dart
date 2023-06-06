@@ -21,6 +21,7 @@ import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/services/finance_health_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/user_avatar.dart';
@@ -167,6 +168,7 @@ class _Tab1PageState extends State<Tab1Page> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     final accountService = AccountService.instance;
 
@@ -237,8 +239,9 @@ class _Tab1PageState extends State<Tab1Page> {
                                 .openDateModal(context)
                                 .then((_) => setState(() {}));
                           },
-                          label: const Text(
-                            'Este mes',
+                          label: Text(
+                            dateRangeService.selectedDateRange
+                                .currentText(context),
                           ),
                           avatar: Icon(
                             Icons.calendar_month,
@@ -254,14 +257,14 @@ class _Tab1PageState extends State<Tab1Page> {
                       stream: accountService.getAccounts(),
                       builder: (context, accounts) {
                         if (!accounts.hasData) {
-                          return const Column(
+                          return Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total balance',
-                                  style: TextStyle(fontSize: 12)),
-                              Skeleton(width: 70, height: 40),
-                              Skeleton(width: 30, height: 14),
+                              Text(t.tabs.tab1.total_balance,
+                                  style: const TextStyle(fontSize: 12)),
+                              const Skeleton(width: 70, height: 40),
+                              const Skeleton(width: 30, height: 14),
                             ],
                           );
                         } else {
@@ -269,8 +272,8 @@ class _Tab1PageState extends State<Tab1Page> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Total balance',
-                                  style: TextStyle(fontSize: 12)),
+                              Text(t.tabs.tab1.total_balance,
+                                  style: const TextStyle(fontSize: 12)),
                               StreamBuilder(
                                   stream: accountService.getAccountsMoney(
                                       accountIds:
@@ -344,13 +347,13 @@ class _Tab1PageState extends State<Tab1Page> {
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return CardWithHeader(
-                                title: 'Accounts',
+                                title: t.general.accounts,
                                 body: const LinearProgressIndicator());
                           } else {
                             final accounts = snapshot.data!;
 
                             return CardWithHeader(
-                                title: 'Accounts',
+                                title: t.general.accounts,
                                 onDetailsClick: accounts.isEmpty
                                     ? null
                                     : () {
@@ -367,7 +370,7 @@ class _Tab1PageState extends State<Tab1Page> {
                       height: 16,
                     ),
                     CardWithHeader(
-                      title: 'Salud financiera',
+                      title: t.financial_health.display,
                       body: StreamBuilder(
                           stream: accountService.getAccounts(),
                           builder: (context, snapshot) {

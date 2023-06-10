@@ -175,6 +175,7 @@ class _Tab1PageState extends State<Tab1Page> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
+        backgroundColor: Theme.of(context).colorScheme.background,
       ),
       body: Column(
         children: [

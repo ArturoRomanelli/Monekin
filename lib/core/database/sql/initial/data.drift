@@ -318,11 +318,3 @@ insertInitialCurrencyNames: INSERT INTO currencyNames(currencyCode, en, es) VALU
 insertInitialSettings: INSERT INTO userSettings VALUES
 ('avatar', 'man')
 ,('userName', 'User');
-
-insertInitialSettings2: INSERT INTO appData VALUES
-('avdjlkatar', 'man')
-,('userNcdhjame', 'User');
-
-insertInitialSettings3: INSERT INTO userSettings VALUES
-('avdkatar', 'man')
-,('userNflkcdhjame', 'User');

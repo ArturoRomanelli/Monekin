@@ -90,7 +90,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
         onTap: () => onClick(),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
           labelText: title,
           suffixIcon: const Icon(Icons.arrow_drop_down),
           prefixIcon: Container(
@@ -274,7 +273,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       decoration: InputDecoration(
                           labelText: 'Amount *',
                           hintText: 'Ex.: 200',
-                          border: const OutlineInputBorder(),
                           suffix: fromAccount != null && valueToNumber != null
                               ? Padding(
                                   padding: const EdgeInsets.only(left: 10),
@@ -405,7 +403,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                           text: DateFormat.yMMMMd().add_Hm().format(date)),
                       decoration: const InputDecoration(
                         labelText: 'Fecha y hora *',
-                        border: OutlineInputBorder(),
                       ),
                       readOnly: true,
                       onTap: () async {
@@ -450,7 +447,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                             });
                           },
                           decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
                             labelText: "Repeat",
                             suffixIcon: Icon(Icons.arrow_drop_down),
                           ))
@@ -463,7 +459,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         labelText: 'Titulo de la transacción',
                         hintText:
                             'Si no se especifica, se usará el nombre de la categoría',
-                        border: OutlineInputBorder(),
                       ),
                     ),
                   ],
@@ -483,7 +478,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                             value: status,
                             decoration: const InputDecoration(
                               labelText: 'Status',
-                              border: OutlineInputBorder(),
                             ),
                             items: [
                               const DropdownMenuItem(
@@ -510,7 +504,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               decoration: InputDecoration(
                                   labelText: 'Amount in destiny *',
                                   hintText: 'Ex.: 200',
-                                  border: const OutlineInputBorder(),
                                   suffix: fromAccount != null &&
                                           valueInDestinyToNumber != null
                                       ? Padding(
@@ -592,7 +585,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               alignLabelWithHint: true,
                               hintText:
                                   'Escribe información extra acerca de esta transacción',
-                              border: OutlineInputBorder(),
                             ),
                           ),
                         ],

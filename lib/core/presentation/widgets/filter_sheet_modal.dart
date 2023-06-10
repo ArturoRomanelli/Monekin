@@ -50,7 +50,6 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
         readOnly: true,
         onTap: () => onClick(),
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
           labelText: title,
           suffixIcon: const Icon(Icons.arrow_drop_down),
         ));

@@ -137,7 +137,6 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                     });
                               },
                               decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
                                   labelText: 'Currency',
                                   suffixIcon: const Icon(Icons.arrow_drop_down),
                                   prefixIcon: Container(
@@ -165,7 +164,6 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                           date)), //editing controller of this TextField
                                   decoration: const InputDecoration(
                                     labelText: 'Fecha *',
-                                    border: OutlineInputBorder(),
                                   ),
                                   readOnly:
                                       true, //set it true, so that user will not able to edit text
@@ -196,7 +194,6 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                   decoration: const InputDecoration(
                                     labelText: 'Tipo de cambio *',
                                     hintText: 'Ex.: 2.14',
-                                    border: OutlineInputBorder(),
                                   ),
                                 ),
                               )

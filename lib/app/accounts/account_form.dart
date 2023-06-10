@@ -12,6 +12,7 @@ import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -169,6 +170,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
       persistentFooterButtons: [
         PersistentFooterButton(
@@ -186,7 +189,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
         )
       ],
       appBar: AppBar(
-        title: Text(widget.account != null ? 'Edit account' : 'Create Account'),
+        title: Text(widget.account != null
+            ? t.account.form.edit
+            : t.account.form.create),
         elevation: 2,
       ),
       body: widget.account != null && _accountToEdit == null
@@ -228,7 +233,11 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                             .outline),
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(6))),
-                                child: _icon.display(size: 48)),
+                                child: _icon.display(
+                                    size: 48,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground)),
                           ),
                           const SizedBox(
                             width: 20,
@@ -236,10 +245,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           Expanded(
                             child: TextFormField(
                               controller: _nameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Account name *',
+                              decoration: InputDecoration(
+                                labelText: '${t.account.form.name} *',
                                 hintText: 'Ex.: My account',
-                                border: OutlineInputBorder(),
                               ),
                               validator: (value) =>
                                   fieldValidator(value, isRequired: true),
@@ -260,7 +268,6 @@ class _AccountFormPageState extends State<AccountFormPage> {
                               ? 'Current balance *'
                               : 'Initial balance *',
                           hintText: 'Ex.: 200',
-                          border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.number,
                         validator: (value) => fieldValidator(value,
@@ -296,8 +303,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                 });
                           },
                           decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: 'Currency',
+                              labelText: t.currencies.currency,
                               suffixIcon: const Icon(Icons.arrow_drop_down),
                               prefixIcon: _currency != null
                                   ? Container(
@@ -361,7 +367,6 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                       .format(_openingDate)),
                               decoration: const InputDecoration(
                                 labelText: 'Fecha de apertura *',
-                                border: OutlineInputBorder(),
                               ),
                               readOnly: true,
                               onTap: () async {
@@ -381,18 +386,16 @@ class _AccountFormPageState extends State<AccountFormPage> {
                             const SizedBox(height: 22),
                             TextFormField(
                               controller: _ibanController,
-                              decoration: const InputDecoration(
-                                labelText: 'IBAN',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                labelText: t.account.form.iban,
                               ),
                               textInputAction: TextInputAction.next,
                             ),
                             const SizedBox(height: 22),
                             TextFormField(
                               controller: _swiftController,
-                              decoration: const InputDecoration(
-                                labelText: 'SWIFT',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                labelText: t.account.form.swift,
                               ),
                               textInputAction: TextInputAction.next,
                             ),
@@ -401,12 +404,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
                               minLines: 2,
                               maxLines: 10,
                               controller: _textController,
-                              decoration: const InputDecoration(
-                                labelText: 'Notes',
-                                hintText:
-                                    'Type some notes/description about this account',
+                              decoration: InputDecoration(
+                                labelText: t.account.form.notes,
+                                hintText: t.account.form.notes_placeholder,
                                 alignLabelWithHint: true,
-                                border: OutlineInputBorder(),
                               ),
                               textInputAction: TextInputAction.next,
                             ),

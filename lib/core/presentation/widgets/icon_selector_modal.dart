@@ -66,7 +66,8 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                       Chip(
                         side: BorderSide(color: colors.primary, width: 2),
                         //  backgroundColor: Theme.of(context).primaryColorLight,
-                        label: _selectedIcon!.display(size: 34),
+                        label: _selectedIcon!
+                            .display(size: 34, color: colors.onBackground),
                       )
                     ],
                   ),
@@ -102,7 +103,11 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                                   runSpacing: 12, // gap between lines
                                   children: iconsByScope[scope]!
                                       .map((e) => Card(
-                                            elevation: 1,
+                                            elevation:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? 4
+                                                    : 1,
                                             clipBehavior: Clip.antiAlias,
                                             color: _selectedIcon?.id == e.id
                                                 ? colors.primary
@@ -118,11 +123,12 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                                                       const EdgeInsets.all(6),
                                                   child: e.display(
                                                       size: 34,
-                                                      color:
-                                                          _selectedIcon?.id ==
-                                                                  e.id
-                                                              ? colors.onPrimary
-                                                              : null)),
+                                                      color: _selectedIcon
+                                                                  ?.id ==
+                                                              e.id
+                                                          ? colors.onPrimary
+                                                          : colors
+                                                              .onBackground)),
                                             ),
                                           ))
                                       .toList(),

@@ -323,7 +323,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                         decoration: const InputDecoration(
                                           labelText: 'Category name *',
                                           hintText: 'Ex.: Food',
-                                          border: OutlineInputBorder(),
                                         ),
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -344,7 +343,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                 DropdownButtonFormField<CategoryType>(
                                   decoration: const InputDecoration(
                                     labelText: 'Tipo de categoría *',
-                                    border: OutlineInputBorder(),
                                   ),
                                   items: const [
                                     DropdownMenuItem(

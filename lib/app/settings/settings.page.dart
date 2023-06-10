@@ -37,12 +37,8 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.arrow_forward_ios, size: 14),
-          ],
-        ),
+        trailing: Text("Hola"),
+        // leadingAndTrailingTextStyle: Theme.of(context).textTheme.headlineMedium,
         onTap: () => onTap());
   }
 

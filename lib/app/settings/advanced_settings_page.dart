@@ -1,3 +1,4 @@
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,23 @@ class AdvancedSettingsPage extends StatefulWidget {
 }
 
 class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
+  Widget buildSelector(
+      {required String title, required DropdownButton dropdown}) {
+    return ListTile(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(child: Text(title)),
+          Flexible(
+            child: DropdownButtonHideUnderline(
+              child: dropdown,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
@@ -17,31 +35,52 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
       appBar: AppBar(
         title: Text(t.settings.general.other),
       ),
-      body: ListTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text("Language")),
-            Flexible(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton(
-                  items: const [
-                    DropdownMenuItem(value: "es", child: Text('ES')),
-                    DropdownMenuItem(value: "en", child: Text('EN'))
-                  ],
-                  value: LocaleSettings.currentLocale.languageTag,
-                  underline: const SizedBox(),
-                  onChanged: (value) {
-                    if (value == null) return;
+      body: Column(
+        children: [
+          buildSelector(
+              title: "App Language",
+              dropdown: DropdownButton(
+                items: const [
+                  DropdownMenuItem(value: "es", child: Text('ES')),
+                  DropdownMenuItem(value: "en", child: Text('EN'))
+                ],
+                value: LocaleSettings.currentLocale.languageTag,
+                underline: const SizedBox(),
+                onChanged: (value) {
+                  if (value == null) return;
 
-                    LocaleSettings.setLocaleRaw(value,
-                        listenToDeviceLocale: true);
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
+                  LocaleSettings.setLocaleRaw(value,
+                      listenToDeviceLocale: true);
+
+                  UserSettingService.instance
+                      .setSetting(SettingKey.appLanguage, value)
+                      .then((value) => null);
+                },
+              )),
+          StreamBuilder(
+              stream:
+                  UserSettingService.instance.getSetting(SettingKey.themeMode),
+              builder: (context, snapshot) {
+                return buildSelector(
+                    title: "Theme",
+                    dropdown: DropdownButton(
+                      items: const [
+                        DropdownMenuItem(value: "system", child: Text('Auto')),
+                        DropdownMenuItem(value: "light", child: Text('Light')),
+                        DropdownMenuItem(value: "dark", child: Text('Dark'))
+                      ],
+                      value: snapshot.data ?? "system",
+                      underline: const SizedBox(),
+                      onChanged: (value) {
+                        if (value == null) return;
+
+                        UserSettingService.instance
+                            .setSetting(SettingKey.themeMode, value)
+                            .then((value) => null);
+                      },
+                    ));
+              }),
+        ],
       ),
     );
   }

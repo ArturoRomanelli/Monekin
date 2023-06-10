@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
@@ -70,7 +71,7 @@ class DatabaseImpl extends _$DatabaseImpl {
 
             // await insertInitialSettings();
             await customStatement(
-                "INSERT INTO userSettings VALUES ('avatar', 'man'), ('userName', 'User')");
+                "INSERT INTO userSettings VALUES ('avatar', 'man'), ('userName', 'User'), ('appLanguage', null), ('themeMode', 'system')");
 
             String defaultCategories = await rootBundle
                 .loadString('assets/sql/default_categories.json');

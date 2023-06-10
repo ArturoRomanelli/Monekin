@@ -2796,11 +2796,12 @@ class UserSettings extends Table with TableInfo<UserSettings, UserSetting> {
   UserSettings(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _settingKeyMeta =
       const VerificationMeta('settingKey');
-  late final GeneratedColumn<String> settingKey = GeneratedColumn<String>(
-      'settingKey', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
+  late final GeneratedColumnWithTypeConverter<SettingKey, String> settingKey =
+      GeneratedColumn<String>('settingKey', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: true,
+              $customConstraints: 'NOT NULL PRIMARY KEY')
+          .withConverter<SettingKey>(UserSettings.$convertersettingKey);
   static const VerificationMeta _settingValueMeta =
       const VerificationMeta('settingValue');
   late final GeneratedColumn<String> settingValue = GeneratedColumn<String>(
@@ -2819,14 +2820,7 @@ class UserSettings extends Table with TableInfo<UserSettings, UserSetting> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('settingKey')) {
-      context.handle(
-          _settingKeyMeta,
-          settingKey.isAcceptableOrUnknown(
-              data['settingKey']!, _settingKeyMeta));
-    } else if (isInserting) {
-      context.missing(_settingKeyMeta);
-    }
+    context.handle(_settingKeyMeta, const VerificationResult.success());
     if (data.containsKey('settingValue')) {
       context.handle(
           _settingValueMeta,
@@ -2842,8 +2836,9 @@ class UserSettings extends Table with TableInfo<UserSettings, UserSetting> {
   UserSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return UserSetting(
-      settingKey: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}settingKey'])!,
+      settingKey: UserSettings.$convertersettingKey.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}settingKey'])!),
       settingValue: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}settingValue']),
     );
@@ -2854,18 +2849,23 @@ class UserSettings extends Table with TableInfo<UserSettings, UserSetting> {
     return UserSettings(attachedDatabase, alias);
   }
 
+  static JsonTypeConverter2<SettingKey, String, String> $convertersettingKey =
+      const EnumNameConverter<SettingKey>(SettingKey.values);
   @override
   bool get dontWriteConstraints => true;
 }
 
 class UserSetting extends DataClass implements Insertable<UserSetting> {
-  final String settingKey;
+  final SettingKey settingKey;
   final String? settingValue;
   const UserSetting({required this.settingKey, this.settingValue});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['settingKey'] = Variable<String>(settingKey);
+    {
+      final converter = UserSettings.$convertersettingKey;
+      map['settingKey'] = Variable<String>(converter.toSql(settingKey));
+    }
     if (!nullToAbsent || settingValue != null) {
       map['settingValue'] = Variable<String>(settingValue);
     }
@@ -2885,7 +2885,8 @@ class UserSetting extends DataClass implements Insertable<UserSetting> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UserSetting(
-      settingKey: serializer.fromJson<String>(json['settingKey']),
+      settingKey: UserSettings.$convertersettingKey
+          .fromJson(serializer.fromJson<String>(json['settingKey'])),
       settingValue: serializer.fromJson<String?>(json['settingValue']),
     );
   }
@@ -2893,13 +2894,14 @@ class UserSetting extends DataClass implements Insertable<UserSetting> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'settingKey': serializer.toJson<String>(settingKey),
+      'settingKey': serializer
+          .toJson<String>(UserSettings.$convertersettingKey.toJson(settingKey)),
       'settingValue': serializer.toJson<String?>(settingValue),
     };
   }
 
   UserSetting copyWith(
-          {String? settingKey,
+          {SettingKey? settingKey,
           Value<String?> settingValue = const Value.absent()}) =>
       UserSetting(
         settingKey: settingKey ?? this.settingKey,
@@ -2926,7 +2928,7 @@ class UserSetting extends DataClass implements Insertable<UserSetting> {
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSetting> {
-  final Value<String> settingKey;
+  final Value<SettingKey> settingKey;
   final Value<String?> settingValue;
   final Value<int> rowid;
   const UserSettingsCompanion({
@@ -2935,7 +2937,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSetting> {
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
-    required String settingKey,
+    required SettingKey settingKey,
     this.settingValue = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : settingKey = Value(settingKey);
@@ -2952,7 +2954,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSetting> {
   }
 
   UserSettingsCompanion copyWith(
-      {Value<String>? settingKey,
+      {Value<SettingKey>? settingKey,
       Value<String?>? settingValue,
       Value<int>? rowid}) {
     return UserSettingsCompanion(
@@ -2966,7 +2968,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSetting> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (settingKey.present) {
-      map['settingKey'] = Variable<String>(settingKey.value);
+      final converter = UserSettings.$convertersettingKey;
+      map['settingKey'] = Variable<String>(converter.toSql(settingKey.value));
     }
     if (settingValue.present) {
       map['settingValue'] = Variable<String>(settingValue.value);
@@ -3509,22 +3512,6 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
   Future<int> insertInitialSettings() {
     return customInsert(
       'INSERT INTO userSettings VALUES (\'avatar\', \'man\'), (\'userName\', \'User\')',
-      variables: [],
-      updates: {userSettings},
-    );
-  }
-
-  Future<int> insertInitialSettings2() {
-    return customInsert(
-      'INSERT INTO appData VALUES (\'avdjlkatar\', \'man\'), (\'userNcdhjame\', \'User\')',
-      variables: [],
-      updates: {appData},
-    );
-  }
-
-  Future<int> insertInitialSettings3() {
-    return customInsert(
-      'INSERT INTO userSettings VALUES (\'avdkatar\', \'man\'), (\'userNflkcdhjame\', \'User\')',
       variables: [],
       updates: {userSettings},
     );

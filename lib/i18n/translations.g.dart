@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 719 (359 per locale)
+/// Strings: 724 (362 per locale)
 ///
-/// Built on 2023-06-05 at 15:19 UTC
+/// Built on 2023-06-10 at 07:11 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -175,6 +175,7 @@ class _TranslationsGeneralEn {
 	String get cancel => 'Cancel';
 	String get or => 'or';
 	String get understood => 'Understood';
+	String get unspecified => 'Sin especificar';
 	String get confirm => 'Confirm';
 	String get add => 'Add';
 	String get edit => 'Edit';
@@ -351,6 +352,7 @@ class _TranslationsCurrenciesEn {
 	// Translations
 	String get currency_converter => 'Currency converter';
 	String get select_a_currency => 'Select a currency';
+	String get currency => 'Currency';
 	String get search_placeholder => 'Search by currency name, code...';
 	String days_without_update({required Object X}) => 'Exchange rates last updated ${X} day(s) ago';
 }
@@ -722,7 +724,8 @@ class _TranslationsAccountFormEn {
 	// Translations
 	String get name => 'Account name';
 	String get name_placeholder => 'Ex: Savings account';
-	String get description => 'Description';
+	String get notes => 'Notes';
+	String get notes_placeholder => 'Type some notes/description about this account';
 	String get initial_balance => 'Initial balance';
 	String get current_balance => 'Current balance';
 	String get create => 'Create account';
@@ -1084,6 +1087,7 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get cancel => 'Cancelar';
 	@override String get or => 'o';
 	@override String get understood => 'Entendido';
+	@override String get unspecified => 'Sin especificar';
 	@override String get confirm => 'Confirmar';
 	@override String get add => 'Añadir';
 	@override String get edit => 'Editar';
@@ -1259,6 +1263,7 @@ class _TranslationsCurrenciesEs extends _TranslationsCurrenciesEn {
 
 	// Translations
 	@override String get currency_converter => 'Conversor de divisas';
+	@override String get currency => 'Divisa';
 	@override String get select_a_currency => 'Selecciona una divisa';
 	@override String get search_placeholder => 'Busca por nombre o por código de la divisa';
 	@override String days_without_update({required Object X}) => 'Tipos de cambio actualizados por última vez hace ${X} día(s)';
@@ -1553,7 +1558,6 @@ class _TranslationsTransactionFormEs extends _TranslationsTransactionFormEn {
 	@override String get description => 'Descripción';
 	@override String get description_info => 'Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro';
 	@override String get description_add => 'Añade una nota';
-	@override String get without_category => 'Sin especificar';
 	@override String exchange_to_preferred({required Object X}) => 'Actualmente equivalen aproximadamente a ${X}';
 }
 
@@ -1631,7 +1635,8 @@ class _TranslationsAccountFormEs extends _TranslationsAccountFormEn {
 	// Translations
 	@override String get name => 'Nombre de la cuenta';
 	@override String get name_placeholder => 'Ej: Cuenta de ahorros';
-	@override String get description => 'Descripción';
+	@override String get notes => 'Notas';
+	@override String get notes_placeholder => 'Escribe algunas notas/descripciones sobre esta cuenta';
 	@override String get initial_balance => 'Balance inicial';
 	@override String get current_balance => 'Balance actual';
 	@override String get create => 'Crear cuenta';
@@ -1946,6 +1951,7 @@ extension on _TranslationsEn {
 			case 'general.cancel': return 'Cancel';
 			case 'general.or': return 'or';
 			case 'general.understood': return 'Understood';
+			case 'general.unspecified': return 'Sin especificar';
 			case 'general.confirm': return 'Confirm';
 			case 'general.add': return 'Add';
 			case 'general.edit': return 'Edit';
@@ -2127,7 +2133,8 @@ extension on _TranslationsEn {
 			case 'account.types.saving_descr': return 'You will only be able to add and withdraw money from it from other accounts. Perfect to start saving money';
 			case 'account.form.name': return 'Account name';
 			case 'account.form.name_placeholder': return 'Ex: Savings account';
-			case 'account.form.description': return 'Description';
+			case 'account.form.notes': return 'Notes';
+			case 'account.form.notes_placeholder': return 'Type some notes/description about this account';
 			case 'account.form.initial_balance': return 'Initial balance';
 			case 'account.form.current_balance': return 'Current balance';
 			case 'account.form.create': return 'Create account';
@@ -2150,6 +2157,7 @@ extension on _TranslationsEn {
 			case 'account.select.multiple': return 'Select accounts';
 			case 'currencies.currency_converter': return 'Currency converter';
 			case 'currencies.select_a_currency': return 'Select a currency';
+			case 'currencies.currency': return 'Currency';
 			case 'currencies.search_placeholder': return 'Search by currency name, code...';
 			case 'currencies.days_without_update': return ({required Object X}) => 'Exchange rates last updated ${X} day(s) ago';
 			case 'categories.unknown': return 'Unknown category';
@@ -2314,6 +2322,7 @@ extension on _TranslationsEs {
 			case 'general.cancel': return 'Cancelar';
 			case 'general.or': return 'o';
 			case 'general.understood': return 'Entendido';
+			case 'general.unspecified': return 'Sin especificar';
 			case 'general.confirm': return 'Confirmar';
 			case 'general.add': return 'Añadir';
 			case 'general.edit': return 'Editar';
@@ -2443,7 +2452,6 @@ extension on _TranslationsEs {
 			case 'transaction.form.description': return 'Descripción';
 			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro';
 			case 'transaction.form.description_add': return 'Añade una nota';
-			case 'transaction.form.without_category': return 'Sin especificar';
 			case 'transaction.form.exchange_to_preferred': return ({required Object X}) => 'Actualmente equivalen aproximadamente a ${X}';
 			case 'transfer.display': return 'Transferencia';
 			case 'transfer.from_to_text': return ({required Object X, required Object Y}) => 'Desde ${X} hasta ${Y}';
@@ -2495,7 +2503,8 @@ extension on _TranslationsEs {
 			case 'account.types.saving_descr': return 'Solo podrás añadir y retirar dinero de ella desde otras cuentas. Perfecta para empezar a ahorrar';
 			case 'account.form.name': return 'Nombre de la cuenta';
 			case 'account.form.name_placeholder': return 'Ej: Cuenta de ahorros';
-			case 'account.form.description': return 'Descripción';
+			case 'account.form.notes': return 'Notas';
+			case 'account.form.notes_placeholder': return 'Escribe algunas notas/descripciones sobre esta cuenta';
 			case 'account.form.initial_balance': return 'Balance inicial';
 			case 'account.form.current_balance': return 'Balance actual';
 			case 'account.form.create': return 'Crear cuenta';
@@ -2517,6 +2526,7 @@ extension on _TranslationsEs {
 			case 'account.select.multiple': return 'Selecciona cuentas';
 			case 'account.select.all': return 'Todas las cuentas';
 			case 'currencies.currency_converter': return 'Conversor de divisas';
+			case 'currencies.currency': return 'Divisa';
 			case 'currencies.select_a_currency': return 'Selecciona una divisa';
 			case 'currencies.search_placeholder': return 'Busca por nombre o por código de la divisa';
 			case 'currencies.days_without_update': return ({required Object X}) => 'Tipos de cambio actualizados por última vez hace ${X} día(s)';

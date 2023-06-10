@@ -81,7 +81,6 @@ class _EditProfileModalState extends State<EditProfileModal> {
                       maxLength: 20,
                       decoration: const InputDecoration(
                         labelText: 'User name *',
-                        border: OutlineInputBorder(),
                       ),
                       validator: (value) =>
                           fieldValidator(value, isRequired: true),

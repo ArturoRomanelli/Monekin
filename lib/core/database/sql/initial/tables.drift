@@ -6,6 +6,7 @@
 import './../../../models/transaction/transaction.dart';
 import './../../../models/category/category.dart';
 import './../../../models/account/account.dart';
+import './../../services/user-setting/user_setting_service.dart';
 
 CREATE TABLE IF NOT EXISTS currencies (
     -- ISO 4217 currency code. Identifies a currency uniquely ([see more](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes))
@@ -149,7 +150,7 @@ CREATE TABLE IF NOT EXISTS recurrentRules (
 ) AS RecurrentRuleInDB;
 
 CREATE TABLE IF NOT EXISTS userSettings (
-  settingKey TEXT NOT NULL PRIMARY KEY,
+  settingKey ENUMNAME(SettingKey) NOT NULL PRIMARY KEY,
   settingValue TEXT
 );
 

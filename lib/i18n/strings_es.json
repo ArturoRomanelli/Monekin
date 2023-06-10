@@ -3,6 +3,7 @@
     "cancel": "Cancelar",
     "or": "o",
     "understood": "Entendido",
+    "unspecified": "Sin especificar",
     "confirm": "Confirmar",
     "add": "Añadir",
     "edit": "Editar",
@@ -170,7 +171,6 @@
       "description": "Descripción",
       "description-info": "Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro",
       "description.add": "Añade una nota",
-      "without_category": "Sin especificar",
       "exchange-to-preferred": "Actualmente equivalen aproximadamente a {{x}}"
     }
   },
@@ -240,7 +240,8 @@
     "FORM": {
       "name": "Nombre de la cuenta",
       "name.placeholder": "Ej: Cuenta de ahorros",
-      "description": "Descripción",
+      "notes": "Notas",
+      "notes.placeholder": "Escribe algunas notas/descripciones sobre esta cuenta",
       "initial-balance": "Balance inicial",
       "current-balance": "Balance actual",
       "create": "Crear cuenta",
@@ -271,6 +272,7 @@
   },
   "CURRENCIES": {
     "currency-converter": "Conversor de divisas",
+    "currency": "Divisa",
     "select-a-currency": "Selecciona una divisa",
     "search-placeholder": "Busca por nombre o por código de la divisa",
     "days-without-update": "Tipos de cambio actualizados por última vez hace {{x}} día(s)"

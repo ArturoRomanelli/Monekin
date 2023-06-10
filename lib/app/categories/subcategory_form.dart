@@ -114,7 +114,6 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                             decoration: const InputDecoration(
                               labelText: 'Account name *',
                               hintText: 'Ex.: My account',
-                              border: OutlineInputBorder(),
                             ),
                             validator: (value) =>
                                 fieldValidator(value, isRequired: true),

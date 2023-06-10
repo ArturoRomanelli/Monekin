@@ -91,7 +91,6 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                           decoration: const InputDecoration(
                             labelText: 'Cada *',
                             helperText: '',
-                            border: OutlineInputBorder(),
                           ),
                           onChanged: (value) {
                             intervalEach = int.tryParse(value);
@@ -109,7 +108,6 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                         decoration: const InputDecoration(
                           labelText: 'Periodicidad *',
                           helperText: '',
-                          border: OutlineInputBorder(),
                         ),
                         items: List.generate(
                             TransactionPeriodicity.values.length,
@@ -149,9 +147,7 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                         controller: TextEditingController(
                             text: DateFormat.yMMMMd().add_Hm().format(endDate)),
                         decoration: const InputDecoration(
-                            labelText: 'Fecha y hora *',
-                            border: OutlineInputBorder(),
-                            isDense: true),
+                            labelText: 'Fecha y hora *', isDense: true),
                         readOnly: true,
                         enabled: ruleUntilMode == RuleUntilMode.date,
                         onTap: () async {
@@ -184,7 +180,6 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                       decoration: const InputDecoration(
                         isDense: true,
                         labelText: 'Repeticiones *',
-                        border: OutlineInputBorder(),
                       ),
                       enabled: ruleUntilMode == RuleUntilMode.nTimes,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],

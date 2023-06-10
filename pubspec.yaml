@@ -48,6 +48,7 @@ dependencies:
   rxdart: ^0.27.7
   slang: ^3.18.1
   slang_flutter: ^3.18.0
+  flex_color_scheme: ^7.1.2
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,7 @@
+import 'package:drift/drift.dart';
 import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
+import 'package:finlytics/core/presentation/theme.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,13 +10,52 @@ import 'package:intl/intl.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  LocaleSettings.useDeviceLocale();
 
-  runApp(ProviderScope(child: TranslationProvider(child: const MyApp())));
+  runApp(ProviderScope(
+      child: StreamBuilder(
+          stream: UserSettingService.instance.getSettings((p0) =>
+              p0.settingKey.equalsValue(SettingKey.appLanguage) |
+              p0.settingKey.equalsValue(SettingKey.themeMode)),
+          builder: (context, snapshot) {
+            print('Finding initial user settings...');
+
+            if (snapshot.hasData) {
+              final userSettings = snapshot.data!;
+
+              final lang = userSettings
+                  .firstWhere(
+                      (element) => element.settingKey == SettingKey.appLanguage)
+                  .settingValue;
+
+              if (lang != null) {
+                print('App language found. Setting the locale to `$lang`...');
+                LocaleSettings.setLocaleRaw(lang);
+              } else {
+                print(
+                    'App language found. Setting the user device language...');
+                LocaleSettings.useDeviceLocale();
+                UserSettingService.instance
+                    .setSetting(SettingKey.appLanguage,
+                        LocaleSettings.currentLocale.languageTag)
+                    .then((value) => null);
+              }
+
+              return TranslationProvider(
+                  child: MyApp(
+                themeMode: ThemeMode.values.byName(userSettings
+                    .firstWhere(
+                        (element) => element.settingKey == SettingKey.themeMode)
+                    .settingValue!),
+              ));
+            }
+
+            return Container();
+          })));
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  final ThemeMode themeMode;
+  const MyApp({super.key, required this.themeMode});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,30 +68,9 @@ class MyApp extends ConsumerWidget {
         locale: TranslationProvider.of(context).flutterLocale,
         supportedLocales: AppLocaleUtils.supportedLocales,
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: ThemeData(
-            dividerTheme: const DividerThemeData(space: 0),
-            colorSchemeSeed: const Color.fromARGB(255, 15, 51, 117),
-            listTileTheme: Theme.of(context).listTileTheme.copyWith(
-                  minVerticalPadding: 8,
-                  subtitleTextStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      fontFamily: 'Nunito'),
-                  leadingAndTrailingTextStyle: Theme.of(context)
-                          .listTileTheme
-                          .leadingAndTrailingTextStyle
-                          ?.copyWith(fontSize: 16) ??
-                      TextStyle(
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                          fontSize: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.fontSize ??
-                              14,
-                          fontFamily: 'Nunito'),
-                ),
-            useMaterial3: true,
-            fontFamily: 'Nunito'),
+        theme: getThemeData(false),
+        darkTheme: getThemeData(true),
+        themeMode: themeMode,
         home: const TabsPage());
   }
 }

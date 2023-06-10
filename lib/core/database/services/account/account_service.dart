@@ -129,7 +129,8 @@ class AccountService {
       DateTime? startDate,
       bool convertToPreferredCurrency = true}) {
     String transactionWhereStatement = """
-        isHidden = 0      
+        isHidden = 0
+        AND status IS NOT 'voided'      
         ${categoriesIds != null ? ' AND transactions.categoryID IN (${List.filled(categoriesIds.length, '?').join(', ')}) ' : ''} 
         ${endDate != null ? ' AND date <= ?' : ''} 
         ${startDate != null ? ' AND date >= ?' : ''} 

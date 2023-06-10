@@ -35,7 +35,7 @@ class SupportedIcon {
     return Container(
         padding: EdgeInsets.all(size / (22 / 6)),
         decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withOpacity(0.12),
             borderRadius: BorderRadius.circular(size / (22 / 6))),
         child: display(size: size, color: color));
   }

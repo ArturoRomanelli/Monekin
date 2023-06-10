@@ -3,8 +3,10 @@ import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:slang/builder/utils/string_extensions.dart';
 
 class TransactionDetailAction {
   final String label;
@@ -58,7 +60,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
         (transaction is MoneyRecurrentRule) && widget.recurrentMode;
 
     final color = showRecurrencyStatus
-        ? Theme.of(context).primaryColor
+        ? Theme.of(context).colorScheme.primary.lighten(0.2)
         : transaction.status!.color;
 
     return Card(
@@ -73,7 +75,14 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Transacción reconciliada',
+                Text(
+                    showRecurrencyStatus
+                        ? "Transacción recurrente"
+                        : t.transaction.status
+                            .tr_status(
+                                status:
+                                    transaction.status!.displayName(context))
+                            .capitalize(),
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w700)),
                 Icon(
@@ -91,8 +100,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
-                Text(
-                    'Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco'),
+                Text(showRecurrencyStatus
+                    ? "El próximo pago de esta transacción recurrente esta previsto para el día ${DateFormat.yMMMMd().format(transaction.date)}. Puedes elegir si quieres saltar este pago o pagarlo eligiendo la fecha del pago"
+                    : transaction.status!.description(context)),
                 if (transaction.status == TransactionStatus.pending)
                   const SizedBox(height: 12),
                 if (transaction.status == TransactionStatus.pending)
@@ -135,6 +145,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
         .transactionDetailsActions(context,
             transaction: widget.transaction, prevPage: widget.prevPage);
 
+    final t = Translations.of(context);
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -223,7 +234,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Cuenta'),
+                              Text(t.general.account),
                               Chip(
                                   label: Text(widget.transaction.account.name),
                                   padding: const EdgeInsets.all(2),
@@ -251,8 +262,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(widget.transaction.isIncomeOrExpense
-                                  ? 'Category'
-                                  : 'Cuenta de destino'),
+                                  ? t.general.category
+                                  : t.transfer.form.to),
                               Chip(
                                   label: Text(
                                       widget.transaction.isIncomeOrExpense
@@ -322,6 +333,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                   const SizedBox(height: 4),
                                   Text(
                                     item.label,
+                                    softWrap: false,
+                                    overflow: TextOverflow.fade,
                                     style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300),

@@ -152,9 +152,7 @@
     "name": "Nombre:",
     "icon": "Icono",
     "color": "Color",
-    "select-icon": "Selecciona un icono",
-    "add-subcategory": "Añadir subcategoría",
-    "edit-subcategory": "Editar subcategoría"
+    "select-icon": "Selecciona un icono"
   },
   "TRANSACTION": {
     "create": "Nueva transacción",
@@ -169,20 +167,32 @@
     "delete.warning-message": "Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas",
     "delete.success": "Transacción eliminada correctamente",
     "FORM": {
+      "status": "Estado",
+      "VALIDATORS": {
+        "zero": "El valor de una transacción no puede ser igual a cero",
+        "negative-transaction": "No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso",
+        "negative-transfer": "El valor monetario de una transferencia no puede ser negativo"
+      },
       "description": "Descripción",
       "description-info": "Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro",
-      "description.add": "Añade una nota",
       "exchange-to-preferred": "Actualmente equivalen aproximadamente a {{x}}"
+    },
+    "STATUS": {
+      "tr_status": "Transacción {{ status }}",
+      "reconciled": "Reconciliada",
+      "reconciled.descr": "Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco",
+      "unreconciled": "No reconciliada",
+      "unreconciled.descr": "Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics",
+      "pending": "Pendiente",
+      "pending.descr": "Esta transacción esta pendiente de pago y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas",
+      "voided": "Nula",
+      "voided.descr": "Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas"
     }
   },
   "TRANSFER": {
     "display": "Transferencia",
     "from-to-text": "Desde {{x}} hasta {{y}}",
     "create": "Nueva transferencia",
-    "edit": "Editar transferencia",
-    "delete": "Eliminar transferencia",
-    "delete.warning-message": "Esta acción es irreversible",
-    "delete.success": "Transferencia eliminada correctamente",
     "need-two-accounts.warning.header": "Ops!",
     "need-two-accounts.warning.message": "Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar",
     "FORM": {
@@ -199,8 +209,7 @@
   },
   "RECURRENT-TRANSACTIONS": {
     "title": "Movimientos recurrentes",
-    "empty": "Parece que no posees ninguna transacción que se repita periodicamente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí",
-    "balance": "Balance total",
+    "empty": "Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí",
     "DETAILS": {
       "title": "Detalles del movimiento",
       "each-week": "Cada semana",
@@ -213,15 +222,8 @@
       "pause-header": "Pausar pagos",
       "pause-message": "Con esta acción se dará por finalizada esta transacción hoy, y no se produciran mas pagos a partir de ahora. Pagos previos al día de hoy no serán eliminados del balance",
       "pause-correctly": "Transacción pausada correctamente",
-      "delete-header": "Eliminar pagos",
-      "delete-message": "Esta acción es irreversible y borrara todos tus pagos del balance",
-      "delete.success": "Transacciones eliminadas correctamente"
-    },
-    "SELECTOR": {
-      "title": "¿Cómo se repite su transacción?",
-      "until": "Hasta",
-      "infinite": "El infinito",
-      "date": "Una fecha"
+      "delete-header": "Eliminar transacción recurrente",
+      "delete-message": "Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado"
     }
   },
   "ACCOUNT": {
@@ -251,12 +253,6 @@
       "already-exists": "Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro",
       "iban": "IBAN",
       "swift": "SWIFT"
-    },
-    "SHARE": {
-      "title": "Compartir esta cuenta",
-      "title-short": "Compartir",
-      "description": "Introduce el ID del usuario en cuestión para compartir esta cuenta. El usuario podrá ver, añadir, editar o modificar todas las transacciones de esta cuenta",
-      "correct": "Cuenta compartida correctamente"
     },
     "DELETE": {
       "warning-header": "¿Estas seguro?",
@@ -346,22 +342,6 @@
       "expend-evolution": "Evolución del gasto",
       "no-transactions": "Parece que no has realizado ningún gasto relativo a este presupuesto"
     }
-  },
-  "GO-PREMIUM": {
-    "title": "Elige un plan",
-    "description": "Consulta las ventajas de todos nuestros planes premium. Elige uno y cancela cuando quieras.",
-    "accounts-limit": "Número máximo de cuentas",
-    "budgets-limit": "Número máximo de presupuestos",
-    "recurring-transactions-limit": "Transacciones recurrentes permitidas",
-    "rate-update-frequency": "Frecuencia de actualización de los tipos de cambio",
-    "support": "Apoyo al desarrollador",
-    "anual-price": "Precio al año",
-    "monthly-price": "Precio al mes",
-    "change-plan": "Para cambiar de plan primero has de cancelar anteriores subscripciones y esperar a que estas expiren",
-    "return-to-free": "Para volver al plan gratuito anula las subscripciones que tengas actualmente activas",
-    "current-plan": "Este es tu plan actual. Puedes cancelarlo sin compromiso en cualquier momento",
-    "current-free-plan": "Ahora mismo te encuentras aquí, en el plan básico",
-    "admin-subscriptions": "Administrar subscripciones"
   },
   "BACKUP": {
     "EXPORT": {

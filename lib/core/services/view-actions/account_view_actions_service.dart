@@ -3,6 +3,7 @@ import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/utils/list_tile_action_item.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class AccountViewActionService {
@@ -12,9 +13,11 @@ class AccountViewActionService {
 
   List<ListTileActionItem> accountDetailsActions(BuildContext context,
       {required Account account, Widget? prevPage}) {
+    final t = Translations.of(context);
+
     return [
       ListTileActionItem(
-          label: 'Edit',
+          label: t.general.edit,
           icon: Icons.edit,
           onClick: () => Navigator.push(
               context,
@@ -24,18 +27,46 @@ class AccountViewActionService {
                         account: account,
                       )))),
       ListTileActionItem(
-          label: 'New transfer',
+          label: t.transfer.create,
           icon: Icons.swap_vert_rounded,
-          onClick: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TransactionFormPage(
-                        prevPage: prevPage,
-                        fromAccount: account,
-                        mode: TransactionFormMode.transfer,
-                      )))),
+          onClick: () async {
+            showAccountsWarn() => showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(t.transfer.need_two_accounts_warning_header),
+                      content: SingleChildScrollView(
+                          child: Text(
+                              t.transfer.need_two_accounts_warning_message)),
+                      actions: [
+                        TextButton(
+                            child: Text(t.general.understood),
+                            onPressed: () => Navigator.pop(context)),
+                      ],
+                    );
+                  },
+                );
+
+            navigateToTransferForm() => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TransactionFormPage(
+                          prevPage: prevPage,
+                          fromAccount: account,
+                          mode: TransactionFormMode.transfer,
+                        )));
+
+            final numberOfAccounts =
+                (await AccountService.instance.getAccounts().first).length;
+
+            if (numberOfAccounts <= 1) {
+              await showAccountsWarn();
+            } else {
+              await navigateToTransferForm();
+            }
+          }),
       ListTileActionItem(
-          label: 'Delete',
+          label: t.general.delete,
           icon: Icons.delete,
           onClick: () => AccountViewActionService()
               .deleteTransactionWithAlertAndSnackBar(context,
@@ -49,12 +80,12 @@ class AccountViewActionService {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Borrar cuenta'),
-          content: const SingleChildScrollView(
-              child: Text('Esta acción es irreversible, ¿deseas continuar?')),
+          title: Text(t.account.delete.warning_header),
+          content:
+              SingleChildScrollView(child: Text(t.account.delete.warning_text)),
           actions: [
             TextButton(
-              child: const Text('Yes, continue'),
+              child: Text(t.general.confirm),
               onPressed: () {
                 accountService.deleteAccount(transactionId).then((value) {
                   if (returnPage != null) {

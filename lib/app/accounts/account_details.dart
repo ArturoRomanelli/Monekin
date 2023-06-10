@@ -32,6 +32,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,19 +56,20 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                 Hero(
                   tag: 'account-icon-${widget.account.id}',
                   child: Container(
-                    padding: const EdgeInsets.all(12),
+                    clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                        borderRadius: BorderRadius.circular(1000),
+                        border: Border.all(
+                            width: 2, color: Theme.of(context).primaryColor)),
                     child: widget.account.icon.displayFilled(
-                        size: 42, color: Theme.of(context).primaryColor),
+                      size: 36,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 )
               ],
             ),
-            const SizedBox(
-              height: 12,
-            ),
+            const SizedBox(height: 24),
             SingleChildScrollView(
               child: Column(
                 children: [
@@ -120,6 +122,8 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                                   const SizedBox(height: 4),
                                   Text(
                                     item.label,
+                                    softWrap: false,
+                                    overflow: TextOverflow.fade,
                                     style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300),

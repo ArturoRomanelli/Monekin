@@ -99,7 +99,7 @@ class _Tab1PageState extends State<Tab1Page> {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const AccountFormPage())),
-                            child: Text('Crear cuenta'))
+                            child: Text(t.account.form.create))
                       ],
                     )),
               )
@@ -128,7 +128,15 @@ class _Tab1PageState extends State<Tab1Page> {
                             ))),
                 leading: Hero(
                     tag: 'account-icon-${account.id}',
-                    child: account.icon.display(size: 22)),
+                    child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                width: 2,
+                                color: Theme.of(context).primaryColor),
+                            borderRadius: BorderRadius.circular(1000)),
+                        child: account.icon.display(
+                            size: 22, color: Theme.of(context).primaryColor))),
                 trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,

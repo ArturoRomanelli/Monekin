@@ -1,6 +1,7 @@
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class RecurrentTransactionPage extends StatefulWidget {
@@ -14,8 +15,10 @@ class RecurrentTransactionPage extends StatefulWidget {
 class _RecurrentTransactionPageState extends State<RecurrentTransactionPage> {
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: Text("Transacciones recurrentes")),
+      appBar: AppBar(title: Text(t.recurrent_transactions.title)),
       body: StreamBuilder(
           stream: RecurrentRuleService.instance.getRecurrentRules(),
           builder: (context, snapshot) {
@@ -26,13 +29,12 @@ class _RecurrentTransactionPageState extends State<RecurrentTransactionPage> {
             final transactions = snapshot.data!;
 
             if (transactions.isEmpty) {
-              return const Column(
+              return Column(
                 children: [
                   Expanded(
                       child: EmptyIndicator(
                           title: 'Ops! Esto esta muy vacio',
-                          description:
-                              'Añade una transacción pulsando el botón inferior para empezar a ver valores aquí')),
+                          description: t.recurrent_transactions.empty)),
                 ],
               );
             }

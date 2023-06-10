@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   -- Some description, notes or extra info about the transaction.
   notes TEXT,
 
-  status ENUMNAME(TransactionStatus) CHECK(status IN ('voided', 'pending', 'reconcilied', 'unreconcilied')),
+  status ENUMNAME(TransactionStatus) CHECK(status IN ('voided', 'pending', 'reconciled', 'unreconciled')),
   categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
   valueInDestiny REAL,
   receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -152,9 +152,7 @@
     "name": "Name:",
     "icon": "Icon",
     "color": "Colour",
-    "select-icon": "Select an icon",
-    "add-subcategory": "Add subcategory",
-    "edit-subcategory": "Edit subcategory"
+    "select-icon": "Select an icon"
   },
   "TRANSACTION": {
     "create": "New transaction",
@@ -169,21 +167,32 @@
     "delete.warning-message": "This action is irreversible. The current balance of your accounts and all your statistics will be recalculated",
     "delete.success": "Transaction deleted correctly",
     "FORM": {
+      "status": "Status",
+      "VALIDATORS": {
+        "zero": "The value of a transaction cannot be equal to zero",
+        "negative-transaction": "Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income",
+        "negative-transfer": "The monetary value of a transfer cannot be negative"
+      },
       "description": "Description",
       "description-info": "Adding a note will help you find this transaction faster in the future",
-      "description.add": "Add a note",
-      "without_category": "Unspecified",
       "exchange-to-preferred": "Currently equal to approximately {{x}}"
+    },
+    "STATUS": {
+      "tr_status": "{{ status }} transaction",
+      "reconciled": "Reconciled",
+      "reconciled.descr": "This transaction has already been validated and corresponds to a real transaction from your bank",
+      "unreconciled": "Unreconciled",
+      "unreconciled.descr": "This transaction has not yet been validated and therefore does not yet appear in your real bank accounts. However, it counts for the calculation of balances and statistics in Finlytics",
+      "pending": "Pending",
+      "pending.descr": "This transaction is pending payment and therefore will not be taken into account when calculating balances and statistics",
+      "voided": "Voided",
+      "voided.descr": "Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics"
     }
   },
   "TRANSFER": {
     "display": "Transfer",
     "from-to-text": "From {{x}} to {{y}}",
     "create": "New Transfer",
-    "edit": "Edit Transfer",
-    "delete": "Delete transfer",
-    "delete.warning-message": "This action is irreversible",
-    "delete.success": "Transfer successfully deleted",
     "need-two-accounts.warning.header": "Ops!",
     "need-two-accounts.warning.message": "At least two accounts are needed to perform this action. If you need to adjust or edit the current balance of this account, click the edit button",
     "FORM": {
@@ -214,15 +223,8 @@
       "pause-header": "Pause payments",
       "pause-message": "This action will terminate this transaction today, and no more payments will be made from now on. Payments made before today will not be removed from the balance",
       "pause-correctly": "Transaction paused successfully",
-      "delete-header": "Delete payments",
-      "delete-message": "This action is irreversible and will delete all your payments from the balance",
-      "delete.success": "Transactions deleted correctly"
-    },
-    "SELECTOR": {
-      "title": "¿How is your transaction repeated?",
-      "until": "Until",
-      "infinite": "The infinite",
-      "date": "A date"
+      "delete-header": "Delete recurring transaction",
+      "delete-message": "This action is irreversible and will not affect transactions you have already confirmed/paid for"
     }
   },
   "ACCOUNT": {
@@ -252,12 +254,6 @@
       "already-exists": "There is already another one with the same name, please write another",
       "iban": "IBAN",
       "swift": "SWIFT"
-    },
-    "SHARE": {
-      "title": "Share this account",
-      "title-short": "Share",
-      "description": "Enter the ID of the user in question to share this account. The user will be able to see, add, edit or modify all the transactions of this account",
-      "correct": "Account shared successfully"
     },
     "DELETE": {
       "warning-header": "Are you sure?",
@@ -347,22 +343,6 @@
       "expend-evolution": "Expenditure evolution",
       "no-transactions": "It seems that you have not made any expenses related to this budget"
     }
-  },
-  "GO-PREMIUM": {
-    "title": "Choose a plan",
-    "description": "Check the benefits of all our premium plans. Choose one and cancel whenever you want.",
-    "accounts-limit": "Maximum number of accounts",
-    "budgets-limit": "Maximum number of budgets",
-    "recurring-transactions-limit": "Recurring transactions allowed",
-    "rate-update-frequency": "Exchange rates update frequency",
-    "support": "Support the developer",
-    "anual-price": "Anual price",
-    "monthly-price": "Mensual price",
-    "change-plan": "To change plans you must first cancel previous subscriptions and wait for them to expire",
-    "return-to-free": "To return to the free plan cancel the subscriptions you currently have active",
-    "current-plan": "This is your current plan. You can cancel without obligation at any time",
-    "current-free-plan": "You are here on the basic plan right now",
-    "admin-subscriptions": "Manage subscriptions"
   },
   "BACKUP": {
     "EXPORT": {

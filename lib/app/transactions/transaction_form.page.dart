@@ -1,6 +1,6 @@
 import 'package:finlytics/app/accounts/account_selector.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
-import 'package:finlytics/app/tabs/tab2.page.dart';
+import 'package:finlytics/app/tabs/tabs.page.dart';
 import 'package:finlytics/app/transactions/widgets/interval_selector_help.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
@@ -16,6 +16,7 @@ import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dar
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
@@ -100,11 +101,13 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   }
 
   submitForm() {
+    final t = Translations.of(context);
+
     if (valueToNumber! < 0) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(widget.mode == TransactionFormMode.incomeOrExpense
-              ? 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso'
-              : 'Transfers between accounts can not have a negative ammount')));
+              ? t.transaction.form.validators.negative_transaction
+              : t.transaction.form.validators.negative_transfer)));
 
       return;
     }
@@ -114,12 +117,13 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => widget.prevPage ?? const Tab2Page()));
+              builder: (context) =>
+                  widget.prevPage ?? const TabsPage(currentPageIndex: 1)));
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(isEditMode
-              ? 'Transacción editada correctamente'
-              : 'Transacción creada correctamente')));
+              ? t.transaction.edit_success
+              : t.transaction.new_success)));
     }
 
     if (recurrentRule.isNoRecurrent) {
@@ -238,9 +242,11 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditMode ? 'Edit transaction' : 'Add transaction'),
+        title: Text(isEditMode ? t.transaction.edit : t.transaction.create),
       ),
       persistentFooterButtons: [
         PersistentFooterButton(
@@ -253,7 +259,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
               }
             },
             icon: const Icon(Icons.save),
-            label: const Text('Guardar transacción'),
+            label: Text(t.transaction.create),
           ),
         )
       ],
@@ -293,7 +299,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         }
 
                         if (valueToNumber! == 0) {
-                          return 'Transactions amount can be zero';
+                          return t.transaction.form.validators.zero;
                         }
 
                         return null;
@@ -476,8 +482,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         children: [
                           DropdownButtonFormField(
                             value: status,
-                            decoration: const InputDecoration(
-                              labelText: 'Status',
+                            decoration: InputDecoration(
+                              labelText: t.transaction.form.status,
                             ),
                             items: [
                               const DropdownMenuItem(
@@ -489,7 +495,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                   (index) => DropdownMenuItem(
                                       value: TransactionStatus.values[index],
                                       child: Text(TransactionStatus
-                                          .values[index].name)))
+                                          .values[index]
+                                          .displayName(context))))
                             ],
                             onChanged: (value) {
                               setState(() {

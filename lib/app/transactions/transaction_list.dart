@@ -115,11 +115,16 @@ class TransactionListComponent extends StatelessWidget {
               amountToConvert: transaction.value,
               currency: transaction.account.currency,
               textStyle: TextStyle(
-                  color: transaction.type == TransactionType.income
-                      ? Colors.green
-                      : transaction.type == TransactionType.expense
-                          ? Colors.red
-                          : null,
+                  color: transaction.status == TransactionStatus.voided
+                      ? Colors.grey.shade400
+                      : transaction.type == TransactionType.income
+                          ? Colors.green
+                          : transaction.type == TransactionType.expense
+                              ? Colors.red
+                              : null,
+                  decoration: transaction.status == TransactionStatus.voided
+                      ? TextDecoration.lineThrough
+                      : null,
                   fontWeight: FontWeight.bold),
             ),
             leading: Hero(

@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 722 (361 per locale)
+/// Strings: 686 (343 per locale)
 ///
-/// Built on 2023-06-10 at 08:28 UTC
+/// Built on 2023-06-10 at 11:33 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -159,7 +159,6 @@ class _TranslationsEn implements BaseTranslations<AppLocale, _TranslationsEn> {
 	late final _TranslationsCurrenciesEn currencies = _TranslationsCurrenciesEn._(_root);
 	late final _TranslationsCategoriesEn categories = _TranslationsCategoriesEn._(_root);
 	late final _TranslationsBudgetsEn budgets = _TranslationsBudgetsEn._(_root);
-	late final _TranslationsGoPremiumEn go_premium = _TranslationsGoPremiumEn._(_root);
 	late final _TranslationsBackupEn backup = _TranslationsBackupEn._(_root);
 	late final _TranslationsSettingsEn settings = _TranslationsSettingsEn._(_root);
 	late final _TranslationsLangEn lang = _TranslationsLangEn._(_root);
@@ -267,8 +266,6 @@ class _TranslationsIconSelectorEn {
 	String get icon => 'Icon';
 	String get color => 'Colour';
 	String get select_icon => 'Select an icon';
-	String get add_subcategory => 'Add subcategory';
-	String get edit_subcategory => 'Edit subcategory';
 }
 
 // Path: transaction
@@ -290,6 +287,7 @@ class _TranslationsTransactionEn {
 	String get delete_warning_message => 'This action is irreversible. The current balance of your accounts and all your statistics will be recalculated';
 	String get delete_success => 'Transaction deleted correctly';
 	late final _TranslationsTransactionFormEn form = _TranslationsTransactionFormEn._(_root);
+	late final _TranslationsTransactionStatusEn status = _TranslationsTransactionStatusEn._(_root);
 }
 
 // Path: transfer
@@ -300,12 +298,8 @@ class _TranslationsTransferEn {
 
 	// Translations
 	String get display => 'Transfer';
-	String from_to_text({required Object X, required Object Y}) => 'From ${X} to ${Y}';
+	String from_to_text({required Object x, required Object y}) => 'From ${x} to ${y}';
 	String get create => 'New Transfer';
-	String get edit => 'Edit Transfer';
-	String get delete => 'Delete transfer';
-	String get delete_warning_message => 'This action is irreversible';
-	String get delete_success => 'Transfer successfully deleted';
 	String get need_two_accounts_warning_header => 'Ops!';
 	String get need_two_accounts_warning_message => 'At least two accounts are needed to perform this action. If you need to adjust or edit the current balance of this account, click the edit button';
 	late final _TranslationsTransferFormEn form = _TranslationsTransferFormEn._(_root);
@@ -322,7 +316,6 @@ class _TranslationsRecurrentTransactionsEn {
 	String get empty => 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
 	String get balance => 'Total balance';
 	late final _TranslationsRecurrentTransactionsDetailsEn details = _TranslationsRecurrentTransactionsDetailsEn._(_root);
-	late final _TranslationsRecurrentTransactionsSelectorEn selector = _TranslationsRecurrentTransactionsSelectorEn._(_root);
 }
 
 // Path: account
@@ -339,7 +332,6 @@ class _TranslationsAccountEn {
 	String get withdraw_money => 'Withdraw money';
 	late final _TranslationsAccountTypesEn types = _TranslationsAccountTypesEn._(_root);
 	late final _TranslationsAccountFormEn form = _TranslationsAccountFormEn._(_root);
-	late final _TranslationsAccountShareEn share = _TranslationsAccountShareEn._(_root);
 	late final _TranslationsAccountDeleteEn delete = _TranslationsAccountDeleteEn._(_root);
 	late final _TranslationsAccountSelectEn select = _TranslationsAccountSelectEn._(_root);
 }
@@ -355,7 +347,7 @@ class _TranslationsCurrenciesEn {
 	String get select_a_currency => 'Select a currency';
 	String get currency => 'Currency';
 	String get search_placeholder => 'Search by currency name, code...';
-	String days_without_update({required Object X}) => 'Exchange rates last updated ${X} day(s) ago';
+	String days_without_update({required Object x}) => 'Exchange rates last updated ${x} day(s) ago';
 }
 
 // Path: categories
@@ -379,16 +371,16 @@ class _TranslationsCategoriesEn {
 	String get subcategories_add => 'Add subcategory';
 	String get make_parent => 'Make to category';
 	String get make_child => 'Make a subcategory';
-	String make_child_warning1({required Object Destiny}) => 'This category and its subcategories will become subcategories of <b>${Destiny}</b>.';
-	String make_child_warning2({required Object X, required Object Destiny}) => 'Their transactions <b>(${X})</b> will be moved to the new subcategories created within the <b>${Destiny}</b> category.';
+	String make_child_warning1({required Object destiny}) => 'This category and its subcategories will become subcategories of <b>${destiny}</b>.';
+	String make_child_warning2({required Object x, required Object destiny}) => 'Their transactions <b>(${x})</b> will be moved to the new subcategories created within the <b>${destiny}</b> category.';
 	String get make_child_success => 'Subcategories created successfully';
 	String get merge => 'Merge with another category';
-	String merge_warning1({required Object X, required Object From, required Object Destiny}) => 'All transactions (<b>${X}</b>) associated with the category <b>${From}</b> will be moved to the category <b>${Destiny}</b>.';
-	String merge_warning2({required Object From}) => 'The category <b>${From}</b> will be irreversibly deleted.';
+	String merge_warning1({required Object x, required Object from, required Object destiny}) => 'All transactions (<b>${x}</b>) associated with the category <b>${from}</b> will be moved to the category <b>${destiny}</b>.';
+	String merge_warning2({required Object from}) => 'The category <b>${from}</b> will be irreversibly deleted.';
 	String get merge_success => 'Category merged successfully';
 	String get delete_success => 'Category deleted correctly';
 	String get delete_warning_header => 'Delete category?';
-	String delete_warning_message({required Object X}) => 'This action will irreversibly delete all transactions <b>(${X})</b> related to this category.';
+	String delete_warning_message({required Object x}) => 'This action will irreversibly delete all transactions <b>(${x})</b> related to this category.';
 	late final _TranslationsCategoriesSelectEn select = _TranslationsCategoriesSelectEn._(_root);
 }
 
@@ -417,29 +409,6 @@ class _TranslationsBudgetsEn {
 	String get delete_warning => 'This action is irreversible. Categories and transactions referring to this quote will not be deleted';
 	late final _TranslationsBudgetsFormEn form = _TranslationsBudgetsFormEn._(_root);
 	late final _TranslationsBudgetsDetailsEn details = _TranslationsBudgetsDetailsEn._(_root);
-}
-
-// Path: go_premium
-class _TranslationsGoPremiumEn {
-	_TranslationsGoPremiumEn._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Choose a plan';
-	String get description => 'Check the benefits of all our premium plans. Choose one and cancel whenever you want.';
-	String get accounts_limit => 'Maximum number of accounts';
-	String get budgets_limit => 'Maximum number of budgets';
-	String get recurring_transactions_limit => 'Recurring transactions allowed';
-	String get rate_update_frequency => 'Exchange rates update frequency';
-	String get support => 'Support the developer';
-	String get anual_price => 'Anual price';
-	String get monthly_price => 'Mensual price';
-	String get change_plan => 'To change plans you must first cancel previous subscriptions and wait for them to expire';
-	String get return_to_free => 'To return to the free plan cancel the subscriptions you currently have active';
-	String get current_plan => 'This is your current plan. You can cancel without obligation at any time';
-	String get current_free_plan => 'You are here on the basic plan right now';
-	String get admin_subscriptions => 'Manage subscriptions';
 }
 
 // Path: backup
@@ -497,7 +466,7 @@ class _TranslationsGeneralClipboardEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String success({required Object X}) => '${X} copiado al portapapeles';
+	String success({required Object x}) => '${x} copiado al portapapeles';
 	String get error => 'Error al copiar';
 }
 
@@ -617,9 +586,9 @@ class _TranslationsFinancialHealthMonthsWithoutIncomeEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String good({required Object X}) => 'Well done! At your current spending rate right now you could survive up to ${X} months without any income';
-	String normal({required Object X}) => 'At your current spending rate right now you could survive up to ${X} months without any income. While this value is acceptable, you can still improve a little more!';
-	String bad({required Object X}) => 'Wow! You would barely survive ${X} months without income at your current spending rate. Remember that it is recommended to be able to live at least 6 months without any income';
+	String good({required Object x}) => 'Well done! At your current spending rate right now you could survive up to ${x} months without any income';
+	String normal({required Object x}) => 'At your current spending rate right now you could survive up to ${x} months without any income. While this value is acceptable, you can still improve a little more!';
+	String bad({required Object x}) => 'Wow! You would barely survive ${x} months without income at your current spending rate. Remember that it is recommended to be able to live at least 6 months without any income';
 	String get very_bad => 'Wow! You could hardly survive a month without income at your current spending rate. Remember that it is recommended to be able to live at least 6 months without any income';
 	String get insufficient_data => 'It looks like we don\'t have enough expenses to calculate how many months you could survive without income. Enter a few transactions and come back here to check your financial health';
 }
@@ -631,9 +600,9 @@ class _TranslationsFinancialHealthSavingsPercentageEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String good({required Object Value}) => 'Congratulations! You have managed to save ${Value}% of your income during this period. It seems that you are already quite an expert. Keep it up!';
-	String normal({required Object Value}) => 'Congratulations, you managed to save ${Value}% of your income during this period. Visit the analysis tab to see where you can save even more!';
-	String bad({required Object Value}) => 'You have managed to save ${Value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
+	String good({required Object value}) => 'Congratulations! You have managed to save ${value}% of your income during this period. It seems that you are already quite an expert. Keep it up!';
+	String normal({required Object value}) => 'Congratulations, you managed to save ${value}% of your income during this period. Visit the analysis tab to see where you can save even more!';
+	String bad({required Object value}) => 'You have managed to save ${value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
 	String get very_bad => 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
 }
 
@@ -644,11 +613,29 @@ class _TranslationsTransactionFormEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
+	String get status => 'Status';
+	late final _TranslationsTransactionFormValidatorsEn validators = _TranslationsTransactionFormValidatorsEn._(_root);
 	String get description => 'Description';
 	String get description_info => 'Adding a note will help you find this transaction faster in the future';
-	String get description_add => 'Add a note';
-	String get without_category => 'Unspecified';
-	String exchange_to_preferred({required Object X}) => 'Currently equal to approximately ${X}';
+	String exchange_to_preferred({required Object x}) => 'Currently equal to approximately ${x}';
+}
+
+// Path: transaction.status
+class _TranslationsTransactionStatusEn {
+	_TranslationsTransactionStatusEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String tr_status({required Object status}) => '${status} transaction';
+	String get reconciled => 'Reconciled';
+	String get reconciled_descr => 'This transaction has already been validated and corresponds to a real transaction from your bank';
+	String get unreconciled => 'Unreconciled';
+	String get unreconciled_descr => 'This transaction has not yet been validated and therefore does not yet appear in your real bank accounts. However, it counts for the calculation of balances and statistics in Finlytics';
+	String get pending => 'Pending';
+	String get pending_descr => 'This transaction is pending payment and therefore will not be taken into account when calculating balances and statistics';
+	String get voided => 'Voided';
+	String get voided_descr => 'Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics';
 }
 
 // Path: transfer.form
@@ -660,8 +647,8 @@ class _TranslationsTransferFormEn {
 	// Translations
 	String get from => 'Origin account';
 	String get to => 'Destination account';
-	String currency_info_add({required Object X}) => '${X} will be transferred to the destination account &#183; Click to edit';
-	String currency_info_edit({required Object X}) => '${X} have been transferred to the destination account &#183; Click to edit';
+	String currency_info_add({required Object x}) => '${x} will be transferred to the destination account &#183; Click to edit';
+	String currency_info_edit({required Object x}) => '${x} have been transferred to the destination account &#183; Click to edit';
 	late final _TranslationsTransferFormCurrencyExchangeSelectorEn currency_exchange_selector = _TranslationsTransferFormCurrencyExchangeSelectorEn._(_root);
 }
 
@@ -683,22 +670,8 @@ class _TranslationsRecurrentTransactionsDetailsEn {
 	String get pause_header => 'Pause payments';
 	String get pause_message => 'This action will terminate this transaction today, and no more payments will be made from now on. Payments made before today will not be removed from the balance';
 	String get pause_correctly => 'Transaction paused successfully';
-	String get delete_header => 'Delete payments';
-	String get delete_message => 'This action is irreversible and will delete all your payments from the balance';
-	String get delete_success => 'Transactions deleted correctly';
-}
-
-// Path: recurrent_transactions.selector
-class _TranslationsRecurrentTransactionsSelectorEn {
-	_TranslationsRecurrentTransactionsSelectorEn._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => '¿How is your transaction repeated?';
-	String get until => 'Until';
-	String get infinite => 'The infinite';
-	String get date => 'A date';
+	String get delete_header => 'Delete recurring transaction';
+	String get delete_message => 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 }
 
 // Path: account.types
@@ -735,19 +708,6 @@ class _TranslationsAccountFormEn {
 	String get already_exists => 'There is already another one with the same name, please write another';
 	String get iban => 'IBAN';
 	String get swift => 'SWIFT';
-}
-
-// Path: account.share
-class _TranslationsAccountShareEn {
-	_TranslationsAccountShareEn._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Share this account';
-	String get title_short => 'Share';
-	String get description => 'Enter the ID of the user in question to share this account. The user will be able to see, add, edit or modify all the transactions of this account';
-	String get correct => 'Account shared successfully';
 }
 
 // Path: account.delete
@@ -1019,6 +979,18 @@ class _TranslationsFinancialHealthReviewDescrEn {
 	String get very_bad => 'Hmm, your financial health is far below what it should be. Try to see where the problem is in the analysis section';
 }
 
+// Path: transaction.form.validators
+class _TranslationsTransactionFormValidatorsEn {
+	_TranslationsTransactionFormValidatorsEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get zero => 'The value of a transaction cannot be equal to zero';
+	String get negative_transaction => 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
+	String get negative_transfer => 'The monetary value of a transfer cannot be negative';
+}
+
 // Path: transfer.form.currency_exchange_selector
 class _TranslationsTransferFormCurrencyExchangeSelectorEn {
 	_TranslationsTransferFormCurrencyExchangeSelectorEn._(this._root);
@@ -1070,7 +1042,6 @@ class _TranslationsEs extends _TranslationsEn {
 	@override late final _TranslationsCurrenciesEs currencies = _TranslationsCurrenciesEs._(_root);
 	@override late final _TranslationsCategoriesEs categories = _TranslationsCategoriesEs._(_root);
 	@override late final _TranslationsBudgetsEs budgets = _TranslationsBudgetsEs._(_root);
-	@override late final _TranslationsGoPremiumEs go_premium = _TranslationsGoPremiumEs._(_root);
 	@override late final _TranslationsBackupEs backup = _TranslationsBackupEs._(_root);
 	@override late final _TranslationsSettingsEs settings = _TranslationsSettingsEs._(_root);
 	@override late final _TranslationsLangEs lang = _TranslationsLangEs._(_root);
@@ -1178,8 +1149,6 @@ class _TranslationsIconSelectorEs extends _TranslationsIconSelectorEn {
 	@override String get icon => 'Icono';
 	@override String get color => 'Color';
 	@override String get select_icon => 'Selecciona un icono';
-	@override String get add_subcategory => 'Añadir subcategoría';
-	@override String get edit_subcategory => 'Editar subcategoría';
 }
 
 // Path: transaction
@@ -1201,6 +1170,7 @@ class _TranslationsTransactionEs extends _TranslationsTransactionEn {
 	@override String get delete_warning_message => 'Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas';
 	@override String get delete_success => 'Transacción eliminada correctamente';
 	@override late final _TranslationsTransactionFormEs form = _TranslationsTransactionFormEs._(_root);
+	@override late final _TranslationsTransactionStatusEs status = _TranslationsTransactionStatusEs._(_root);
 }
 
 // Path: transfer
@@ -1211,12 +1181,8 @@ class _TranslationsTransferEs extends _TranslationsTransferEn {
 
 	// Translations
 	@override String get display => 'Transferencia';
-	@override String from_to_text({required Object X, required Object Y}) => 'Desde ${X} hasta ${Y}';
+	@override String from_to_text({required Object x, required Object y}) => 'Desde ${x} hasta ${y}';
 	@override String get create => 'Nueva transferencia';
-	@override String get edit => 'Editar transferencia';
-	@override String get delete => 'Eliminar transferencia';
-	@override String get delete_warning_message => 'Esta acción es irreversible';
-	@override String get delete_success => 'Transferencia eliminada correctamente';
 	@override String get need_two_accounts_warning_header => 'Ops!';
 	@override String get need_two_accounts_warning_message => 'Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar';
 	@override late final _TranslationsTransferFormEs form = _TranslationsTransferFormEs._(_root);
@@ -1230,10 +1196,8 @@ class _TranslationsRecurrentTransactionsEs extends _TranslationsRecurrentTransac
 
 	// Translations
 	@override String get title => 'Movimientos recurrentes';
-	@override String get empty => 'Parece que no posees ninguna transacción que se repita periodicamente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
-	@override String get balance => 'Balance total';
+	@override String get empty => 'Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
 	@override late final _TranslationsRecurrentTransactionsDetailsEs details = _TranslationsRecurrentTransactionsDetailsEs._(_root);
-	@override late final _TranslationsRecurrentTransactionsSelectorEs selector = _TranslationsRecurrentTransactionsSelectorEs._(_root);
 }
 
 // Path: account
@@ -1250,7 +1214,6 @@ class _TranslationsAccountEs extends _TranslationsAccountEn {
 	@override String get withdraw_money => 'Retirar dinero';
 	@override late final _TranslationsAccountTypesEs types = _TranslationsAccountTypesEs._(_root);
 	@override late final _TranslationsAccountFormEs form = _TranslationsAccountFormEs._(_root);
-	@override late final _TranslationsAccountShareEs share = _TranslationsAccountShareEs._(_root);
 	@override late final _TranslationsAccountDeleteEs delete = _TranslationsAccountDeleteEs._(_root);
 	@override late final _TranslationsAccountSelectEs select = _TranslationsAccountSelectEs._(_root);
 }
@@ -1266,7 +1229,7 @@ class _TranslationsCurrenciesEs extends _TranslationsCurrenciesEn {
 	@override String get currency => 'Divisa';
 	@override String get select_a_currency => 'Selecciona una divisa';
 	@override String get search_placeholder => 'Busca por nombre o por código de la divisa';
-	@override String days_without_update({required Object X}) => 'Tipos de cambio actualizados por última vez hace ${X} día(s)';
+	@override String days_without_update({required Object x}) => 'Tipos de cambio actualizados por última vez hace ${x} día(s)';
 }
 
 // Path: categories
@@ -1290,16 +1253,16 @@ class _TranslationsCategoriesEs extends _TranslationsCategoriesEn {
 	@override String get subcategories_add => 'Añadir subcategoría';
 	@override String get make_parent => 'Convertir en categoría';
 	@override String get make_child => 'Convertir en subcategoría';
-	@override String make_child_warning1({required Object Destiny}) => 'Esta categoría y sus subcategorías pasarán a ser subcategorías de <b>${Destiny}</b>.';
-	@override String make_child_warning2({required Object X, required Object Destiny}) => 'Sus transacciones <b>(${X})</b> pasarán a las nuevas subcategorías creadas dentro de la categoría <b>${Destiny}</b>.';
+	@override String make_child_warning1({required Object destiny}) => 'Esta categoría y sus subcategorías pasarán a ser subcategorías de <b>${destiny}</b>.';
+	@override String make_child_warning2({required Object x, required Object destiny}) => 'Sus transacciones <b>(${x})</b> pasarán a las nuevas subcategorías creadas dentro de la categoría <b>${destiny}</b>.';
 	@override String get make_child_success => 'Subcategorías creadas con exito';
 	@override String get merge => 'Fusionar con otra categoría';
-	@override String merge_warning1({required Object X, required Object From, required Object Destiny}) => 'Todas las transacciones (<b>${X}</b>) asocidadas con la categoría <b>${From}</b> serán movidas a la categoría <b>${Destiny}</b>.';
-	@override String merge_warning2({required Object From}) => 'La categoría <b>${From}</b> será eliminada de forma irreversible.';
+	@override String merge_warning1({required Object x, required Object from, required Object destiny}) => 'Todas las transacciones (<b>${x}</b>) asocidadas con la categoría <b>${from}</b> serán movidas a la categoría <b>${destiny}</b>.';
+	@override String merge_warning2({required Object from}) => 'La categoría <b>${from}</b> será eliminada de forma irreversible.';
 	@override String get merge_success => 'Categoría fusionada correctamente';
 	@override String get delete_success => 'Categoría eliminada correctamente';
 	@override String get delete_warning_header => '¿Eliminar categoría?';
-	@override String delete_warning_message({required Object X}) => 'Esta acción borrará de forma irreversible todas las transacciones <b>(${X})</b> relativas a esta categoría.';
+	@override String delete_warning_message({required Object x}) => 'Esta acción borrará de forma irreversible todas las transacciones <b>(${x})</b> relativas a esta categoría.';
 	@override late final _TranslationsCategoriesSelectEs select = _TranslationsCategoriesSelectEs._(_root);
 }
 
@@ -1328,29 +1291,6 @@ class _TranslationsBudgetsEs extends _TranslationsBudgetsEn {
 	@override String get delete_warning => 'Esta acción es irreversible. Categorías y transacciones referentes a este presupuesto no serán eliminados';
 	@override late final _TranslationsBudgetsFormEs form = _TranslationsBudgetsFormEs._(_root);
 	@override late final _TranslationsBudgetsDetailsEs details = _TranslationsBudgetsDetailsEs._(_root);
-}
-
-// Path: go_premium
-class _TranslationsGoPremiumEs extends _TranslationsGoPremiumEn {
-	_TranslationsGoPremiumEs._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Elige un plan';
-	@override String get description => 'Consulta las ventajas de todos nuestros planes premium. Elige uno y cancela cuando quieras.';
-	@override String get accounts_limit => 'Número máximo de cuentas';
-	@override String get budgets_limit => 'Número máximo de presupuestos';
-	@override String get recurring_transactions_limit => 'Transacciones recurrentes permitidas';
-	@override String get rate_update_frequency => 'Frecuencia de actualización de los tipos de cambio';
-	@override String get support => 'Apoyo al desarrollador';
-	@override String get anual_price => 'Precio al año';
-	@override String get monthly_price => 'Precio al mes';
-	@override String get change_plan => 'Para cambiar de plan primero has de cancelar anteriores subscripciones y esperar a que estas expiren';
-	@override String get return_to_free => 'Para volver al plan gratuito anula las subscripciones que tengas actualmente activas';
-	@override String get current_plan => 'Este es tu plan actual. Puedes cancelarlo sin compromiso en cualquier momento';
-	@override String get current_free_plan => 'Ahora mismo te encuentras aquí, en el plan básico';
-	@override String get admin_subscriptions => 'Administrar subscripciones';
 }
 
 // Path: backup
@@ -1408,7 +1348,7 @@ class _TranslationsGeneralClipboardEs extends _TranslationsGeneralClipboardEn {
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String success({required Object X}) => '${X} copiado al portapapeles';
+	@override String success({required Object x}) => '${x} copiado al portapapeles';
 	@override String get error => 'Error al copiar';
 }
 
@@ -1528,9 +1468,9 @@ class _TranslationsFinancialHealthMonthsWithoutIncomeEs extends _TranslationsFin
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String good({required Object X}) => 'Bien hecho! Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${X} meses sin ningún ingreso';
-	@override String normal({required Object X}) => 'Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${X} meses sin ningún ingreso. Si bien este valor es aceptable, aun puedes mejorar un poco más!';
-	@override String bad({required Object X}) => 'Vaya! Apenás sobrevivirías ${X} meses sin ingresos con tu ritmo de gastos actual. Recuerda que lo recomendable es poder vivir al menos 6 meses sin ningun ingreso';
+	@override String good({required Object x}) => 'Bien hecho! Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${x} meses sin ningún ingreso';
+	@override String normal({required Object x}) => 'Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${x} meses sin ningún ingreso. Si bien este valor es aceptable, aun puedes mejorar un poco más!';
+	@override String bad({required Object x}) => 'Vaya! Apenás sobrevivirías ${x} meses sin ingresos con tu ritmo de gastos actual. Recuerda que lo recomendable es poder vivir al menos 6 meses sin ningun ingreso';
 	@override String get very_bad => 'Vaya! Apenas sobrevivirías un mes sin ingresos con tu ritmo de gastos actual. Recuerda que lo recomendable es poder vivir al menos 6 meses sin ningun ingreso';
 	@override String get insufficient_data => 'Parece que no tenemos gastos suficientes para calcular cuantos meses podrías sobrevivir sin ingresos. Introduce unas pocas transacciones y regresa aquí para consultar tu salud financiera';
 }
@@ -1542,9 +1482,9 @@ class _TranslationsFinancialHealthSavingsPercentageEs extends _TranslationsFinan
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String good({required Object Value}) => 'Enhorabuena! Has conseguido ahorrar un ${Value}% de tus ingresos durante este periodo. Parece que ya eres todo un expert@. Sigue asi!';
-	@override String normal({required Object Value}) => 'Enhorabuena, has conseguido ahorrar un ${Value}% de tus ingresos durante este periodo. Visita la pestaña de análisis para ver donde puedes ahorrar aun más!';
-	@override String bad({required Object Value}) => 'Has conseguido ahorrar un ${Value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
+	@override String good({required Object value}) => 'Enhorabuena! Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Parece que ya eres todo un expert@. Sigue asi!';
+	@override String normal({required Object value}) => 'Enhorabuena, has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Visita la pestaña de análisis para ver donde puedes ahorrar aun más!';
+	@override String bad({required Object value}) => 'Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 	@override String get very_bad => 'Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 }
 
@@ -1555,10 +1495,29 @@ class _TranslationsTransactionFormEs extends _TranslationsTransactionFormEn {
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get status => 'Estado';
+	@override late final _TranslationsTransactionFormValidatorsEs validators = _TranslationsTransactionFormValidatorsEs._(_root);
 	@override String get description => 'Descripción';
 	@override String get description_info => 'Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro';
-	@override String get description_add => 'Añade una nota';
-	@override String exchange_to_preferred({required Object X}) => 'Actualmente equivalen aproximadamente a ${X}';
+	@override String exchange_to_preferred({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
+}
+
+// Path: transaction.status
+class _TranslationsTransactionStatusEs extends _TranslationsTransactionStatusEn {
+	_TranslationsTransactionStatusEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String tr_status({required Object status}) => 'Transacción ${status}';
+	@override String get reconciled => 'Reconciliada';
+	@override String get reconciled_descr => 'Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco';
+	@override String get unreconciled => 'No reconciliada';
+	@override String get unreconciled_descr => 'Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics';
+	@override String get pending => 'Pendiente';
+	@override String get pending_descr => 'Esta transacción esta pendiente de pago y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas';
+	@override String get voided => 'Nula';
+	@override String get voided_descr => 'Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas';
 }
 
 // Path: transfer.form
@@ -1570,8 +1529,8 @@ class _TranslationsTransferFormEs extends _TranslationsTransferFormEn {
 	// Translations
 	@override String get from => 'Cuenta origen';
 	@override String get to => 'Cuenta destino';
-	@override String currency_info_add({required Object X}) => 'Se transpasarán ${X} a la cuenta de destino &#183; Pulsa para editar';
-	@override String currency_info_edit({required Object X}) => 'Se han transpasado ${X} a la cuenta de destino &#183; Pulsa para editar';
+	@override String currency_info_add({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino &#183; Pulsa para editar';
+	@override String currency_info_edit({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino &#183; Pulsa para editar';
 	@override late final _TranslationsTransferFormCurrencyExchangeSelectorEs currency_exchange_selector = _TranslationsTransferFormCurrencyExchangeSelectorEs._(_root);
 }
 
@@ -1593,22 +1552,8 @@ class _TranslationsRecurrentTransactionsDetailsEs extends _TranslationsRecurrent
 	@override String get pause_header => 'Pausar pagos';
 	@override String get pause_message => 'Con esta acción se dará por finalizada esta transacción hoy, y no se produciran mas pagos a partir de ahora. Pagos previos al día de hoy no serán eliminados del balance';
 	@override String get pause_correctly => 'Transacción pausada correctamente';
-	@override String get delete_header => 'Eliminar pagos';
-	@override String get delete_message => 'Esta acción es irreversible y borrara todos tus pagos del balance';
-	@override String get delete_success => 'Transacciones eliminadas correctamente';
-}
-
-// Path: recurrent_transactions.selector
-class _TranslationsRecurrentTransactionsSelectorEs extends _TranslationsRecurrentTransactionsSelectorEn {
-	_TranslationsRecurrentTransactionsSelectorEs._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => '¿Cómo se repite su transacción?';
-	@override String get until => 'Hasta';
-	@override String get infinite => 'El infinito';
-	@override String get date => 'Una fecha';
+	@override String get delete_header => 'Eliminar transacción recurrente';
+	@override String get delete_message => 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 }
 
 // Path: account.types
@@ -1645,19 +1590,6 @@ class _TranslationsAccountFormEs extends _TranslationsAccountFormEn {
 	@override String get already_exists => 'Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro';
 	@override String get iban => 'IBAN';
 	@override String get swift => 'SWIFT';
-}
-
-// Path: account.share
-class _TranslationsAccountShareEs extends _TranslationsAccountShareEn {
-	_TranslationsAccountShareEs._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Compartir esta cuenta';
-	@override String get title_short => 'Compartir';
-	@override String get description => 'Introduce el ID del usuario en cuestión para compartir esta cuenta. El usuario podrá ver, añadir, editar o modificar todas las transacciones de esta cuenta';
-	@override String get correct => 'Cuenta compartida correctamente';
 }
 
 // Path: account.delete
@@ -1928,6 +1860,18 @@ class _TranslationsFinancialHealthReviewDescrEs extends _TranslationsFinancialHe
 	@override String get very_bad => 'Mmm, tu salud financera esta muy por debajo de lo que debería. Trata de ver donde esta el problema en la sección de análisis';
 }
 
+// Path: transaction.form.validators
+class _TranslationsTransactionFormValidatorsEs extends _TranslationsTransactionFormValidatorsEn {
+	_TranslationsTransactionFormValidatorsEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get zero => 'El valor de una transacción no puede ser igual a cero';
+	@override String get negative_transaction => 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
+	@override String get negative_transfer => 'El valor monetario de una transferencia no puede ser negativo';
+}
+
 // Path: transfer.form.currency_exchange_selector
 class _TranslationsTransferFormCurrencyExchangeSelectorEs extends _TranslationsTransferFormCurrencyExchangeSelectorEn {
 	_TranslationsTransferFormCurrencyExchangeSelectorEs._(_TranslationsEs root) : this._root = root, super._(root);
@@ -1970,7 +1914,7 @@ extension on _TranslationsEn {
 			case 'general.today': return 'Today';
 			case 'general.yesterday': return 'Yesterday';
 			case 'general.filters': return 'Filters';
-			case 'general.clipboard.success': return ({required Object X}) => '${X} copiado al portapapeles';
+			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
 			case 'general.clipboard.error': return 'Error al copiar';
 			case 'general.time.range': return 'Time range';
 			case 'general.time.monthly': return 'Monthly';
@@ -2051,21 +1995,19 @@ extension on _TranslationsEn {
 			case 'financial_health.review.descr.normal': return 'Your financial health is more or less in the average of the rest of the population for this period';
 			case 'financial_health.review.descr.bad': return 'It seems that your financial situation is not the best yet. Explore the analysis tab to learn more about your finances';
 			case 'financial_health.review.descr.very_bad': return 'Hmm, your financial health is far below what it should be. Try to see where the problem is in the analysis section';
-			case 'financial_health.months_without_income.good': return ({required Object X}) => 'Well done! At your current spending rate right now you could survive up to ${X} months without any income';
-			case 'financial_health.months_without_income.normal': return ({required Object X}) => 'At your current spending rate right now you could survive up to ${X} months without any income. While this value is acceptable, you can still improve a little more!';
-			case 'financial_health.months_without_income.bad': return ({required Object X}) => 'Wow! You would barely survive ${X} months without income at your current spending rate. Remember that it is recommended to be able to live at least 6 months without any income';
+			case 'financial_health.months_without_income.good': return ({required Object x}) => 'Well done! At your current spending rate right now you could survive up to ${x} months without any income';
+			case 'financial_health.months_without_income.normal': return ({required Object x}) => 'At your current spending rate right now you could survive up to ${x} months without any income. While this value is acceptable, you can still improve a little more!';
+			case 'financial_health.months_without_income.bad': return ({required Object x}) => 'Wow! You would barely survive ${x} months without income at your current spending rate. Remember that it is recommended to be able to live at least 6 months without any income';
 			case 'financial_health.months_without_income.very_bad': return 'Wow! You could hardly survive a month without income at your current spending rate. Remember that it is recommended to be able to live at least 6 months without any income';
 			case 'financial_health.months_without_income.insufficient_data': return 'It looks like we don\'t have enough expenses to calculate how many months you could survive without income. Enter a few transactions and come back here to check your financial health';
-			case 'financial_health.savings_percentage.good': return ({required Object Value}) => 'Congratulations! You have managed to save ${Value}% of your income during this period. It seems that you are already quite an expert. Keep it up!';
-			case 'financial_health.savings_percentage.normal': return ({required Object Value}) => 'Congratulations, you managed to save ${Value}% of your income during this period. Visit the analysis tab to see where you can save even more!';
-			case 'financial_health.savings_percentage.bad': return ({required Object Value}) => 'You have managed to save ${Value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
+			case 'financial_health.savings_percentage.good': return ({required Object value}) => 'Congratulations! You have managed to save ${value}% of your income during this period. It seems that you are already quite an expert. Keep it up!';
+			case 'financial_health.savings_percentage.normal': return ({required Object value}) => 'Congratulations, you managed to save ${value}% of your income during this period. Visit the analysis tab to see where you can save even more!';
+			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'You have managed to save ${value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
 			case 'financial_health.savings_percentage.very_bad': return 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
 			case 'icon_selector.name': return 'Name:';
 			case 'icon_selector.icon': return 'Icon';
 			case 'icon_selector.color': return 'Colour';
 			case 'icon_selector.select_icon': return 'Select an icon';
-			case 'icon_selector.add_subcategory': return 'Add subcategory';
-			case 'icon_selector.edit_subcategory': return 'Edit subcategory';
 			case 'transaction.create': return 'New transaction';
 			case 'transaction.new_income': return 'New income';
 			case 'transaction.new_expense': return 'New expense';
@@ -2077,24 +2019,31 @@ extension on _TranslationsEn {
 			case 'transaction.delete': return 'Delete transaction';
 			case 'transaction.delete_warning_message': return 'This action is irreversible. The current balance of your accounts and all your statistics will be recalculated';
 			case 'transaction.delete_success': return 'Transaction deleted correctly';
+			case 'transaction.form.status': return 'Status';
+			case 'transaction.form.validators.zero': return 'The value of a transaction cannot be equal to zero';
+			case 'transaction.form.validators.negative_transaction': return 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
+			case 'transaction.form.validators.negative_transfer': return 'The monetary value of a transfer cannot be negative';
 			case 'transaction.form.description': return 'Description';
 			case 'transaction.form.description_info': return 'Adding a note will help you find this transaction faster in the future';
-			case 'transaction.form.description_add': return 'Add a note';
-			case 'transaction.form.without_category': return 'Unspecified';
-			case 'transaction.form.exchange_to_preferred': return ({required Object X}) => 'Currently equal to approximately ${X}';
+			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Currently equal to approximately ${x}';
+			case 'transaction.status.tr_status': return ({required Object status}) => '${status} transaction';
+			case 'transaction.status.reconciled': return 'Reconciled';
+			case 'transaction.status.reconciled_descr': return 'This transaction has already been validated and corresponds to a real transaction from your bank';
+			case 'transaction.status.unreconciled': return 'Unreconciled';
+			case 'transaction.status.unreconciled_descr': return 'This transaction has not yet been validated and therefore does not yet appear in your real bank accounts. However, it counts for the calculation of balances and statistics in Finlytics';
+			case 'transaction.status.pending': return 'Pending';
+			case 'transaction.status.pending_descr': return 'This transaction is pending payment and therefore will not be taken into account when calculating balances and statistics';
+			case 'transaction.status.voided': return 'Voided';
+			case 'transaction.status.voided_descr': return 'Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics';
 			case 'transfer.display': return 'Transfer';
-			case 'transfer.from_to_text': return ({required Object X, required Object Y}) => 'From ${X} to ${Y}';
+			case 'transfer.from_to_text': return ({required Object x, required Object y}) => 'From ${x} to ${y}';
 			case 'transfer.create': return 'New Transfer';
-			case 'transfer.edit': return 'Edit Transfer';
-			case 'transfer.delete': return 'Delete transfer';
-			case 'transfer.delete_warning_message': return 'This action is irreversible';
-			case 'transfer.delete_success': return 'Transfer successfully deleted';
 			case 'transfer.need_two_accounts_warning_header': return 'Ops!';
 			case 'transfer.need_two_accounts_warning_message': return 'At least two accounts are needed to perform this action. If you need to adjust or edit the current balance of this account, click the edit button';
 			case 'transfer.form.from': return 'Origin account';
 			case 'transfer.form.to': return 'Destination account';
-			case 'transfer.form.currency_info_add': return ({required Object X}) => '${X} will be transferred to the destination account &#183; Click to edit';
-			case 'transfer.form.currency_info_edit': return ({required Object X}) => '${X} have been transferred to the destination account &#183; Click to edit';
+			case 'transfer.form.currency_info_add': return ({required Object x}) => '${x} will be transferred to the destination account &#183; Click to edit';
+			case 'transfer.form.currency_info_edit': return ({required Object x}) => '${x} have been transferred to the destination account &#183; Click to edit';
 			case 'transfer.form.currency_exchange_selector.title': return 'Edit exchange between currencies';
 			case 'transfer.form.currency_exchange_selector.exchange_rate': return 'Exchange rate';
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Amount transferred in destination';
@@ -2112,13 +2061,8 @@ extension on _TranslationsEn {
 			case 'recurrent_transactions.details.pause_header': return 'Pause payments';
 			case 'recurrent_transactions.details.pause_message': return 'This action will terminate this transaction today, and no more payments will be made from now on. Payments made before today will not be removed from the balance';
 			case 'recurrent_transactions.details.pause_correctly': return 'Transaction paused successfully';
-			case 'recurrent_transactions.details.delete_header': return 'Delete payments';
-			case 'recurrent_transactions.details.delete_message': return 'This action is irreversible and will delete all your payments from the balance';
-			case 'recurrent_transactions.details.delete_success': return 'Transactions deleted correctly';
-			case 'recurrent_transactions.selector.title': return '¿How is your transaction repeated?';
-			case 'recurrent_transactions.selector.until': return 'Until';
-			case 'recurrent_transactions.selector.infinite': return 'The infinite';
-			case 'recurrent_transactions.selector.date': return 'A date';
+			case 'recurrent_transactions.details.delete_header': return 'Delete recurring transaction';
+			case 'recurrent_transactions.details.delete_message': return 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 			case 'account.date': return 'Date created';
 			case 'account.balance': return 'Account balance';
 			case 'account.n_transactions': return 'Number of transactions';
@@ -2142,10 +2086,6 @@ extension on _TranslationsEn {
 			case 'account.form.already_exists': return 'There is already another one with the same name, please write another';
 			case 'account.form.iban': return 'IBAN';
 			case 'account.form.swift': return 'SWIFT';
-			case 'account.share.title': return 'Share this account';
-			case 'account.share.title_short': return 'Share';
-			case 'account.share.description': return 'Enter the ID of the user in question to share this account. The user will be able to see, add, edit or modify all the transactions of this account';
-			case 'account.share.correct': return 'Account shared successfully';
 			case 'account.delete.warning_header': return 'Are you sure?';
 			case 'account.delete.warning_text': return 'This action will delete this account and all its transactions';
 			case 'account.delete.success': return 'Account deleted successfully';
@@ -2156,7 +2096,7 @@ extension on _TranslationsEn {
 			case 'currencies.select_a_currency': return 'Select a currency';
 			case 'currencies.currency': return 'Currency';
 			case 'currencies.search_placeholder': return 'Search by currency name, code...';
-			case 'currencies.days_without_update': return ({required Object X}) => 'Exchange rates last updated ${X} day(s) ago';
+			case 'currencies.days_without_update': return ({required Object x}) => 'Exchange rates last updated ${x} day(s) ago';
 			case 'categories.unknown': return 'Unknown category';
 			case 'categories.create': return 'Create category';
 			case 'categories.create_success': return 'Category created correctly';
@@ -2171,16 +2111,16 @@ extension on _TranslationsEn {
 			case 'categories.subcategories_add': return 'Add subcategory';
 			case 'categories.make_parent': return 'Make to category';
 			case 'categories.make_child': return 'Make a subcategory';
-			case 'categories.make_child_warning1': return ({required Object Destiny}) => 'This category and its subcategories will become subcategories of <b>${Destiny}</b>.';
-			case 'categories.make_child_warning2': return ({required Object X, required Object Destiny}) => 'Their transactions <b>(${X})</b> will be moved to the new subcategories created within the <b>${Destiny}</b> category.';
+			case 'categories.make_child_warning1': return ({required Object destiny}) => 'This category and its subcategories will become subcategories of <b>${destiny}</b>.';
+			case 'categories.make_child_warning2': return ({required Object x, required Object destiny}) => 'Their transactions <b>(${x})</b> will be moved to the new subcategories created within the <b>${destiny}</b> category.';
 			case 'categories.make_child_success': return 'Subcategories created successfully';
 			case 'categories.merge': return 'Merge with another category';
-			case 'categories.merge_warning1': return ({required Object X, required Object From, required Object Destiny}) => 'All transactions (<b>${X}</b>) associated with the category <b>${From}</b> will be moved to the category <b>${Destiny}</b>.';
-			case 'categories.merge_warning2': return ({required Object From}) => 'The category <b>${From}</b> will be irreversibly deleted.';
+			case 'categories.merge_warning1': return ({required Object x, required Object from, required Object destiny}) => 'All transactions (<b>${x}</b>) associated with the category <b>${from}</b> will be moved to the category <b>${destiny}</b>.';
+			case 'categories.merge_warning2': return ({required Object from}) => 'The category <b>${from}</b> will be irreversibly deleted.';
 			case 'categories.merge_success': return 'Category merged successfully';
 			case 'categories.delete_success': return 'Category deleted correctly';
 			case 'categories.delete_warning_header': return 'Delete category?';
-			case 'categories.delete_warning_message': return ({required Object X}) => 'This action will irreversibly delete all transactions <b>(${X})</b> related to this category.';
+			case 'categories.delete_warning_message': return ({required Object x}) => 'This action will irreversibly delete all transactions <b>(${x})</b> related to this category.';
 			case 'categories.select.title': return 'Select categories';
 			case 'categories.select.select_all': return 'Select all';
 			case 'categories.select.select_one': return 'Select a category';
@@ -2218,20 +2158,6 @@ extension on _TranslationsEn {
 			case 'budgets.details.expend_diary_left': return 'Remaining daily spend';
 			case 'budgets.details.expend_evolution': return 'Expenditure evolution';
 			case 'budgets.details.no_transactions': return 'It seems that you have not made any expenses related to this budget';
-			case 'go_premium.title': return 'Choose a plan';
-			case 'go_premium.description': return 'Check the benefits of all our premium plans. Choose one and cancel whenever you want.';
-			case 'go_premium.accounts_limit': return 'Maximum number of accounts';
-			case 'go_premium.budgets_limit': return 'Maximum number of budgets';
-			case 'go_premium.recurring_transactions_limit': return 'Recurring transactions allowed';
-			case 'go_premium.rate_update_frequency': return 'Exchange rates update frequency';
-			case 'go_premium.support': return 'Support the developer';
-			case 'go_premium.anual_price': return 'Anual price';
-			case 'go_premium.monthly_price': return 'Mensual price';
-			case 'go_premium.change_plan': return 'To change plans you must first cancel previous subscriptions and wait for them to expire';
-			case 'go_premium.return_to_free': return 'To return to the free plan cancel the subscriptions you currently have active';
-			case 'go_premium.current_plan': return 'This is your current plan. You can cancel without obligation at any time';
-			case 'go_premium.current_free_plan': return 'You are here on the basic plan right now';
-			case 'go_premium.admin_subscriptions': return 'Manage subscriptions';
 			case 'backup.export.title': return 'Export your data';
 			case 'backup.export.title_sort': return 'Export';
 			case 'backup.export.all': return 'Full backup';
@@ -2340,7 +2266,7 @@ extension on _TranslationsEs {
 			case 'general.today': return 'Hoy';
 			case 'general.yesterday': return 'Ayer';
 			case 'general.filters': return 'Filtros';
-			case 'general.clipboard.success': return ({required Object X}) => '${X} copiado al portapapeles';
+			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
 			case 'general.clipboard.error': return 'Error al copiar';
 			case 'general.time.range': return 'Rango temporal';
 			case 'general.time.diary': return 'Diaría';
@@ -2421,21 +2347,19 @@ extension on _TranslationsEs {
 			case 'financial_health.review.descr.normal': return 'Tu salud financiera se encuentra mas o menos en la media del resto de la población para este periodo';
 			case 'financial_health.review.descr.bad': return 'Parece que tu situación financiera no es la mejor aun. Explora la pestaña de análisis para conocer mas sobre tus finanzas';
 			case 'financial_health.review.descr.very_bad': return 'Mmm, tu salud financera esta muy por debajo de lo que debería. Trata de ver donde esta el problema en la sección de análisis';
-			case 'financial_health.months_without_income.good': return ({required Object X}) => 'Bien hecho! Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${X} meses sin ningún ingreso';
-			case 'financial_health.months_without_income.normal': return ({required Object X}) => 'Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${X} meses sin ningún ingreso. Si bien este valor es aceptable, aun puedes mejorar un poco más!';
-			case 'financial_health.months_without_income.bad': return ({required Object X}) => 'Vaya! Apenás sobrevivirías ${X} meses sin ingresos con tu ritmo de gastos actual. Recuerda que lo recomendable es poder vivir al menos 6 meses sin ningun ingreso';
+			case 'financial_health.months_without_income.good': return ({required Object x}) => 'Bien hecho! Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${x} meses sin ningún ingreso';
+			case 'financial_health.months_without_income.normal': return ({required Object x}) => 'Con tu ritmo de gastos actual ahora mismo podrías sobrevivir hasta ${x} meses sin ningún ingreso. Si bien este valor es aceptable, aun puedes mejorar un poco más!';
+			case 'financial_health.months_without_income.bad': return ({required Object x}) => 'Vaya! Apenás sobrevivirías ${x} meses sin ingresos con tu ritmo de gastos actual. Recuerda que lo recomendable es poder vivir al menos 6 meses sin ningun ingreso';
 			case 'financial_health.months_without_income.very_bad': return 'Vaya! Apenas sobrevivirías un mes sin ingresos con tu ritmo de gastos actual. Recuerda que lo recomendable es poder vivir al menos 6 meses sin ningun ingreso';
 			case 'financial_health.months_without_income.insufficient_data': return 'Parece que no tenemos gastos suficientes para calcular cuantos meses podrías sobrevivir sin ingresos. Introduce unas pocas transacciones y regresa aquí para consultar tu salud financiera';
-			case 'financial_health.savings_percentage.good': return ({required Object Value}) => 'Enhorabuena! Has conseguido ahorrar un ${Value}% de tus ingresos durante este periodo. Parece que ya eres todo un expert@. Sigue asi!';
-			case 'financial_health.savings_percentage.normal': return ({required Object Value}) => 'Enhorabuena, has conseguido ahorrar un ${Value}% de tus ingresos durante este periodo. Visita la pestaña de análisis para ver donde puedes ahorrar aun más!';
-			case 'financial_health.savings_percentage.bad': return ({required Object Value}) => 'Has conseguido ahorrar un ${Value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
+			case 'financial_health.savings_percentage.good': return ({required Object value}) => 'Enhorabuena! Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Parece que ya eres todo un expert@. Sigue asi!';
+			case 'financial_health.savings_percentage.normal': return ({required Object value}) => 'Enhorabuena, has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Visita la pestaña de análisis para ver donde puedes ahorrar aun más!';
+			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 			case 'financial_health.savings_percentage.very_bad': return 'Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 			case 'icon_selector.name': return 'Nombre:';
 			case 'icon_selector.icon': return 'Icono';
 			case 'icon_selector.color': return 'Color';
 			case 'icon_selector.select_icon': return 'Selecciona un icono';
-			case 'icon_selector.add_subcategory': return 'Añadir subcategoría';
-			case 'icon_selector.edit_subcategory': return 'Editar subcategoría';
 			case 'transaction.create': return 'Nueva transacción';
 			case 'transaction.new_income': return 'Nuevo ingreso';
 			case 'transaction.new_expense': return 'Nuevo gasto';
@@ -2447,29 +2371,36 @@ extension on _TranslationsEs {
 			case 'transaction.delete': return 'Eliminar transacción';
 			case 'transaction.delete_warning_message': return 'Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas';
 			case 'transaction.delete_success': return 'Transacción eliminada correctamente';
+			case 'transaction.form.status': return 'Estado';
+			case 'transaction.form.validators.zero': return 'El valor de una transacción no puede ser igual a cero';
+			case 'transaction.form.validators.negative_transaction': return 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
+			case 'transaction.form.validators.negative_transfer': return 'El valor monetario de una transferencia no puede ser negativo';
 			case 'transaction.form.description': return 'Descripción';
 			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro';
-			case 'transaction.form.description_add': return 'Añade una nota';
-			case 'transaction.form.exchange_to_preferred': return ({required Object X}) => 'Actualmente equivalen aproximadamente a ${X}';
+			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
+			case 'transaction.status.tr_status': return ({required Object status}) => 'Transacción ${status}';
+			case 'transaction.status.reconciled': return 'Reconciliada';
+			case 'transaction.status.reconciled_descr': return 'Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco';
+			case 'transaction.status.unreconciled': return 'No reconciliada';
+			case 'transaction.status.unreconciled_descr': return 'Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics';
+			case 'transaction.status.pending': return 'Pendiente';
+			case 'transaction.status.pending_descr': return 'Esta transacción esta pendiente de pago y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas';
+			case 'transaction.status.voided': return 'Nula';
+			case 'transaction.status.voided_descr': return 'Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas';
 			case 'transfer.display': return 'Transferencia';
-			case 'transfer.from_to_text': return ({required Object X, required Object Y}) => 'Desde ${X} hasta ${Y}';
+			case 'transfer.from_to_text': return ({required Object x, required Object y}) => 'Desde ${x} hasta ${y}';
 			case 'transfer.create': return 'Nueva transferencia';
-			case 'transfer.edit': return 'Editar transferencia';
-			case 'transfer.delete': return 'Eliminar transferencia';
-			case 'transfer.delete_warning_message': return 'Esta acción es irreversible';
-			case 'transfer.delete_success': return 'Transferencia eliminada correctamente';
 			case 'transfer.need_two_accounts_warning_header': return 'Ops!';
 			case 'transfer.need_two_accounts_warning_message': return 'Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar';
 			case 'transfer.form.from': return 'Cuenta origen';
 			case 'transfer.form.to': return 'Cuenta destino';
-			case 'transfer.form.currency_info_add': return ({required Object X}) => 'Se transpasarán ${X} a la cuenta de destino &#183; Pulsa para editar';
-			case 'transfer.form.currency_info_edit': return ({required Object X}) => 'Se han transpasado ${X} a la cuenta de destino &#183; Pulsa para editar';
+			case 'transfer.form.currency_info_add': return ({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino &#183; Pulsa para editar';
+			case 'transfer.form.currency_info_edit': return ({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino &#183; Pulsa para editar';
 			case 'transfer.form.currency_exchange_selector.title': return 'Editar cambio entre divisas';
 			case 'transfer.form.currency_exchange_selector.exchange_rate': return 'Tipo de cambio';
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Cantidad transferida en destino';
 			case 'recurrent_transactions.title': return 'Movimientos recurrentes';
-			case 'recurrent_transactions.empty': return 'Parece que no posees ninguna transacción que se repita periodicamente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
-			case 'recurrent_transactions.balance': return 'Balance total';
+			case 'recurrent_transactions.empty': return 'Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
 			case 'recurrent_transactions.details.title': return 'Detalles del movimiento';
 			case 'recurrent_transactions.details.each_week': return 'Cada semana';
 			case 'recurrent_transactions.details.each_month': return 'Cada mes';
@@ -2481,13 +2412,8 @@ extension on _TranslationsEs {
 			case 'recurrent_transactions.details.pause_header': return 'Pausar pagos';
 			case 'recurrent_transactions.details.pause_message': return 'Con esta acción se dará por finalizada esta transacción hoy, y no se produciran mas pagos a partir de ahora. Pagos previos al día de hoy no serán eliminados del balance';
 			case 'recurrent_transactions.details.pause_correctly': return 'Transacción pausada correctamente';
-			case 'recurrent_transactions.details.delete_header': return 'Eliminar pagos';
-			case 'recurrent_transactions.details.delete_message': return 'Esta acción es irreversible y borrara todos tus pagos del balance';
-			case 'recurrent_transactions.details.delete_success': return 'Transacciones eliminadas correctamente';
-			case 'recurrent_transactions.selector.title': return '¿Cómo se repite su transacción?';
-			case 'recurrent_transactions.selector.until': return 'Hasta';
-			case 'recurrent_transactions.selector.infinite': return 'El infinito';
-			case 'recurrent_transactions.selector.date': return 'Una fecha';
+			case 'recurrent_transactions.details.delete_header': return 'Eliminar transacción recurrente';
+			case 'recurrent_transactions.details.delete_message': return 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 			case 'account.date': return 'Fecha de creación';
 			case 'account.balance': return 'Saldo de la cuenta';
 			case 'account.n_transactions': return 'Número de transacciones';
@@ -2511,10 +2437,6 @@ extension on _TranslationsEs {
 			case 'account.form.already_exists': return 'Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro';
 			case 'account.form.iban': return 'IBAN';
 			case 'account.form.swift': return 'SWIFT';
-			case 'account.share.title': return 'Compartir esta cuenta';
-			case 'account.share.title_short': return 'Compartir';
-			case 'account.share.description': return 'Introduce el ID del usuario en cuestión para compartir esta cuenta. El usuario podrá ver, añadir, editar o modificar todas las transacciones de esta cuenta';
-			case 'account.share.correct': return 'Cuenta compartida correctamente';
 			case 'account.delete.warning_header': return '¿Estas seguro?';
 			case 'account.delete.warning_text': return 'Esta acción borrara esta cuenta y todas sus transacciones';
 			case 'account.delete.success': return 'Cuenta eliminada correctamente';
@@ -2525,7 +2447,7 @@ extension on _TranslationsEs {
 			case 'currencies.currency': return 'Divisa';
 			case 'currencies.select_a_currency': return 'Selecciona una divisa';
 			case 'currencies.search_placeholder': return 'Busca por nombre o por código de la divisa';
-			case 'currencies.days_without_update': return ({required Object X}) => 'Tipos de cambio actualizados por última vez hace ${X} día(s)';
+			case 'currencies.days_without_update': return ({required Object x}) => 'Tipos de cambio actualizados por última vez hace ${x} día(s)';
 			case 'categories.unknown': return 'Categoría desconocida';
 			case 'categories.create': return 'Crear categoría';
 			case 'categories.create_success': return 'Categoría creada correctamente';
@@ -2540,16 +2462,16 @@ extension on _TranslationsEs {
 			case 'categories.subcategories_add': return 'Añadir subcategoría';
 			case 'categories.make_parent': return 'Convertir en categoría';
 			case 'categories.make_child': return 'Convertir en subcategoría';
-			case 'categories.make_child_warning1': return ({required Object Destiny}) => 'Esta categoría y sus subcategorías pasarán a ser subcategorías de <b>${Destiny}</b>.';
-			case 'categories.make_child_warning2': return ({required Object X, required Object Destiny}) => 'Sus transacciones <b>(${X})</b> pasarán a las nuevas subcategorías creadas dentro de la categoría <b>${Destiny}</b>.';
+			case 'categories.make_child_warning1': return ({required Object destiny}) => 'Esta categoría y sus subcategorías pasarán a ser subcategorías de <b>${destiny}</b>.';
+			case 'categories.make_child_warning2': return ({required Object x, required Object destiny}) => 'Sus transacciones <b>(${x})</b> pasarán a las nuevas subcategorías creadas dentro de la categoría <b>${destiny}</b>.';
 			case 'categories.make_child_success': return 'Subcategorías creadas con exito';
 			case 'categories.merge': return 'Fusionar con otra categoría';
-			case 'categories.merge_warning1': return ({required Object X, required Object From, required Object Destiny}) => 'Todas las transacciones (<b>${X}</b>) asocidadas con la categoría <b>${From}</b> serán movidas a la categoría <b>${Destiny}</b>.';
-			case 'categories.merge_warning2': return ({required Object From}) => 'La categoría <b>${From}</b> será eliminada de forma irreversible.';
+			case 'categories.merge_warning1': return ({required Object x, required Object from, required Object destiny}) => 'Todas las transacciones (<b>${x}</b>) asocidadas con la categoría <b>${from}</b> serán movidas a la categoría <b>${destiny}</b>.';
+			case 'categories.merge_warning2': return ({required Object from}) => 'La categoría <b>${from}</b> será eliminada de forma irreversible.';
 			case 'categories.merge_success': return 'Categoría fusionada correctamente';
 			case 'categories.delete_success': return 'Categoría eliminada correctamente';
 			case 'categories.delete_warning_header': return '¿Eliminar categoría?';
-			case 'categories.delete_warning_message': return ({required Object X}) => 'Esta acción borrará de forma irreversible todas las transacciones <b>(${X})</b> relativas a esta categoría.';
+			case 'categories.delete_warning_message': return ({required Object x}) => 'Esta acción borrará de forma irreversible todas las transacciones <b>(${x})</b> relativas a esta categoría.';
 			case 'categories.select.title': return 'Selecciona categorías';
 			case 'categories.select.select_all': return 'Seleccionar todas';
 			case 'categories.select.select_one': return 'Selecciona una categoría';
@@ -2587,20 +2509,6 @@ extension on _TranslationsEs {
 			case 'budgets.details.expend_diary_left': return 'Gasto diario restante';
 			case 'budgets.details.expend_evolution': return 'Evolución del gasto';
 			case 'budgets.details.no_transactions': return 'Parece que no has realizado ningún gasto relativo a este presupuesto';
-			case 'go_premium.title': return 'Elige un plan';
-			case 'go_premium.description': return 'Consulta las ventajas de todos nuestros planes premium. Elige uno y cancela cuando quieras.';
-			case 'go_premium.accounts_limit': return 'Número máximo de cuentas';
-			case 'go_premium.budgets_limit': return 'Número máximo de presupuestos';
-			case 'go_premium.recurring_transactions_limit': return 'Transacciones recurrentes permitidas';
-			case 'go_premium.rate_update_frequency': return 'Frecuencia de actualización de los tipos de cambio';
-			case 'go_premium.support': return 'Apoyo al desarrollador';
-			case 'go_premium.anual_price': return 'Precio al año';
-			case 'go_premium.monthly_price': return 'Precio al mes';
-			case 'go_premium.change_plan': return 'Para cambiar de plan primero has de cancelar anteriores subscripciones y esperar a que estas expiren';
-			case 'go_premium.return_to_free': return 'Para volver al plan gratuito anula las subscripciones que tengas actualmente activas';
-			case 'go_premium.current_plan': return 'Este es tu plan actual. Puedes cancelarlo sin compromiso en cualquier momento';
-			case 'go_premium.current_free_plan': return 'Ahora mismo te encuentras aquí, en el plan básico';
-			case 'go_premium.admin_subscriptions': return 'Administrar subscripciones';
 			case 'backup.export.title': return 'Exportar datos';
 			case 'backup.export.title_sort': return 'Exportar';
 			case 'backup.export.all': return 'Respaldo total';

@@ -37,8 +37,12 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-        trailing: Text("Hola"),
-        // leadingAndTrailingTextStyle: Theme.of(context).textTheme.headlineMedium,
+        trailing: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.arrow_forward_ios, size: 14),
+          ],
+        ),
         onTap: () => onTap());
   }
 
@@ -68,9 +72,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
         appBar: AppBar(
+          elevation: 1,
           title: Text(t.settings.title),
         ),
         body: SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -80,7 +86,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         context: context,
                         isScrollControlled: true,
                         builder: (context) {
-                          return EditProfileModal();
+                          return const EditProfileModal();
                         });
                   },
                   title: Text(t.settings.edit_profile),
@@ -102,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 12),
               createListSeparator(t.settings.general.display),
               createSettingItem(
-                  title: 'Categories',
+                  title: t.general.categories,
                   subtitle: t.settings.general.categories_descr,
                   icon: Icons.sell_outlined,
                   onTap: () => {

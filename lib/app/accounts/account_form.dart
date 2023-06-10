@@ -265,8 +265,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
                         controller: _balanceController,
                         decoration: InputDecoration(
                           labelText: widget.account != null
-                              ? 'Current balance *'
-                              : 'Initial balance *',
+                              ? '${t.account.form.current_balance} *'
+                              : '${t.account.form.initial_balance} *',
                           hintText: 'Ex.: 200',
                         ),
                         keyboardType: TextInputType.number,
@@ -282,7 +282,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           controller: TextEditingController(
                               text: _currency != null
                                   ? _currency?.name
-                                  : 'Sin especificar'),
+                                  : t.general.unspecified),
                           readOnly: true,
                           onTap: () {
                             if (_currency == null) return;
@@ -329,19 +329,18 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(8),
                             child: Row(
-                              children: const [
-                                Icon(
+                              children: [
+                                const Icon(
                                   Icons.warning_rounded,
                                   color: Colors.amber,
                                   size: 28,
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Flexible(
                                   child: Text(
-                                    'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes',
-                                    style: TextStyle(
-                                        fontSize: 12.25,
-                                        fontWeight: FontWeight.w400),
+                                    t.account.form.currency_not_found_warn,
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
                                   ),
                                 ),
                               ],

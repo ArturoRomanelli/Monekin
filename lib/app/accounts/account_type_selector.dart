@@ -27,25 +27,27 @@ class _AccountTypeSelectorState extends State<AccountTypeSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(
-        AccountType.values.length,
-        (index) {
-          final AccountType item = AccountType.values[index];
-          return Flexible(
-            child: FinlyticsFilterChip(
-              title: item.name,
-              onPressed: () {
-                setState(() {
-                  selectedItem = item;
-                  widget.onSelected(item);
-                });
-              },
-              isSelected: item == selectedItem,
-              icon: item.icon,
-            ),
-          );
-        },
+    return IntrinsicHeight(
+      child: Row(
+        children: List.generate(
+          AccountType.values.length,
+          (index) {
+            final AccountType item = AccountType.values[index];
+
+            return Flexible(
+              child: FinlyticsFilterChip(
+                accountType: item,
+                onPressed: () {
+                  setState(() {
+                    selectedItem = item;
+                    widget.onSelected(item);
+                  });
+                },
+                isSelected: item == selectedItem,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -54,16 +56,15 @@ class _AccountTypeSelectorState extends State<AccountTypeSelector> {
 class FinlyticsFilterChip extends StatelessWidget {
   const FinlyticsFilterChip({
     super.key,
-    required this.title,
+    required this.accountType,
     required this.onPressed,
     required this.isSelected,
-    required this.icon,
   });
 
-  final String title;
   final VoidCallback onPressed;
   final bool isSelected;
-  final IconData icon;
+
+  final AccountType accountType;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +89,7 @@ class FinlyticsFilterChip extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  icon,
+                  accountType.icon,
                   size: 28,
                   color: isSelected
                       ? Theme.of(context).colorScheme.primary
@@ -96,14 +97,13 @@ class FinlyticsFilterChip extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  title,
+                  accountType.title(context),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary
                           : Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
-                Text(
-                    "Useful to record your day-to-day finances. It is the most common account, it allows you to add expenses, income...",
+                Text(accountType.description(context),
                     softWrap: true,
                     style:
                         TextStyle(fontWeight: FontWeight.w300, fontSize: 14)),

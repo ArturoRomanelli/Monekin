@@ -2,6 +2,8 @@ import 'package:finlytics/core/database/services/category/category_service.dart'
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
+import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class SubcategorySelector extends StatefulWidget {
@@ -28,7 +30,6 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
         .getChildCategories(parentId: widget.parentCategory.id)
         .first
         .then((value) {
-      print(value);
       setState(() {
         childCategories = value;
       });
@@ -54,9 +55,8 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
                       ? Colors.white
                       : Theme.of(context).colorScheme.onBackground,
                 ),
-          backgroundColor: isSelected
-              ? Color(int.parse('0xff${widget.parentCategory.color}'))
-              : null,
+          backgroundColor:
+              isSelected ? ColorHex.get(widget.parentCategory.color) : null,
           onPressed: () {
             if (!isSelected) {
               setState(() {
@@ -73,6 +73,8 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       child: Container(
@@ -90,7 +92,7 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Select a subcategory',
+                      t.categories.select.select_subcategory,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(
@@ -117,7 +119,7 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
                 ),
               ),
               BottomSheetFooter(
-                  submitText: 'Continue',
+                  submitText: t.general.continue_text,
                   submitIcon: Icons.arrow_forward_ios,
                   onSaved: () {
                     Navigator.of(context).pop(selectedCategory);

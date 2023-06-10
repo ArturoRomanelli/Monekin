@@ -86,7 +86,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                           const Divider(indent: 12),
                           ListTile(
                             title: Text("Tipo de cuenta"),
-                            subtitle: Text(widget.account.type.title),
+                            subtitle: Text(widget.account.type.title(context)),
                           ),
                           if (widget.account.description != null)
                             const Divider(indent: 12),

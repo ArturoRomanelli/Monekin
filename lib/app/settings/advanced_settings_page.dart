@@ -33,16 +33,17 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 1,
         title: Text(t.settings.general.other),
       ),
       body: Column(
         children: [
           buildSelector(
-              title: "App Language",
+              title: t.settings.lang,
               dropdown: DropdownButton(
-                items: const [
-                  DropdownMenuItem(value: "es", child: Text('ES')),
-                  DropdownMenuItem(value: "en", child: Text('EN'))
+                items: [
+                  DropdownMenuItem(value: 'es', child: Text(t.lang.es)),
+                  DropdownMenuItem(value: 'en', child: Text(t.lang.en))
                 ],
                 value: LocaleSettings.currentLocale.languageTag,
                 underline: const SizedBox(),
@@ -57,19 +58,20 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                       .then((value) => null);
                 },
               )),
+          const Divider(),
           StreamBuilder(
               stream:
                   UserSettingService.instance.getSetting(SettingKey.themeMode),
               builder: (context, snapshot) {
                 return buildSelector(
-                    title: "Theme",
+                    title: 'Theme',
                     dropdown: DropdownButton(
                       items: const [
-                        DropdownMenuItem(value: "system", child: Text('Auto')),
-                        DropdownMenuItem(value: "light", child: Text('Light')),
-                        DropdownMenuItem(value: "dark", child: Text('Dark'))
+                        DropdownMenuItem(value: 'system', child: Text('Auto')),
+                        DropdownMenuItem(value: 'light', child: Text('Light')),
+                        DropdownMenuItem(value: 'dark', child: Text('Dark'))
                       ],
-                      value: snapshot.data ?? "system",
+                      value: snapshot.data ?? 'system',
                       underline: const SizedBox(),
                       onChanged: (value) {
                         if (value == null) return;

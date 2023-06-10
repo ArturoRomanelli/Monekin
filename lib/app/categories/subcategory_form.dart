@@ -3,6 +3,7 @@ import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class SubcategoryFormDialog extends StatefulWidget {
@@ -46,6 +47,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -111,8 +113,8 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                             onChanged: (value) {
                               setState(() {});
                             },
-                            decoration: const InputDecoration(
-                              labelText: 'Account name *',
+                            decoration: InputDecoration(
+                              labelText: '${t.categories.name} *',
                               hintText: 'Ex.: My account',
                             ),
                             validator: (value) =>

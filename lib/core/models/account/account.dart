@@ -1,6 +1,7 @@
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 enum AccountType {
@@ -20,11 +21,25 @@ enum AccountType {
     return Icons.question_mark;
   }
 
-  String get title {
+  String title(BuildContext context) {
+    final t = Translations.of(context);
+
     if (this == normal) {
-      return 'Normal';
+      return t.account.types.normal;
     } else if (this == saving) {
-      return 'Savings';
+      return t.account.types.saving;
+    }
+
+    return '';
+  }
+
+  String description(BuildContext context) {
+    final t = Translations.of(context);
+
+    if (this == normal) {
+      return t.account.types.normal_descr;
+    } else if (this == saving) {
+      return t.account.types.saving_descr;
     }
 
     return '';

@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 724 (362 per locale)
+/// Strings: 722 (361 per locale)
 ///
-/// Built on 2023-06-10 at 07:11 UTC
+/// Built on 2023-06-10 at 08:28 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -177,6 +177,7 @@ class _TranslationsGeneralEn {
 	String get understood => 'Understood';
 	String get unspecified => 'Sin especificar';
 	String get confirm => 'Confirm';
+	String get continue_text => 'Continue';
 	String get add => 'Add';
 	String get edit => 'Edit';
 	String get delete => 'Delete';
@@ -730,10 +731,8 @@ class _TranslationsAccountFormEn {
 	String get current_balance => 'Current balance';
 	String get create => 'Create account';
 	String get edit => 'Edit account';
+	String get currency_not_found_warn => 'You do not have information on exchange rates for this currency. 1.0 will be used as the default exchange rate. You can modify this in the settings';
 	String get already_exists => 'There is already another one with the same name, please write another';
-	String get users => 'Account users';
-	String get admin => 'Administrator';
-	String get collaborator => 'Collaborator';
 	String get iban => 'IBAN';
 	String get swift => 'SWIFT';
 }
@@ -1089,6 +1088,7 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get understood => 'Entendido';
 	@override String get unspecified => 'Sin especificar';
 	@override String get confirm => 'Confirmar';
+	@override String get continue_text => 'Continuar';
 	@override String get add => 'Añadir';
 	@override String get edit => 'Editar';
 	@override String get delete => 'Eliminar';
@@ -1641,10 +1641,8 @@ class _TranslationsAccountFormEs extends _TranslationsAccountFormEn {
 	@override String get current_balance => 'Balance actual';
 	@override String get create => 'Crear cuenta';
 	@override String get edit => 'Editar cuenta';
+	@override String get currency_not_found_warn => 'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes';
 	@override String get already_exists => 'Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro';
-	@override String get users => 'Usuarios de la cuenta';
-	@override String get admin => 'Administrador';
-	@override String get collaborator => 'Colaborador';
 	@override String get iban => 'IBAN';
 	@override String get swift => 'SWIFT';
 }
@@ -1953,6 +1951,7 @@ extension on _TranslationsEn {
 			case 'general.understood': return 'Understood';
 			case 'general.unspecified': return 'Sin especificar';
 			case 'general.confirm': return 'Confirm';
+			case 'general.continue_text': return 'Continue';
 			case 'general.add': return 'Add';
 			case 'general.edit': return 'Edit';
 			case 'general.delete': return 'Delete';
@@ -2139,10 +2138,8 @@ extension on _TranslationsEn {
 			case 'account.form.current_balance': return 'Current balance';
 			case 'account.form.create': return 'Create account';
 			case 'account.form.edit': return 'Edit account';
+			case 'account.form.currency_not_found_warn': return 'You do not have information on exchange rates for this currency. 1.0 will be used as the default exchange rate. You can modify this in the settings';
 			case 'account.form.already_exists': return 'There is already another one with the same name, please write another';
-			case 'account.form.users': return 'Account users';
-			case 'account.form.admin': return 'Administrator';
-			case 'account.form.collaborator': return 'Collaborator';
 			case 'account.form.iban': return 'IBAN';
 			case 'account.form.swift': return 'SWIFT';
 			case 'account.share.title': return 'Share this account';
@@ -2324,6 +2321,7 @@ extension on _TranslationsEs {
 			case 'general.understood': return 'Entendido';
 			case 'general.unspecified': return 'Sin especificar';
 			case 'general.confirm': return 'Confirmar';
+			case 'general.continue_text': return 'Continuar';
 			case 'general.add': return 'Añadir';
 			case 'general.edit': return 'Editar';
 			case 'general.delete': return 'Eliminar';
@@ -2509,10 +2507,8 @@ extension on _TranslationsEs {
 			case 'account.form.current_balance': return 'Balance actual';
 			case 'account.form.create': return 'Crear cuenta';
 			case 'account.form.edit': return 'Editar cuenta';
+			case 'account.form.currency_not_found_warn': return 'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes';
 			case 'account.form.already_exists': return 'Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro';
-			case 'account.form.users': return 'Usuarios de la cuenta';
-			case 'account.form.admin': return 'Administrador';
-			case 'account.form.collaborator': return 'Colaborador';
 			case 'account.form.iban': return 'IBAN';
 			case 'account.form.swift': return 'SWIFT';
 			case 'account.share.title': return 'Compartir esta cuenta';

@@ -7,6 +7,8 @@ import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -105,11 +107,13 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   }
 
   deleteCategory(String categoryId) {
+    final t = Translations.of(context);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Remove category'),
+          title: Text(t.general.delete),
           content: const SingleChildScrollView(
               child: Text(
                   'This action will irreversibly delete all transactions <b>({{x}})</b> related to this category.')),
@@ -122,8 +126,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     .then((value) async {
                   if (categoryId == widget.categoryUUID) {
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Subcategoría borrada con exito')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(t.categories.delete_success)));
                   }
                 }).catchError((error) {});
 
@@ -159,7 +163,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         builder: (context) {
           return SubcategoryFormDialog(
             name: subcategory?.name ?? '',
-            color: Color(int.parse('0xff$_color')),
+            color: ColorHex.get(_color),
             icon: subcategory?.icon ??
                 SupportedIconService.instance.defaultSupportedIcon,
             onSubmit: onSubmit,
@@ -204,6 +208,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
         persistentFooterButtons: [
           PersistentFooterButton(
@@ -229,31 +235,31 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                 PopupMenuButton(
                   itemBuilder: (context) {
                     return <PopupMenuEntry<String>>[
-                      const PopupMenuItem(
+                      PopupMenuItem(
                           value: 'to_subcategory',
                           child: ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: Icon(Icons.login),
+                            leading: const Icon(Icons.login),
                             minLeadingWidth: 26,
-                            title: Text('Make a subcategory'),
+                            title: Text(t.categories.make_child),
                           )),
                       const PopupMenuDivider(),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                           value: 'merge',
                           child: ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: Icon(Icons.merge_type),
+                            leading: const Icon(Icons.merge_type),
                             minLeadingWidth: 26,
-                            title: Text('Merge with another category'),
+                            title: Text(t.categories.merge),
                           )),
                       const PopupMenuDivider(),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                           value: 'delete',
                           child: ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: Icon(Icons.delete),
+                            leading: const Icon(Icons.delete),
                             minLeadingWidth: 26,
-                            title: Text('Delete'),
+                            title: Text(t.general.delete),
                           ))
                     ];
                   },
@@ -295,23 +301,23 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                               );
                                             });
                                       },
-                                      child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                              color: Color(
-                                                      int.parse('0xff$_color'))
-                                                  .withOpacity(0.05),
-                                              border: Border.all(
-                                                  width: 1.625,
-                                                  color: Color(int.parse(
-                                                      '0xff$_color'))),
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(6))),
-                                          child: _icon.display(
-                                              size: 48,
-                                              color: Color(
-                                                  int.parse('0xff$_color')))),
+                                      child: Builder(builder: (context) {
+                                        final iconColor = ColorHex.get(_color);
+
+                                        return Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                                color:
+                                                    iconColor.withOpacity(0.05),
+                                                border: Border.all(
+                                                    width: 1.625,
+                                                    color: iconColor),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(6))),
+                                            child: _icon.display(
+                                                size: 48, color: iconColor));
+                                      }),
                                     ),
                                     const SizedBox(
                                       width: 20,
@@ -320,16 +326,13 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                       child: TextFormField(
                                         controller: _nameController,
                                         maxLength: 20,
-                                        decoration: const InputDecoration(
-                                          labelText: 'Category name *',
+                                        decoration: InputDecoration(
+                                          labelText: '${t.categories.name} *',
                                           hintText: 'Ex.: Food',
                                         ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter a name';
-                                          }
-                                          return null;
-                                        },
+                                        validator: (value) => fieldValidator(
+                                            value,
+                                            isRequired: true),
                                         autovalidateMode:
                                             AutovalidateMode.onUserInteraction,
                                         textInputAction: TextInputAction.next,
@@ -396,7 +399,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Color(int.parse('0xff$colorItem')),
+                                    color: ColorHex.get(colorItem),
                                   ),
                                   child: Material(
                                     color: Colors.transparent,
@@ -457,13 +460,14 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                   offset: const Offset(0, 48),
                                   itemBuilder: (context) {
                                     return <PopupMenuEntry<String>>[
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                           value: 'to_category',
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
-                                            leading: Icon(Icons.login),
+                                            leading: const Icon(Icons.login),
                                             minLeadingWidth: 26,
-                                            title: Text('Make to category'),
+                                            title:
+                                                Text(t.categories.make_parent),
                                           )),
                                       const PopupMenuDivider(),
                                       const PopupMenuItem(
@@ -476,22 +480,22 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                                 'Merge with another category'),
                                           )),
                                       const PopupMenuDivider(),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                           value: 'edit',
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
-                                            leading: Icon(Icons.edit),
+                                            leading: const Icon(Icons.edit),
                                             minLeadingWidth: 26,
-                                            title: Text('Edit'),
+                                            title: Text(t.general.edit),
                                           )),
                                       const PopupMenuDivider(),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                           value: 'delete',
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
-                                            leading: Icon(Icons.delete),
+                                            leading: const Icon(Icons.delete),
                                             minLeadingWidth: 26,
-                                            title: Text('Delete'),
+                                            title: Text(t.general.delete),
                                           ))
                                     ];
                                   },
@@ -532,7 +536,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                       parentCategoryID: categoryToEdit!.id));
                             });
                           },
-                          title: const Text('Add subcategory'))
+                          title: Text(t.categories.subcategories_add))
                   ],
                 ),
               ));

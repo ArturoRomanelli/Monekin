@@ -90,7 +90,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                       builder: (context) => const AccountFormPage()));
             },
             icon: const Icon(Icons.add),
-            label: const Text('Añadir cuenta'),
+            label: Text(t.account.form.create),
           ),
         )
       ],

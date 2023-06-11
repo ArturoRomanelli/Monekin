@@ -232,7 +232,7 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                 children: <Widget>[
                   PieChart(
                     swapAnimationCurve: Curves.easeOut,
-                    swapAnimationDuration: Duration(milliseconds: 450),
+                    swapAnimationDuration: const Duration(milliseconds: 450),
                     PieChartData(
                       pieTouchData: PieTouchData(
                         touchCallback: (FlTouchEvent event, pieTouchResponse) {

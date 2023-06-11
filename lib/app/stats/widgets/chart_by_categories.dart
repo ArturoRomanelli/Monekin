@@ -231,6 +231,8 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
               child: Stack(
                 children: <Widget>[
                   PieChart(
+                    swapAnimationCurve: Curves.easeOut,
+                    swapAnimationDuration: Duration(milliseconds: 450),
                     PieChartData(
                       pieTouchData: PieTouchData(
                         touchCallback: (FlTouchEvent event, pieTouchResponse) {

@@ -238,6 +238,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
     notesController.text = transaction.notes ?? '';
     titleController.text = transaction.title ?? '';
     valueController.text = transaction.value.abs().toString();
+    valueInDestinyController.text =
+        transaction.valueInDestiny?.abs().toString() ?? '';
   }
 
   @override
@@ -264,57 +266,80 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
         )
       ],
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 24),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: valueController,
-                      decoration: InputDecoration(
-                          labelText: 'Amount *',
-                          hintText: 'Ex.: 200',
-                          suffix: fromAccount != null && valueToNumber != null
-                              ? Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: CurrencyDisplayer(
-                                      amountToConvert: valueToNumber!,
-                                      currency: fromAccount!.currency),
-                                )
-                              : null),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        final defaultNumberValidatorResult = fieldValidator(
-                            value,
-                            isRequired: true,
-                            validator: ValidatorType.double);
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: valueController,
+                    decoration: InputDecoration(
+                        labelText: 'Amount *',
+                        hintText: 'Ex.: 200',
+                        suffix: fromAccount != null && valueToNumber != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: CurrencyDisplayer(
+                                    amountToConvert: valueToNumber!,
+                                    currency: fromAccount!.currency),
+                              )
+                            : null),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      final defaultNumberValidatorResult = fieldValidator(value,
+                          isRequired: true, validator: ValidatorType.double);
 
-                        if (defaultNumberValidatorResult != null) {
-                          return defaultNumberValidatorResult;
+                      if (defaultNumberValidatorResult != null) {
+                        return defaultNumberValidatorResult;
+                      }
+
+                      if (valueToNumber! == 0) {
+                        return t.transaction.form.validators.zero;
+                      }
+
+                      return null;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  selector(
+                      title: 'Account *',
+                      inputValue: fromAccount?.name,
+                      icon: fromAccount?.icon,
+                      iconColor: null,
+                      onClick: () async {
+                        final modalRes =
+                            await showModalBottomSheet<List<Account>>(
+                          context: context,
+                          builder: (context) {
+                            return AccountSelector(
+                              allowMultiSelection: false,
+                              filterSavingAccounts: widget.mode ==
+                                  TransactionFormMode.incomeOrExpense,
+                              selectedAccounts: [fromAccount!],
+                            );
+                          },
+                        );
+
+                        if (modalRes != null && modalRes.isNotEmpty) {
+                          setState(() {
+                            fromAccount = modalRes.first;
+                          });
                         }
-
-                        if (valueToNumber! == 0) {
-                          return t.transaction.form.validators.zero;
-                        }
-
-                        return null;
-                      },
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      textInputAction: TextInputAction.next,
-                      onChanged: (value) {
-                        setState(() {});
-                      },
-                    ),
-                    const SizedBox(height: 16),
+                      }),
+                  const SizedBox(height: 16),
+                  if (widget.mode == TransactionFormMode.transfer)
                     selector(
-                        title: 'Account *',
-                        inputValue: fromAccount?.name,
-                        icon: fromAccount?.icon,
+                        title: 'Receiving account *',
+                        inputValue: toAccount?.name,
+                        icon: toAccount?.icon,
                         iconColor: null,
                         onClick: () async {
                           final modalRes =
@@ -325,277 +350,243 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                 allowMultiSelection: false,
                                 filterSavingAccounts: widget.mode ==
                                     TransactionFormMode.incomeOrExpense,
-                                selectedAccounts: [fromAccount!],
+                                selectedAccounts: [toAccount!],
                               );
                             },
                           );
 
                           if (modalRes != null && modalRes.isNotEmpty) {
                             setState(() {
-                              fromAccount = modalRes.first;
+                              toAccount = modalRes.first;
                             });
                           }
                         }),
-                    const SizedBox(height: 16),
-                    if (widget.mode == TransactionFormMode.transfer)
-                      selector(
-                          title: 'Receiving account *',
-                          inputValue: toAccount?.name,
-                          icon: toAccount?.icon,
-                          iconColor: null,
-                          onClick: () async {
-                            final modalRes =
-                                await showModalBottomSheet<List<Account>>(
-                              context: context,
-                              builder: (context) {
-                                return AccountSelector(
-                                  allowMultiSelection: false,
-                                  filterSavingAccounts: widget.mode ==
-                                      TransactionFormMode.incomeOrExpense,
-                                  selectedAccounts: [toAccount!],
-                                );
-                              },
-                            );
-
-                            if (modalRes != null && modalRes.isNotEmpty) {
-                              setState(() {
-                                toAccount = modalRes.first;
-                              });
-                            }
-                          }),
-                    if (widget.mode == TransactionFormMode.incomeOrExpense)
-                      selector(
-                          title: 'Category *',
-                          inputValue: selectedCategory?.name,
-                          icon: selectedCategory?.icon,
-                          iconColor: selectedCategory != null
-                              ? ColorHex.get(selectedCategory!.color)
-                              : null,
-                          onClick: () async {
-                            final modalRes =
-                                await showModalBottomSheet<List<Category>>(
-                              context: context,
-                              builder: (context) {
-                                return const ClipRRect(
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20)),
-                                  child: Scaffold(
-                                    body: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        BottomSheetHeader(),
-                                        Expanded(
-                                          child: CategoriesList(
-                                            mode: CategoriesListMode
-                                                .modalSelectSubcategory,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-
-                            if (modalRes != null && modalRes.isNotEmpty) {
-                              setState(() {
-                                selectedCategory = modalRes.first;
-                              });
-                            }
-                          }),
-                    const SizedBox(height: 24),
-                    TextFormField(
-                      controller: TextEditingController(
-                          text: DateFormat.yMMMMd().add_Hm().format(date)),
-                      decoration: const InputDecoration(
-                        labelText: 'Fecha y hora *',
-                      ),
-                      readOnly: true,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
+                  if (widget.mode == TransactionFormMode.incomeOrExpense)
+                    selector(
+                        title: 'Category *',
+                        inputValue: selectedCategory?.name,
+                        icon: selectedCategory?.icon,
+                        iconColor: selectedCategory != null
+                            ? ColorHex.get(selectedCategory!.color)
+                            : null,
+                        onClick: () async {
+                          final modalRes =
+                              await showModalBottomSheet<List<Category>>(
                             context: context,
-                            initialDate: date,
-                            firstDate: DateTime(1700),
-                            lastDate: DateTime(2099));
+                            builder: (context) {
+                              return const ClipRRect(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20)),
+                                child: Scaffold(
+                                  body: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      BottomSheetHeader(),
+                                      Expanded(
+                                        child: CategoriesList(
+                                          mode: CategoriesListMode
+                                              .modalSelectSubcategory,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
 
-                        if (pickedDate == null) return;
-
-                        setState(() {
-                          date = pickedDate;
-                        });
-                      },
-                    ),
-                    if (!(widget.transactionToEdit != null &&
-                        widget.transactionToEdit is! MoneyRecurrentRule)) ...[
-                      const SizedBox(height: 16),
-                      TextField(
-                          controller: TextEditingController(
-                              text: recurrentRule.formText),
-                          readOnly: true,
-                          onTap: () async {
-                            final res = await showDialog<RecurrencyData?>(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 0),
-                                  clipBehavior: Clip.hardEdge,
-                                  content: IntervalSelectorHelp(
-                                      selectedRecurrentRule: recurrentRule),
-                                );
-                              },
-                            );
-
-                            if (res == null) return;
-
+                          if (modalRes != null && modalRes.isNotEmpty) {
                             setState(() {
-                              recurrentRule = res;
+                              selectedCategory = modalRes.first;
                             });
-                          },
-                          decoration: const InputDecoration(
-                            labelText: "Repeat",
-                            suffixIcon: Icon(Icons.arrow_drop_down),
-                          ))
-                    ],
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: titleController,
-                      maxLength: 15,
-                      decoration: const InputDecoration(
-                        labelText: 'Titulo de la transacción',
-                        hintText:
-                            'Si no se especifica, se usará el nombre de la categoría',
-                      ),
+                          }
+                        }),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: TextEditingController(
+                        text: DateFormat.yMMMMd().add_Hm().format(date)),
+                    decoration: const InputDecoration(
+                      labelText: 'Fecha y hora *',
                     ),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: date,
+                          firstDate: DateTime(1700),
+                          lastDate: DateTime(2099));
+
+                      if (pickedDate == null) return;
+
+                      setState(() {
+                        date = pickedDate;
+                      });
+                    },
+                  ),
+                  if (!(widget.transactionToEdit != null &&
+                      widget.transactionToEdit is! MoneyRecurrentRule)) ...[
+                    const SizedBox(height: 16),
+                    TextField(
+                        controller:
+                            TextEditingController(text: recurrentRule.formText),
+                        readOnly: true,
+                        onTap: () async {
+                          final res = await showDialog<RecurrencyData?>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 0),
+                                clipBehavior: Clip.hardEdge,
+                                content: IntervalSelectorHelp(
+                                    selectedRecurrentRule: recurrentRule),
+                              );
+                            },
+                          );
+
+                          if (res == null) return;
+
+                          setState(() {
+                            recurrentRule = res;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          labelText: "Repeat",
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                        ))
                   ],
-                ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: titleController,
+                    maxLength: 15,
+                    decoration: const InputDecoration(
+                      labelText: 'Titulo de la transacción',
+                      hintText:
+                          'Si no se especifica, se usará el nombre de la categoría',
+                    ),
+                  ),
+                ],
               ),
             ),
             SingleExpansionPanel(
-              sidePadding: 16,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          DropdownButtonFormField(
-                            value: status,
-                            decoration: InputDecoration(
-                              labelText: t.transaction.form.status,
-                            ),
-                            items: [
-                              const DropdownMenuItem(
-                                value: null,
-                                child: Text('Ninguno'),
-                              ),
-                              ...List.generate(
-                                  TransactionStatus.values.length,
-                                  (index) => DropdownMenuItem(
-                                      value: TransactionStatus.values[index],
-                                      child: Text(TransactionStatus
-                                          .values[index]
-                                          .displayName(context))))
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                status = value;
-                              });
-                            },
+                  Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField(
+                        value: status,
+                        decoration: InputDecoration(
+                          labelText: t.transaction.form.status,
+                        ),
+                        items: [
+                          const DropdownMenuItem(
+                            value: null,
+                            child: Text('Ninguno'),
                           ),
-                          if (widget.mode == TransactionFormMode.transfer) ...[
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: valueInDestinyController,
-                              decoration: InputDecoration(
-                                  labelText: 'Amount in destiny *',
-                                  hintText: 'Ex.: 200',
-                                  suffix: fromAccount != null &&
-                                          valueInDestinyToNumber != null
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          child: CurrencyDisplayer(
-                                              amountToConvert:
-                                                  valueInDestinyToNumber!,
-                                              currency: fromAccount!.currency),
-                                        )
-                                      : null),
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                final defaultNumberValidatorResult =
-                                    fieldValidator(value,
-                                        isRequired: false,
-                                        validator: ValidatorType.double);
-
-                                if (defaultNumberValidatorResult != null) {
-                                  return defaultNumberValidatorResult;
-                                }
-
-                                if (valueToNumber == null) {
-                                  return null;
-                                } else if (valueToNumber! == 0) {
-                                  return 'Transactions amount can be zero';
-                                }
-
-                                return null;
-                              },
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              textInputAction: TextInputAction.next,
-                              onChanged: (value) {
-                                setState(() {});
-                              },
-                            ),
-                          ],
-                          if (widget.mode == TransactionFormMode.transfer &&
-                              valueToNumber != null &&
-                              valueInDestinyToNumber == null) ...[
-                            const SizedBox(height: 16),
-                            Card(
-                              color: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.2),
-                              elevation: 0,
-                              margin: const EdgeInsets.all(0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.info_rounded,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 28,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Flexible(
-                                      child: Text(
-                                        'Serán transpasados a la cuenta de destino especificada ${NumberFormat.currency(symbol: toAccount!.currency.symbol).format(valueToNumber)}',
-                                        style: TextStyle(
-                                            fontSize: 12.25,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            minLines: 2,
-                            maxLines: 10,
-                            controller: notesController,
-                            decoration: const InputDecoration(
-                              labelText: 'Notas',
-                              alignLabelWithHint: true,
-                              hintText:
-                                  'Escribe información extra acerca de esta transacción',
-                            ),
-                          ),
+                          ...List.generate(
+                              TransactionStatus.values.length,
+                              (index) => DropdownMenuItem(
+                                  value: TransactionStatus.values[index],
+                                  child: Text(TransactionStatus.values[index]
+                                      .displayName(context))))
                         ],
-                      )),
+                        onChanged: (value) {
+                          setState(() {
+                            status = value;
+                          });
+                        },
+                      ),
+                      if (widget.mode == TransactionFormMode.transfer) ...[
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: valueInDestinyController,
+                          decoration: InputDecoration(
+                              labelText: 'Amount in destiny *',
+                              hintText: 'Ex.: 200',
+                              suffix: fromAccount != null &&
+                                      valueInDestinyToNumber != null
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: CurrencyDisplayer(
+                                          amountToConvert:
+                                              valueInDestinyToNumber!,
+                                          currency: fromAccount!.currency),
+                                    )
+                                  : null),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            final defaultNumberValidatorResult = fieldValidator(
+                                value,
+                                isRequired: false,
+                                validator: ValidatorType.double);
+
+                            if (defaultNumberValidatorResult != null) {
+                              return defaultNumberValidatorResult;
+                            }
+
+                            if (valueToNumber == null) {
+                              return null;
+                            } else if (valueToNumber! == 0) {
+                              return 'Transactions amount can be zero';
+                            }
+
+                            return null;
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          textInputAction: TextInputAction.next,
+                          onChanged: (value) {
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                      if (widget.mode == TransactionFormMode.transfer &&
+                          valueToNumber != null &&
+                          valueInDestinyToNumber == null) ...[
+                        const SizedBox(height: 16),
+                        Card(
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.2),
+                          elevation: 0,
+                          margin: const EdgeInsets.all(0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.info_rounded,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 28,
+                                ),
+                                SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                    'Serán transpasados a la cuenta de destino especificada ${NumberFormat.currency(symbol: toAccount!.currency.symbol).format(valueToNumber)}',
+                                    style: TextStyle(
+                                        fontSize: 12.25,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        minLines: 2,
+                        maxLines: 10,
+                        controller: notesController,
+                        decoration: const InputDecoration(
+                          labelText: 'Notas',
+                          alignLabelWithHint: true,
+                          hintText:
+                              'Escribe información extra acerca de esta transacción',
+                        ),
+                      ),
+                    ],
+                  ),
                   SwitchListTile(
                     value: isHidden,
                     title: Text('Ocultar transacción'),

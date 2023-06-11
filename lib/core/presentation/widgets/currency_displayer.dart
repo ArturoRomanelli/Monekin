@@ -64,9 +64,10 @@ class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
       final String symbolWithoutDecSep =
           currency!.symbol.replaceAll(decimalSep, '');
 
-      final String formattedAmount =
-          NumberFormat.currency(decimalDigits: 2, symbol: symbolWithoutDecSep)
-              .format(widget.amountToConvert);
+      final String formattedAmount = NumberFormat.currency(
+              decimalDigits: widget.showDecimals ? 2 : 0,
+              symbol: symbolWithoutDecSep)
+          .format(widget.amountToConvert);
 
       // Get the decimal and the integer part, and restore the original symbol
       final List<String> parts = formattedAmount

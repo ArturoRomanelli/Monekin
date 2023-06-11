@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 686 (343 per locale)
+/// Strings: 688 (344 per locale)
 ///
-/// Built on 2023-06-10 at 11:33 UTC
+/// Built on 2023-06-11 at 10:46 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -762,6 +762,7 @@ class _TranslationsBudgetsFormEn {
 	String get repetition => 'Repetition';
 	String get create => 'Add budget';
 	String get edit => 'Edit budget';
+	String get negative_warn => 'The budgets can not have a negative amount';
 }
 
 // Path: budgets.details
@@ -1644,6 +1645,7 @@ class _TranslationsBudgetsFormEs extends _TranslationsBudgetsFormEn {
 	@override String get repetition => 'Repetición';
 	@override String get create => 'Añade el presupuesto';
 	@override String get edit => 'Editar presupuesto';
+	@override String get negative_warn => 'Los presupuestos no pueden tener un valor límite negativo';
 }
 
 // Path: budgets.details
@@ -2149,6 +2151,7 @@ extension on _TranslationsEn {
 			case 'budgets.form.repetition': return 'Repetition';
 			case 'budgets.form.create': return 'Add budget';
 			case 'budgets.form.edit': return 'Edit budget';
+			case 'budgets.form.negative_warn': return 'The budgets can not have a negative amount';
 			case 'budgets.details.title': return 'Budget Details';
 			case 'budgets.details.budget_value': return 'Budget';
 			case 'budgets.details.statistics': return 'Statistics';
@@ -2500,6 +2503,7 @@ extension on _TranslationsEs {
 			case 'budgets.form.repetition': return 'Repetición';
 			case 'budgets.form.create': return 'Añade el presupuesto';
 			case 'budgets.form.edit': return 'Editar presupuesto';
+			case 'budgets.form.negative_warn': return 'Los presupuestos no pueden tener un valor límite negativo';
 			case 'budgets.details.title': return 'Detalles del presupuesto';
 			case 'budgets.details.budget_value': return 'Presupuestado';
 			case 'budgets.details.statistics': return 'Estadísticas';

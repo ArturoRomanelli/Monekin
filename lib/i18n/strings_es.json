@@ -329,7 +329,8 @@
       "value": "Cantidad límite",
       "repetition": "Repetición",
       "create": "Añade el presupuesto",
-      "edit": "Editar presupuesto"
+      "edit": "Editar presupuesto",
+      "negative-warn": "Los presupuestos no pueden tener un valor límite negativo"
     },
     "DETAILS": {
       "title": "Detalles del presupuesto",

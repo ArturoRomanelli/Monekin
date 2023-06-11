@@ -330,7 +330,8 @@
       "value": "Limit quantity",
       "repetition": "Repetition",
       "create": "Add budget",
-      "edit": "Edit budget"
+      "edit": "Edit budget",
+      "negative-warn": "The budgets can not have a negative amount"
     },
     "DETAILS": {
       "title": "Budget Details",

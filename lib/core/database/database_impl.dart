@@ -6,6 +6,7 @@ import 'package:drift/native.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/core/models/budget/budget.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';

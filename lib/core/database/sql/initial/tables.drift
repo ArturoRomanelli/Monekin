@@ -149,6 +149,37 @@ CREATE TABLE IF NOT EXISTS recurrentRules (
   CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
 ) AS RecurrentRuleInDB;
 
+CREATE TABLE IF NOT EXISTS budgets (
+  id TEXT NOT NULL PRIMARY KEY,
+
+  -- Title of the budget and its identificator. For instance, this name is unique (the user can not have another budget with the same name) 
+  name TEXT NOT NULL UNIQUE,
+
+  --  Maximum value that the budget takes. It will always be in the user's preferred currency
+  limitAmount REAL NOT NULL,
+
+  -- Periodicity of the budget. If null, the budget is a single-time budget
+  intervalPeriod ENUMNAME(TransactionPeriodicity) CHECK(intervalPeriod IN ('day','week','month','year')),
+
+  -- Custom start date. Only if the budget has no periodicity
+  startDate DATETIME,
+
+  -- Custom end date. Only if the budget has no periodicity
+  endDate DATETIME,
+
+  CHECK ((startDate IS NULL AND endDate IS NULL) != (intervalPeriod IS NULL))
+) AS BudgetInDB;
+
+CREATE TABLE IF NOT EXISTS budgetCategory (
+  budgetID TEXT NOT NULL REFERENCES budgets(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  categoryID TEXT NOT NULL REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS budgetAccount (
+  budgetID TEXT NOT NULL REFERENCES budgets(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS userSettings (
   settingKey ENUMNAME(SettingKey) NOT NULL PRIMARY KEY,
   settingValue TEXT

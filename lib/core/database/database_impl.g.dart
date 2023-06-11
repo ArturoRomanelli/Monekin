@@ -2563,6 +2563,770 @@ class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateInDB> {
   }
 }
 
+class Budgets extends Table with TableInfo<Budgets, BudgetInDB> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Budgets(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL PRIMARY KEY');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL UNIQUE');
+  static const VerificationMeta _limitAmountMeta =
+      const VerificationMeta('limitAmount');
+  late final GeneratedColumn<double> limitAmount = GeneratedColumn<double>(
+      'limitAmount', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _intervalPeriodMeta =
+      const VerificationMeta('intervalPeriod');
+  late final GeneratedColumnWithTypeConverter<TransactionPeriodicity?,
+      String> intervalPeriod = GeneratedColumn<String>(
+          'intervalPeriod', aliasedName, true,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          $customConstraints:
+              'CHECK (intervalPeriod IN (\'day\', \'week\', \'month\', \'year\'))')
+      .withConverter<TransactionPeriodicity?>(
+          Budgets.$converterintervalPeriodn);
+  static const VerificationMeta _startDateMeta =
+      const VerificationMeta('startDate');
+  late final GeneratedColumn<DateTime> startDate = GeneratedColumn<DateTime>(
+      'startDate', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _endDateMeta =
+      const VerificationMeta('endDate');
+  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
+      'endDate', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, name, limitAmount, intervalPeriod, startDate, endDate];
+  @override
+  String get aliasedName => _alias ?? 'budgets';
+  @override
+  String get actualTableName => 'budgets';
+  @override
+  VerificationContext validateIntegrity(Insertable<BudgetInDB> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('limitAmount')) {
+      context.handle(
+          _limitAmountMeta,
+          limitAmount.isAcceptableOrUnknown(
+              data['limitAmount']!, _limitAmountMeta));
+    } else if (isInserting) {
+      context.missing(_limitAmountMeta);
+    }
+    context.handle(_intervalPeriodMeta, const VerificationResult.success());
+    if (data.containsKey('startDate')) {
+      context.handle(_startDateMeta,
+          startDate.isAcceptableOrUnknown(data['startDate']!, _startDateMeta));
+    }
+    if (data.containsKey('endDate')) {
+      context.handle(_endDateMeta,
+          endDate.isAcceptableOrUnknown(data['endDate']!, _endDateMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetInDB map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetInDB(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      limitAmount: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}limitAmount'])!,
+      intervalPeriod: Budgets.$converterintervalPeriodn.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}intervalPeriod'])),
+      startDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}startDate']),
+      endDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}endDate']),
+    );
+  }
+
+  @override
+  Budgets createAlias(String alias) {
+    return Budgets(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<TransactionPeriodicity, String, String>
+      $converterintervalPeriod =
+      const EnumNameConverter<TransactionPeriodicity>(
+          TransactionPeriodicity.values);
+  static JsonTypeConverter2<TransactionPeriodicity?, String?, String?>
+      $converterintervalPeriodn =
+      JsonTypeConverter2.asNullable($converterintervalPeriod);
+  @override
+  List<String> get customConstraints => const [
+        'CHECK((startDate IS NULL AND endDate IS NULL)!=(intervalPeriod IS NULL))'
+      ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class BudgetInDB extends DataClass implements Insertable<BudgetInDB> {
+  final String id;
+
+  /// Title of the budget and its identificator. For instance, this name is unique (the user can not have another budget with the same name)
+  final String name;
+
+  ///  Maximum value that the budget takes. It will always be in the user's preferred currency
+  final double limitAmount;
+
+  /// Periodicity of the budget. If null, the budget is a single-time budget
+  final TransactionPeriodicity? intervalPeriod;
+
+  /// Custom start date. Only if the budget has no periodicity
+  final DateTime? startDate;
+
+  /// Custom end date. Only if the budget has no periodicity
+  final DateTime? endDate;
+  const BudgetInDB(
+      {required this.id,
+      required this.name,
+      required this.limitAmount,
+      this.intervalPeriod,
+      this.startDate,
+      this.endDate});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['limitAmount'] = Variable<double>(limitAmount);
+    if (!nullToAbsent || intervalPeriod != null) {
+      final converter = Budgets.$converterintervalPeriodn;
+      map['intervalPeriod'] = Variable<String>(converter.toSql(intervalPeriod));
+    }
+    if (!nullToAbsent || startDate != null) {
+      map['startDate'] = Variable<DateTime>(startDate);
+    }
+    if (!nullToAbsent || endDate != null) {
+      map['endDate'] = Variable<DateTime>(endDate);
+    }
+    return map;
+  }
+
+  BudgetsCompanion toCompanion(bool nullToAbsent) {
+    return BudgetsCompanion(
+      id: Value(id),
+      name: Value(name),
+      limitAmount: Value(limitAmount),
+      intervalPeriod: intervalPeriod == null && nullToAbsent
+          ? const Value.absent()
+          : Value(intervalPeriod),
+      startDate: startDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startDate),
+      endDate: endDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endDate),
+    );
+  }
+
+  factory BudgetInDB.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetInDB(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      limitAmount: serializer.fromJson<double>(json['limitAmount']),
+      intervalPeriod: Budgets.$converterintervalPeriodn
+          .fromJson(serializer.fromJson<String?>(json['intervalPeriod'])),
+      startDate: serializer.fromJson<DateTime?>(json['startDate']),
+      endDate: serializer.fromJson<DateTime?>(json['endDate']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'limitAmount': serializer.toJson<double>(limitAmount),
+      'intervalPeriod': serializer.toJson<String?>(
+          Budgets.$converterintervalPeriodn.toJson(intervalPeriod)),
+      'startDate': serializer.toJson<DateTime?>(startDate),
+      'endDate': serializer.toJson<DateTime?>(endDate),
+    };
+  }
+
+  BudgetInDB copyWith(
+          {String? id,
+          String? name,
+          double? limitAmount,
+          Value<TransactionPeriodicity?> intervalPeriod = const Value.absent(),
+          Value<DateTime?> startDate = const Value.absent(),
+          Value<DateTime?> endDate = const Value.absent()}) =>
+      BudgetInDB(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        limitAmount: limitAmount ?? this.limitAmount,
+        intervalPeriod:
+            intervalPeriod.present ? intervalPeriod.value : this.intervalPeriod,
+        startDate: startDate.present ? startDate.value : this.startDate,
+        endDate: endDate.present ? endDate.value : this.endDate,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('BudgetInDB(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('limitAmount: $limitAmount, ')
+          ..write('intervalPeriod: $intervalPeriod, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, limitAmount, intervalPeriod, startDate, endDate);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetInDB &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.limitAmount == this.limitAmount &&
+          other.intervalPeriod == this.intervalPeriod &&
+          other.startDate == this.startDate &&
+          other.endDate == this.endDate);
+}
+
+class BudgetsCompanion extends UpdateCompanion<BudgetInDB> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<double> limitAmount;
+  final Value<TransactionPeriodicity?> intervalPeriod;
+  final Value<DateTime?> startDate;
+  final Value<DateTime?> endDate;
+  final Value<int> rowid;
+  const BudgetsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.limitAmount = const Value.absent(),
+    this.intervalPeriod = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetsCompanion.insert({
+    required String id,
+    required String name,
+    required double limitAmount,
+    this.intervalPeriod = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        name = Value(name),
+        limitAmount = Value(limitAmount);
+  static Insertable<BudgetInDB> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<double>? limitAmount,
+    Expression<String>? intervalPeriod,
+    Expression<DateTime>? startDate,
+    Expression<DateTime>? endDate,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (limitAmount != null) 'limitAmount': limitAmount,
+      if (intervalPeriod != null) 'intervalPeriod': intervalPeriod,
+      if (startDate != null) 'startDate': startDate,
+      if (endDate != null) 'endDate': endDate,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? name,
+      Value<double>? limitAmount,
+      Value<TransactionPeriodicity?>? intervalPeriod,
+      Value<DateTime?>? startDate,
+      Value<DateTime?>? endDate,
+      Value<int>? rowid}) {
+    return BudgetsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      limitAmount: limitAmount ?? this.limitAmount,
+      intervalPeriod: intervalPeriod ?? this.intervalPeriod,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (limitAmount.present) {
+      map['limitAmount'] = Variable<double>(limitAmount.value);
+    }
+    if (intervalPeriod.present) {
+      final converter = Budgets.$converterintervalPeriodn;
+      map['intervalPeriod'] =
+          Variable<String>(converter.toSql(intervalPeriod.value));
+    }
+    if (startDate.present) {
+      map['startDate'] = Variable<DateTime>(startDate.value);
+    }
+    if (endDate.present) {
+      map['endDate'] = Variable<DateTime>(endDate.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('limitAmount: $limitAmount, ')
+          ..write('intervalPeriod: $intervalPeriod, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class BudgetCategory extends Table
+    with TableInfo<BudgetCategory, BudgetCategoryData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  BudgetCategory(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _budgetIDMeta =
+      const VerificationMeta('budgetID');
+  late final GeneratedColumn<String> budgetID = GeneratedColumn<String>(
+      'budgetID', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints:
+          'NOT NULL REFERENCES budgets(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  static const VerificationMeta _categoryIDMeta =
+      const VerificationMeta('categoryID');
+  late final GeneratedColumn<String> categoryID = GeneratedColumn<String>(
+      'categoryID', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints:
+          'NOT NULL REFERENCES categories(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  @override
+  List<GeneratedColumn> get $columns => [budgetID, categoryID];
+  @override
+  String get aliasedName => _alias ?? 'budgetCategory';
+  @override
+  String get actualTableName => 'budgetCategory';
+  @override
+  VerificationContext validateIntegrity(Insertable<BudgetCategoryData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('budgetID')) {
+      context.handle(_budgetIDMeta,
+          budgetID.isAcceptableOrUnknown(data['budgetID']!, _budgetIDMeta));
+    } else if (isInserting) {
+      context.missing(_budgetIDMeta);
+    }
+    if (data.containsKey('categoryID')) {
+      context.handle(
+          _categoryIDMeta,
+          categoryID.isAcceptableOrUnknown(
+              data['categoryID']!, _categoryIDMeta));
+    } else if (isInserting) {
+      context.missing(_categoryIDMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  BudgetCategoryData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetCategoryData(
+      budgetID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}budgetID'])!,
+      categoryID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}categoryID'])!,
+    );
+  }
+
+  @override
+  BudgetCategory createAlias(String alias) {
+    return BudgetCategory(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class BudgetCategoryData extends DataClass
+    implements Insertable<BudgetCategoryData> {
+  final String budgetID;
+  final String categoryID;
+  const BudgetCategoryData({required this.budgetID, required this.categoryID});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['budgetID'] = Variable<String>(budgetID);
+    map['categoryID'] = Variable<String>(categoryID);
+    return map;
+  }
+
+  BudgetCategoryCompanion toCompanion(bool nullToAbsent) {
+    return BudgetCategoryCompanion(
+      budgetID: Value(budgetID),
+      categoryID: Value(categoryID),
+    );
+  }
+
+  factory BudgetCategoryData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetCategoryData(
+      budgetID: serializer.fromJson<String>(json['budgetID']),
+      categoryID: serializer.fromJson<String>(json['categoryID']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'budgetID': serializer.toJson<String>(budgetID),
+      'categoryID': serializer.toJson<String>(categoryID),
+    };
+  }
+
+  BudgetCategoryData copyWith({String? budgetID, String? categoryID}) =>
+      BudgetCategoryData(
+        budgetID: budgetID ?? this.budgetID,
+        categoryID: categoryID ?? this.categoryID,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('BudgetCategoryData(')
+          ..write('budgetID: $budgetID, ')
+          ..write('categoryID: $categoryID')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(budgetID, categoryID);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetCategoryData &&
+          other.budgetID == this.budgetID &&
+          other.categoryID == this.categoryID);
+}
+
+class BudgetCategoryCompanion extends UpdateCompanion<BudgetCategoryData> {
+  final Value<String> budgetID;
+  final Value<String> categoryID;
+  final Value<int> rowid;
+  const BudgetCategoryCompanion({
+    this.budgetID = const Value.absent(),
+    this.categoryID = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetCategoryCompanion.insert({
+    required String budgetID,
+    required String categoryID,
+    this.rowid = const Value.absent(),
+  })  : budgetID = Value(budgetID),
+        categoryID = Value(categoryID);
+  static Insertable<BudgetCategoryData> custom({
+    Expression<String>? budgetID,
+    Expression<String>? categoryID,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (budgetID != null) 'budgetID': budgetID,
+      if (categoryID != null) 'categoryID': categoryID,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetCategoryCompanion copyWith(
+      {Value<String>? budgetID, Value<String>? categoryID, Value<int>? rowid}) {
+    return BudgetCategoryCompanion(
+      budgetID: budgetID ?? this.budgetID,
+      categoryID: categoryID ?? this.categoryID,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (budgetID.present) {
+      map['budgetID'] = Variable<String>(budgetID.value);
+    }
+    if (categoryID.present) {
+      map['categoryID'] = Variable<String>(categoryID.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetCategoryCompanion(')
+          ..write('budgetID: $budgetID, ')
+          ..write('categoryID: $categoryID, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class BudgetAccount extends Table
+    with TableInfo<BudgetAccount, BudgetAccountData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  BudgetAccount(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _budgetIDMeta =
+      const VerificationMeta('budgetID');
+  late final GeneratedColumn<String> budgetID = GeneratedColumn<String>(
+      'budgetID', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints:
+          'NOT NULL REFERENCES budgets(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  static const VerificationMeta _accountIDMeta =
+      const VerificationMeta('accountID');
+  late final GeneratedColumn<String> accountID = GeneratedColumn<String>(
+      'accountID', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints:
+          'NOT NULL REFERENCES accounts(id)ON UPDATE CASCADE ON DELETE CASCADE');
+  @override
+  List<GeneratedColumn> get $columns => [budgetID, accountID];
+  @override
+  String get aliasedName => _alias ?? 'budgetAccount';
+  @override
+  String get actualTableName => 'budgetAccount';
+  @override
+  VerificationContext validateIntegrity(Insertable<BudgetAccountData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('budgetID')) {
+      context.handle(_budgetIDMeta,
+          budgetID.isAcceptableOrUnknown(data['budgetID']!, _budgetIDMeta));
+    } else if (isInserting) {
+      context.missing(_budgetIDMeta);
+    }
+    if (data.containsKey('accountID')) {
+      context.handle(_accountIDMeta,
+          accountID.isAcceptableOrUnknown(data['accountID']!, _accountIDMeta));
+    } else if (isInserting) {
+      context.missing(_accountIDMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  BudgetAccountData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetAccountData(
+      budgetID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}budgetID'])!,
+      accountID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}accountID'])!,
+    );
+  }
+
+  @override
+  BudgetAccount createAlias(String alias) {
+    return BudgetAccount(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class BudgetAccountData extends DataClass
+    implements Insertable<BudgetAccountData> {
+  final String budgetID;
+  final String accountID;
+  const BudgetAccountData({required this.budgetID, required this.accountID});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['budgetID'] = Variable<String>(budgetID);
+    map['accountID'] = Variable<String>(accountID);
+    return map;
+  }
+
+  BudgetAccountCompanion toCompanion(bool nullToAbsent) {
+    return BudgetAccountCompanion(
+      budgetID: Value(budgetID),
+      accountID: Value(accountID),
+    );
+  }
+
+  factory BudgetAccountData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetAccountData(
+      budgetID: serializer.fromJson<String>(json['budgetID']),
+      accountID: serializer.fromJson<String>(json['accountID']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'budgetID': serializer.toJson<String>(budgetID),
+      'accountID': serializer.toJson<String>(accountID),
+    };
+  }
+
+  BudgetAccountData copyWith({String? budgetID, String? accountID}) =>
+      BudgetAccountData(
+        budgetID: budgetID ?? this.budgetID,
+        accountID: accountID ?? this.accountID,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('BudgetAccountData(')
+          ..write('budgetID: $budgetID, ')
+          ..write('accountID: $accountID')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(budgetID, accountID);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetAccountData &&
+          other.budgetID == this.budgetID &&
+          other.accountID == this.accountID);
+}
+
+class BudgetAccountCompanion extends UpdateCompanion<BudgetAccountData> {
+  final Value<String> budgetID;
+  final Value<String> accountID;
+  final Value<int> rowid;
+  const BudgetAccountCompanion({
+    this.budgetID = const Value.absent(),
+    this.accountID = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetAccountCompanion.insert({
+    required String budgetID,
+    required String accountID,
+    this.rowid = const Value.absent(),
+  })  : budgetID = Value(budgetID),
+        accountID = Value(accountID);
+  static Insertable<BudgetAccountData> custom({
+    Expression<String>? budgetID,
+    Expression<String>? accountID,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (budgetID != null) 'budgetID': budgetID,
+      if (accountID != null) 'accountID': accountID,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetAccountCompanion copyWith(
+      {Value<String>? budgetID, Value<String>? accountID, Value<int>? rowid}) {
+    return BudgetAccountCompanion(
+      budgetID: budgetID ?? this.budgetID,
+      accountID: accountID ?? this.accountID,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (budgetID.present) {
+      map['budgetID'] = Variable<String>(budgetID.value);
+    }
+    if (accountID.present) {
+      map['accountID'] = Variable<String>(accountID.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetAccountCompanion(')
+          ..write('budgetID: $budgetID, ')
+          ..write('accountID: $accountID, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class CurrencyNames extends Table with TableInfo<CurrencyNames, CurrencyName> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3198,6 +3962,9 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
   late final Transactions transactions = Transactions(this);
   late final RecurrentRules recurrentRules = RecurrentRules(this);
   late final ExchangeRates exchangeRates = ExchangeRates(this);
+  late final Budgets budgets = Budgets(this);
+  late final BudgetCategory budgetCategory = BudgetCategory(this);
+  late final BudgetAccount budgetAccount = BudgetAccount(this);
   late final CurrencyNames currencyNames = CurrencyNames(this);
   late final UserSettings userSettings = UserSettings(this);
   late final AppData appData = AppData(this);
@@ -3493,6 +4260,66 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         ));
   }
 
+  Selectable<Budget> getBudgetsWithFullData(
+      {GetBudgetsWithFullData$predicate? predicate,
+      GetBudgetsWithFullData$orderBy? orderBy,
+      required GetBudgetsWithFullData$limit limit}) {
+    var $arrayStartIndex = 1;
+    final generatedpredicate = $write(
+        predicate?.call(this.budgets) ?? const CustomExpression('(TRUE)'),
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedpredicate.amountOfVariables;
+    final generatedorderBy = $write(
+        orderBy?.call(this.budgets) ?? const OrderBy.nothing(),
+        startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedorderBy.amountOfVariables;
+    final generatedlimit =
+        $write(limit(this.budgets), startIndex: $arrayStartIndex);
+    $arrayStartIndex += generatedlimit.amountOfVariables;
+    return customSelect(
+        'SELECT id, name, limitAmount, intervalPeriod, startDate, endDate, budgets.id AS "\$n_0", budgets.id AS "\$n_1" FROM budgets WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
+        variables: [
+          ...generatedpredicate.introducedVariables,
+          ...generatedorderBy.introducedVariables,
+          ...generatedlimit.introducedVariables
+        ],
+        readsFrom: {
+          budgets,
+          budgetCategory,
+          budgetAccount,
+          ...generatedpredicate.watchedTables,
+          ...generatedorderBy.watchedTables,
+          ...generatedlimit.watchedTables,
+        }).asyncMap((QueryRow row) async => Budget(
+          id: row.read<String>('id'),
+          name: row.read<String>('name'),
+          limitAmount: row.read<double>('limitAmount'),
+          categories: await customSelect(
+              'SELECT categoryID FROM budgetCategory WHERE budgetID = ?1',
+              variables: [
+                Variable<String>(row.read('\$n_0'))
+              ],
+              readsFrom: {
+                budgetCategory,
+                budgets,
+              }).map((QueryRow row) => row.read<String>('categoryID')).get(),
+          accounts: await customSelect(
+              'SELECT accountID FROM budgetAccount WHERE budgetID = ?1',
+              variables: [
+                Variable<String>(row.read('\$n_1'))
+              ],
+              readsFrom: {
+                budgetAccount,
+                budgets,
+              }).map((QueryRow row) => row.read<String>('accountID')).get(),
+          intervalPeriod: NullAwareTypeConverter.wrapFromSql(
+              Budgets.$converterintervalPeriod,
+              row.readNullable<String>('intervalPeriod')),
+          startDate: row.readNullable<DateTime>('startDate'),
+          endDate: row.readNullable<DateTime>('endDate'),
+        ));
+  }
+
   Future<int> insertInitialCurrencies() {
     return customInsert(
       'INSERT INTO currencies VALUES (\'AED\', \'dh\'), (\'AFN\', \'Af.\'), (\'ALL\', \'Lek\'), (\'AMD\', \'Dram\'), (\'ANG\', \'ƒ\'), (\'AOA\', \'Kz\'), (\'ARS\', \'\$\'), (\'AUD\', \'\$\'), (\'AWG\', \'Afl.\'), (\'AZN\', \'man.\'), (\'BAM\', \'KM\'), (\'BBD\', \'\$\'), (\'BDT\', \'৳\'), (\'BGN\', \'lev\'), (\'BHD\', \'din\'), (\'BIF\', \'FBu\'), (\'BND\', \'\$\'), (\'BOB\', \'Bs\'), (\'BRL\', \'R\$\'), (\'BSD\', \'\$\'), (\'BTN\', \'Nu.\'), (\'BWP\', \'P\'), (\'BYR\', \'BYR\'), (\'BZD\', \'\$\'), (\'CAD\', \'\$\'), (\'CDF\', \'FrCD\'), (\'CHF\', \'CHF\'), (\'CLP\', \'\$\'), (\'CNY\', \'¥\'), (\'COP\', \'\$\'), (\'CRC\', \'₡\'), (\'CUP\', \'\$\'), (\'CVE\', \'CVE\'), (\'CZK\', \'Kč\'), (\'DJF\', \'Fdj\'), (\'DKK\', \'kr\'), (\'DOP\', \'\$\'), (\'DZD\', \'din\'), (\'EGP\', \'E£\'), (\'ERN\', \'Nfk\'), (\'ETB\', \'Birr\'), (\'EUR\', \'€\'), (\'FJD\', \'\$\'), (\'FKP\', \'£\'), (\'GBP\', \'£\'), (\'GEL\', \'GEL\'), (\'GHS\', \'GHS\'), (\'GIP\', \'£\'), (\'GMD\', \'GMD\'), (\'GNF\', \'FG\'), (\'GTQ\', \'Q\'), (\'HKD\', \'\$\'), (\'HNL\', \'L\'), (\'HRK\', \'kn\'), (\'HTG\', \'HTG\'), (\'HUF\', \'Ft\'), (\'IDR\', \'Rp\'), (\'ILS\', \'₪\'), (\'INR\', \'₹\'), (\'IQD\', \'din\'), (\'IRR\', \'Rial\'), (\'ISK\', \'kr\'), (\'JMD\', \'\$\'), (\'JOD\', \'din\'), (\'JPY\', \'¥\'), (\'KES\', \'Ksh\'), (\'KGS\', \'KGS\'), (\'KHR\', \'Riel\'), (\'KMF\', \'CF\'), (\'KPW\', \'₩\'), (\'KRW\', \'₩\'), (\'KWD\', \'din\'), (\'KYD\', \'\$\'), (\'KZT\', \'₸\'), (\'LAK\', \'₭\'), (\'LBP\', \'L£\'), (\'LKR\', \'Rs\'), (\'LRD\', \'\$\'), (\'LSL\', \'LSL\'), (\'LYD\', \'din\'), (\'MAD\', \'dh\'), (\'MDL\', \'MDL\'), (\'MGA\', \'Ar\'), (\'MKD\', \'din\'), (\'MMK\', \'K\'), (\'MNT\', \'₮\'), (\'MOP\', \'MOP\'), (\'MUR\', \'Rs\'), (\'MVR\', \'Rf\'), (\'MWK\', \'MWK\'), (\'MXN\', \'\$\'), (\'MYR\', \'RM\'), (\'MZN\', \'MTn\'), (\'NAD\', \'\$\'), (\'NGN\', \'₦\'), (\'NIO\', \'C\$\'), (\'NOK\', \'kr\'), (\'NPR\', \'Rs\'), (\'NZD\', \'\$\'), (\'OMR\', \'Rial\'), (\'PAB\', \'B/.\'), (\'PEN\', \'S/\'), (\'PGK\', \'PGK\'), (\'PHP\', \'₱\'), (\'PKR\', \'Rs\'), (\'PLN\', \'zł\'), (\'PYG\', \'Gs\'), (\'QAR\', \'Rial\'), (\'RON\', \'RON\'), (\'RSD\', \'din\'), (\'RUB\', \'₽\'), (\'RWF\', \'RF\'), (\'SAR\', \'Riyal\'), (\'SBD\', \'\$\'), (\'SCR\', \'SCR\'), (\'SDG\', \'SDG\'), (\'SEK\', \'kr\'), (\'SGD\', \'\$\'), (\'SLL\', \'SLL\'), (\'SOS\', \'SOS\'), (\'SRD\', \'\$\'), (\'SSP\', \'SSP\'), (\'STD\', \'Db\'), (\'SVC\', \'₡\'), (\'SYP\', \'£\'), (\'SZL\', \'SZL\'), (\'THB\', \'฿\'), (\'TJS\', \'Som\'), (\'TMT\', \'TMT\'), (\'TND\', \'din\'), (\'TOP\', \'T\$\'), (\'TRY\', \'TL\'), (\'TTD\', \'\$\'), (\'TWD\', \'NT\$\'), (\'TZS\', \'TSh\'), (\'UAH\', \'₴\'), (\'UGX\', \'UGX\'), (\'USD\', \'\$\'), (\'UYU\', \'\$\'), (\'UZS\', \'soʼm\'), (\'VEF\', \'Bs\'), (\'VND\', \'₫\'), (\'VUV\', \'VUV\'), (\'WST\', \'WST\'), (\'XAF\', \'FCFA\'), (\'XCD\', \'\$\'), (\'XOF\', \'CFA\'), (\'XPF\', \'FCFP\'), (\'YER\', \'Rial\'), (\'ZAR\', \'R\'), (\'ZMW\', \'ZK\'), (\'ZWL\', \'\$\')',
@@ -3528,6 +4355,9 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
         transactions,
         recurrentRules,
         exchangeRates,
+        budgets,
+        budgetCategory,
+        budgetAccount,
         currencyNames,
         userSettings,
         appData
@@ -3648,6 +4478,62 @@ abstract class _$DatabaseImpl extends GeneratedDatabase {
             ],
           ),
           WritePropagation(
+            on: TableUpdateQuery.onTableName('budgets',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('budgetCategory', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('budgets',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('budgetCategory', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('categories',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('budgetCategory', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('categories',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('budgetCategory', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('budgets',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('budgetAccount', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('budgets',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('budgetAccount', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('accounts',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('budgetAccount', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('accounts',
+                limitUpdateKind: UpdateKind.update),
+            result: [
+              TableUpdate('budgetAccount', kind: UpdateKind.update),
+            ],
+          ),
+          WritePropagation(
             on: TableUpdateQuery.onTableName('currencies',
                 limitUpdateKind: UpdateKind.delete),
             result: [
@@ -3726,3 +4612,7 @@ typedef GetCategoriesWithFullData$predicate = Expression<bool> Function(
     Categories a, Categories parentCategory);
 typedef GetExchangeRates$predicate = Expression<bool> Function(
     ExchangeRates e, Currencies currency);
+typedef GetBudgetsWithFullData$predicate = Expression<bool> Function(
+    Budgets budgets);
+typedef GetBudgetsWithFullData$orderBy = OrderBy Function(Budgets budgets);
+typedef GetBudgetsWithFullData$limit = Limit Function(Budgets budgets);

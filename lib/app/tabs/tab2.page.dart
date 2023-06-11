@@ -98,9 +98,7 @@ class _Tab2PageState extends State<Tab2Page> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Column(
-                    children: [
-                      LinearProgressIndicator(),
-                    ],
+                    children: [LinearProgressIndicator()],
                   );
                 }
 

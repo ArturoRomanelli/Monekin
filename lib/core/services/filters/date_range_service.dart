@@ -53,12 +53,12 @@ enum DateRange {
 }
 
 class DateRangeService {
-  DateRange selectedDateRange = DateRange.monthly;
+  DateRange selectedDateRange;
 
   DateTime? startDate;
   DateTime? endDate;
 
-  DateRangeService() {
+  DateRangeService({this.selectedDateRange = DateRange.monthly}) {
     resetDateRanges();
   }
 

@@ -6,6 +6,7 @@ import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class TransactionFilters {
@@ -44,9 +45,11 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
     required String? inputValue,
     required Function onClick,
   }) {
+    final t = Translations.of(context);
+
     return TextField(
         controller:
-            TextEditingController(text: inputValue ?? 'Sin especificar'),
+            TextEditingController(text: inputValue ?? t.general.unspecified),
         readOnly: true,
         onTap: () => onClick(),
         decoration: InputDecoration(
@@ -58,6 +61,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -90,7 +94,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                             stream: AccountService.instance.getAccounts(),
                             builder: (context, snapshot) {
                               return selector(
-                                  title: 'Accounts',
+                                  title: t.general.accounts,
                                   inputValue:
                                       filtersToReturn.accounts == null ||
                                               (snapshot.hasData &&
@@ -144,7 +148,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                   CategoryService.instance.getMainCategories(),
                               builder: (context, snapshot) {
                                 return selector(
-                                    title: 'Categories',
+                                    title: t.general.categories,
                                     inputValue:
                                         filtersToReturn.categories == null ||
                                                 (snapshot.hasData &&

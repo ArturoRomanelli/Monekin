@@ -123,6 +123,10 @@ class _CategoriesListState extends State<CategoriesList> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
+          bottom: TabBar(tabs: [
+            Tab(text: t.general.incomes),
+            Tab(text: t.general.expenses),
+          ]),
           title: Text(t.general.categories),
           automaticallyImplyLeading: widget.mode == CategoriesListMode.page,
           leading: Navigator.canPop(context) &&
@@ -153,10 +157,6 @@ class _CategoriesListState extends State<CategoriesList> {
             : null,
         body: Column(
           children: [
-            TabBar(tabs: [
-              Tab(text: t.general.incomes),
-              Tab(text: t.general.expenses),
-            ]),
             StreamBuilder(
                 stream: CategoryService.instance.getMainCategories(),
                 builder: (context, categories) {

@@ -33,7 +33,6 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 1,
         title: Text(t.settings.general.other),
       ),
       body: Column(

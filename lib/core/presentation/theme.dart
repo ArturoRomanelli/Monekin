@@ -30,12 +30,14 @@ ThemeData getThemeData(bool dark) {
       colors: appColorScheme.dark,
       useMaterial3: true,
       fontFamily: 'Nunito',
+      appBarElevation: 3,
     );
   } else {
     theme = FlexThemeData.light(
       colors: appColorScheme.light,
       useMaterial3: true,
       fontFamily: 'Nunito',
+      appBarElevation: 2,
     );
   }
 

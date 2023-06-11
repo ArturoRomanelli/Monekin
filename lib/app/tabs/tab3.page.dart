@@ -1,6 +1,8 @@
 import 'package:finlytics/app/stats/widgets/balance_bar_chart.dart';
 import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
+import 'package:finlytics/app/tabs/card_with_header.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
@@ -104,7 +106,7 @@ class _Tab3PageState extends State<Tab3Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Hello Tab 2'), elevation: 3, actions: [
+      appBar: AppBar(title: const Text('Hello Tab 2'), actions: [
         IconButton(
           icon: const Icon(Icons.calendar_month),
           onPressed: () async {
@@ -189,60 +191,28 @@ class _Tab3PageState extends State<Tab3Page> {
                     child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(children: [
-                    Card(
-                      elevation: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Row(
-                              children: [
-                                Text('Gastos e ingresos',
-                                    style: TextStyle(fontSize: 18)),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                incomeOrExpenseIndicator(
-                                    AccountDataFilter.income,
-                                    startDate,
-                                    endDate),
-                                incomeOrExpenseIndicator(
-                                    AccountDataFilter.expense,
-                                    startDate,
-                                    endDate),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IncomeOrExpenseCard(
+                            type: AccountDataFilter.income,
+                            startDate: startDate,
+                            endDate: endDate),
+                        IncomeOrExpenseCard(
+                            type: AccountDataFilter.expense,
+                            startDate: startDate,
+                            endDate: endDate),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
-                          child: Card(
-                            clipBehavior: Clip.hardEdge,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text('Cash-flow',
-                                        style: TextStyle(fontSize: 18)),
-                                  ),
-                                  BalanceBarChart(
-                                    startDate: startDate,
-                                    dateRange:
-                                        dateRangeService.selectedDateRange,
-                                  )
-                                ],
-                              ),
+                          child: CardWithHeader(
+                            title: "Cash-flow",
+                            body: BalanceBarChart(
+                              startDate: startDate,
+                              dateRange: dateRangeService.selectedDateRange,
                             ),
                           ),
                         ),
@@ -333,25 +303,11 @@ class _Tab3PageState extends State<Tab3Page> {
                     Row(
                       children: [
                         Expanded(
-                          child: Card(
-                            clipBehavior: Clip.hardEdge,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text('Fund evolution',
-                                        style: TextStyle(fontSize: 18)),
-                                  ),
-                                  FundEvolutionLineChart(
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                  )
-                                ],
-                              ),
+                          child: CardWithHeader(
+                            title: "Fund evolution",
+                            body: FundEvolutionLineChart(
+                              startDate: startDate,
+                              endDate: endDate,
                             ),
                           ),
                         ),

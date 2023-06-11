@@ -192,7 +192,6 @@ class _AccountFormPageState extends State<AccountFormPage> {
         title: Text(widget.account != null
             ? t.account.form.edit
             : t.account.form.create),
-        elevation: 2,
       ),
       body: widget.account != null && _accountToEdit == null
           ? const LinearProgressIndicator()

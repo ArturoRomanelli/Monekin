@@ -5,6 +5,7 @@ import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 enum CategoriesListMode {
@@ -114,12 +115,15 @@ class _CategoriesListState extends State<CategoriesList> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return DefaultTabController(
       length: 2,
       initialIndex: 1,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Categories'),
+          elevation: 0,
+          title: Text(t.general.categories),
           automaticallyImplyLeading: widget.mode == CategoriesListMode.page,
           leading: Navigator.canPop(context) &&
                   widget.mode != CategoriesListMode.page
@@ -142,16 +146,16 @@ class _CategoriesListState extends State<CategoriesList> {
                               builder: (context) => const CategoryFormPage()));
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('Añadir categoría'),
+                    label: Text(t.categories.create),
                   ),
                 )
               ]
             : null,
         body: Column(
           children: [
-            const TabBar(tabs: [
-              Tab(text: 'Incomes'),
-              Tab(text: 'Expenses'),
+            TabBar(tabs: [
+              Tab(text: t.general.incomes),
+              Tab(text: t.general.expenses),
             ]),
             StreamBuilder(
                 stream: CategoryService.instance.getMainCategories(),

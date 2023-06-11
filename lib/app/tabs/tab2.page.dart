@@ -27,7 +27,6 @@ class _Tab2PageState extends State<Tab2Page> {
           title: const Text('Transactions'),
           // foregroundColor: Theme.of(context).colorScheme.onPrimary,
           // backgroundColor: Theme.of(context).primaryColor,
-          elevation: 4,
           actions: [
             IconButton(
                 onPressed: () async {

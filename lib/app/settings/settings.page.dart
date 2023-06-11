@@ -72,7 +72,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
         appBar: AppBar(
-          elevation: 1,
           title: Text(t.settings.title),
         ),
         body: SingleChildScrollView(
@@ -118,7 +117,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 builder: (context) => const CategoriesList(
                                     mode: CategoriesListMode.page)))
                       }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: 'Administrador de divisas',
                   subtitle:
@@ -131,7 +130,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 builder: (context) =>
                                     const CurrencyManagerPage()))
                       }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.general.other,
                   subtitle: t.settings.general.other_descr,
@@ -158,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       print(err);
                     });
                   }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.data.import,
                   subtitle: t.settings.data.import_descr,
@@ -170,6 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       print(err);
                     });
                   }),
+              const SizedBox(height: 22),
               createListSeparator(t.settings.help_us.display),
               createSettingItem(
                   title: t.settings.help_us.rate_us,
@@ -179,7 +179,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     openURL(context,
                         'https://play.google.com/store/apps/details?id=com.monekin.app');
                   }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.help_us.share,
                   icon: Icons.share,
@@ -187,7 +187,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Share.share(
                         'Monekin! The best personal finance app. Download here: https://play.google.com/store/apps/details?id=com.monekin.app');
                   }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.help_us.report,
                   icon: Icons.rate_review_outlined,
@@ -195,6 +195,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     openURL(context,
                         'https://github.com/enrique-lozano/Monekin/issues/new/choose');
                   }),
+              const SizedBox(height: 22),
               createListSeparator('Project'),
               createSettingItem(
                   title: 'Terms and privacy',
@@ -203,7 +204,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   onTap: () async {
                     // TODO
                   }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: 'Collaborators',
                   subtitle: 'All the developers who have made Monekin grow',
@@ -212,7 +213,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     openURL(context,
                         'https://github.com/enrique-lozano/Monekin/graphs/contributors');
                   }),
-              const Divider(indent: 70),
+              const Divider(indent: 54),
               createSettingItem(
                   title: 'Contact us!',
                   icon: Icons.email_outlined,

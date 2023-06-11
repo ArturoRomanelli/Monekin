@@ -25,7 +25,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
             account: widget.account, prevPage: widget.prevPage);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

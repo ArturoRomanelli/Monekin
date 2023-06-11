@@ -147,7 +147,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
 
     final t = Translations.of(context);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(elevation: 0),
       body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(

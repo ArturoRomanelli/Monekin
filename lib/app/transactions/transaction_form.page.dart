@@ -315,7 +315,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     ),
                     const SizedBox(height: 16),
                     selector(
-                        title: 'Account *',
+                        title: '${t.general.account} *',
                         inputValue: fromAccount?.name,
                         icon: fromAccount?.icon,
                         iconColor: null,
@@ -368,7 +368,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                           }),
                     if (widget.mode == TransactionFormMode.incomeOrExpense)
                       selector(
-                          title: 'Category *',
+                          title: '${t.general.category} *',
                           inputValue: selectedCategory?.name,
                           icon: selectedCategory?.icon,
                           iconColor: selectedCategory != null
@@ -433,7 +433,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       const SizedBox(height: 16),
                       TextField(
                           controller: TextEditingController(
-                              text: recurrentRule.formText),
+                              text: recurrentRule.formText(context)),
                           readOnly: true,
                           onTap: () async {
                             final res = await showDialog<RecurrencyData?>(
@@ -455,9 +455,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               recurrentRule = res;
                             });
                           },
-                          decoration: const InputDecoration(
-                            labelText: "Repeat",
-                            suffixIcon: Icon(Icons.arrow_drop_down),
+                          decoration: InputDecoration(
+                            labelText: t.general.time.periodicity.display,
+                            suffixIcon: const Icon(Icons.arrow_drop_down),
                           ))
                     ],
                     const SizedBox(height: 16),

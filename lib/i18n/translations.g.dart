@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 688 (344 per locale)
+/// Strings: 722 (361 per locale)
 ///
-/// Built on 2023-06-11 at 10:46 UTC
+/// Built on 2023-06-15 at 11:32 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -477,19 +477,12 @@ class _TranslationsGeneralTimeEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get range => 'Time range';
-	String get monthly => 'Monthly';
-	String get diary => 'Diary';
-	String get annualy => 'Annualy';
-	String get quaterly => 'Quaterly';
-	String get weekly => 'Weekly';
-	String get custom => 'Custom';
-	String get infinite => 'Always';
 	String get start_date => 'Start date';
 	String get end_date => 'End date';
-	String get no_repeat => 'No recurrent';
-	String get periodicity => 'Periodicity';
+	late final _TranslationsGeneralTimeRangesEn ranges = _TranslationsGeneralTimeRangesEn._(_root);
+	late final _TranslationsGeneralTimePeriodicityEn periodicity = _TranslationsGeneralTimePeriodicityEn._(_root);
 	late final _TranslationsGeneralTimeCurrentEn current = _TranslationsGeneralTimeCurrentEn._(_root);
+	late final _TranslationsGeneralTimeAllEn all = _TranslationsGeneralTimeAllEn._(_root);
 }
 
 // Path: general.transaction_order
@@ -938,6 +931,53 @@ class _TranslationsSettingsTermsOfUseEn {
 	String get title => 'Terms of use';
 }
 
+// Path: general.time.ranges
+class _TranslationsGeneralTimeRangesEn {
+	_TranslationsGeneralTimeRangesEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get display => 'Time range';
+	String get it_repeat => 'Repeats';
+	String get it_ends => 'Ends';
+	String get forever => 'Forever';
+	String month({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Month',
+		other: 'Months',
+	);
+	String year({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Year',
+		other: 'Years',
+	);
+	String day({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Day',
+		other: 'Days',
+	);
+	String week({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Week',
+		other: 'Weeks',
+	);
+}
+
+// Path: general.time.periodicity
+class _TranslationsGeneralTimePeriodicityEn {
+	_TranslationsGeneralTimePeriodicityEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get display => 'Recurrence';
+	String get no_repeat => 'No repeat';
+	String get diary => 'Daily';
+	String get monthly => 'Monthly';
+	String get annually => 'Annually';
+	String get quaterly => 'Quarterly';
+	String get weekly => 'Weekly';
+	String get custom => 'Custom';
+	String get infinite => 'Always';
+}
+
 // Path: general.time.current
 class _TranslationsGeneralTimeCurrentEn {
 	_TranslationsGeneralTimeCurrentEn._(this._root);
@@ -946,11 +986,25 @@ class _TranslationsGeneralTimeCurrentEn {
 
 	// Translations
 	String get monthly => 'This month';
-	String get annualy => 'This year';
+	String get annually => 'This year';
 	String get quaterly => 'This quarter';
 	String get weekly => 'This week';
 	String get infinite => 'For ever';
 	String get custom => 'Custom Range';
+}
+
+// Path: general.time.all
+class _TranslationsGeneralTimeAllEn {
+	_TranslationsGeneralTimeAllEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get diary => 'Every day';
+	String get monthly => 'Every month';
+	String get annually => 'Every year';
+	String get quaterly => 'Every quarterly';
+	String get weekly => 'Every week';
 }
 
 // Path: tabs.tab1.account_resume
@@ -1360,19 +1414,12 @@ class _TranslationsGeneralTimeEs extends _TranslationsGeneralTimeEn {
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get range => 'Rango temporal';
-	@override String get diary => 'Diaría';
-	@override String get monthly => 'Mensual';
-	@override String get annualy => 'Anual';
-	@override String get quaterly => 'Trimestral';
-	@override String get weekly => 'Semanal';
-	@override String get custom => 'Personalizado';
-	@override String get infinite => 'Siempre';
 	@override String get start_date => 'Fecha de inicio';
 	@override String get end_date => 'Fecha de fin';
-	@override String get no_repeat => 'Sin repetición';
-	@override String get periodicity => 'Periodicidad';
+	@override late final _TranslationsGeneralTimeRangesEs ranges = _TranslationsGeneralTimeRangesEs._(_root);
+	@override late final _TranslationsGeneralTimePeriodicityEs periodicity = _TranslationsGeneralTimePeriodicityEs._(_root);
 	@override late final _TranslationsGeneralTimeCurrentEs current = _TranslationsGeneralTimeCurrentEs._(_root);
+	@override late final _TranslationsGeneralTimeAllEs all = _TranslationsGeneralTimeAllEs._(_root);
 }
 
 // Path: general.transaction_order
@@ -1820,6 +1867,54 @@ class _TranslationsSettingsTermsOfUseEs extends _TranslationsSettingsTermsOfUseE
 	@override String get title => 'Términos de uso';
 }
 
+// Path: general.time.ranges
+class _TranslationsGeneralTimeRangesEs extends _TranslationsGeneralTimeRangesEn {
+	_TranslationsGeneralTimeRangesEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get display => 'Time range';
+	@override String get it_repeat => 'Se repite';
+	@override String get it_ends => 'Termina';
+	@override String get forever => 'Para siempre';
+	@override String month({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Mes',
+		other: 'Meses',
+	);
+	@override String year({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Año',
+		other: 'Años',
+	);
+	@override String day({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Día',
+		other: 'Días',
+	);
+	@override String week({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Semana',
+		other: 'Semanas',
+	);
+}
+
+// Path: general.time.periodicity
+class _TranslationsGeneralTimePeriodicityEs extends _TranslationsGeneralTimePeriodicityEn {
+	_TranslationsGeneralTimePeriodicityEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get display => 'Periodicidad';
+	@override String get range => 'Rango temporal';
+	@override String get no_repeat => 'Sin repetición';
+	@override String get diary => 'Diaría';
+	@override String get monthly => 'Mensual';
+	@override String get annually => 'Anual';
+	@override String get quaterly => 'Trimestral';
+	@override String get weekly => 'Semanal';
+	@override String get custom => 'Personalizado';
+	@override String get infinite => 'Siempre';
+}
+
 // Path: general.time.current
 class _TranslationsGeneralTimeCurrentEs extends _TranslationsGeneralTimeCurrentEn {
 	_TranslationsGeneralTimeCurrentEs._(_TranslationsEs root) : this._root = root, super._(root);
@@ -1827,12 +1922,27 @@ class _TranslationsGeneralTimeCurrentEs extends _TranslationsGeneralTimeCurrentE
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get diary => 'Este día';
 	@override String get monthly => 'Este mes';
-	@override String get annualy => 'Este año';
+	@override String get annually => 'Este año';
 	@override String get quaterly => 'Este trimestre';
 	@override String get weekly => 'Esta semana';
 	@override String get infinite => 'Desde siempre';
 	@override String get custom => 'Rango personalizado';
+}
+
+// Path: general.time.all
+class _TranslationsGeneralTimeAllEs extends _TranslationsGeneralTimeAllEn {
+	_TranslationsGeneralTimeAllEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get diary => 'Todos los días';
+	@override String get monthly => 'Todos los meses';
+	@override String get annually => 'Todos los años';
+	@override String get quaterly => 'Todos los trimestres';
+	@override String get weekly => 'Todas las semanas';
 }
 
 // Path: tabs.tab1.account_resume
@@ -1918,24 +2028,48 @@ extension on _TranslationsEn {
 			case 'general.filters': return 'Filters';
 			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
 			case 'general.clipboard.error': return 'Error al copiar';
-			case 'general.time.range': return 'Time range';
-			case 'general.time.monthly': return 'Monthly';
-			case 'general.time.diary': return 'Diary';
-			case 'general.time.annualy': return 'Annualy';
-			case 'general.time.quaterly': return 'Quaterly';
-			case 'general.time.weekly': return 'Weekly';
-			case 'general.time.custom': return 'Custom';
-			case 'general.time.infinite': return 'Always';
 			case 'general.time.start_date': return 'Start date';
 			case 'general.time.end_date': return 'End date';
-			case 'general.time.no_repeat': return 'No recurrent';
-			case 'general.time.periodicity': return 'Periodicity';
+			case 'general.time.ranges.display': return 'Time range';
+			case 'general.time.ranges.it_repeat': return 'Repeats';
+			case 'general.time.ranges.it_ends': return 'Ends';
+			case 'general.time.ranges.forever': return 'Forever';
+			case 'general.time.ranges.month': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Month',
+				other: 'Months',
+			);
+			case 'general.time.ranges.year': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Year',
+				other: 'Years',
+			);
+			case 'general.time.ranges.day': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Day',
+				other: 'Days',
+			);
+			case 'general.time.ranges.week': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Week',
+				other: 'Weeks',
+			);
+			case 'general.time.periodicity.display': return 'Recurrence';
+			case 'general.time.periodicity.no_repeat': return 'No repeat';
+			case 'general.time.periodicity.diary': return 'Daily';
+			case 'general.time.periodicity.monthly': return 'Monthly';
+			case 'general.time.periodicity.annually': return 'Annually';
+			case 'general.time.periodicity.quaterly': return 'Quarterly';
+			case 'general.time.periodicity.weekly': return 'Weekly';
+			case 'general.time.periodicity.custom': return 'Custom';
+			case 'general.time.periodicity.infinite': return 'Always';
 			case 'general.time.current.monthly': return 'This month';
-			case 'general.time.current.annualy': return 'This year';
+			case 'general.time.current.annually': return 'This year';
 			case 'general.time.current.quaterly': return 'This quarter';
 			case 'general.time.current.weekly': return 'This week';
 			case 'general.time.current.infinite': return 'For ever';
 			case 'general.time.current.custom': return 'Custom Range';
+			case 'general.time.all.diary': return 'Every day';
+			case 'general.time.all.monthly': return 'Every month';
+			case 'general.time.all.annually': return 'Every year';
+			case 'general.time.all.quaterly': return 'Every quarterly';
+			case 'general.time.all.weekly': return 'Every week';
 			case 'general.transaction_order.display': return 'Order transactions';
 			case 'general.transaction_order.category': return 'By category';
 			case 'general.transaction_order.quantity': return 'By quantity';
@@ -2271,24 +2405,50 @@ extension on _TranslationsEs {
 			case 'general.filters': return 'Filtros';
 			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
 			case 'general.clipboard.error': return 'Error al copiar';
-			case 'general.time.range': return 'Rango temporal';
-			case 'general.time.diary': return 'Diaría';
-			case 'general.time.monthly': return 'Mensual';
-			case 'general.time.annualy': return 'Anual';
-			case 'general.time.quaterly': return 'Trimestral';
-			case 'general.time.weekly': return 'Semanal';
-			case 'general.time.custom': return 'Personalizado';
-			case 'general.time.infinite': return 'Siempre';
 			case 'general.time.start_date': return 'Fecha de inicio';
 			case 'general.time.end_date': return 'Fecha de fin';
-			case 'general.time.no_repeat': return 'Sin repetición';
-			case 'general.time.periodicity': return 'Periodicidad';
+			case 'general.time.ranges.display': return 'Time range';
+			case 'general.time.ranges.it_repeat': return 'Se repite';
+			case 'general.time.ranges.it_ends': return 'Termina';
+			case 'general.time.ranges.forever': return 'Para siempre';
+			case 'general.time.ranges.month': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Mes',
+				other: 'Meses',
+			);
+			case 'general.time.ranges.year': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Año',
+				other: 'Años',
+			);
+			case 'general.time.ranges.day': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Día',
+				other: 'Días',
+			);
+			case 'general.time.ranges.week': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Semana',
+				other: 'Semanas',
+			);
+			case 'general.time.periodicity.display': return 'Periodicidad';
+			case 'general.time.periodicity.range': return 'Rango temporal';
+			case 'general.time.periodicity.no_repeat': return 'Sin repetición';
+			case 'general.time.periodicity.diary': return 'Diaría';
+			case 'general.time.periodicity.monthly': return 'Mensual';
+			case 'general.time.periodicity.annually': return 'Anual';
+			case 'general.time.periodicity.quaterly': return 'Trimestral';
+			case 'general.time.periodicity.weekly': return 'Semanal';
+			case 'general.time.periodicity.custom': return 'Personalizado';
+			case 'general.time.periodicity.infinite': return 'Siempre';
+			case 'general.time.current.diary': return 'Este día';
 			case 'general.time.current.monthly': return 'Este mes';
-			case 'general.time.current.annualy': return 'Este año';
+			case 'general.time.current.annually': return 'Este año';
 			case 'general.time.current.quaterly': return 'Este trimestre';
 			case 'general.time.current.weekly': return 'Esta semana';
 			case 'general.time.current.infinite': return 'Desde siempre';
 			case 'general.time.current.custom': return 'Rango personalizado';
+			case 'general.time.all.diary': return 'Todos los días';
+			case 'general.time.all.monthly': return 'Todos los meses';
+			case 'general.time.all.annually': return 'Todos los años';
+			case 'general.time.all.quaterly': return 'Todos los trimestres';
+			case 'general.time.all.weekly': return 'Todas las semanas';
 			case 'general.transaction_order.display': return 'Ordenar transacciones';
 			case 'general.transaction_order.category': return 'Por categoría';
 			case 'general.transaction_order.quantity': return 'Por cantidad';

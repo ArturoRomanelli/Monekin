@@ -77,7 +77,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
           ],
         ),
         body: TabBarView(children: [
-          Padding(
+          SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -87,62 +87,18 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                     body: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Row(
+                              Column(
                                 children: [
-                                  CurrencyDisplayer(
-                                    amountToConvert: widget.budget.limitAmount,
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(fontWeight: FontWeight.w700),
+                                  Text(
+                                    "Gastado hasta hoy",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              StreamBuilder(
-                                  stream: widget.budget.currentValue,
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return Skeleton(width: 200, height: 16);
-                                    }
-
-                                    return Row(
-                                      children: [
-                                        Text(
-                                            'Gasto diario restante máximo recomendado: ',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall!
-                                                .copyWith(
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 12)),
-                                        CurrencyDisplayer(
-                                            showDecimals: false,
-                                            textStyle: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall!
-                                                .copyWith(
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                            amountToConvert: ((widget.budget
-                                                            .limitAmount -
-                                                        snapshot.data!) >
-                                                    0)
-                                                ? ((widget.budget.limitAmount -
-                                                        snapshot.data!) /
-                                                    widget.budget.daysLeft)
-                                                : 0)
-                                      ],
-                                    );
-                                  }),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
                                   StreamBuilder(
                                       stream: widget.budget.currentValue,
                                       builder: (context, snapshot) {
@@ -153,22 +109,29 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
 
                                         return CurrencyDisplayer(
                                           amountToConvert: snapshot.data!,
-                                          showDecimals: false,
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w700),
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w700),
                                         );
                                       }),
-                                  StreamBuilder(
-                                      stream:
-                                          widget.budget.percentageAlreadyUsed,
-                                      builder: (context, snapshot) {
-                                        return Text(
-                                          NumberFormat.percentPattern()
-                                              .format(snapshot.data ?? 0),
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w300),
-                                        );
-                                      }),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    "Limite del presupuesto",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                  CurrencyDisplayer(
+                                    amountToConvert: widget.budget.limitAmount,
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                  ),
                                 ],
                               ),
                             ],
@@ -180,6 +143,50 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                               return AnimatedProgressBar(
                                   value: snapshot.data ?? 0);
                             })
+                      ],
+                    )),
+                const SizedBox(height: 16),
+                CardWithHeader(
+                    title: 'Datos del presupuesto',
+                    body: Column(
+                      children: [
+                        ListTile(
+                            title: Text(t.general.time.periodicity.display),
+                            trailing: Text(widget.budget.intervalPeriod
+                                    ?.allThePeriodsText(context) ??
+                                t.general.time.periodicity.no_repeat)),
+                        const Divider(indent: 12),
+                        ListTile(
+                            title: Text(t.general.time.start_date),
+                            trailing: Text(DateFormat.yMMMd()
+                                .format(widget.budget.currentDateRange[0]))),
+                        const Divider(indent: 12),
+                        ListTile(
+                            title: Text(t.general.time.end_date),
+                            trailing: Text(DateFormat.yMMMd()
+                                .format(widget.budget.currentDateRange[1]))),
+                        const Divider(indent: 12),
+                        ListTile(
+                          title:
+                              Text('Gasto medio diario restante recomendado'),
+                          trailing: StreamBuilder(
+                              stream: widget.budget.currentValue,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Skeleton(width: 25, height: 16);
+                                }
+
+                                return CurrencyDisplayer(
+                                    amountToConvert:
+                                        ((widget.budget.limitAmount -
+                                                    snapshot.data!) >
+                                                0)
+                                            ? ((widget.budget.limitAmount -
+                                                    snapshot.data!) /
+                                                widget.budget.daysLeft)
+                                            : 0);
+                              }),
+                        )
                       ],
                     )),
                 const SizedBox(height: 16),

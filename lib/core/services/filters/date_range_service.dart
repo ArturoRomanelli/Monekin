@@ -21,7 +21,7 @@ enum DateRange {
     } else if (this == quaterly) {
       return t.general.time.current.quaterly;
     } else if (this == annualy) {
-      return t.general.time.current.annualy;
+      return t.general.time.current.annually;
     } else if (this == infinite) {
       return t.general.time.current.infinite;
     } else if (this == custom) {
@@ -31,21 +31,21 @@ enum DateRange {
     return '';
   }
 
-  String rangeText(BuildContext context) {
+  String periodicityText(BuildContext context) {
     final t = Translations.of(context);
 
     if (this == weekly) {
-      return t.general.time.weekly;
+      return t.general.time.periodicity.weekly;
     } else if (this == monthly) {
-      return t.general.time.monthly;
+      return t.general.time.periodicity.monthly;
     } else if (this == quaterly) {
-      return t.general.time.quaterly;
+      return t.general.time.periodicity.quaterly;
     } else if (this == annualy) {
-      return t.general.time.annualy;
+      return t.general.time.periodicity.annually;
     } else if (this == infinite) {
-      return t.general.time.infinite;
+      return t.general.time.periodicity.infinite;
     } else if (this == custom) {
-      return t.general.time.custom;
+      return t.general.time.periodicity.custom;
     }
 
     return '';
@@ -115,7 +115,7 @@ class DateRangeService {
                 ),
               if (icon != null) Icon(icon, size: 25),
               const SizedBox(height: 4),
-              Text(dateRange.rangeText(context))
+              Text(dateRange.periodicityText(context))
             ],
           ),
         ),

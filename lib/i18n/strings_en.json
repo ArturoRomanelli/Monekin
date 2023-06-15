@@ -29,25 +29,55 @@
       "error": "Error al copiar"
     },
     "TIME": {
-      "range": "Time range",
-      "monthly": "Monthly",
-      "diary": "Diary",
-      "annualy": "Annualy",
-      "quaterly": "Quaterly",
-      "weekly": "Weekly",
-      "custom": "Custom",
-      "infinite": "Always",
       "start-date": "Start date",
       "end-date": "End date",
-      "no-repeat": "No recurrent",
-      "periodicity": "Periodicity",
+      "RANGES": {
+        "display": "Time range",
+        "it-repeat": "Repeats",
+        "it-ends": "Ends",
+        "forever": "Forever",
+        "month": {
+          "one": "Month",
+          "other": "Months"
+        },
+        "year": {
+          "one": "Year",
+          "other": "Years"
+        },
+        "day": {
+          "one": "Day",
+          "other": "Days"
+        },
+        "week": {
+          "one": "Week",
+          "other": "Weeks"
+        }
+      },
+      "PERIODICITY": {
+        "display": "Recurrence",
+        "no-repeat": "No repeat",
+        "diary": "Daily",
+        "monthly": "Monthly",
+        "annually": "Annually",
+        "quaterly": "Quarterly",
+        "weekly": "Weekly",
+        "custom": "Custom",
+        "infinite": "Always"
+      },
       "CURRENT": {
         "Monthly": "This month",
-        "Annualy": "This year",
+        "Annually": "This year",
         "Quaterly": "This quarter",
         "Weekly": "This week",
         "Infinite": "For ever",
         "Custom": "Custom Range"
+      },
+      "ALL": {
+        "diary": "Every day",
+        "Monthly": "Every month",
+        "Annually": "Every year",
+        "Quaterly": "Every quarterly",
+        "Weekly": "Every week"
       }
     },
     "TRANSACTION-ORDER": {

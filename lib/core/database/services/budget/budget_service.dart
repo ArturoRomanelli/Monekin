@@ -14,7 +14,9 @@ class BudgetServive {
           id: budget.id,
           name: budget.name,
           limitAmount: budget.limitAmount,
-          intervalPeriod: budget.intervalPeriod));
+          intervalPeriod: budget.intervalPeriod,
+          startDate: budget.startDate,
+          endDate: budget.endDate));
 
       for (final category in budget.categories) {
         await db.into(db.budgetCategory).insert(

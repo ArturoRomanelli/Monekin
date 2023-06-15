@@ -26,7 +26,7 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/user_avatar.dart';
-import '../transactions/recurrent-transactions.dart';
+import '../transactions/recurrent_transactions_page.dart';
 
 class Tab1Page extends StatefulWidget {
   const Tab1Page({Key? key}) : super(key: key);

@@ -7,6 +7,7 @@ import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dar
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class BudgetsPage extends StatelessWidget {
   const BudgetsPage({super.key});
@@ -55,12 +56,32 @@ class BudgetsPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              budget.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(fontWeight: FontWeight.w700),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  budget.name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(fontWeight: FontWeight.w700),
+                                ),
+                                Chip(
+                                    side: const BorderSide(
+                                        width: 0, color: Colors.transparent),
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer,
+                                    padding: const EdgeInsets.all(0),
+                                    label: Text(
+                                      budget.intervalPeriod
+                                              ?.allThePeriodsText(context) ??
+                                          '${DateFormat.yMMMd().format(budget.currentDateRange[0])} - ${DateFormat.yMMMd().format(budget.currentDateRange[1])}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall,
+                                    ))
+                              ],
                             ),
                             const SizedBox(height: 12),
                             Row(

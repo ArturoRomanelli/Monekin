@@ -42,6 +42,7 @@ class _RecurrentTransactionPageState extends State<RecurrentTransactionPage> {
             return TransactionListComponent(
                 transactions: transactions,
                 showRecurrentInfo: true,
+                showGroupDivider: false,
                 prevPage: const RecurrentTransactionPage());
           }),
     );

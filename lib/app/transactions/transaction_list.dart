@@ -80,33 +80,46 @@ class TransactionListComponent extends StatelessWidget {
                   )
               ],
             ),
-            subtitle: Column(
+            subtitle: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${transaction.account.name} • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} ',
+                  '${transaction.account.name} ${transaction is MoneyRecurrentRule && showRecurrentInfo ? '' : ' • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} '}',
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w300),
                 ),
                 if (transaction is MoneyRecurrentRule && showRecurrentInfo) ...[
                   const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.repeat_rounded,
-                        size: 14,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "In ${transaction.date.difference(DateTime.now()).inDays} days",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                    ],
-                  ),
+                  Builder(builder: (context) {
+                    final dateDiff =
+                        transaction.date.difference(DateTime.now()).inDays;
+
+                    final isPending = dateDiff >= 0;
+
+                    return Row(
+                      children: [
+                        Icon(
+                          Icons.repeat_rounded,
+                          size: 14,
+                          color: isPending
+                              ? Theme.of(context).primaryColor
+                              : Colors.red,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                            isPending
+                                ? "In ${dateDiff} days"
+                                : "Pendiente, hace ${dateDiff * -1} días",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: isPending
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.red,
+                            ))
+                      ],
+                    );
+                  }),
                   const SizedBox(height: 2),
                 ]
               ],

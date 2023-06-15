@@ -10,6 +10,7 @@ import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/models/account/account.dart';
@@ -40,6 +41,9 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
   List<Account> accounts = [];
 
   TransactionPeriodicity? intervalPeriod = TransactionPeriodicity.month;
+
+  DateTime startDate = DateTime.now();
+  DateTime? endDate;
 
   Widget selector({
     required String title,
@@ -93,6 +97,8 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
       name: nameController.text,
       limitAmount: valueToNumber!,
       intervalPeriod: intervalPeriod,
+      startDate: intervalPeriod == null ? startDate : null,
+      endDate: intervalPeriod == null ? endDate : null,
       categories: categories.map((e) => e.id).toList(),
       accounts: accounts.map((e) => e.id).toList(),
     );
@@ -102,14 +108,14 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
         onSuccess();
       }).catchError((error) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error)));
+            .showSnackBar(SnackBar(content: Text(error.toString())));
       });
     } else {
       BudgetServive.instance.insertBudget(toPush).then((value) {
         onSuccess();
       }).catchError((error) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error)));
+            .showSnackBar(SnackBar(content: Text(error.toString())));
       });
     }
   }
@@ -126,6 +132,11 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
   fillForm(Budget budget) {
     nameController.text = budget.name;
     valueController.text = budget.limitAmount.abs().toString();
+
+    if (budget.intervalPeriod == null) {
+      startDate = budget.startDate!;
+      endDate = budget.endDate;
+    }
 
     CategoryService.instance
         .getCategories(
@@ -281,16 +292,16 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                     labelText: '${t.budgets.form.repetition} *',
                   ),
                   items: [
-                    const DropdownMenuItem(
+                    DropdownMenuItem(
                       value: null,
-                      child: Text('Ninguno'),
+                      child: Text(t.general.time.periodicity.no_repeat),
                     ),
                     ...List.generate(
                         TransactionPeriodicity.values.length,
                         (index) => DropdownMenuItem(
                             value: TransactionPeriodicity.values[index],
-                            child: Text(
-                                TransactionPeriodicity.values[index].name)))
+                            child: Text(TransactionPeriodicity.values[index]
+                                .allThePeriodsText(context))))
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -298,6 +309,64 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                     });
                   },
                 ),
+                if (intervalPeriod == null) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: TextEditingController(
+                              text: DateFormat.yMMMd().format(startDate)),
+                          decoration: InputDecoration(
+                            labelText: '${t.general.time.start_date} *',
+                          ),
+                          readOnly: true,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: startDate,
+                                firstDate: DateTime(1700),
+                                lastDate: endDate ?? DateTime(2099));
+
+                            if (pickedDate == null) return;
+
+                            setState(() {
+                              startDate = pickedDate;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: TextFormField(
+                          controller: TextEditingController(
+                              text: endDate != null
+                                  ? DateFormat.yMMMd().format(endDate!)
+                                  : ''),
+                          decoration: InputDecoration(
+                            labelText: '${t.general.time.end_date} *',
+                          ),
+                          readOnly: true,
+                          validator: (value) =>
+                              fieldValidator(value, isRequired: true),
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: endDate ?? DateTime.now(),
+                                firstDate: startDate,
+                                lastDate: DateTime(2099));
+
+                            if (pickedDate == null) return;
+
+                            setState(() {
+                              endDate = pickedDate;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ]
               ]),
             )));
   }

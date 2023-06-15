@@ -29,25 +29,57 @@
       "error": "Error al copiar"
     },
     "TIME": {
-      "range": "Rango temporal",
-      "diary": "Diaría",
-      "monthly": "Mensual",
-      "annualy": "Anual",
-      "quaterly": "Trimestral",
-      "weekly": "Semanal",
-      "custom": "Personalizado",
-      "infinite": "Siempre",
       "start-date": "Fecha de inicio",
       "end-date": "Fecha de fin",
-      "no-repeat": "Sin repetición",
-      "periodicity": "Periodicidad",
+      "RANGES": {
+        "display": "Time range",
+        "it-repeat": "Se repite",
+        "it-ends": "Termina",
+        "forever": "Para siempre",
+        "month": {
+          "one": "Mes",
+          "other": "Meses"
+        },
+        "year": {
+          "one": "Año",
+          "other": "Años"
+        },
+        "day": {
+          "one": "Día",
+          "other": "Días"
+        },
+        "week": {
+          "one": "Semana",
+          "other": "Semanas"
+        }
+      },
+      "PERIODICITY": {
+        "display": "Periodicidad",
+        "range": "Rango temporal",
+        "no-repeat": "Sin repetición",
+        "diary": "Diaría",
+        "monthly": "Mensual",
+        "annually": "Anual",
+        "quaterly": "Trimestral",
+        "weekly": "Semanal",
+        "custom": "Personalizado",
+        "infinite": "Siempre"
+      },
       "CURRENT": {
+        "diary": "Este día",
         "Monthly": "Este mes",
-        "Annualy": "Este año",
+        "Annually": "Este año",
         "Quaterly": "Este trimestre",
         "Weekly": "Esta semana",
         "Infinite": "Desde siempre",
         "Custom": "Rango personalizado"
+      },
+      "ALL": {
+        "diary": "Todos los días",
+        "Monthly": "Todos los meses",
+        "Annually": "Todos los años",
+        "Quaterly": "Todos los trimestres",
+        "Weekly": "Todas las semanas"
       }
     },
     "TRANSACTION-ORDER": {

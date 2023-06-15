@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:finlytics/app/transactions/widgets/interval_selector.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class RecurrencyData extends Equatable {
@@ -28,12 +29,14 @@ class RecurrencyData extends Equatable {
 
   bool get isNoRecurrent => ruleRecurrentLimit == null;
 
-  String get formText {
+  String formText(BuildContext context) {
+    final t = Translations.of(context);
+
     if (isNoRecurrent) {
-      return 'No se repite';
+      return t.general.time.periodicity.no_repeat;
     } else if (ruleRecurrentLimit!.untilMode == RuleUntilMode.infinity &&
         intervalEach == 1) {
-      return 'Todos los ${intervalPeriod?.name}';
+      return '${intervalPeriod?.allThePeriodsText(context)}';
     } else {
       if (ruleRecurrentLimit!.untilMode == RuleUntilMode.infinity) {
         return 'Each $intervalEach ${intervalPeriod?.name}';
@@ -83,7 +86,7 @@ class _IntervalSelectorHelpState extends State<IntervalSelectorHelp> {
 
           return RadioListTile(
               value: radioItem,
-              title: Text(radioItem.formText),
+              title: Text(radioItem.formText(context)),
               groupValue: widget.selectedRecurrentRule,
               onChanged: (value) => Navigator.pop(context, radioItem));
         }),
@@ -92,13 +95,13 @@ class _IntervalSelectorHelpState extends State<IntervalSelectorHelp> {
             null)
           RadioListTile(
               value: widget.selectedRecurrentRule,
-              title: Text(widget.selectedRecurrentRule.formText),
+              title: Text(widget.selectedRecurrentRule.formText(context)),
               groupValue: widget.selectedRecurrentRule,
               onChanged: (value) =>
                   Navigator.pop(context, widget.selectedRecurrentRule)),
         RadioListTile(
             value: null,
-            title: Text('Personalizado'),
+            title: Text(t.general.time.periodicity.custom),
             groupValue: widget.selectedRecurrentRule,
             onChanged: (value) {
               Navigator.push<RecurrencyData>(

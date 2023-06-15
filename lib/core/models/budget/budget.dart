@@ -47,14 +47,17 @@ class Budget extends BudgetInDB {
     return DateTime.now().difference(currentDateRange[1]).inDays;
   }
 
-  Stream<double> get currentValue {
+  /// Get the amount of money relative to this budget for a given date
+  Stream<double> getValueOnDate(DateTime? date) {
+    date ??= DateTime.now();
+
     return AccountService.instance
         .getAccountsData(
       accountIds: accounts,
       accountDataFilter: AccountDataFilter.balance,
       categoriesIds: categories,
       startDate: currentDateRange[0],
-      endDate: currentDateRange[1],
+      endDate: date,
     )
         .map((res) {
       res = res * -1;
@@ -67,6 +70,12 @@ class Budget extends BudgetInDB {
     });
   }
 
+  /// Get the amount of money relative to this budget for the current date-time
+  Stream<double> get currentValue {
+    return getValueOnDate(null);
+  }
+
+  /// Get the percentage of the budget already filled
   Stream<double> get percentageAlreadyUsed {
     return currentValue.map((event) => event / limitAmount);
   }

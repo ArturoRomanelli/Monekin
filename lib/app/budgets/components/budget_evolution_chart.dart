@@ -1,54 +1,36 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
+import 'package:finlytics/core/models/budget/budget.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class LineChartDataItem {
-  List<double> balance;
-  List<String> labels;
+class BudgetEvolutionChart extends StatelessWidget {
+  const BudgetEvolutionChart({super.key, required this.budget});
 
-  LineChartDataItem({required this.balance, required this.labels});
-}
-
-class FundEvolutionLineChart extends StatelessWidget {
-  const FundEvolutionLineChart(
-      {super.key,
-      required this.startDate,
-      required this.endDate,
-      this.accountsFilter});
-
-  final DateTime? startDate;
-  final DateTime? endDate;
-
-  final List<Account>? accountsFilter;
+  final Budget budget;
 
   Future<LineChartDataItem?> getEvolutionData(
     BuildContext context,
   ) async {
-    if (startDate == null || endDate == null) return null;
-
     List<Future<double>> balance = [];
     List<String> labels = [];
 
-    final accountService = AccountService.instance;
-
-    final accounts = accountsFilter ?? await accountService.getAccounts().first;
+    final startDate = budget.currentDateRange[0];
+    final endDate = budget.currentDateRange[1];
 
     DateTime currentDay =
-        DateTime(startDate!.year, startDate!.month, startDate!.day);
+        DateTime(startDate.year, startDate.month, startDate.day);
 
-    final dayRange = (endDate!.difference(startDate!).inDays / 100).ceil();
+    final dayRange = (endDate.difference(startDate).inDays / 100).ceil();
 
-    while (currentDay.compareTo(endDate!) < 0) {
+    while (currentDay.compareTo(endDate) < 0) {
       labels.add(DateFormat.yMMMMd().format(currentDay));
 
-      balance.add(accountService
-          .getAccountsMoney(
-              accountIds: accounts.map((e) => e.id), date: currentDay)
-          .first);
+      balance.add(budget.getValueOnDate(currentDay).first);
 
       currentDay = currentDay.add(Duration(days: dayRange));
     }
@@ -156,10 +138,10 @@ class FundEvolutionLineChart extends StatelessWidget {
                 ),
               ),
               borderData: FlBorderData(show: false),
-              minY:
-                  snapshot.data!.balance.min - snapshot.data!.balance.min * 0.1,
-              maxY:
+              minY: 0,
+              maxY: max(
                   snapshot.data!.balance.max + snapshot.data!.balance.max * 0.1,
+                  budget.limitAmount),
               lineBarsData: [
                 LineChartBarData(
                   spots: List.generate(

@@ -1,7 +1,8 @@
 import 'package:finlytics/app/accounts/account_form.dart';
+import 'package:finlytics/app/budgets/budget_form_page.dart';
+import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/tabs/tab1.page.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
-import 'package:finlytics/app/tabs/tab3.page.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _TabsPageState extends State<TabsPage> {
     tabsPages.addAll([
       _buildTabComponent(widget: const Tab1Page(), context: context, key: 0),
       _buildTabComponent(widget: const Tab2Page(), context: context, key: 1),
-      _buildTabComponent(widget: const Tab3Page(), context: context, key: 2),
+      _buildTabComponent(widget: const BudgetsPage(), context: context, key: 2),
     ]);
 
     currentSelectedIndex = widget.currentPageIndex;
@@ -96,6 +97,18 @@ class _TabsPageState extends State<TabsPage> {
       key: ValueKey<int>(key),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          if (currentSelectedIndex == 2) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => BudgetFormPage(
+                          prevPage:
+                              TabsPage(currentPageIndex: currentSelectedIndex),
+                        )));
+
+            return;
+          }
+
           if ((await accountService.getAccounts().first).isEmpty) {
             _showShouldCreateAccountWarn();
 

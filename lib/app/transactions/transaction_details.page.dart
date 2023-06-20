@@ -146,6 +146,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             transaction: widget.transaction, prevPage: widget.prevPage);
 
     final t = Translations.of(context);
+
     return Scaffold(
       appBar: AppBar(elevation: 0),
       body: SingleChildScrollView(
@@ -190,7 +191,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              '${(widget.transaction as MoneyRecurrentRule).recurrencyData.formText} ',
+                              (widget.transaction as MoneyRecurrentRule)
+                                  .recurrencyData
+                                  .formText(context),
                               style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: Theme.of(context).primaryColor),

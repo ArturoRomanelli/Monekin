@@ -1,9 +1,7 @@
 import 'package:finlytics/app/budgets/budget_details_page.dart';
-import 'package:finlytics/app/budgets/budget_form_page.dart';
 import 'package:finlytics/core/database/services/budget/budget_service.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -20,18 +18,6 @@ class BudgetsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(t.budgets.title),
       ),
-      persistentFooterButtons: [
-        PersistentFooterButton(
-            child: FilledButton.icon(
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const BudgetFormPage(
-                              prevPage: BudgetsPage(),
-                            ))),
-                icon: const Icon(Icons.add),
-                label: Text(t.budgets.form.create)))
-      ],
       body: StreamBuilder(
           stream: BudgetServive.instance.getBudgets(),
           builder: (context, snapshot) {

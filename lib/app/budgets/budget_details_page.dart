@@ -5,12 +5,15 @@ import 'package:finlytics/app/budgets/components/budget_evolution_chart.dart';
 import 'package:finlytics/app/tabs/card_with_header.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/services/budget/budget_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/budget/budget.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/finlytics_popup_menu_button.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/core/utils/list_tile_action_item.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -40,30 +43,11 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
             Tab(text: t.general.transactions),
           ]),
           actions: [
-            PopupMenuButton(
-              itemBuilder: (context) {
-                return <PopupMenuEntry<String>>[
-                  PopupMenuItem(
-                      value: 'edit',
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.edit),
-                        minLeadingWidth: 26,
-                        title: Text(t.budgets.form.edit),
-                      )),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                      value: 'delete',
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.delete),
-                        minLeadingWidth: 26,
-                        title: Text(t.general.delete),
-                      ))
-                ];
-              },
-              onSelected: (String value) {
-                if (value == 'edit') {
+            FinlyticsPopuMenuButton(actionItems: [
+              ListTileActionItem(
+                label: t.budgets.form.edit,
+                icon: Icons.edit,
+                onClick: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -71,9 +55,42 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                             prevPage: const BudgetsPage(),
                             budgetToEdit: widget.budget),
                       ));
-                }
-              },
-            ),
+                },
+              ),
+              ListTileActionItem(
+                label: t.general.delete,
+                icon: Icons.delete,
+                onClick: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(t.budgets.delete),
+                        content: Text(t.budgets.delete_warning),
+                        actions: [
+                          TextButton(
+                            child: Text(t.general.confirm),
+                            onPressed: () {
+                              BudgetServive.instance
+                                  .deleteBudget(widget.budget.id)
+                                  .then((value) {
+                                Navigator.pop(context);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(t.general.delete)));
+                              }).catchError((err) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('$err')));
+                              }).whenComplete(() => Navigator.pop(context));
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              )
+            ])
           ],
         ),
         body: TabBarView(children: [

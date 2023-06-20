@@ -1,5 +1,8 @@
 import 'package:drift/drift.dart';
+import 'package:finlytics/app/onboarding/onboarding.dart';
 import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/services/app-data/app_data_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/theme.dart';
 import 'package:finlytics/i18n/translations.g.dart';
@@ -7,20 +10,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(ProviderScope(
       child: StreamBuilder(
-          stream: UserSettingService.instance.getSettings((p0) =>
-              p0.settingKey.equalsValue(SettingKey.appLanguage) |
-              p0.settingKey.equalsValue(SettingKey.themeMode)),
+          stream: Rx.combineLatest2(
+              UserSettingService.instance.getSettings((p0) =>
+                  p0.settingKey.equalsValue(SettingKey.appLanguage) |
+                  p0.settingKey.equalsValue(SettingKey.themeMode)),
+              AppDataService.instance
+                  .getAppDataItems((p0) => DatabaseImpl.instance.buildExpr([])),
+              (a, b) => (a, b)),
           builder: (context, snapshot) {
             print('Finding initial user settings...');
 
             if (snapshot.hasData) {
-              final userSettings = snapshot.data!;
+              final userSettings = snapshot.data!.$1;
+              final appDataItems = snapshot.data!.$2;
 
               final lang = userSettings
                   .firstWhere(
@@ -40,13 +49,21 @@ void main() {
                     .then((value) => null);
               }
 
+              final userHasSeenIntro = appDataItems
+                  .firstWhere(
+                    (element) => element.appDataKey == AppDataKey.introSeen,
+                  )
+                  .appDataValue;
+
               return TranslationProvider(
-                  child: MyApp(
-                themeMode: ThemeMode.values.byName(userSettings
-                    .firstWhere(
-                        (element) => element.settingKey == SettingKey.themeMode)
-                    .settingValue!),
-              ));
+                child: MyApp(
+                  goToIntro: userHasSeenIntro != "true",
+                  themeMode: ThemeMode.values.byName(userSettings
+                      .firstWhere((element) =>
+                          element.settingKey == SettingKey.themeMode)
+                      .settingValue!),
+                ),
+              );
             }
 
             return Container();
@@ -54,8 +71,10 @@ void main() {
 }
 
 class MyApp extends ConsumerWidget {
+  const MyApp({super.key, required this.themeMode, required this.goToIntro});
+
   final ThemeMode themeMode;
-  const MyApp({super.key, required this.themeMode});
+  final bool goToIntro;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,6 +90,12 @@ class MyApp extends ConsumerWidget {
         theme: getThemeData(false),
         darkTheme: getThemeData(true),
         themeMode: themeMode,
-        home: const TabsPage());
+        home: Builder(builder: (context) {
+          if (!goToIntro) {
+            return const TabsPage();
+          } else {
+            return const OnboardingPage();
+          }
+        }));
   }
 }

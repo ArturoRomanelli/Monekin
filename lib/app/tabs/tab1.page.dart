@@ -1,7 +1,6 @@
 import 'package:finlytics/app/accounts/account_details.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/accounts/all_accounts_balance.dart';
-import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
 import 'package:finlytics/app/stats/cash_flow.dart';
@@ -56,11 +55,6 @@ class _Tab1PageState extends State<Tab1Page> {
       'icon': Icons.settings_outlined,
       'label': 'Settings',
       'route': const SettingsPage()
-    },
-    {
-      'icon': Icons.access_alarm,
-      'label': 'Budget',
-      'route': const BudgetsPage()
     },
   ];
 

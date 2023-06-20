@@ -3762,11 +3762,12 @@ class AppData extends Table with TableInfo<AppData, AppDataData> {
   AppData(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _appDataKeyMeta =
       const VerificationMeta('appDataKey');
-  late final GeneratedColumn<String> appDataKey = GeneratedColumn<String>(
-      'appDataKey', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
+  late final GeneratedColumnWithTypeConverter<AppDataKey, String> appDataKey =
+      GeneratedColumn<String>('appDataKey', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: true,
+              $customConstraints: 'NOT NULL PRIMARY KEY')
+          .withConverter<AppDataKey>(AppData.$converterappDataKey);
   static const VerificationMeta _appDataValueMeta =
       const VerificationMeta('appDataValue');
   late final GeneratedColumn<String> appDataValue = GeneratedColumn<String>(
@@ -3785,14 +3786,7 @@ class AppData extends Table with TableInfo<AppData, AppDataData> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('appDataKey')) {
-      context.handle(
-          _appDataKeyMeta,
-          appDataKey.isAcceptableOrUnknown(
-              data['appDataKey']!, _appDataKeyMeta));
-    } else if (isInserting) {
-      context.missing(_appDataKeyMeta);
-    }
+    context.handle(_appDataKeyMeta, const VerificationResult.success());
     if (data.containsKey('appDataValue')) {
       context.handle(
           _appDataValueMeta,
@@ -3808,8 +3802,9 @@ class AppData extends Table with TableInfo<AppData, AppDataData> {
   AppDataData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AppDataData(
-      appDataKey: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}appDataKey'])!,
+      appDataKey: AppData.$converterappDataKey.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}appDataKey'])!),
       appDataValue: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}appDataValue']),
     );
@@ -3820,18 +3815,23 @@ class AppData extends Table with TableInfo<AppData, AppDataData> {
     return AppData(attachedDatabase, alias);
   }
 
+  static JsonTypeConverter2<AppDataKey, String, String> $converterappDataKey =
+      const EnumNameConverter<AppDataKey>(AppDataKey.values);
   @override
   bool get dontWriteConstraints => true;
 }
 
 class AppDataData extends DataClass implements Insertable<AppDataData> {
-  final String appDataKey;
+  final AppDataKey appDataKey;
   final String? appDataValue;
   const AppDataData({required this.appDataKey, this.appDataValue});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['appDataKey'] = Variable<String>(appDataKey);
+    {
+      final converter = AppData.$converterappDataKey;
+      map['appDataKey'] = Variable<String>(converter.toSql(appDataKey));
+    }
     if (!nullToAbsent || appDataValue != null) {
       map['appDataValue'] = Variable<String>(appDataValue);
     }
@@ -3851,7 +3851,8 @@ class AppDataData extends DataClass implements Insertable<AppDataData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AppDataData(
-      appDataKey: serializer.fromJson<String>(json['appDataKey']),
+      appDataKey: AppData.$converterappDataKey
+          .fromJson(serializer.fromJson<String>(json['appDataKey'])),
       appDataValue: serializer.fromJson<String?>(json['appDataValue']),
     );
   }
@@ -3859,13 +3860,14 @@ class AppDataData extends DataClass implements Insertable<AppDataData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'appDataKey': serializer.toJson<String>(appDataKey),
+      'appDataKey': serializer
+          .toJson<String>(AppData.$converterappDataKey.toJson(appDataKey)),
       'appDataValue': serializer.toJson<String?>(appDataValue),
     };
   }
 
   AppDataData copyWith(
-          {String? appDataKey,
+          {AppDataKey? appDataKey,
           Value<String?> appDataValue = const Value.absent()}) =>
       AppDataData(
         appDataKey: appDataKey ?? this.appDataKey,
@@ -3892,7 +3894,7 @@ class AppDataData extends DataClass implements Insertable<AppDataData> {
 }
 
 class AppDataCompanion extends UpdateCompanion<AppDataData> {
-  final Value<String> appDataKey;
+  final Value<AppDataKey> appDataKey;
   final Value<String?> appDataValue;
   final Value<int> rowid;
   const AppDataCompanion({
@@ -3901,7 +3903,7 @@ class AppDataCompanion extends UpdateCompanion<AppDataData> {
     this.rowid = const Value.absent(),
   });
   AppDataCompanion.insert({
-    required String appDataKey,
+    required AppDataKey appDataKey,
     this.appDataValue = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : appDataKey = Value(appDataKey);
@@ -3918,7 +3920,7 @@ class AppDataCompanion extends UpdateCompanion<AppDataData> {
   }
 
   AppDataCompanion copyWith(
-      {Value<String>? appDataKey,
+      {Value<AppDataKey>? appDataKey,
       Value<String?>? appDataValue,
       Value<int>? rowid}) {
     return AppDataCompanion(
@@ -3932,7 +3934,8 @@ class AppDataCompanion extends UpdateCompanion<AppDataData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (appDataKey.present) {
-      map['appDataKey'] = Variable<String>(appDataKey.value);
+      final converter = AppData.$converterappDataKey;
+      map['appDataKey'] = Variable<String>(converter.toSql(appDataKey.value));
     }
     if (appDataValue.present) {
       map['appDataValue'] = Variable<String>(appDataValue.value);

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:finlytics/core/database/services/app-data/app_data_service.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
@@ -73,6 +74,9 @@ class DatabaseImpl extends _$DatabaseImpl {
             // await insertInitialSettings();
             await customStatement(
                 "INSERT INTO userSettings VALUES ('avatar', 'man'), ('userName', 'User'), ('appLanguage', null), ('themeMode', 'system')");
+
+            await customStatement(
+                "INSERT INTO appData VALUES ('dbVersion', '${schemaVersion.toStringAsFixed(0)}'), ('appVersion', null), ('introSeen', 'false'), ('lastExportDate', null)");
 
             String defaultCategories = await rootBundle
                 .loadString('assets/sql/default_categories.json');

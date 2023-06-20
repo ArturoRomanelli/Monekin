@@ -7,6 +7,7 @@ import './../../../models/transaction/transaction.dart';
 import './../../../models/category/category.dart';
 import './../../../models/account/account.dart';
 import './../../services/user-setting/user_setting_service.dart';
+import './../../services/app-data/app_data_service.dart';
 
 CREATE TABLE IF NOT EXISTS currencies (
     -- ISO 4217 currency code. Identifies a currency uniquely ([see more](https://en.wikipedia.org/wiki/ISO_4217#List_of_ISO_4217_currency_codes))
@@ -186,6 +187,6 @@ CREATE TABLE IF NOT EXISTS userSettings (
 );
 
 CREATE TABLE IF NOT EXISTS appData (
-  appDataKey TEXT NOT NULL PRIMARY KEY,
+  appDataKey ENUMNAME(AppDataKey) NOT NULL PRIMARY KEY,
   appDataValue TEXT
 );

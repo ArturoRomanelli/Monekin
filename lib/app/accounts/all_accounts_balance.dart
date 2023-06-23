@@ -119,8 +119,24 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                       final accountWithMoney = accounts[index];
 
                       return ListTile(
-                        leading: accountWithMoney.account.icon.display(),
-                        onTap: () => false,
+                        leading: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 2,
+                                    color: Theme.of(context).primaryColor),
+                                borderRadius: BorderRadius.circular(1000)),
+                            child: accountWithMoney.account.icon.display(
+                                size: 22,
+                                color: Theme.of(context).primaryColor)),
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AccountFormPage(
+                              prevPage: const AllAccountBalancePage(),
+                              account: accountWithMoney.account,
+                            ),
+                          ),
+                        ),
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

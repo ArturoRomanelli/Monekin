@@ -80,10 +80,6 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
 
     onSuccess() {
       Navigator.pop(context);
-      Navigator.pop(context);
-
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => widget.prevPage));
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(isEditMode

@@ -75,7 +75,7 @@ class Budget extends BudgetInDB {
     return getValueOnDate(null);
   }
 
-  /// Get the percentage of the budget already filled
+  /// Get the percentage of the budget already filled. The return value can be greather than 1 (>100%)
   Stream<double> get percentageAlreadyUsed {
     return currentValue.map((event) => event / limitAmount);
   }

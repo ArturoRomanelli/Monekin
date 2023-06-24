@@ -157,8 +157,16 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                         StreamBuilder(
                             stream: widget.budget.percentageAlreadyUsed,
                             builder: (context, snapshot) {
+                              final budgetValue = snapshot.data;
+
                               return AnimatedProgressBar(
-                                  value: snapshot.data ?? 0);
+                                value: budgetValue != null && budgetValue >= 1
+                                    ? 1
+                                    : budgetValue ?? 0,
+                                color: budgetValue != null && budgetValue >= 1
+                                    ? Colors.red
+                                    : null,
+                              );
                             })
                       ],
                     )),

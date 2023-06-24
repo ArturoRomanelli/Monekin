@@ -130,14 +130,14 @@
       }
     },
     "TAB2": {
-      "title": "Transacciones",
+      "title": "Transactions",
       "balance": "Balance",
       "empty": "No transactions found to display here. Add a transaction by clicking the '+' button at the bottom",
       "searcher.placeholder": "Search by category, description...",
       "loading": "Loading more transactions..."
     },
     "TAB3": {
-      "title": "Resume",
+      "title": "Budgets",
       "without-subcat": "Other - ",
       "average-by-transaction": "Average/transaction",
       "average-by-day": "Average/day",

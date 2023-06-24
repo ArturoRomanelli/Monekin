@@ -5,6 +5,7 @@ import 'package:finlytics/app/tabs/tab1.page.dart';
 import 'package:finlytics/app/tabs/tab2.page.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class TabsPage extends StatefulWidget {
@@ -17,23 +18,27 @@ class TabsPage extends StatefulWidget {
 }
 
 class _TabsPageState extends State<TabsPage> {
-  final List<Map<String, dynamic>> _tabs = [
-    {
-      'icon': Icons.home_outlined,
-      'selectedIcon': Icons.home,
-      'label': 'Home',
-    },
-    {
-      'icon': Icons.list_alt_outlined,
-      'selectedIcon': Icons.list_alt,
-      'label': 'Transactions',
-    },
-    {
-      'icon': Icons.query_stats_outlined,
-      'selectedIcon': Icons.query_stats,
-      'label': 'Analysis',
-    },
-  ];
+  List<Map<String, dynamic>> _getTabs(BuildContext context) {
+    final t = Translations.of(context);
+
+    return [
+      {
+        'icon': Icons.home_outlined,
+        'selectedIcon': Icons.home,
+        'label': t.tabs.tab1.title,
+      },
+      {
+        'icon': Icons.list_alt_outlined,
+        'selectedIcon': Icons.list_alt,
+        'label': t.tabs.tab2.title,
+      },
+      {
+        'icon': Icons.calculate_outlined,
+        'selectedIcon': Icons.calculate_rounded,
+        'label': t.tabs.tab3.title,
+      },
+    ];
+  }
 
   final List<Widget> tabsPages = [];
 
@@ -130,6 +135,8 @@ class _TabsPageState extends State<TabsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _tabs = _getTabs(context);
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth > 600) {

@@ -3,7 +3,9 @@ import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/services/view-actions/account_view_actions_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class AccountDetailsPage extends StatefulWidget {
@@ -18,11 +20,35 @@ class AccountDetailsPage extends StatefulWidget {
 }
 
 class _AccountDetailsPageState extends State<AccountDetailsPage> {
+  ListTile buildCopyableTile(String title, String value) {
+    final snackbarDisplayer = ScaffoldMessenger.of(context).showSnackBar;
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(value),
+      trailing: IconButton(
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: value)).then((_) {
+              snackbarDisplayer(
+                SnackBar(content: Text(t.general.clipboard.success(x: title))),
+              );
+            }).catchError((_) {
+              snackbarDisplayer(
+                SnackBar(content: Text(t.general.clipboard.error)),
+              );
+            });
+          },
+          icon: const Icon(Icons.copy_rounded)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final transactionDetailsActions = AccountViewActionService()
         .accountDetailsActions(context,
             account: widget.account, prevPage: widget.prevPage);
+
+    final t = Translations.of(context);
 
     return Scaffold(
       appBar: AppBar(elevation: 0),
@@ -74,11 +100,11 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
               child: Column(
                 children: [
                   CardWithHeader(
-                      title: 'Data',
+                      title: 'Info',
                       body: Column(
                         children: [
                           ListTile(
-                            title: Text("Fecha de creacion"),
+                            title: Text(t.account.date),
                             subtitle: Text(
                               DateFormat.yMMMMEEEEd()
                                   .add_Hm()
@@ -87,16 +113,26 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                           ),
                           const Divider(indent: 12),
                           ListTile(
-                            title: Text("Tipo de cuenta"),
+                            title: Text(t.account.types.title),
                             subtitle: Text(widget.account.type.title(context)),
                           ),
-                          if (widget.account.description != null)
+                          if (widget.account.description != null) ...[
                             const Divider(indent: 12),
-                          if (widget.account.description != null)
                             ListTile(
-                              title: Text("Descripción / Notas"),
+                              title: Text(t.account.form.notes),
                               subtitle: Text(widget.account.description!),
-                            )
+                            ),
+                          ],
+                          if (widget.account.iban != null) ...[
+                            const Divider(indent: 12),
+                            buildCopyableTile(
+                                t.account.form.iban, widget.account.iban!)
+                          ],
+                          if (widget.account.swift != null) ...[
+                            const Divider(indent: 12),
+                            buildCopyableTile(
+                                t.account.form.swift, widget.account.swift!)
+                          ]
                         ],
                       )),
                   const SizedBox(height: 16),

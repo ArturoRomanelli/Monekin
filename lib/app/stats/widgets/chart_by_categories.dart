@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:finlytics/app/stats/widgets/category_stats_modal.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
@@ -8,9 +9,12 @@ import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import '../../../core/services/filters/date_range_service.dart';
 
 class ChartByCategoriesDataItem {
   Category category;
@@ -215,6 +219,8 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return FutureBuilder(
       future: getEvolutionData(context),
       builder: (context, snapshot) {
@@ -229,7 +235,7 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
             SizedBox(
               height: 250,
               child: Stack(
-                children: <Widget>[
+                children: [
                   PieChart(
                     swapAnimationCurve: Curves.easeOut,
                     swapAnimationDuration: const Duration(milliseconds: 450),
@@ -309,7 +315,9 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                            '${dataCategory.transactions.length} transacciones'),
+                          '${dataCategory.transactions.length} ${dataCategory.transactions.length == 1 ? t.general.transaction : t.general.transactions}'
+                              .toLowerCase(),
+                        ),
                         Text(
                             NumberFormat.decimalPercentPattern(decimalDigits: 2)
                                 .format(getElementPercentageInTotal(
@@ -326,7 +334,20 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                           color: ColorHex.get(dataCategory.category.color),
                           size: 28),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return CategoryStatsModal(
+                              categoryData: dataCategory,
+                              dateRangeDisplayName: DateRangeService()
+                                  .getTextOfRange(
+                                      startDate: widget.startDate,
+                                      endDate: widget.endDate),
+                            );
+                          });
+                    },
                   );
                 },
               ),

@@ -7,6 +7,7 @@ import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -22,9 +23,11 @@ class _Tab2PageState extends State<Tab2Page> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Transactions'),
+          title: Text(t.general.transactions),
           // foregroundColor: Theme.of(context).colorScheme.onPrimary,
           // backgroundColor: Theme.of(context).primaryColor,
           actions: [

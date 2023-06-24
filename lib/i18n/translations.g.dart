@@ -3,7 +3,7 @@
 /// Locales: 2
 /// Strings: 722 (361 per locale)
 ///
-/// Built on 2023-06-23 at 10:13 UTC
+/// Built on 2023-06-24 at 15:00 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -533,7 +533,7 @@ class _TranslationsTabsTab2En {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get title => 'Transacciones';
+	String get title => 'Transactions';
 	String get balance => 'Balance';
 	String get empty => 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
 	String get searcher_placeholder => 'Search by category, description...';
@@ -547,7 +547,7 @@ class _TranslationsTabsTab3En {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get title => 'Resume';
+	String get title => 'Budgets';
 	String get without_subcat => 'Other - ';
 	String get average_by_transaction => 'Average/transaction';
 	String get average_by_day => 'Average/day';
@@ -1484,7 +1484,7 @@ class _TranslationsTabsTab3Es extends _TranslationsTabsTab3En {
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Análisis';
+	@override String get title => 'Presupuestos';
 	@override String get without_subcat => 'Otro - ';
 	@override String get average_by_transaction => 'Medía/transacción';
 	@override String get average_by_day => 'Medía/día';
@@ -2107,12 +2107,12 @@ extension on _TranslationsEn {
 			case 'tabs.tab1.account_resume.display': return 'Summary of accounts';
 			case 'tabs.tab1.account_resume.balance_by_account': return 'Balance by accounts';
 			case 'tabs.tab1.account_resume.balance_by_currency': return 'Balance by currency';
-			case 'tabs.tab2.title': return 'Transacciones';
+			case 'tabs.tab2.title': return 'Transactions';
 			case 'tabs.tab2.balance': return 'Balance';
 			case 'tabs.tab2.empty': return 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
 			case 'tabs.tab2.searcher_placeholder': return 'Search by category, description...';
 			case 'tabs.tab2.loading': return 'Loading more transactions...';
-			case 'tabs.tab3.title': return 'Resume';
+			case 'tabs.tab3.title': return 'Budgets';
 			case 'tabs.tab3.without_subcat': return 'Other - ';
 			case 'tabs.tab3.average_by_transaction': return 'Average/transaction';
 			case 'tabs.tab3.average_by_day': return 'Average/day';
@@ -2491,7 +2491,7 @@ extension on _TranslationsEs {
 			case 'tabs.tab2.empty': return 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
 			case 'tabs.tab2.searcher_placeholder': return 'Busca por categoría, descripción...';
 			case 'tabs.tab2.loading': return 'Cargando más transacciones...';
-			case 'tabs.tab3.title': return 'Análisis';
+			case 'tabs.tab3.title': return 'Presupuestos';
 			case 'tabs.tab3.without_subcat': return 'Otro - ';
 			case 'tabs.tab3.average_by_transaction': return 'Medía/transacción';
 			case 'tabs.tab3.average_by_day': return 'Medía/día';

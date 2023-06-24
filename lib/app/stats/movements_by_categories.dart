@@ -3,6 +3,7 @@ import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class MovementsByCategoryPage extends StatefulWidget {
@@ -37,6 +38,8 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Movimientos por categoría"),
@@ -75,14 +78,14 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: SegmentedButton(
-                segments: const <ButtonSegment>[
+                segments: [
                   ButtonSegment(
                     value: TransactionType.expense,
-                    label: Text('Gastos'),
+                    label: Text(t.general.expense),
                   ),
                   ButtonSegment(
                     value: TransactionType.income,
-                    label: Text('Ingresos'),
+                    label: Text(t.general.income),
                   ),
                 ],
                 showSelectedIcon: false,

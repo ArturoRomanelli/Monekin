@@ -6,6 +6,7 @@ import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/core/utils/date_time_picker.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -168,11 +169,10 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                   readOnly:
                                       true, //set it true, so that user will not able to edit text
                                   onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                        context: context,
-                                        initialDate: date,
-                                        firstDate: DateTime(1700),
-                                        lastDate: DateTime(2099));
+                                    DateTime? pickedDate =
+                                        await openDateTimePicker(context,
+                                            showTimePickerAfterDate: false,
+                                            initialDate: date);
 
                                     if (pickedDate == null) return;
 

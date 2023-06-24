@@ -15,6 +15,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/models/account/account.dart';
 import '../../core/presentation/widgets/persistent_footer_button.dart';
+import '../../core/utils/date_time_picker.dart';
 
 class BudgetFormPage extends StatefulWidget {
   const BudgetFormPage({super.key, this.budgetToEdit, required this.prevPage});
@@ -322,11 +323,11 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                           ),
                           readOnly: true,
                           onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: startDate,
-                                firstDate: DateTime(1700),
-                                lastDate: endDate ?? DateTime(2099));
+                            DateTime? pickedDate = await openDateTimePicker(
+                                context,
+                                showTimePickerAfterDate: false,
+                                lastDate: endDate,
+                                initialDate: startDate);
 
                             if (pickedDate == null) return;
 
@@ -350,11 +351,11 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                           validator: (value) =>
                               fieldValidator(value, isRequired: true),
                           onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: endDate ?? DateTime.now(),
-                                firstDate: startDate,
-                                lastDate: DateTime(2099));
+                            DateTime? pickedDate = await openDateTimePicker(
+                                context,
+                                showTimePickerAfterDate: false,
+                                initialDate: endDate,
+                                firstDate: startDate);
 
                             if (pickedDate == null) return;
 

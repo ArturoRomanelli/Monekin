@@ -18,6 +18,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/utils/date_time_picker.dart';
+
 class AccountFormPage extends StatefulWidget {
   const AccountFormPage({Key? key, this.account, this.prevPage})
       : super(key: key);
@@ -368,11 +370,11 @@ class _AccountFormPageState extends State<AccountFormPage> {
                               ),
                               readOnly: true,
                               onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: _openingDate,
-                                    firstDate: DateTime(1700),
-                                    lastDate: DateTime(2099));
+                                DateTime? pickedDate = await openDateTimePicker(
+                                  context,
+                                  initialDate: _openingDate,
+                                  showTimePickerAfterDate: true,
+                                );
 
                                 if (pickedDate == null) return;
 

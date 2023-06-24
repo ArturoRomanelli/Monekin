@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/utils/date_time_picker.dart';
+
 class IntervalSelector extends StatefulWidget {
   const IntervalSelector({super.key});
 
@@ -165,11 +167,11 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                         readOnly: true,
                         enabled: ruleUntilMode == RuleUntilMode.date,
                         onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: endDate,
-                              firstDate: DateTime(1700),
-                              lastDate: DateTime(2099));
+                          DateTime? pickedDate = await openDateTimePicker(
+                            context,
+                            initialDate: endDate,
+                            showTimePickerAfterDate: false,
+                          );
 
                           if (pickedDate == null) return;
 

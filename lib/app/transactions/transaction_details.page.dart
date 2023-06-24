@@ -1,8 +1,11 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/tabs/card_with_header.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/core/utils/list_tile_action_item.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -41,9 +44,13 @@ class TransactionDetailsPage extends StatefulWidget {
 }
 
 class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
+  late MoneyTransaction transaction;
+
   @override
   void initState() {
     super.initState();
+
+    transaction = widget.transaction;
 
     if (widget.recurrentMode && widget.transaction is! MoneyRecurrentRule) {
       throw Exception(
@@ -51,7 +58,67 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
     }
   }
 
-  Widget statusDisplayer(MoneyTransaction transaction) {
+  List<ListTileActionItem> _getPayActions(BuildContext context) {
+    final t = Translations.of(context);
+
+    payTransaction(DateTime datetime) {
+      TransactionService.instance
+          .insertOrUpdateTransaction(transaction.copyWith(
+              date: datetime, status: const drift.Value(null)))
+          .then((value) {
+        if (value <= 0) return;
+
+        TransactionService.instance
+            .getTransactionById(transaction.id)
+            .first
+            .then((value) {
+          if (value == null) return;
+
+          setState(() {
+            transaction = value;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(t.transaction.edit_success)));
+        });
+      });
+    }
+
+    return [
+      ListTileActionItem(
+        label:
+            'Pay in the required date (${DateFormat.yMd().format(transaction.date)})',
+        icon: Icons.today_rounded,
+        onClick: () => payTransaction(transaction.date),
+      ),
+      ListTileActionItem(
+        label: 'Pay today',
+        icon: Icons.event_available_rounded,
+        onClick: () => payTransaction(DateTime.now()),
+      ),
+    ];
+  }
+
+  showPayModal(BuildContext context, MoneyTransaction transaction) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        clipBehavior: Clip.hardEdge,
+        builder: (context) {
+          return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: (_getPayActions(context).map((e) => ListTile(
+                    leading: Icon(e.icon),
+                    title: Text(e.label),
+                    onTap: () {
+                      Navigator.pop(context);
+                      e.onClick();
+                    },
+                  ))).toList());
+        });
+  }
+
+  Widget statusDisplayer() {
     if (transaction.status == null && transaction is! MoneyRecurrentRule) {
       throw Exception('Error');
     }
@@ -123,7 +190,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       ],
                       Expanded(
                         child: FilledButton(
-                          onPressed: () => false,
+                          onPressed: () => showPayModal(context, transaction),
                           child: Text('Pagar'),
                           style: FilledButton.styleFrom(
                               backgroundColor: color.darken(0.2)),
@@ -161,15 +228,15 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CurrencyDisplayer(
-                        amountToConvert: widget.transaction.value,
-                        currency: widget.transaction.account.currency,
+                        amountToConvert: transaction.value,
+                        currency: transaction.account.currency,
                         textStyle: const TextStyle(
                           fontSize: 34,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
-                        widget.transaction.displayName,
+                        transaction.displayName,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -177,9 +244,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       ),
                       if (!widget.recurrentMode)
                         Text(
-                          DateFormat.yMMMMd()
-                              .add_Hm()
-                              .format(widget.transaction.date),
+                          DateFormat.yMMMMd().add_Hm().format(transaction.date),
                         )
                       else
                         Row(
@@ -191,7 +256,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              (widget.transaction as MoneyRecurrentRule)
+                              (transaction as MoneyRecurrentRule)
                                   .recurrencyData
                                   .formText(context),
                               style: TextStyle(
@@ -203,17 +268,16 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                     ],
                   ),
                   Hero(
-                    tag: 'transaction-icon-${widget.transaction.id}',
+                    tag: 'transaction-icon-${transaction.id}',
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color:
-                            widget.transaction.color(context).withOpacity(0.2),
+                        color: transaction.color(context).withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: widget.transaction.isIncomeOrExpense
-                          ? widget.transaction.category!.icon.display(
-                              color: widget.transaction.color(context),
+                      child: transaction.isIncomeOrExpense
+                          ? transaction.category!.icon.display(
+                              color: transaction.color(context),
                               size: 42,
                             )
                           : const Icon(Icons.swap_vert, size: 42),
@@ -222,9 +286,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                 ],
               ),
               const SizedBox(height: 24),
-              if (widget.transaction.status != null ||
-                  widget.transaction is MoneyRecurrentRule)
-                statusDisplayer(widget.transaction),
+              if (transaction.status != null ||
+                  transaction is MoneyRecurrentRule)
+                statusDisplayer(),
               CardWithHeader(
                 title: 'Datos',
                 body: SizedBox(
@@ -239,7 +303,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             children: [
                               Text(t.general.account),
                               Chip(
-                                  label: Text(widget.transaction.account.name),
+                                  label: Text(transaction.account.name),
                                   padding: const EdgeInsets.all(2),
                                   labelStyle: TextStyle(
                                       color: Theme.of(context).primaryColor),
@@ -250,10 +314,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                       .withOpacity(0.12),
                                   avatar: CircleAvatar(
                                     backgroundColor: Colors.transparent,
-                                    child: widget.transaction.account.icon
-                                        .display(
-                                            color:
-                                                Theme.of(context).primaryColor),
+                                    child: transaction.account.icon.display(
+                                        color: Theme.of(context).primaryColor),
                                   )),
                             ],
                           ),
@@ -264,49 +326,43 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(widget.transaction.isIncomeOrExpense
+                              Text(transaction.isIncomeOrExpense
                                   ? t.general.category
                                   : t.transfer.form.to),
                               Chip(
-                                  label: Text(
-                                      widget.transaction.isIncomeOrExpense
-                                          ? widget.transaction.category!.name
-                                          : widget.transaction.receivingAccount!
-                                              .name),
+                                  label: Text(transaction.isIncomeOrExpense
+                                      ? transaction.category!.name
+                                      : transaction.receivingAccount!.name),
                                   padding: const EdgeInsets.all(2),
                                   labelStyle: TextStyle(
-                                      color: widget.transaction
-                                          .color(context)
-                                          .darken()),
+                                      color:
+                                          transaction.color(context).darken()),
                                   side: BorderSide(
-                                      color: widget.transaction
-                                          .color(context)
-                                          .darken()),
-                                  backgroundColor: widget.transaction
+                                      color:
+                                          transaction.color(context).darken()),
+                                  backgroundColor: transaction
                                       .color(context)
                                       .withOpacity(0.12),
                                   avatar: CircleAvatar(
                                     backgroundColor: Colors.transparent,
-                                    child: widget.transaction.isIncomeOrExpense
-                                        ? widget.transaction.category!.icon
-                                            .display(
-                                                color: widget.transaction
-                                                    .color(context))
+                                    child: transaction.isIncomeOrExpense
+                                        ? transaction.category!.icon.display(
+                                            color: transaction.color(context))
                                         : widget
                                             .transaction.receivingAccount!.icon
                                             .display(
-                                                color: widget.transaction
-                                                    .color(context)),
+                                                color:
+                                                    transaction.color(context)),
                                   )),
                             ],
                           ),
                         ),
-                        if (widget.transaction.notes != null)
+                        if (transaction.notes != null)
                           const Divider(indent: 12),
-                        if (widget.transaction.notes != null)
+                        if (transaction.notes != null)
                           ListTile(
                             title: Text('Note'),
-                            subtitle: Text(widget.transaction.notes!),
+                            subtitle: Text(transaction.notes!),
                           )
                       ]),
                 ),
@@ -347,7 +403,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           .toList(),
                     ),
                     if (!widget.recurrentMode &&
-                        (widget.transaction is MoneyRecurrentRule))
+                        (transaction is MoneyRecurrentRule))
                       const Padding(
                         padding: EdgeInsets.all(16),
                         child: Text(

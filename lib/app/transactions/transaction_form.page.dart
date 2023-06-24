@@ -15,6 +15,7 @@ import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expan
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/core/utils/date_time_picker.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -262,7 +263,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
               }
             },
             icon: const Icon(Icons.save),
-            label: Text(t.transaction.create),
+            label:
+                Text(isEditMode ? t.transaction.create : t.transaction.create),
           ),
         )
       ],
@@ -415,12 +417,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       ),
                       readOnly: true,
                       onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: date,
-                            firstDate: DateTime(1700),
-                            lastDate: DateTime(2099));
-
+                        DateTime? pickedDate = await openDateTimePicker(context,
+                            showTimePickerAfterDate: true);
                         if (pickedDate == null) return;
 
                         setState(() {

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/home/home.page.dart';
+import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
@@ -26,35 +27,41 @@ class _TransactionsPageState extends State<TransactionsPage> {
     final t = Translations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(t.general.transactions),
-          // foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          // backgroundColor: Theme.of(context).primaryColor,
-          actions: [
-            IconButton(
-                onPressed: () async {
-                  final modalRes =
-                      await showModalBottomSheet<TransactionFilters>(
-                          context: context,
-                          isScrollControlled: true,
-                          showDragHandle: true,
-                          builder: (context) =>
-                              FilterSheetModal(preselectedFilter: filters));
+      appBar: AppBar(title: Text(t.general.transactions), actions: [
+        IconButton(
+            onPressed: () async {
+              final modalRes = await showModalBottomSheet<TransactionFilters>(
+                  context: context,
+                  isScrollControlled: true,
+                  showDragHandle: true,
+                  builder: (context) =>
+                      FilterSheetModal(preselectedFilter: filters));
 
-                  if (modalRes != null) {
-                    setState(() {
-                      filters = modalRes;
-                    });
-                  }
-                },
-                icon: const Icon(Icons.filter_alt_outlined)),
-            IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {
-                // Do something
-              },
-            ),
-          ]),
+              if (modalRes != null) {
+                setState(() {
+                  filters = modalRes;
+                });
+              }
+            },
+            icon: const Icon(Icons.filter_alt_outlined)),
+        IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () {
+            // Do something
+          },
+        ),
+      ]),
+      floatingActionButton: FloatingActionButton.extended(
+          icon: const Icon(Icons.add_rounded),
+          label: Text(t.transaction.create),
+          onPressed: () => {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TransactionFormPage(
+                              prevPage: TransactionsPage(),
+                            )))
+              }),
       body: Column(
         children: [
           Expanded(
@@ -107,8 +114,6 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 }
 
                 final transactions = snapshot.data!;
-
-                print(transactions.map((e) => '${e.id}-${e.displayName}'));
 
                 if (transactions.isEmpty) {
                   return const Column(

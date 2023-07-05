@@ -84,6 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
+                        showDragHandle: true,
                         builder: (context) {
                           return const EditProfileModal();
                         });

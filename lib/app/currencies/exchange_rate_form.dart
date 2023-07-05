@@ -3,7 +3,6 @@ import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_ser
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/utils/date_time_picker.dart';
@@ -78,136 +77,127 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      child: Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.background),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const BottomSheetHeader(),
-              Container(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Create exchange rate',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(
-                      height: 22,
-                    ),
-                    Form(
-                      key: _formKey,
-                      child: Column(
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Create exchange rate',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(
+                  height: 22,
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                          controller: TextEditingController(
+                              text: _currency != null
+                                  ? _currency?.name
+                                  : 'Sin especificar'),
+                          readOnly: true,
+                          validator: (value) {
+                            if (_currency == null) {
+                              return 'Please specify a currency';
+                            } else if (_currency!.code ==
+                                userPreferredCurrency?.code) {
+                              return 'The currency can not be equal to the user currency';
+                            }
+
+                            return null;
+                          },
+                          onTap: () {
+                            showModalBottomSheet(
+                                context: context,
+                                showDragHandle: true,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return CurrencySelectorModal(
+                                      preselectedCurrency: _currency,
+                                      onCurrencySelected: (newCurrency) => {
+                                            setState(() {
+                                              _currency = newCurrency;
+                                            })
+                                          });
+                                });
+                          },
+                          decoration: InputDecoration(
+                              labelText: 'Currency',
+                              suffixIcon: const Icon(Icons.arrow_drop_down),
+                              prefixIcon: Container(
+                                margin: const EdgeInsets.all(10),
+                                clipBehavior: Clip.hardEdge,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: _currency != null
+                                    ? SvgPicture.asset(
+                                        'assets/icons/currency_flags/${_currency!.code.toLowerCase()}.svg',
+                                        height: 25,
+                                        width: 25,
+                                      )
+                                    : const Skeleton(width: 28, height: 28),
+                              ))),
+                      const SizedBox(height: 22),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextFormField(
+                          Expanded(
+                            child: TextFormField(
                               controller: TextEditingController(
-                                  text: _currency != null
-                                      ? _currency?.name
-                                      : 'Sin especificar'),
-                              readOnly: true,
-                              validator: (value) {
-                                if (_currency == null) {
-                                  return 'Please specify a currency';
-                                } else if (_currency!.code ==
-                                    userPreferredCurrency?.code) {
-                                  return 'The currency can not be equal to the user currency';
-                                }
-
-                                return null;
-                              },
-                              onTap: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (context) {
-                                      return CurrencySelectorModal(
-                                          preselectedCurrency: _currency,
-                                          onCurrencySelected: (newCurrency) => {
-                                                setState(() {
-                                                  _currency = newCurrency;
-                                                })
-                                              });
-                                    });
-                              },
-                              decoration: InputDecoration(
-                                  labelText: 'Currency',
-                                  suffixIcon: const Icon(Icons.arrow_drop_down),
-                                  prefixIcon: Container(
-                                    margin: const EdgeInsets.all(10),
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                    child: _currency != null
-                                        ? SvgPicture.asset(
-                                            'assets/icons/currency_flags/${_currency!.code.toLowerCase()}.svg',
-                                            height: 25,
-                                            width: 25,
-                                          )
-                                        : const Skeleton(width: 28, height: 28),
-                                  ))),
-                          const SizedBox(height: 22),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: TextEditingController(
-                                      text: DateFormat.yMMMd().format(
-                                          date)), //editing controller of this TextField
-                                  decoration: const InputDecoration(
-                                    labelText: 'Fecha *',
-                                  ),
-                                  readOnly:
-                                      true, //set it true, so that user will not able to edit text
-                                  onTap: () async {
-                                    DateTime? pickedDate =
-                                        await openDateTimePicker(context,
-                                            showTimePickerAfterDate: false,
-                                            initialDate: date);
-
-                                    if (pickedDate == null) return;
-
-                                    setState(() {
-                                      date = pickedDate;
-                                    });
-                                  },
-                                ),
+                                  text: DateFormat.yMMMd().format(
+                                      date)), //editing controller of this TextField
+                              decoration: const InputDecoration(
+                                labelText: 'Fecha *',
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: rateController,
-                                  validator: (value) => fieldValidator(value,
-                                      validator: ValidatorType.double,
-                                      isRequired: true),
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Tipo de cambio *',
-                                    hintText: 'Ex.: 2.14',
-                                  ),
-                                ),
-                              )
-                            ],
+                              readOnly:
+                                  true, //set it true, so that user will not able to edit text
+                              onTap: () async {
+                                DateTime? pickedDate = await openDateTimePicker(
+                                    context,
+                                    showTimePickerAfterDate: false,
+                                    initialDate: date);
+
+                                if (pickedDate == null) return;
+
+                                setState(() {
+                                  date = pickedDate;
+                                });
+                              },
+                            ),
                           ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              controller: rateController,
+                              validator: (value) => fieldValidator(value,
+                                  validator: ValidatorType.double,
+                                  isRequired: true),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              decoration: const InputDecoration(
+                                labelText: 'Tipo de cambio *',
+                                hintText: 'Ex.: 2.14',
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-              BottomSheetFooter(onSaved: () => onSubmitted())
-            ]),
-      ),
-    );
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          BottomSheetFooter(onSaved: () => onSubmitted())
+        ]);
   }
 }

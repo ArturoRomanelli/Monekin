@@ -27,7 +27,6 @@ class TransactionListComponent extends StatelessWidget {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        clipBehavior: Clip.hardEdge,
         builder: (context) {
           return Column(
               mainAxisSize: MainAxisSize.min,
@@ -162,7 +161,6 @@ class TransactionListComponent extends StatelessWidget {
                       builder: (context) => TransactionDetailsPage(
                             transaction: transaction,
                             prevPage: prevPage,
-                            recurrentMode: showRecurrentInfo,
                           )));
             },
             onLongPress: () => showTransactionActions(context, transaction),

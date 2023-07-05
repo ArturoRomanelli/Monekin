@@ -95,6 +95,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
+                  showDragHandle: true,
                   builder: (context) {
                     return CurrencySelectorModal(
                         preselectedCurrency: _userCurrency!,
@@ -118,6 +119,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                       await showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
+                          showDragHandle: true,
                           builder: (context) {
                             return const ExchangeRateFormDialog();
                           });

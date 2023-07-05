@@ -23,8 +23,6 @@ Future<DateTime?> openDateTimePicker(
     return pickedDate;
   }
 
-  await Future.delayed(const Duration(seconds: 1));
-
   final timePicked = await showTimePicker(
       context: context,
       initialTime:

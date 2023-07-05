@@ -240,17 +240,13 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                         ? accounts.map((e) => e.name).join(', ')
                         : null,
                     onClick: () async {
-                      final modalRes =
-                          await showModalBottomSheet<List<Account>>(
-                        context: context,
-                        builder: (context) {
-                          return AccountSelector(
+                      final modalRes = await showAccountSelectorBottomSheet(
+                          context,
+                          AccountSelector(
                             allowMultiSelection: true,
                             filterSavingAccounts: false,
                             selectedAccounts: accounts,
-                          );
-                        },
-                      );
+                          ));
 
                       if (modalRes != null) {
                         setState(() {

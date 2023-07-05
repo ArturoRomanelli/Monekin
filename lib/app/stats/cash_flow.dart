@@ -44,6 +44,7 @@ class _CashFlowPageState extends State<CashFlowPage> {
                 final modalRes = await showModalBottomSheet<TransactionFilters>(
                     context: context,
                     isScrollControlled: true,
+                    showDragHandle: true,
                     builder: (context) =>
                         FilterSheetModal(preselectedFilter: filters));
 

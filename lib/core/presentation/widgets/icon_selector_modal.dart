@@ -1,6 +1,5 @@
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -40,135 +39,129 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
         builder: (context, scrollController) {
           final iconsByScope = SupportedIconService.instance.getIconsByScope();
 
-          return ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Scaffold(
-              body: Column(children: [
-                const BottomSheetHeader(),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Select an icon',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const Text(
-                            'Identify your account',
-                          ),
-                        ],
-                      ),
-                      Chip(
-                        side: BorderSide(color: colors.primary, width: 2),
-                        //  backgroundColor: Theme.of(context).primaryColorLight,
-                        label: _selectedIcon!
-                            .display(size: 34, color: colors.onBackground),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      SingleChildScrollView(
-                        controller: scrollController,
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                            children: iconsByScope.keys.toList().map((scope) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Stack(
-                                alignment: AlignmentDirectional.center,
-                                children: [
-                                  const Divider(),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 16),
-                                    color: colors.background,
-                                    child:
-                                        Text(toBeginningOfSentenceCase(scope)!),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Wrap(
-                                  spacing: 8, // gap between adjacent cards
-                                  runSpacing: 12, // gap between lines
-                                  children: iconsByScope[scope]!
-                                      .map((e) => Card(
-                                            elevation:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.dark
-                                                    ? 4
-                                                    : 1,
-                                            clipBehavior: Clip.antiAlias,
-                                            color: _selectedIcon?.id == e.id
-                                                ? colors.primary
-                                                : null,
-                                            child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedIcon = e;
-                                                });
-                                              },
-                                              child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(6),
-                                                  child: e.display(
-                                                      size: 34,
-                                                      color: _selectedIcon
-                                                                  ?.id ==
-                                                              e.id
-                                                          ? colors.onPrimary
-                                                          : colors
-                                                              .onBackground)),
-                                            ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ),
-                              const SizedBox(
-                                // Margin between the icon groups
-                                height: 10,
-                              )
-                            ],
-                          );
-                        }).toList()),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 18,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              colors.background.withOpacity(0),
-                              colors.background
-                            ],
-                          )),
+          return Scaffold(
+            body: Column(children: [
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Select an icon',
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                      )
-                    ],
-                  ),
+                        const Text(
+                          'Identify your account',
+                        ),
+                      ],
+                    ),
+                    Chip(
+                      side: BorderSide(color: colors.primary, width: 2),
+                      //  backgroundColor: Theme.of(context).primaryColorLight,
+                      label: _selectedIcon!
+                          .display(size: 34, color: colors.onBackground),
+                    )
+                  ],
                 ),
-                BottomSheetFooter(
-                    onSaved: () => {
-                          widget.onIconSelected!(_selectedIcon!),
-                          Navigator.pop(context)
-                        })
-              ]),
-            ),
+              ),
+              Expanded(
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      controller: scrollController,
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                          children: iconsByScope.keys.toList().map((scope) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Stack(
+                              alignment: AlignmentDirectional.center,
+                              children: [
+                                const Divider(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 16),
+                                  color: colors.background,
+                                  child:
+                                      Text(toBeginningOfSentenceCase(scope)!),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Wrap(
+                                spacing: 8, // gap between adjacent cards
+                                runSpacing: 12, // gap between lines
+                                children: iconsByScope[scope]!
+                                    .map((e) => Card(
+                                          elevation:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? 4
+                                                  : 1,
+                                          clipBehavior: Clip.antiAlias,
+                                          color: _selectedIcon?.id == e.id
+                                              ? colors.primary
+                                              : null,
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                _selectedIcon = e;
+                                              });
+                                            },
+                                            child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(6),
+                                                child: e.display(
+                                                    size: 34,
+                                                    color: _selectedIcon?.id ==
+                                                            e.id
+                                                        ? colors.onPrimary
+                                                        : colors.onBackground)),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                            const SizedBox(
+                              // Margin between the icon groups
+                              height: 10,
+                            )
+                          ],
+                        );
+                      }).toList()),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 18,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            colors.background.withOpacity(0),
+                            colors.background
+                          ],
+                        )),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              BottomSheetFooter(
+                  onSaved: () => {
+                        widget.onIconSelected!(_selectedIcon!),
+                        Navigator.pop(context)
+                      })
+            ]),
           );
         });
   }

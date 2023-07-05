@@ -233,4 +233,39 @@ class MoneyRecurrentRule extends MoneyTransaction {
               ruleRecurrentLimit: recurrentLimit,
               intervalPeriod: intervalPeriod,
               intervalEach: intervalEach);
+
+  /// Since the next payment date is stored in the `date` variable, this getter gets the payment after this date. That is, when a payment is made,
+  /// the `date` variable will change to this new value.
+  ///
+  /// The function will return `null` in the event that there are no more payments to be made after the immediately following one (stored in the
+  /// `date` variable).
+  DateTime? get followingDateToNext {
+    if (recurrentLimit.remainingIterations != null &&
+        recurrentLimit.remainingIterations! <= 1) {
+      return null;
+    }
+
+    DateTime? toReturn;
+
+    if (intervalPeriod == TransactionPeriodicity.day) {
+      toReturn = date.add(Duration(days: intervalEach));
+    } else if (intervalPeriod == TransactionPeriodicity.week) {
+      toReturn = date.add(Duration(days: intervalEach * 7));
+    } else if (intervalPeriod == TransactionPeriodicity.month) {
+      toReturn = date.copyWith(month: date.month + intervalEach);
+
+      if (toReturn.month > date.month + intervalEach) {
+        toReturn = date.copyWith(month: date.month + intervalEach + 1);
+      }
+    } else if (intervalPeriod == TransactionPeriodicity.year) {
+      toReturn = date.copyWith(year: date.year + intervalEach);
+    }
+
+    if (recurrentLimit.endDate != null &&
+        toReturn!.compareTo(recurrentLimit.endDate!) <= 0) {
+      return null;
+    }
+
+    return toReturn;
+  }
 }

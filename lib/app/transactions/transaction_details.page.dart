@@ -10,6 +10,9 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:slang/builder/utils/string_extensions.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../core/database/services/recurrent-rules/recurrent_rule_service.dart';
 
 class TransactionDetailAction {
   final String label;
@@ -25,19 +28,16 @@ class TransactionDetailAction {
 }
 
 class TransactionDetailsPage extends StatefulWidget {
-  const TransactionDetailsPage(
-      {super.key,
-      required this.transaction,
-      required this.prevPage,
-      this.recurrentMode = false});
+  const TransactionDetailsPage({
+    super.key,
+    required this.transaction,
+    required this.prevPage,
+  });
 
   final MoneyTransaction transaction;
 
   /// Widget to navigate if the transaction is removed
   final Widget prevPage;
-
-  /// If true, it will display some info about the recurrency of a transaction
-  final bool recurrentMode;
 
   @override
   State<TransactionDetailsPage> createState() => _TransactionDetailsPageState();
@@ -51,37 +51,124 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
     super.initState();
 
     transaction = widget.transaction;
-
-    if (widget.recurrentMode && widget.transaction is! MoneyRecurrentRule) {
-      throw Exception(
-          'A single/normal transaction can not be passed when recurrentMode is true');
-    }
   }
 
   List<ListTileActionItem> _getPayActions(BuildContext context) {
     final t = Translations.of(context);
 
     payTransaction(DateTime datetime) {
-      TransactionService.instance
-          .insertOrUpdateTransaction(transaction.copyWith(
-              date: datetime, status: const drift.Value(null)))
-          .then((value) {
-        if (value <= 0) return;
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Pagar transacción'),
+            content: SingleChildScrollView(
+                child: Text(transaction is MoneyRecurrentRule
+                    ? 'Esta acción creará una transacción nueva con fecha ${DateFormat.yMMMd().format(datetime)}. Podrás consultar los detalles de esta transacción en la página de transacciones'
+                    : 'La fecha de la transacción se cambiará a la especificada y el estado de la misma pasará a nulo')),
+            actions: [
+              TextButton(
+                child: Text(t.general.continue_text),
+                onPressed: () {
+                  final newId = transaction is MoneyRecurrentRule
+                      ? const Uuid().v4()
+                      : transaction.id;
 
-        TransactionService.instance
-            .getTransactionById(transaction.id)
-            .first
-            .then((value) {
-          if (value == null) return;
+                  TransactionService.instance
+                      .insertOrUpdateTransaction(transaction.copyWith(
+                          date: datetime,
+                          status: const drift.Value(null),
+                          id: newId))
+                      .then((value) {
+                    if (value <= 0) return;
 
-          setState(() {
-            transaction = value;
-          });
+                    // New transaction created successfully
 
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(t.transaction.edit_success)));
-        });
-      });
+                    if (transaction is MoneyRecurrentRule) {
+                      final recurrentRule = (transaction as MoneyRecurrentRule);
+
+                      if (recurrentRule.followingDateToNext == null) {
+                        RecurrentRuleService.instance
+                            .deleteRecurrentRule(recurrentRule.id)
+                            .then((value) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text(
+                                'Transacción creada correctamente. La regla recurrente se ha completado, ya no hay mas pagos a realizar!'),
+                          ));
+
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        });
+
+                        return;
+                      }
+
+                      final db = RecurrentRuleService.instance.db;
+
+                      (db.select(db.recurrentRules)
+                            ..where((tbl) => tbl.id.isValue(transaction.id)))
+                          .getSingle()
+                          .then((value) {
+                        // Change the next payment date and the remaining iterations (if required)
+                        int? remainingIterations =
+                            recurrentRule.recurrentLimit.remainingIterations;
+
+                        RecurrentRuleService.instance
+                            .insertOrUpdateRecurrentRule(
+                          value.copyWith(
+                              nextPaymentDate:
+                                  recurrentRule.followingDateToNext,
+                              remainingTransactions: remainingIterations != null
+                                  ? drift.Value(remainingIterations - 1)
+                                  : const drift.Value(null)),
+                        )
+                            .then((inserted) {
+                          if (inserted <= 0) return;
+
+                          RecurrentRuleService.instance
+                              .getRecurrentRuleById(transaction.id)
+                              .first
+                              .then((value) {
+                            if (value == null) return;
+
+                            setState(() {
+                              transaction = value;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(t.transaction.new_success),
+                            ));
+
+                            Navigator.pop(context);
+                          });
+                        });
+                      });
+                    } else {
+                      TransactionService.instance
+                          .getTransactionById(newId)
+                          .first
+                          .then((value) {
+                        if (value == null) return;
+
+                        setState(() {
+                          transaction = value;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(t.transaction.edit_success),
+                        ));
+
+                        Navigator.pop(context);
+                      });
+                    }
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
 
     return [
@@ -103,18 +190,17 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        clipBehavior: Clip.hardEdge,
         builder: (context) {
-          return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: (_getPayActions(context).map((e) => ListTile(
-                    leading: Icon(e.icon),
-                    title: Text(e.label),
-                    onTap: () {
-                      Navigator.pop(context);
-                      e.onClick();
-                    },
-                  ))).toList());
+          return Column(mainAxisSize: MainAxisSize.min, children: [
+            ...(_getPayActions(context).map((e) => ListTile(
+                  leading: Icon(e.icon),
+                  title: Text(e.label),
+                  onTap: () {
+                    Navigator.pop(context);
+                    e.onClick();
+                  },
+                ))).toList(),
+          ]);
         });
   }
 
@@ -123,8 +209,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
       throw Exception('Error');
     }
 
-    final bool showRecurrencyStatus =
-        (transaction is MoneyRecurrentRule) && widget.recurrentMode;
+    final bool showRecurrencyStatus = (transaction is MoneyRecurrentRule);
 
     final color = showRecurrencyStatus
         ? Theme.of(context).colorScheme.primary.lighten(0.2)
@@ -179,11 +264,11 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => false,
-                            child: Text('Saltar pago'),
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: color.darken(0.2)),
                                 backgroundColor: Colors.white.withOpacity(0.6),
                                 foregroundColor: color.darken(0.2)),
+                            child: const Text('Saltar pago'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -191,9 +276,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       Expanded(
                         child: FilledButton(
                           onPressed: () => showPayModal(context, transaction),
-                          child: Text('Pagar'),
                           style: FilledButton.styleFrom(
                               backgroundColor: color.darken(0.2)),
+                          child: const Text('Pagar'),
                         ),
                       ),
                     ],
@@ -242,7 +327,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (!widget.recurrentMode)
+                      if (transaction is! MoneyRecurrentRule)
                         Text(
                           DateFormat.yMMMMd().add_Hm().format(transaction.date),
                         )
@@ -361,7 +446,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           const Divider(indent: 12),
                         if (transaction.notes != null)
                           ListTile(
-                            title: Text('Note'),
+                            title: const Text('Note'),
                             subtitle: Text(transaction.notes!),
                           )
                       ]),
@@ -402,16 +487,6 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                               ))
                           .toList(),
                     ),
-                    if (!widget.recurrentMode &&
-                        (transaction is MoneyRecurrentRule))
-                      const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          '* Esta transacción ha sido autogenerada a raiz de una regla recurrente. Por ello, al editar o eliminarla afectarás a todas las futuras transacciones que se puedan generar con esta regla',
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w300),
-                        ),
-                      )
                   ],
                 ),
               ),

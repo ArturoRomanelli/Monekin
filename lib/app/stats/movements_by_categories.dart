@@ -49,6 +49,7 @@ class _MovementsByCategoryPageState extends State<MovementsByCategoryPage> {
                 final modalRes = await showModalBottomSheet<TransactionFilters>(
                     context: context,
                     isScrollControlled: true,
+                    showDragHandle: true,
                     builder: (context) =>
                         FilterSheetModal(preselectedFilter: filters));
 

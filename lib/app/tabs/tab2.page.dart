@@ -37,6 +37,7 @@ class _Tab2PageState extends State<Tab2Page> {
                       await showModalBottomSheet<TransactionFilters>(
                           context: context,
                           isScrollControlled: true,
+                          showDragHandle: true,
                           builder: (context) =>
                               FilterSheetModal(preselectedFilter: filters));
 

@@ -50,6 +50,7 @@ class _FundEvolutionPageState extends State<FundEvolutionPage> {
                 final modalRes = await showModalBottomSheet<TransactionFilters>(
                     context: context,
                     isScrollControlled: true,
+                    showDragHandle: true,
                     builder: (context) => FilterSheetModal(
                           showCategoryFilter: false,
                           preselectedFilter:

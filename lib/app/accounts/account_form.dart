@@ -9,6 +9,7 @@ import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
 import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
+import 'package:finlytics/core/presentation/widgets/inline_info_card.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
@@ -291,6 +292,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                             showModalBottomSheet(
                                 context: context,
                                 isScrollControlled: true,
+                                showDragHandle: true,
                                 builder: (context) {
                                   return CurrencySelectorModal(
                                       preselectedCurrency: _currency!,
@@ -323,38 +325,17 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                   : null)),
                       const SizedBox(height: 12),
                       if (showCurrencyExchangesWarn)
-                        Card(
-                          color: Colors.amber.withOpacity(0.2),
-                          elevation: 0,
-                          margin: const EdgeInsets.all(0),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.warning_rounded,
-                                  color: Colors.amber,
-                                  size: 28,
-                                ),
-                                const SizedBox(width: 10),
-                                Flexible(
-                                  child: Text(
-                                    t.account.form.currency_not_found_warn,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      if (_accountToEdit == null) const SizedBox(height: 12),
-                      if (_accountToEdit == null)
+                        InlineInfoCard(
+                            text: t.account.form.currency_not_found_warn,
+                            mode: InlineInfoCardMode.warn),
+                      if (_accountToEdit == null) ...[
+                        const SizedBox(height: 12),
                         AccountTypeSelector(onSelected: (newType) {
                           setState(() {
                             _type = newType;
                           });
-                        }),
+                        })
+                      ],
                       const SizedBox(height: 16),
                       SingleExpansionPanel(
                         child: Column(

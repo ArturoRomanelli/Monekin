@@ -1,7 +1,6 @@
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -75,57 +74,49 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      child: Container(
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.background),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const BottomSheetHeader(),
-              Container(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.categories.select.select_subcategory,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(
-                      height: 22,
-                    ),
-                    Builder(
-                      builder: (_) {
-                        if (childCategories == null) {
-                          return const LinearProgressIndicator();
-                        } else {
-                          return Wrap(
-                            children: [
-                              subcategoryChip(widget.parentCategory),
-                              ...List.generate(
-                                  childCategories!.length,
-                                  (index) =>
-                                      subcategoryChip(childCategories![index]))
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ],
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.categories.select.select_subcategory,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-              ),
-              BottomSheetFooter(
-                  submitText: t.general.continue_text,
-                  submitIcon: Icons.arrow_forward_ios,
-                  onSaved: () {
-                    Navigator.of(context).pop(selectedCategory);
-                  })
-            ]),
-      ),
-    );
+                const SizedBox(
+                  height: 22,
+                ),
+                Builder(
+                  builder: (_) {
+                    if (childCategories == null) {
+                      return const LinearProgressIndicator();
+                    } else {
+                      return Wrap(
+                        children: [
+                          subcategoryChip(widget.parentCategory),
+                          ...List.generate(
+                              childCategories!.length,
+                              (index) =>
+                                  subcategoryChip(childCategories![index]))
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          BottomSheetFooter(
+              submitText: t.general.continue_text,
+              submitIcon: Icons.arrow_forward_ios,
+              onSaved: () {
+                Navigator.of(context).pop(selectedCategory);
+              })
+        ]);
   }
 }

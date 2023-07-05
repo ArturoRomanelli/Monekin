@@ -145,6 +145,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                     showModalBottomSheet(
                                         context: context,
                                         isScrollControlled: true,
+                                        showDragHandle: true,
                                         builder: (context) {
                                           return CurrencySelectorModal(
                                               preselectedCurrency: userCurrency,

@@ -44,7 +44,6 @@ ThemeData getThemeData(bool dark) {
   final listTileSmallText = TextStyle(
       color: theme.textTheme.bodyMedium?.color,
       fontSize: 14,
-      backgroundColor: Colors.transparent,
       wordSpacing: 0,
       decorationThickness: 1,
       fontFamily: 'Nunito');
@@ -53,6 +52,13 @@ ThemeData getThemeData(bool dark) {
     dividerTheme: const DividerThemeData(space: 0),
     inputDecorationTheme: const InputDecorationTheme(
       border: OutlineInputBorder(),
+    ),
+    bottomSheetTheme: theme.bottomSheetTheme.copyWith(
+      elevation: 0,
+      dragHandleSize: const Size(25, 4),
+      surfaceTintColor: theme.colorScheme.background,
+      dragHandleColor: Colors.grey[300],
+      clipBehavior: Clip.hardEdge,
     ),
     listTileTheme: theme.listTileTheme.copyWith(
       minVerticalPadding: 8,

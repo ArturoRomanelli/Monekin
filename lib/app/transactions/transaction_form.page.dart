@@ -9,9 +9,9 @@ import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
+import 'package:finlytics/core/presentation/widgets/inline_info_card.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
@@ -139,7 +139,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
               ? valueToNumber! * -1
               : valueToNumber!,
           category: selectedCategory!,
-          status: status,
+          status: date.compareTo(DateTime.now()) > 0
+              ? TransactionStatus.pending
+              : status,
           isHidden: isHidden,
           notes: notesController.text.isEmpty ? null : notesController.text,
           title: titleController.text.isEmpty ? null : titleController.text,
@@ -151,7 +153,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
             receivingAccount: toAccount!,
             date: date,
             value: valueToNumber!,
-            status: status,
+            status: date.compareTo(DateTime.now()) > 0
+                ? TransactionStatus.pending
+                : status,
             isHidden: isHidden,
             notes: notesController.text.isEmpty ? null : notesController.text,
             title: titleController.text.isEmpty ? null : titleController.text);
@@ -234,6 +238,10 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       date = transaction.date;
       status = transaction.status;
       selectedCategory = transaction.category;
+
+      if (transaction is MoneyRecurrentRule) {
+        recurrentRule = transaction.recurrencyData;
+      }
     });
 
     notesController.text = transaction.notes ?? '';
@@ -322,18 +330,14 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         icon: fromAccount?.icon,
                         iconColor: null,
                         onClick: () async {
-                          final modalRes =
-                              await showModalBottomSheet<List<Account>>(
-                            context: context,
-                            builder: (context) {
-                              return AccountSelector(
+                          final modalRes = await showAccountSelectorBottomSheet(
+                              context,
+                              AccountSelector(
                                 allowMultiSelection: false,
                                 filterSavingAccounts: widget.mode ==
                                     TransactionFormMode.incomeOrExpense,
                                 selectedAccounts: [fromAccount!],
-                              );
-                            },
-                          );
+                              ));
 
                           if (modalRes != null && modalRes.isNotEmpty) {
                             setState(() {
@@ -350,17 +354,14 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                           iconColor: null,
                           onClick: () async {
                             final modalRes =
-                                await showModalBottomSheet<List<Account>>(
-                              context: context,
-                              builder: (context) {
-                                return AccountSelector(
-                                  allowMultiSelection: false,
-                                  filterSavingAccounts: widget.mode ==
-                                      TransactionFormMode.incomeOrExpense,
-                                  selectedAccounts: [toAccount!],
-                                );
-                              },
-                            );
+                                await showAccountSelectorBottomSheet(
+                                    context,
+                                    AccountSelector(
+                                      allowMultiSelection: false,
+                                      filterSavingAccounts: widget.mode ==
+                                          TransactionFormMode.incomeOrExpense,
+                                      selectedAccounts: [toAccount!],
+                                    ));
 
                             if (modalRes != null && modalRes.isNotEmpty) {
                               setState(() {
@@ -385,17 +386,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                   borderRadius: BorderRadius.vertical(
                                       top: Radius.circular(20)),
                                   child: Scaffold(
-                                    body: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        BottomSheetHeader(),
-                                        Expanded(
-                                          child: CategoriesList(
-                                            mode: CategoriesListMode
-                                                .modalSelectSubcategory,
-                                          ),
-                                        ),
-                                      ],
+                                    body: CategoriesList(
+                                      mode: CategoriesListMode
+                                          .modalSelectSubcategory,
                                     ),
                                   ),
                                 );
@@ -426,44 +419,50 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         });
                       },
                     ),
-                    if (!(widget.transactionToEdit != null &&
-                        widget.transactionToEdit is! MoneyRecurrentRule)) ...[
-                      const SizedBox(height: 16),
-                      TextField(
-                          controller: TextEditingController(
-                              text: recurrentRule.formText(context)),
-                          readOnly: true,
-                          onTap: () async {
-                            final res = await showDialog<RecurrencyData?>(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 0),
-                                  clipBehavior: Clip.hardEdge,
-                                  content: IntervalSelectorHelp(
-                                      selectedRecurrentRule: recurrentRule),
-                                );
-                              },
-                            );
-
-                            if (res == null) return;
-
-                            setState(() {
-                              recurrentRule = res;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            labelText: t.general.time.periodicity.display,
-                            suffixIcon: const Icon(Icons.arrow_drop_down),
-                          ))
+                    if (date.compareTo(DateTime.now()) > 0) ...[
+                      const SizedBox(height: 8),
+                      const InlineInfoCard(
+                          text:
+                              'La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente',
+                          mode: InlineInfoCardMode.info),
+                      const SizedBox(height: 4),
                     ],
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: TextEditingController(
+                          text: recurrentRule.formText(context)),
+                      readOnly: true,
+                      onTap: () async {
+                        final res = await showDialog<RecurrencyData?>(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 0),
+                              clipBehavior: Clip.hardEdge,
+                              content: IntervalSelectorHelp(
+                                  selectedRecurrentRule: recurrentRule),
+                            );
+                          },
+                        );
+
+                        if (res == null) return;
+
+                        setState(() {
+                          recurrentRule = res;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: t.general.time.periodicity.display,
+                        suffixIcon: const Icon(Icons.arrow_drop_down),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: titleController,
                       maxLength: 15,
                       decoration: const InputDecoration(
-                        labelText: 'Titulo de la transacción',
+                        labelText: 'Título de la transacción',
                         hintText:
                             'Si no se especifica, se usará el nombre de la categoría',
                       ),
@@ -481,30 +480,35 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          DropdownButtonFormField(
-                            value: status,
-                            decoration: InputDecoration(
-                              labelText: t.transaction.form.status,
-                            ),
-                            items: [
-                              const DropdownMenuItem(
-                                value: null,
-                                child: Text('Ninguno'),
+                          if (recurrentRule.isNoRecurrent)
+                            DropdownButtonFormField<TransactionStatus?>(
+                              value: date.compareTo(DateTime.now()) > 0
+                                  ? TransactionStatus.pending
+                                  : status,
+                              decoration: InputDecoration(
+                                labelText: t.transaction.form.status,
                               ),
-                              ...List.generate(
-                                  TransactionStatus.values.length,
-                                  (index) => DropdownMenuItem(
-                                      value: TransactionStatus.values[index],
-                                      child: Text(TransactionStatus
-                                          .values[index]
-                                          .displayName(context))))
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                status = value;
-                              });
-                            },
-                          ),
+                              items: [
+                                const DropdownMenuItem(
+                                  value: null,
+                                  child: Text('Ninguno'),
+                                ),
+                                ...List.generate(
+                                    TransactionStatus.values.length,
+                                    (index) => DropdownMenuItem(
+                                        value: TransactionStatus.values[index],
+                                        child: Text(TransactionStatus
+                                            .values[index]
+                                            .displayName(context))))
+                              ],
+                              onChanged: date.compareTo(DateTime.now()) > 0
+                                  ? null
+                                  : (value) {
+                                      setState(() {
+                                        status = value;
+                                      });
+                                    },
+                            ),
                           if (widget.mode == TransactionFormMode.transfer) ...[
                             const SizedBox(height: 16),
                             TextFormField(
@@ -554,34 +558,10 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               valueToNumber != null &&
                               valueInDestinyToNumber == null) ...[
                             const SizedBox(height: 16),
-                            Card(
-                              color: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.2),
-                              elevation: 0,
-                              margin: const EdgeInsets.all(0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.info_rounded,
-                                      color: Theme.of(context).primaryColor,
-                                      size: 28,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Flexible(
-                                      child: Text(
-                                        'Serán transpasados a la cuenta de destino especificada ${NumberFormat.currency(symbol: toAccount!.currency.symbol).format(valueToNumber)}',
-                                        style: TextStyle(
-                                            fontSize: 12.25,
-                                            fontWeight: FontWeight.w400),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            InlineInfoCard(
+                                text:
+                                    'Serán transpasados a la cuenta de destino especificada ${NumberFormat.currency(symbol: toAccount!.currency.symbol).format(valueToNumber)}',
+                                mode: InlineInfoCardMode.info)
                           ],
                           const SizedBox(height: 16),
                           TextFormField(
@@ -599,9 +579,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       )),
                   SwitchListTile(
                     value: isHidden,
-                    title: Text('Ocultar transacción'),
-                    subtitle:
-                        Text('No será mostrada en listados ni estadisticas'),
+                    title: const Text('Ocultar transacción'),
+                    subtitle: const Text(
+                        'No será mostrada en listados ni estadisticas'),
                     onChanged: (value) {
                       setState(() {
                         isHidden = value;

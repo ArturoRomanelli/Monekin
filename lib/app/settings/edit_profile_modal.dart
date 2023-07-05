@@ -1,6 +1,5 @@
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetHeader.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:finlytics/i18n/translations.g.dart';
@@ -56,86 +55,80 @@ class _EditProfileModalState extends State<EditProfileModal> {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final t = Translations.of(context);
 
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      child: Container(
-        decoration: BoxDecoration(color: colors.background),
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const BottomSheetHeader(),
-          Container(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    t.settings.edit_profile,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 22),
-                  Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: _nameController,
-                      maxLength: 20,
-                      decoration: const InputDecoration(
-                        labelText: 'User name *',
-                      ),
-                      validator: (value) =>
-                          fieldValidator(value, isRequired: true),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      textInputAction: TextInputAction.done,
+    return Container(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  t.settings.edit_profile,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 22),
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _nameController,
+                    maxLength: 20,
+                    decoration: const InputDecoration(
+                      labelText: 'User name *',
                     ),
+                    validator: (value) =>
+                        fieldValidator(value, isRequired: true),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    textInputAction: TextInputAction.done,
                   ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8, // gap between adjacent cards
-                    runSpacing: 12, // gap between lines
-                    alignment: WrapAlignment.center,
-                    children: allAvatars
-                        .map((e) => InkWell(
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                setState(() {
-                                  selectedAvatar = e;
-                                });
-                              },
-                              child: UserAvatar(
-                                avatar: e,
-                                size: 52,
-                                border: selectedAvatar == e
-                                    ? Border.all(
-                                        width: 2, color: colors.primary)
-                                    : Border.all(
-                                        width: 2, color: Colors.transparent),
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                ],
-              )),
-          BottomSheetFooter(
-              onSaved: selectedAvatar == null
-                  ? null
-                  : () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8, // gap between adjacent cards
+                  runSpacing: 12, // gap between lines
+                  alignment: WrapAlignment.center,
+                  children: allAvatars
+                      .map((e) => InkWell(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              setState(() {
+                                selectedAvatar = e;
+                              });
+                            },
+                            child: UserAvatar(
+                              avatar: e,
+                              size: 52,
+                              border: selectedAvatar == e
+                                  ? Border.all(width: 2, color: colors.primary)
+                                  : Border.all(
+                                      width: 2, color: Colors.transparent),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ],
+            )),
+        BottomSheetFooter(
+            onSaved: selectedAvatar == null
+                ? null
+                : () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
 
-                        final userSettingsService = UserSettingService.instance;
+                      final userSettingsService = UserSettingService.instance;
 
-                        Future.wait([
-                          userSettingsService.setSetting(
-                              SettingKey.userName, _nameController.text),
-                          userSettingsService.setSetting(
-                              SettingKey.avatar, selectedAvatar!)
-                        ].map((e) => Future.value(e))).then((value) {
-                          Navigator.pop(context);
-                        });
-                      }
-                    })
-        ]),
-      ),
+                      Future.wait([
+                        userSettingsService.setSetting(
+                            SettingKey.userName, _nameController.text),
+                        userSettingsService.setSetting(
+                            SettingKey.avatar, selectedAvatar!)
+                      ].map((e) => Future.value(e))).then((value) {
+                        Navigator.pop(context);
+                      });
+                    }
+                  })
+      ]),
     );
   }
 }

@@ -5,13 +5,16 @@ class CardWithHeader extends StatelessWidget {
       {super.key,
       required this.title,
       required this.body,
-      this.onDetailsClick});
+      this.onHeaderButtonClick,
+      this.headerButtonIcon = Icons.arrow_forward_ios_rounded});
 
   final Widget body;
 
   final String title;
 
-  final void Function()? onDetailsClick;
+  final IconData headerButtonIcon;
+
+  final void Function()? onHeaderButtonClick;
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +29,21 @@ class CardWithHeader extends StatelessWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(
                 16,
-                onDetailsClick != null ? 2 : iconSize,
+                onHeaderButtonClick != null ? 2 : iconSize,
                 2,
-                onDetailsClick != null ? 2 : iconSize),
+                onHeaderButtonClick != null ? 2 : iconSize),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(title,
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w700)),
-                if (onDetailsClick != null)
+                if (onHeaderButtonClick != null)
                   IconButton(
-                    onPressed: onDetailsClick,
+                    onPressed: onHeaderButtonClick,
                     iconSize: iconSize,
                     color: Theme.of(context).primaryColor,
-                    icon: const Icon(Icons.arrow_forward_ios_rounded),
+                    icon: Icon(headerButtonIcon),
                   )
               ],
             ),

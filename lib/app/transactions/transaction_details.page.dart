@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart' as drift;
-import 'package:finlytics/app/tabs/card_with_header.dart';
+import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';

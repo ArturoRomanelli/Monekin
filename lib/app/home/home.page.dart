@@ -1,19 +1,19 @@
 import 'package:finlytics/app/accounts/account_details.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
-import 'package:finlytics/app/accounts/all_accounts_balance.dart';
+import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
+import 'package:finlytics/app/home/card_with_header.dart';
+import 'package:finlytics/app/home/circular_arc.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
-import 'package:finlytics/app/stats/cash_flow.dart';
-import 'package:finlytics/app/stats/fund_evolution.dart';
-import 'package:finlytics/app/stats/movements_by_categories.dart';
 import 'package:finlytics/app/stats/widgets/balance_bar_chart_small.dart';
 import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
-import 'package:finlytics/app/tabs/card_with_header.dart';
-import 'package:finlytics/app/tabs/circular_arc.dart';
-import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/transactions/transaction_form.page.dart';
+import 'package:finlytics/app/transactions/transaction_list.dart';
+import 'package:finlytics/app/transactions/transactions.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
@@ -25,21 +25,22 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/user_avatar.dart';
+import '../stats/stats_page.dart';
 import '../transactions/recurrent_transactions_page.dart';
 
-class Tab1Page extends StatefulWidget {
-  const Tab1Page({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<Tab1Page> createState() => _Tab1PageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _Tab1PageState extends State<Tab1Page> {
+class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> _tools = [
     {
-      'icon': Icons.add_card,
-      'label': 'Add acc.',
-      'route': const AccountFormPage()
+      'icon': Icons.calculate_outlined,
+      'label': t.budgets.title,
+      'route': const BudgetsPage()
     },
     {
       'icon': Icons.sell_outlined,
@@ -124,7 +125,7 @@ class _Tab1PageState extends State<Tab1Page> {
                     MaterialPageRoute(
                         builder: (context) => AccountDetailsPage(
                               account: account,
-                              prevPage: const TabsPage(),
+                              prevPage: const HomePage(),
                             ))),
                 leading: Hero(
                     tag: 'account-icon-${account.id}',
@@ -185,6 +186,14 @@ class _Tab1PageState extends State<Tab1Page> {
         toolbarHeight: 0,
         backgroundColor: Theme.of(context).colorScheme.background,
       ),
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add_rounded),
+          onPressed: () => {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TransactionFormPage()))
+              }),
       body: Column(
         children: [
           Container(
@@ -363,18 +372,44 @@ class _Tab1PageState extends State<Tab1Page> {
 
                             return CardWithHeader(
                                 title: t.general.accounts,
-                                onDetailsClick: accounts.isEmpty
+                                headerButtonIcon: Icons.add_rounded,
+                                onHeaderButtonClick: accounts.isEmpty
                                     ? null
                                     : () {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const AllAccountBalancePage()));
+                                                    const AccountFormPage()));
                                       },
                                 body: buildAccountList(accounts));
                           }
                         }),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    CardWithHeader(
+                        title: 'Últimos registros',
+                        onHeaderButtonClick: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const TransactionsPage()));
+                        },
+                        body: StreamBuilder(
+                            stream: TransactionService.instance
+                                .getTransactions(limit: 5),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const LinearProgressIndicator();
+                              }
+
+                              return TransactionListComponent(
+                                  transactions: snapshot.data!,
+                                  showGroupDivider: false,
+                                  prevPage: const HomePage());
+                            })),
                     const SizedBox(
                       height: 16,
                     ),
@@ -445,13 +480,15 @@ class _Tab1PageState extends State<Tab1Page> {
                         body: FundEvolutionLineChart(
                           startDate: dateRangeService.startDate,
                           endDate: dateRangeService.endDate,
+                          dateRange: dateRangeService.selectedDateRange,
                         ),
-                        onDetailsClick: () {
+                        onHeaderButtonClick: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const FundEvolutionPage()));
+                                  builder: (context) => const StatsPage(
+                                        initialIndex: 1,
+                                      )));
                         }),
                     const SizedBox(height: 16),
                     CardWithHeader(
@@ -460,12 +497,13 @@ class _Tab1PageState extends State<Tab1Page> {
                           startDate: dateRangeService.startDate,
                           endDate: dateRangeService.endDate,
                         ),
-                        onDetailsClick: () {
+                        onHeaderButtonClick: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MovementsByCategoryPage()));
+                                  builder: (context) => const StatsPage(
+                                        initialIndex: 0,
+                                      )));
                         }),
                     const SizedBox(height: 16),
                     CardWithHeader(
@@ -476,11 +514,13 @@ class _Tab1PageState extends State<Tab1Page> {
                           child: BalanceChartSmall(
                               dateRangeService: dateRangeService),
                         ),
-                        onDetailsClick: () {
+                        onHeaderButtonClick: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const CashFlowPage()));
+                                  builder: (context) => const StatsPage(
+                                        initialIndex: 2,
+                                      )));
                         }),
                     const SizedBox(height: 16),
                     CardWithHeader(

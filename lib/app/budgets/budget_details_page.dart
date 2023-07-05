@@ -2,7 +2,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/budgets/budget_form_page.dart';
 import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/budgets/components/budget_evolution_chart.dart';
-import 'package:finlytics/app/tabs/card_with_header.dart';
+import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/budget/budget_service.dart';

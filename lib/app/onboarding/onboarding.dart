@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/core/database/services/app-data/app_data_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
@@ -26,7 +26,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         .then((value) => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const TabsPage(),
+              builder: (context) => const HomePage(),
             )));
   }
 

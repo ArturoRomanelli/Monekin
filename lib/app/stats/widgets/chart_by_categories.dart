@@ -34,7 +34,7 @@ class ChartByCategories extends StatefulWidget {
       required this.startDate,
       required this.endDate,
       this.showList = false,
-      this.transactionsType = TransactionType.expense,
+      this.initialSelectedType = TransactionType.expense,
       this.filters});
 
   final DateTime? startDate;
@@ -42,7 +42,7 @@ class ChartByCategories extends StatefulWidget {
 
   final bool showList;
 
-  final TransactionType transactionsType;
+  final TransactionType initialSelectedType;
 
   final TransactionFilters? filters;
 
@@ -52,6 +52,7 @@ class ChartByCategories extends StatefulWidget {
 
 class _ChartByCategoriesState extends State<ChartByCategories> {
   int touchedIndex = -1;
+  late TransactionType transactionsType;
 
   Future<List<ChartByCategoriesDataItem>?> getEvolutionData(
     BuildContext context,
@@ -78,9 +79,9 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                       .isIn(widget.filters!.categories!.map((e) => e.id)) |
                   transCategory.parentCategoryID
                       .isIn(widget.filters!.categories!.map((e) => e.id)),
-            if (widget.transactionsType == TransactionType.income)
+            if (transactionsType == TransactionType.income)
               t.value.isBiggerOrEqualValue(0),
-            if (widget.transactionsType == TransactionType.expense)
+            if (transactionsType == TransactionType.expense)
               t.value.isSmallerOrEqualValue(0)
           ]),
         )
@@ -218,6 +219,13 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    transactionsType = widget.initialSelectedType;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
@@ -232,6 +240,28 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
         return Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: SegmentedButton(
+                segments: [
+                  ButtonSegment(
+                    value: TransactionType.expense,
+                    label: Text(t.general.expense),
+                  ),
+                  ButtonSegment(
+                    value: TransactionType.income,
+                    label: Text(t.general.income),
+                  ),
+                ],
+                showSelectedIcon: false,
+                selected: {transactionsType},
+                onSelectionChanged: (newSelection) {
+                  setState(() {
+                    transactionsType = newSelection.first;
+                  });
+                },
+              ),
+            ),
             SizedBox(
               height: 250,
               child: Stack(

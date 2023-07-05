@@ -1,5 +1,5 @@
 import 'package:finlytics/app/accounts/account_type_selector.dart';
-import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
@@ -76,7 +76,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
     navigateBack() => Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-            builder: (context) => widget.prevPage ?? const TabsPage()),
+            builder: (context) => widget.prevPage ?? const HomePage()),
         (Route<dynamic> route) => false);
 
     if (_accountToEdit != null) {
@@ -214,6 +214,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                               showModalBottomSheet(
                                   context: context,
                                   isScrollControlled: true,
+                                  showDragHandle: true,
                                   builder: (context) {
                                     return IconSelectorModal(
                                       preselectedIconID: _icon.id,

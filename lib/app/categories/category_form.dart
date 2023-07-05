@@ -290,6 +290,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                         showModalBottomSheet(
                                             context: context,
                                             isScrollControlled: true,
+                                            showDragHandle: true,
                                             builder: (context) {
                                               return IconSelectorModal(
                                                 preselectedIconID: _icon.id,

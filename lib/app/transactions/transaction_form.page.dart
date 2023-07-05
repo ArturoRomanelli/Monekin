@@ -1,6 +1,6 @@
 import 'package:finlytics/app/accounts/account_selector.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
-import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/app/transactions/widgets/interval_selector_help.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
@@ -118,8 +118,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  widget.prevPage ?? const TabsPage(currentPageIndex: 1)));
+              builder: (context) => widget.prevPage ?? const HomePage()));
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(isEditMode

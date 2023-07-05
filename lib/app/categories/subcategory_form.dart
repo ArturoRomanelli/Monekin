@@ -72,6 +72,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                         showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
+                            showDragHandle: true,
                             builder: (context) {
                               return IconSelectorModal(
                                 preselectedIconID: _icon.id,

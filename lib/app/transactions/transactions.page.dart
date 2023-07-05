@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
@@ -11,14 +11,14 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-class Tab2Page extends StatefulWidget {
-  const Tab2Page({Key? key}) : super(key: key);
+class TransactionsPage extends StatefulWidget {
+  const TransactionsPage({Key? key}) : super(key: key);
 
   @override
-  State<Tab2Page> createState() => _Tab2PageState();
+  State<TransactionsPage> createState() => _TransactionsPageState();
 }
 
-class _Tab2PageState extends State<Tab2Page> {
+class _TransactionsPageState extends State<TransactionsPage> {
   TransactionFilters filters = TransactionFilters();
 
   @override
@@ -126,7 +126,7 @@ class _Tab2PageState extends State<Tab2Page> {
                   padding: const EdgeInsets.only(bottom: 80),
                   child: TransactionListComponent(
                     transactions: transactions,
-                    prevPage: const TabsPage(currentPageIndex: 1),
+                    prevPage: const HomePage(),
                   ),
                 );
               },

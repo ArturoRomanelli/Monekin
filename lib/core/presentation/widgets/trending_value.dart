@@ -52,9 +52,11 @@ class TrendingValue extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: percentage >= 0
-              ? const Color.fromARGB(255, 220, 255, 220)
-              : const Color.fromARGB(255, 255, 220, 220),
+          color: !filled
+              ? null
+              : (percentage >= 0
+                  ? const Color.fromARGB(255, 220, 255, 220)
+                  : const Color.fromARGB(255, 255, 220, 220)),
           borderRadius: BorderRadius.circular(fontSize / 3.5),
           border: outlined
               ? Border.all(color: _getColorBasedOnPercentage(), width: 1)

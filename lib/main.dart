@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:finlytics/app/onboarding/onboarding.dart';
-import 'package:finlytics/app/tabs/tabs.page.dart';
+import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/app-data/app_data_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
@@ -92,7 +92,7 @@ class MyApp extends ConsumerWidget {
         themeMode: themeMode,
         home: Builder(builder: (context) {
           if (!goToIntro) {
-            return const TabsPage();
+            return const HomePage();
           } else {
             return const OnboardingPage();
           }

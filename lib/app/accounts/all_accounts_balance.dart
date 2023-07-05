@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
+import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -78,64 +78,97 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(t.tabs.tab1.account_resume.display)),
-      persistentFooterButtons: [
-        PersistentFooterButton(
-          child: FilledButton.icon(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AccountFormPage()));
-            },
-            icon: const Icon(Icons.add),
-            label: Text(t.account.form.create),
-          ),
-        )
-      ],
-      body: SingleChildScrollView(
-        child: StreamBuilder(
-            stream: getAccountsWithMoney(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const LinearProgressIndicator();
-              }
-              final accounts = snapshot.data!;
+    return StreamBuilder(
+        stream: getAccountsWithMoney(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const LinearProgressIndicator();
+          }
+          final accounts = snapshot.data!;
 
-              final totalMoney = accounts.map((e) => e.money).sum;
+          final totalMoney = accounts.map((e) => e.money).sum;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(t.tabs.tab1.account_resume.balance_by_account),
-                  ),
-                  ListView.separated(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CardWithHeader(
+                title: t.tabs.tab1.account_resume.balance_by_account,
+                body: ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final accountWithMoney = accounts[index];
+
+                    return ListTile(
+                      leading: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 2,
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(1000)),
+                          child: accountWithMoney.account.icon.display(
+                              size: 22, color: Theme.of(context).primaryColor)),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => AccountFormPage(
+                            prevPage: const AllAccountBalancePage(),
+                            account: accountWithMoney.account,
+                          ),
+                        ),
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(accountWithMoney.account.name),
+                              CurrencyDisplayer(
+                                  amountToConvert: accountWithMoney.money)
+                            ],
+                          ),
+                          AnimatedProgressBar(
+                              value: accountWithMoney.money / totalMoney),
+                        ],
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(indent: 56);
+                  },
+                  itemCount: accounts.length,
+                  shrinkWrap: true,
+                ),
+              ),
+              const SizedBox(height: 16),
+              CardWithHeader(
+                title: t.tabs.tab1.account_resume.balance_by_currency,
+                body: Builder(builder: (context) {
+                  final currenciesWithMoney = getCurrenciesWithMoney(accounts);
+
+                  return ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      final accountWithMoney = accounts[index];
+                      final currencyWithMoney = currenciesWithMoney[index];
 
                       return ListTile(
-                        leading: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 2,
-                                    color: Theme.of(context).primaryColor),
-                                borderRadius: BorderRadius.circular(1000)),
-                            child: accountWithMoney.account.icon.display(
-                                size: 22,
-                                color: Theme.of(context).primaryColor)),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AccountFormPage(
-                              prevPage: const AllAccountBalancePage(),
-                              account: accountWithMoney.account,
-                            ),
-                          ),
+                        leading: StreamBuilder(
+                          stream: CurrencyService.instance.getCurrencyByCode(
+                              currencyWithMoney.currency.code),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Skeleton(width: 42, height: 42);
+                            }
+
+                            final currency = snapshot.data!;
+
+                            return Container(
+                                clipBehavior: Clip.hardEdge,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: currency.displayFlagIcon(size: 42));
+                          },
                         ),
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,13 +176,26 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(accountWithMoney.account.name),
+                                StreamBuilder(
+                                    stream: CurrencyService.instance
+                                        .getCurrencyByCode(
+                                            currencyWithMoney.currency.code),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const Skeleton(
+                                            width: 42, height: 42);
+                                      }
+
+                                      final currency = snapshot.data!;
+
+                                      return Text(currency.name);
+                                    }),
                                 CurrencyDisplayer(
-                                    amountToConvert: accountWithMoney.money)
+                                    amountToConvert: currencyWithMoney.money)
                               ],
                             ),
                             AnimatedProgressBar(
-                                value: accountWithMoney.money / totalMoney),
+                                value: currencyWithMoney.money / totalMoney),
                           ],
                         ),
                       );
@@ -157,86 +203,13 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                     separatorBuilder: (context, index) {
                       return const Divider(indent: 56);
                     },
-                    itemCount: accounts.length,
+                    itemCount: currenciesWithMoney.length,
                     shrinkWrap: true,
-                  ),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(t.tabs.tab1.account_resume.balance_by_currency),
-                  ),
-                  Builder(builder: (context) {
-                    final currenciesWithMoney =
-                        getCurrenciesWithMoney(accounts);
-
-                    return ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final currencyWithMoney = currenciesWithMoney[index];
-
-                        return ListTile(
-                          leading: StreamBuilder(
-                            stream: CurrencyService.instance.getCurrencyByCode(
-                                currencyWithMoney.currency.code),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const Skeleton(width: 42, height: 42);
-                              }
-
-                              final currency = snapshot.data!;
-
-                              return Container(
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: currency.displayFlagIcon(size: 42));
-                            },
-                          ),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  StreamBuilder(
-                                      stream: CurrencyService.instance
-                                          .getCurrencyByCode(
-                                              currencyWithMoney.currency.code),
-                                      builder: (context, snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return const Skeleton(
-                                              width: 42, height: 42);
-                                        }
-
-                                        final currency = snapshot.data!;
-
-                                        return Text(currency.name);
-                                      }),
-                                  CurrencyDisplayer(
-                                      amountToConvert: currencyWithMoney.money)
-                                ],
-                              ),
-                              AnimatedProgressBar(
-                                  value: currencyWithMoney.money / totalMoney),
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(indent: 56);
-                      },
-                      itemCount: currenciesWithMoney.length,
-                      shrinkWrap: true,
-                    );
-                  }),
-                ],
-              );
-            }),
-      ),
-    );
+                  );
+                }),
+              ),
+            ],
+          );
+        });
   }
 }

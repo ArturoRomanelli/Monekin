@@ -55,10 +55,10 @@ class DatabaseImpl extends _$DatabaseImpl {
     return MigrationStrategy(
       beforeOpen: (details) async {
         print(
-            "DB Opened! Version ${details.versionNow} (previous was ${details.versionBefore}).");
+            'DB found! Version ${details.versionNow} (previous was ${details.versionBefore}).');
 
         if (details.wasCreated) {
-          print("Executing seeders... Populating the database...");
+          print('Executing seeders... Populating the database...');
 
           try {
             // TODO: The next calls won't work if we call insertInitialCurrencies() here. WHY?!
@@ -84,9 +84,9 @@ class DatabaseImpl extends _$DatabaseImpl {
             await CategoryService.instance
                 .initializeCategories(jsonDecode(defaultCategories));
 
-            print("Initial data correctly inserted!");
+            print('Initial data correctly inserted!');
           } catch (e) {
-            print("ERROR: $e");
+            print('ERROR: $e');
             throw Exception(e);
           }
         }
@@ -120,10 +120,7 @@ class DatabaseImpl extends _$DatabaseImpl {
 }
 
 LazyDatabase _openConnection(String dbName, {bool logStatements = false}) {
-  // the LazyDatabase util lets us find the right location for the file async.
   return LazyDatabase(() async {
-    // put the database file, called db.sqlite here, into the documents folder
-    // for your app.
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(join(dbFolder.path, dbName));
     return NativeDatabase.createBackgroundConnection(file,

@@ -2,6 +2,7 @@ import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/currencies/currency_manager.dart';
 import 'package:finlytics/app/settings/advanced_settings_page.dart';
 import 'package:finlytics/app/settings/edit_profile_modal.dart';
+import 'package:finlytics/app/settings/export_page.dart';
 import 'package:finlytics/core/database/backup/backup_database_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
@@ -150,13 +151,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle: t.settings.data.export_descr,
                   icon: Icons.cloud_download_outlined,
                   onTap: () {
-                    BackupDatabaseService()
-                        .downloadDatabaseFile(context)
-                        .then((value) {
-                      print('EEEEEEEEEEE');
-                    }).catchError((err) {
-                      print(err);
-                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ExportDataPage()));
                   }),
               const Divider(indent: 54),
               createSettingItem(

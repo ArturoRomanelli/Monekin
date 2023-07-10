@@ -76,6 +76,15 @@ class _AccountSelectorState extends State<AccountSelector> {
         ),
         Builder(builder: (context) {
           if (allAccounts != null) {
+            if (allAccounts!.length == 0) {
+              return Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    "No hay cuentas disponibles que puedas seleccionar aqui",
+                    textAlign: TextAlign.center,
+                  ));
+            }
+
             return Column(
               children: [
                 ...List.generate(allAccounts!.length, (index) {

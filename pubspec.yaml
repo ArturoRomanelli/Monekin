@@ -50,6 +50,8 @@ dependencies:
   slang_flutter: ^3.18.0
   flex_color_scheme: ^7.1.2
   flutter_launcher_icons: ^0.13.1
+  csv: ^5.0.2
+  dotted_border: ^2.0.0+3
 
 dev_dependencies:
   flutter_test:

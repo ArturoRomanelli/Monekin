@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/account_details.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/budgets/budgets_page.dart';
@@ -398,8 +399,14 @@ class _HomePageState extends State<HomePage> {
                                       const TransactionsPage()));
                         },
                         body: StreamBuilder(
-                            stream: TransactionService.instance
-                                .getTransactions(limit: 5),
+                            stream: TransactionService.instance.getTransactions(
+                                limit: 5,
+                                orderBy: (p0, p1, p2, p3, p4, p5, p6) =>
+                                    drift.OrderBy([
+                                      drift.OrderingTerm(
+                                          expression: p0.date,
+                                          mode: drift.OrderingMode.desc)
+                                    ])),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData) {
                                 return const LinearProgressIndicator();

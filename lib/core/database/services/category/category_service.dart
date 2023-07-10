@@ -25,7 +25,9 @@ class CategoryService {
   }
 
   Stream<List<Category>> getCategories(
-      {Expression<bool> Function(Categories, Categories)? predicate,
+      {Expression<bool> Function(
+              Categories catTable, Categories parentCatTable)?
+          predicate,
       double? limit}) {
     limit ??= -1;
 

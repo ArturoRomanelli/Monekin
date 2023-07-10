@@ -22,35 +22,89 @@ class TransactionsPage extends StatefulWidget {
 class _TransactionsPageState extends State<TransactionsPage> {
   TransactionFilters filters = TransactionFilters();
 
+  bool searchActive = false;
+
+  FocusNode searchFocusNode = FocusNode();
+  String? searchValue;
+
+  @override
+  void initState() {
+    super.initState();
+
+    searchFocusNode.addListener(() {
+      if (!searchFocusNode.hasFocus) {
+        setState(() {
+          searchActive = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    searchFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.general.transactions), actions: [
-        IconButton(
-            onPressed: () async {
-              final modalRes = await showModalBottomSheet<TransactionFilters>(
-                  context: context,
-                  isScrollControlled: true,
-                  showDragHandle: true,
-                  builder: (context) =>
-                      FilterSheetModal(preselectedFilter: filters));
+      appBar: AppBar(
+          leading: searchActive
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      searchActive = false;
+                      searchValue = null;
+                    });
+                  },
+                  icon: const Icon(Icons.close))
+              : null,
+          title: searchActive
+              ? TextField(
+                  focusNode: searchFocusNode,
+                  decoration: InputDecoration(
+                      hintText: t.tabs.tab2.searcher_placeholder,
+                      border: const UnderlineInputBorder()),
+                  onChanged: (value) {
+                    setState(() {
+                      searchValue = value;
+                    });
+                  },
+                )
+              : Text(t.general.transactions),
+          actions: [
+            if (!searchActive)
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    searchActive = true;
+                  });
 
-              if (modalRes != null) {
-                setState(() {
-                  filters = modalRes;
-                });
-              }
-            },
-            icon: const Icon(Icons.filter_alt_outlined)),
-        IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () {
-            // Do something
-          },
-        ),
-      ]),
+                  searchFocusNode.requestFocus();
+                },
+              ),
+            IconButton(
+                onPressed: () async {
+                  final modalRes =
+                      await showModalBottomSheet<TransactionFilters>(
+                          context: context,
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          builder: (context) =>
+                              FilterSheetModal(preselectedFilter: filters));
+
+                  if (modalRes != null) {
+                    setState(() {
+                      filters = modalRes;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.filter_alt_outlined)),
+          ]),
       floatingActionButton: FloatingActionButton.extended(
           icon: const Icon(Icons.add_rounded),
           label: Text(t.transaction.create),
@@ -72,6 +126,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   predicate: (t, account, accountCurrency, receivingAccount,
                           receivingAccountCurrency, c, p6) =>
                       DatabaseImpl.instance.buildExpr([
+                    if (searchValue != null && searchValue!.isNotEmpty)
+                      (t.notes.contains(searchValue!) |
+                          t.title.contains(searchValue!) |
+                          c.name.contains(searchValue!)),
                     if (filters.accounts != null)
                       t.accountID.isIn(filters.accounts!.map((e) => e.id)),
                     if (filters.categories != null)
@@ -90,6 +148,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   predicate: (t, account, accountCurrency, receivingAccount,
                           receivingAccountCurrency, c, p6) =>
                       DatabaseImpl.instance.buildExpr([
+                    if (searchValue != null && searchValue!.isNotEmpty)
+                      (t.notes.contains(searchValue!) |
+                          t.title.contains(searchValue!) |
+                          c.name.contains(searchValue!)),
                     if (filters.accounts != null)
                       t.accountID.isIn(filters.accounts!.map((e) => e.id)),
                     if (filters.categories != null)

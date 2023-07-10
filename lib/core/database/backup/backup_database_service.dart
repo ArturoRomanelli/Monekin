@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
@@ -56,7 +57,7 @@ class BackupDatabaseService {
 
     csvData += '\n';
 
-    final dateFormatter = DateFormat('yyyy-MM-dd H:m:s');
+    final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 
     for (final transaction in data) {
       final toAdd = [
@@ -124,5 +125,19 @@ class BackupDatabaseService {
       // Load the new database
       await file.copy(path);
     }
+  }
+
+  Future<File?> readFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      return File(result.files.single.path!);
+    }
+
+    return null;
+  }
+
+  Future<List<List<dynamic>>> processCsv(String csvData) async {
+    return const CsvToListConverter().convert(csvData, eol: "\n");
   }
 }

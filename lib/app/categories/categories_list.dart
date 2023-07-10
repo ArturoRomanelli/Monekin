@@ -76,6 +76,7 @@ class _CategoriesListState extends State<CategoriesList> {
                   final modalRes = await showModalBottomSheet<Category?>(
                       context: context,
                       isScrollControlled: true,
+                      showDragHandle: true,
                       builder: (context) {
                         return SubcategorySelector(parentCategory: category);
                       });

@@ -3,7 +3,7 @@ import 'package:finlytics/app/currencies/currency_manager.dart';
 import 'package:finlytics/app/settings/advanced_settings_page.dart';
 import 'package:finlytics/app/settings/edit_profile_modal.dart';
 import 'package:finlytics/app/settings/export_page.dart';
-import 'package:finlytics/core/database/backup/backup_database_service.dart';
+import 'package:finlytics/app/settings/import_page.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
@@ -162,11 +162,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   subtitle: t.settings.data.import_descr,
                   icon: Icons.cloud_upload_outlined,
                   onTap: () {
-                    BackupDatabaseService().importDatabase().then((value) {
-                      print('EEEEEEEEEEE');
-                    }).catchError((err) {
-                      print(err);
-                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ImportPage()));
                   }),
               const SizedBox(height: 22),
               createListSeparator(t.settings.help_us.display),

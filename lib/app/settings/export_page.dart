@@ -1,4 +1,10 @@
+import 'package:finlytics/app/accounts/account_selector.dart';
+import 'package:finlytics/app/categories/categories_list.dart';
+import 'package:finlytics/core/database/services/account/account_service.dart';
+import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
+import 'package:finlytics/core/models/category/category.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +23,8 @@ class ExportDataPage extends StatefulWidget {
 
 class _ExportDataPageState extends State<ExportDataPage> {
   _ExportFormats selectedExportFormat = _ExportFormats.db;
+
+  final filters = TransactionFilters();
 
   Widget cardSelector({
     required _ExportFormats exportFormat,
@@ -73,6 +81,26 @@ class _ExportDataPageState extends State<ExportDataPage> {
         ),
       ),
     );
+  }
+
+  Widget selector({
+    required String title,
+    required String? inputValue,
+    required Function onClick,
+  }) {
+    final t = Translations.of(context);
+
+    return TextField(
+        controller:
+            TextEditingController(text: inputValue ?? t.general.unspecified),
+        readOnly: true,
+        onTap: () => onClick(),
+        decoration: InputDecoration(
+          labelText: title,
+          contentPadding: const EdgeInsets.only(left: 16, top: 16, bottom: 10),
+          suffixIcon: const Icon(Icons.arrow_drop_down),
+          border: const UnderlineInputBorder(),
+        ));
   }
 
   @override
@@ -134,6 +162,97 @@ class _ExportDataPageState extends State<ExportDataPage> {
                 descr: t.backup.export.transactions_descr,
                 iconName: 'table_file',
               ),
+              const SizedBox(height: 8),
+              Column(
+                children: [
+                  /* ---------------------------------- */
+                  /* -------- ACCOUNT SELECTOR -------- */
+                  /* ---------------------------------- */
+
+                  StreamBuilder(
+                      stream: AccountService.instance.getAccounts(),
+                      builder: (context, snapshot) {
+                        return selector(
+                            title: t.general.accounts,
+                            inputValue: filters.accounts == null ||
+                                    (snapshot.hasData &&
+                                        filters.accounts!.length ==
+                                            snapshot.data!.length)
+                                ? 'All accounts'
+                                : filters.accounts
+                                    ?.map((e) => e.name)
+                                    .join(', '),
+                            onClick: () async {
+                              final modalRes =
+                                  await showAccountSelectorBottomSheet(
+                                      context,
+                                      AccountSelector(
+                                        allowMultiSelection: true,
+                                        filterSavingAccounts: false,
+                                        selectedAccounts: filters.accounts ??
+                                            (snapshot.hasData
+                                                ? [...snapshot.data!]
+                                                : []),
+                                      ));
+
+                              if (modalRes != null && modalRes.isNotEmpty) {
+                                setState(() {
+                                  filters.accounts = snapshot.hasData &&
+                                          modalRes.length ==
+                                              snapshot.data!.length
+                                      ? null
+                                      : modalRes;
+                                });
+                              }
+                            });
+                      }),
+
+                  /* ---------------------------------- */
+                  /* -------- CATEGORY SELECTOR ------- */
+                  /* ---------------------------------- */
+
+                  StreamBuilder(
+                      stream: CategoryService.instance.getMainCategories(),
+                      builder: (context, snapshot) {
+                        return selector(
+                            title: t.general.categories,
+                            inputValue: filters.categories == null ||
+                                    (snapshot.hasData &&
+                                        filters.categories!.length ==
+                                            snapshot.data!.length)
+                                ? 'All categories'
+                                : filters.categories
+                                    ?.map((e) => e.name)
+                                    .join(', '),
+                            onClick: () async {
+                              final modalRes =
+                                  await showModalBottomSheet<List<Category>>(
+                                context: context,
+                                builder: (context) {
+                                  return CategoriesList(
+                                    mode: CategoriesListMode
+                                        .modalSelectMultiCategory,
+                                    selectedCategories: filters.categories ??
+                                        (snapshot.hasData
+                                            ? [...snapshot.data!]
+                                            : []),
+                                  );
+                                },
+                              );
+
+                              if (modalRes != null && modalRes.isNotEmpty) {
+                                setState(() {
+                                  filters.categories = snapshot.hasData &&
+                                          modalRes.length ==
+                                              snapshot.data!.length
+                                      ? null
+                                      : modalRes;
+                                });
+                              }
+                            });
+                      }),
+                ],
+              )
             ],
           ),
         ));

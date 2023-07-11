@@ -1,12 +1,6 @@
---- Some inserts functions to trigger at the start
+--- Custom statements triggered when the database is created. Each statement will be separated in dart by a semicolon, so try to not use the semicolon in other places of this file
 
----- * WHEN CONVERTING TO .sql:
----- * --- Remove the imports 
----- * --- Remove the function names (xxx:) 
-
-import 'tables.drift';
-
-insertInitialCurrencies: INSERT INTO currencies VALUES
+INSERT INTO currencies VALUES
 ('AED', 'dh')
 ,('AFN', 'Af.')
 ,('ALL', 'Lek')
@@ -160,7 +154,7 @@ insertInitialCurrencies: INSERT INTO currencies VALUES
 ,('ZMW', 'ZK')
 ,('ZWL', '$');
 
-insertInitialCurrencyNames: INSERT INTO currencyNames(currencyCode, en, es) VALUES
+INSERT INTO currencyNames(currencyCode, en, es) VALUES
 ('AED', 'UAE Dirham', 'Dírham de los Emiratos Árabes Unidos')
 ,('AFN', 'Afghani', 'Afgani')
 ,('ALL', 'Lek', 'Lek')
@@ -315,6 +309,8 @@ insertInitialCurrencyNames: INSERT INTO currencyNames(currencyCode, en, es) VALU
 ,('ZWL', 'Zimbabwean dollar', 'Dólar de Zimbawe');
 
 
-insertInitialSettings: INSERT INTO userSettings VALUES
-('avatar', 'man')
-,('userName', 'User');
+INSERT INTO userSettings VALUES 
+('avatar', 'man'), 
+('userName', 'User'), 
+('appLanguage', null), 
+('themeMode', 'system');

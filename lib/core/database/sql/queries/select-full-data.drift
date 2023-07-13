@@ -21,28 +21,14 @@ getAccountsWithFullData($predicate = TRUE) WITH Account:
     LIMIT $limit;
 
 getTransactionsWithFullData($predicate = TRUE) WITH MoneyTransaction: 
-    SELECT t.*, a.** as account, accountCurrency.**, receivingAccountCurrency.**, ra.** as receivingAccount, c.** as category, pc.** as parentCategory
+    SELECT 
+        t.*, a.** as account, 
+        accountCurrency.**, 
+        receivingAccountCurrency.**, 
+        ra.** as receivingAccount, 
+        c.** as category, 
+        pc.** as parentCategory
     FROM transactions t 
-        INNER JOIN accounts a 
-        ON t.accountID = a.id
-        INNER JOIN currencies accountCurrency 
-        ON a.currencyId = accountCurrency.code
-        LEFT JOIN accounts ra 
-        ON t.receivingAccountID = ra.id 
-        INNER JOIN currencies receivingAccountCurrency 
-        ON a.currencyId = receivingAccountCurrency.code
-        LEFT JOIN categories c 
-        ON t.categoryID = c.id
-        LEFT JOIN categories pc
-        ON c.parentCategoryID = pc.id 
-    WHERE $predicate 
-    ORDER BY $orderBy
-    LIMIT $limit;
-
-    
-getRecurrentRulesWithFullData($predicate = TRUE) WITH MoneyRecurrentRule: 
-    SELECT t.*, a.** as account, accountCurrency.**, receivingAccountCurrency.**, ra.** as receivingAccount, c.** as category, pc.** as parentCategory
-    FROM recurrentRules t 
         INNER JOIN accounts a 
         ON t.accountID = a.id
         INNER JOIN currencies accountCurrency 

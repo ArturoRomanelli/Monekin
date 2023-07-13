@@ -3,7 +3,6 @@ import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/app/transactions/widgets/interval_selector_help.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
@@ -21,8 +20,6 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-
-import '../../core/database/database_impl.dart';
 
 enum TransactionFormMode { transfer, incomeOrExpense }
 
@@ -126,11 +123,10 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
               : t.transaction.new_success)));
     }
 
-    if (recurrentRule.isNoRecurrent) {
-      late MoneyTransaction toPush;
+    late MoneyTransaction toPush;
 
-      if (widget.mode == TransactionFormMode.incomeOrExpense) {
-        toPush = MoneyTransaction.incomeOrExpense(
+    if (widget.mode == TransactionFormMode.incomeOrExpense) {
+      toPush = MoneyTransaction.incomeOrExpense(
           id: widget.transactionToEdit?.id ?? const Uuid().v4(),
           account: fromAccount!,
           date: date,
@@ -144,65 +140,29 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           isHidden: isHidden,
           notes: notesController.text.isEmpty ? null : notesController.text,
           title: titleController.text.isEmpty ? null : titleController.text,
-        );
-      } else {
-        toPush = MoneyTransaction.transfer(
-            id: widget.transactionToEdit?.id ?? const Uuid().v4(),
-            account: fromAccount!,
-            receivingAccount: toAccount!,
-            date: date,
-            value: valueToNumber!,
-            status: date.compareTo(DateTime.now()) > 0
-                ? TransactionStatus.pending
-                : status,
-            isHidden: isHidden,
-            notes: notesController.text.isEmpty ? null : notesController.text,
-            title: titleController.text.isEmpty ? null : titleController.text);
-      }
-
-      TransactionService.instance
-          .insertOrUpdateTransaction(toPush)
-          .then((value) {
-        onSuccess();
-      }).catchError((error) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error)));
-      });
+          recurrentInfo: recurrentRule);
     } else {
-      RecurrentRuleInDB toPush = RecurrentRuleInDB(
+      toPush = MoneyTransaction.transfer(
           id: widget.transactionToEdit?.id ?? const Uuid().v4(),
-          nextPaymentDate: date,
-          intervalPeriod: recurrentRule.intervalPeriod!,
-          intervalEach: recurrentRule.intervalEach!,
-          endDate: recurrentRule.ruleRecurrentLimit?.endDate,
-          remainingTransactions:
-              recurrentRule.ruleRecurrentLimit?.remainingIterations,
-          accountID: fromAccount!.id,
-          receivingAccountID: widget.mode == TransactionFormMode.transfer
-              ? toAccount!.id
-              : null,
-          categoryID: widget.mode == TransactionFormMode.incomeOrExpense
-              ? selectedCategory!.id
-              : null,
-          valueInDestiny: widget.mode == TransactionFormMode.transfer
-              ? valueInDestinyToNumber!
-              : null,
+          account: fromAccount!,
+          receivingAccount: toAccount!,
+          date: date,
+          value: valueToNumber!,
+          status: date.compareTo(DateTime.now()) > 0
+              ? TransactionStatus.pending
+              : status,
+          isHidden: isHidden,
           notes: notesController.text.isEmpty ? null : notesController.text,
           title: titleController.text.isEmpty ? null : titleController.text,
-          value: widget.mode == TransactionFormMode.incomeOrExpense &&
-                  selectedCategory!.type.isExpense
-              ? valueToNumber! * -1
-              : valueToNumber!);
-
-      RecurrentRuleService.instance
-          .insertOrUpdateRecurrentRule(toPush)
-          .then((value) {
-        onSuccess();
-      }).catchError((error) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error)));
-      });
+          recurrentInfo: recurrentRule);
     }
+
+    TransactionService.instance.insertOrUpdateTransaction(toPush).then((value) {
+      onSuccess();
+    }).catchError((error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(error)));
+    });
   }
 
   @override
@@ -237,10 +197,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       date = transaction.date;
       status = transaction.status;
       selectedCategory = transaction.category;
-
-      if (transaction is MoneyRecurrentRule) {
-        recurrentRule = transaction.recurrencyData;
-      }
+      recurrentRule = transaction.recurrentInfo;
     });
 
     notesController.text = transaction.notes ?? '';

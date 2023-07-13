@@ -1,6 +1,5 @@
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/core/database/database_impl.dart';
-import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/utils/list_tile_action_item.dart';
@@ -9,14 +8,12 @@ import 'package:uuid/uuid.dart';
 
 class TransactionViewActionService {
   final TransactionService transactionService = TransactionService.instance;
-  final RecurrentRuleService recurrentTransactionService =
-      RecurrentRuleService.instance;
 
   TransactionViewActionService();
 
   List<ListTileActionItem> transactionDetailsActions(BuildContext context,
       {required MoneyTransaction transaction, Widget? prevPage}) {
-    final isRecurrent = transaction is MoneyRecurrentRule;
+    final isRecurrent = transaction.recurrentInfo.isRecurrent;
 
     return [
       ListTileActionItem(
@@ -32,7 +29,7 @@ class TransactionViewActionService {
                             ? TransactionFormMode.incomeOrExpense
                             : TransactionFormMode.transfer,
                       )))),
-      if (transaction is! MoneyRecurrentRule)
+      if (transaction.recurrentInfo.isNoRecurrent)
         ListTileActionItem(
             label: 'Clone',
             icon: Icons.control_point_duplicate,
@@ -65,15 +62,15 @@ class TransactionViewActionService {
             TextButton(
               child: const Text('Yes, continue'),
               onPressed: () {
-                Future<int> call = isRecurrent
-                    ? recurrentTransactionService
-                        .deleteRecurrentRule(transactionId)
-                    : transactionService.deleteTransaction(transactionId);
-
-                call.then((value) {
+                transactionService
+                    .deleteTransaction(transactionId)
+                    .then((value) {
                   if (value == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('No se ha podido eliminar el registro')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('No se ha podido eliminar el registro')),
+                    );
 
                     return;
                   }

@@ -100,25 +100,13 @@ CREATE TABLE IF NOT EXISTS transactions (
   receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
   isHidden BOOLEAN NOT NULL DEFAULT 0,
 
-  -- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
-  CHECK ((receivingAccountID IS NULL) != (categoryID IS NULL)),
+  /* --- Recurrency data --- */
 
-  -- valueInDestiny can not be defined for non-transfer transactions:
-  CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
-) AS TransactionInDB;
-
--- Rules to generate transactions 
-CREATE TABLE IF NOT EXISTS recurrentRules (
-  id TEXT NOT NULL PRIMARY KEY,
-   
-  -- Date of the next scheduled payment
-  nextPaymentDate DATETIME NOT NULL,
-  
   -- The time range with which new transactions to be paid will appear (weekly, monthly...)
-  intervalPeriod ENUMNAME(TransactionPeriodicity) NOT NULL CHECK(intervalPeriod IN ('day','week','month','year')),
+  intervalPeriod ENUMNAME(TransactionPeriodicity) CHECK(intervalPeriod IN ('day','week','month','year')),
 
   -- Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
-  intervalEach INTEGER NOT NULL DEFAULT 1,
+  intervalEach INTEGER DEFAULT 1,
 
   -- Date until which payments will continue to appear. If this field or the `remainingTransactions` field is not specified, the recurring transaction will never end.
   endDate DATETIME,
@@ -126,29 +114,20 @@ CREATE TABLE IF NOT EXISTS recurrentRules (
   -- Number of payments remaining. This value must dicrease by one in the case a new payment is done within this rule. If this field or the `endDate` field is not specified, the recurring transaction will never end.
   remainingTransactions INTEGER,
 
-  /* --------------- COMMON ATTRIBUTES WITH transactions --------------- */
-  
-  accountID TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
-
-  -- Monetary amount related to this transaction, in the currency of its account
-  value REAL NOT NULL,
-
-  -- Title or main label of this transaction. If not defined, the category name is used normally as fallback
-  title TEXT,
-
-  -- Some description, notes or extra info about the transaction.
-  notes TEXT,
-
-  categoryID TEXT REFERENCES categories(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  valueInDestiny REAL,
-  receivingAccountID TEXT REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE,
-
   -- Should be Transfer or income/expense (not both). Leaving both to null is also not valid
   CHECK ((receivingAccountID IS NULL) != (categoryID IS NULL)),
 
+  -- Recurrency data mandatory fields (if the transaction is required)
+  CHECK ((intervalPeriod IS NULL) == (intervalEach IS NULL)),
+
+  CHECK ((intervalPeriod IS NOT NULL) OR (endDate IS NULL)),
+  CHECK ((intervalPeriod IS NOT NULL) OR (remainingTransactions IS NULL)),
+  CHECK ((remainingTransactions IS NULL) != (endDate IS NULL)),
+
   -- valueInDestiny can not be defined for non-transfer transactions:
   CHECK (categoryID IS NULL OR valueInDestiny IS NULL)
-) AS RecurrentRuleInDB;
+) AS TransactionInDB;
+
 
 CREATE TABLE IF NOT EXISTS budgets (
   id TEXT NOT NULL PRIMARY KEY,

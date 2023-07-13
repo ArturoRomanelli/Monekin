@@ -45,14 +45,14 @@ class DatabaseImpl extends _$DatabaseImpl {
       join((await getApplicationDocumentsDirectory()).path, dbName);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
       beforeOpen: (details) async {
         print(
-            'DB found! Version ${details.versionNow} (previous was ${details.versionBefore}).');
+            'DB found! Version ${details.versionNow} (previous was ${details.versionBefore}). Path to DB -> ${await databasePath}');
 
         if (details.wasCreated) {
           print('Executing seeders... Populating the database...');
@@ -62,8 +62,9 @@ class DatabaseImpl extends _$DatabaseImpl {
                 await rootBundle.loadString('assets/sql/initial_data.sql');
 
             final statements = initialSQL
-                .split(RegExp(r"(?<![';/])\s*;\s*"))
+                .split(RegExp(r"(?<![';\/])\s*;\s*"))
                 .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
                 .toList();
 
             for (final sqlStatement in statements) {
@@ -94,6 +95,9 @@ class DatabaseImpl extends _$DatabaseImpl {
         await m.createAll(); // create all tables
 
         print('Database tables created!');
+      },
+      onUpgrade: (m, from, to) async {
+        print('Executing migrations from previous version...');
       },
     );
   }

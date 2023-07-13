@@ -12,8 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:slang/builder/utils/string_extensions.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../core/database/services/recurrent-rules/recurrent_rule_service.dart';
-
 class TransactionDetailAction {
   final String label;
   final IconData icon;
@@ -63,14 +61,14 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
           return AlertDialog(
             title: const Text('Pagar transacción'),
             content: SingleChildScrollView(
-                child: Text(transaction is MoneyRecurrentRule
+                child: Text(transaction.recurrentInfo.isRecurrent
                     ? 'Esta acción creará una transacción nueva con fecha ${DateFormat.yMMMd().format(datetime)}. Podrás consultar los detalles de esta transacción en la página de transacciones'
                     : 'La fecha de la transacción se cambiará a la especificada y el estado de la misma pasará a nulo')),
             actions: [
               TextButton(
                 child: Text(t.general.continue_text),
                 onPressed: () {
-                  final newId = transaction is MoneyRecurrentRule
+                  final newId = transaction.recurrentInfo.isRecurrent
                       ? const Uuid().v4()
                       : transaction.id;
 
@@ -84,41 +82,34 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
 
                     // New transaction created successfully
 
-                    if (transaction is MoneyRecurrentRule) {
-                      final recurrentRule = (transaction as MoneyRecurrentRule);
+                    if (transaction.recurrentInfo.isRecurrent) {
+                      if (transaction.getNextDatesOfRecurrency().isEmpty) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text(
+                              'Transacción creada correctamente. La regla recurrente se ha completado, ya no hay mas pagos a realizar!'),
+                        ));
 
-                      if (recurrentRule.followingDateToNext == null) {
-                        RecurrentRuleService.instance
-                            .deleteRecurrentRule(recurrentRule.id)
-                            .then((value) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text(
-                                'Transacción creada correctamente. La regla recurrente se ha completado, ya no hay mas pagos a realizar!'),
-                          ));
-
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
 
                         return;
                       }
 
-                      final db = RecurrentRuleService.instance.db;
+                      final db = TransactionService.instance.db;
 
-                      (db.select(db.recurrentRules)
+                      (db.select(db.transactions)
                             ..where((tbl) => tbl.id.isValue(transaction.id)))
                           .getSingle()
                           .then((value) {
                         // Change the next payment date and the remaining iterations (if required)
-                        int? remainingIterations =
-                            recurrentRule.recurrentLimit.remainingIterations;
+                        int? remainingIterations = transaction.recurrentInfo
+                            .ruleRecurrentLimit!.remainingIterations;
 
-                        RecurrentRuleService.instance
-                            .insertOrUpdateRecurrentRule(
+                        TransactionService.instance
+                            .insertOrUpdateTransaction(
                           value.copyWith(
-                              nextPaymentDate:
-                                  recurrentRule.followingDateToNext,
+                              date: transaction.getNextDatesOfRecurrency()[0],
                               remainingTransactions: remainingIterations != null
                                   ? drift.Value(remainingIterations - 1)
                                   : const drift.Value(null)),
@@ -126,8 +117,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             .then((inserted) {
                           if (inserted <= 0) return;
 
-                          RecurrentRuleService.instance
-                              .getRecurrentRuleById(transaction.id)
+                          TransactionService.instance
+                              .getTransactionById(transaction.id)
                               .first
                               .then((value) {
                             if (value == null) return;
@@ -205,11 +196,11 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
   }
 
   Widget statusDisplayer() {
-    if (transaction.status == null && transaction is! MoneyRecurrentRule) {
+    if (transaction.status == null && transaction.recurrentInfo.isNoRecurrent) {
       throw Exception('Error');
     }
 
-    final bool showRecurrencyStatus = (transaction is MoneyRecurrentRule);
+    final bool showRecurrencyStatus = (transaction.recurrentInfo.isRecurrent);
 
     final color = showRecurrencyStatus
         ? Theme.of(context).colorScheme.primary.lighten(0.2)
@@ -260,7 +251,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                 if (transaction.status == TransactionStatus.pending)
                   Row(
                     children: [
-                      if (widget.transaction is MoneyRecurrentRule) ...[
+                      if (widget.transaction.recurrentInfo.isRecurrent) ...[
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => false,
@@ -327,7 +318,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (transaction is! MoneyRecurrentRule)
+                      if (transaction.recurrentInfo.isNoRecurrent)
                         Text(
                           DateFormat.yMMMMd().add_Hm().format(transaction.date),
                         )
@@ -341,9 +332,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              (transaction as MoneyRecurrentRule)
-                                  .recurrencyData
-                                  .formText(context),
+                              transaction.recurrentInfo.formText(context),
                               style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: Theme.of(context).primaryColor),
@@ -372,7 +361,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               ),
               const SizedBox(height: 24),
               if (transaction.status != null ||
-                  transaction is MoneyRecurrentRule)
+                  transaction.recurrentInfo.isRecurrent)
                 statusDisplayer(),
               CardWithHeader(
                 title: 'Datos',

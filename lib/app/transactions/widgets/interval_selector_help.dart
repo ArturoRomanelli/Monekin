@@ -6,10 +6,16 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class RecurrencyData extends Equatable {
-  final RuleRecurrentLimit? ruleRecurrentLimit;
+  final RecurrentRuleLimit? ruleRecurrentLimit;
 
   final int? intervalEach;
   final TransactionPeriodicity? intervalPeriod;
+
+  const RecurrencyData({
+    this.intervalEach,
+    this.intervalPeriod,
+    this.ruleRecurrentLimit,
+  });
 
   const RecurrencyData.noRepeat()
       : ruleRecurrentLimit = null,
@@ -25,9 +31,10 @@ class RecurrencyData extends Equatable {
   const RecurrencyData.infinite({
     required this.intervalPeriod,
     this.intervalEach = 1,
-  }) : ruleRecurrentLimit = const RuleRecurrentLimit.infinite();
+  }) : ruleRecurrentLimit = const RecurrentRuleLimit.infinite();
 
   bool get isNoRecurrent => ruleRecurrentLimit == null;
+  bool get isRecurrent => !isNoRecurrent;
 
   String formText(BuildContext context) {
     final t = Translations.of(context);
@@ -63,16 +70,16 @@ class _IntervalSelectorHelpState extends State<IntervalSelectorHelp> {
   List<RecurrencyData> options = [
     const RecurrencyData.noRepeat(),
     const RecurrencyData.withLimit(
-        ruleRecurrentLimit: RuleRecurrentLimit.infinite(),
+        ruleRecurrentLimit: RecurrentRuleLimit.infinite(),
         intervalPeriod: TransactionPeriodicity.day),
     const RecurrencyData.withLimit(
-        ruleRecurrentLimit: RuleRecurrentLimit.infinite(),
+        ruleRecurrentLimit: RecurrentRuleLimit.infinite(),
         intervalPeriod: TransactionPeriodicity.week),
     const RecurrencyData.withLimit(
-        ruleRecurrentLimit: RuleRecurrentLimit.infinite(),
+        ruleRecurrentLimit: RecurrentRuleLimit.infinite(),
         intervalPeriod: TransactionPeriodicity.month),
     const RecurrencyData.withLimit(
-        ruleRecurrentLimit: RuleRecurrentLimit.infinite(),
+        ruleRecurrentLimit: RecurrentRuleLimit.infinite(),
         intervalPeriod: TransactionPeriodicity.year),
   ];
 

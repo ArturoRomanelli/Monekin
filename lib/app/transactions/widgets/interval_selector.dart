@@ -60,7 +60,7 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                                 intervalPeriod: intervalPeriod,
                                 intervalEach: intervalEach)
                             : RecurrencyData.withLimit(
-                                ruleRecurrentLimit: RuleRecurrentLimit(
+                                ruleRecurrentLimit: RecurrentRuleLimit(
                                     endDate: ruleUntilMode == RuleUntilMode.date
                                         ? endDate
                                         : null,

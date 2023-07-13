@@ -1,5 +1,5 @@
 import 'package:finlytics/app/transactions/transaction_list.dart';
-import 'package:finlytics/core/database/services/recurrent-rules/recurrent_rule_service.dart';
+import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,11 @@ class _RecurrentTransactionPageState extends State<RecurrentTransactionPage> {
     return Scaffold(
       appBar: AppBar(title: Text(t.recurrent_transactions.title)),
       body: StreamBuilder(
-          stream: RecurrentRuleService.instance.getRecurrentRules(),
+          stream: TransactionService.instance.getTransactions(
+            predicate: (transaction, account, accountCurrency, receivingAccount,
+                    receivingAccountCurrency, c, p6) =>
+                transaction.intervalPeriod.isNotNull(),
+          ),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const LinearProgressIndicator();

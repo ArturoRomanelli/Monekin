@@ -83,11 +83,12 @@ class TransactionListComponent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${transaction.account.name} ${transaction is MoneyRecurrentRule && showRecurrentInfo ? '' : ' • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} '}',
+                  '${transaction.account.name} ${transaction.recurrentInfo.isRecurrent && showRecurrentInfo ? '' : ' • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} '}',
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w300),
                 ),
-                if (transaction is MoneyRecurrentRule && showRecurrentInfo) ...[
+                if (transaction.recurrentInfo.isRecurrent &&
+                    showRecurrentInfo) ...[
                   const SizedBox(height: 2),
                   Builder(builder: (context) {
                     final dateDiff =

@@ -26,8 +26,8 @@ dependencies:
   # Drift
   drift: ^2.8.1
   path_provider: ^2.0.13
-  http: ^0.13.5
-  sqlite3: ^1.9.3
+  http: ^1.1.0
+  sqlite3: ^2.0.0
   sqlite3_flutter_libs: ^0.5.15
 
   # Riverpod
@@ -40,7 +40,7 @@ dependencies:
   flutter_svg: ^2.0.5
   permission_handler: ^10.2.0
   json_annotation: ^4.8.1
-  fl_chart: ^0.62.0
+  fl_chart: ^0.63.0
   file_picker: ^5.3.0
   share_plus: ^7.0.0
   url_launcher: ^6.1.11

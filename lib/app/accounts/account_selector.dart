@@ -4,6 +4,7 @@ import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 Future<List<Account>?> showAccountSelectorBottomSheet(
@@ -62,6 +63,7 @@ class _AccountSelectorState extends State<AccountSelector> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -70,17 +72,19 @@ class _AccountSelectorState extends State<AccountSelector> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 22),
           child: Text(
-            'Select an account',
+            widget.allowMultiSelection
+                ? t.account.select.multiple
+                : t.account.select.one,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
         Builder(builder: (context) {
           if (allAccounts != null) {
-            if (allAccounts!.length == 0) {
+            if (allAccounts!.isEmpty) {
               return Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
-                    "No hay cuentas disponibles que puedas seleccionar aqui",
+                    t.account.no_accounts,
                     textAlign: TextAlign.center,
                   ));
             }

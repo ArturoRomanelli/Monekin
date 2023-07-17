@@ -372,7 +372,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                 const SizedBox(
                                   height: 24,
                                 ),
-                                const Text('Color')
+                                Text(t.icon_selector.color)
                               ],
                             ))),
                     SizedBox(

@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 664 (332 per locale)
+/// Strings: 687 (343 per locale)
 ///
-/// Built on 2023-07-17 at 10:52 UTC
+/// Built on 2023-07-17 at 18:10 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -365,10 +365,19 @@ class _TranslationsCurrenciesEn {
 
 	// Translations
 	String get currency_converter => 'Currency converter';
-	String get select_a_currency => 'Select a currency';
 	String get currency => 'Currency';
-	String get search_placeholder => 'Search by currency name, code...';
-	String days_without_update({required Object x}) => 'Exchange rates last updated ${x} day(s) ago';
+	String get currency_manager => 'Currency manager';
+	String get preferred_currency => 'Preferred/base currency';
+	String get change_preferred_currency_title => 'Change preferred currency';
+	String get change_preferred_currency_msg => 'All stats and budgets will be displayed in this currency from now on. Accounts and transactions will keep the currency they had. All saved exchange rates will be deleted if you execute this action. Do you wish to continue?';
+	late final _TranslationsCurrenciesFormEn form = _TranslationsCurrenciesFormEn._(_root);
+	String get delete_all_success => 'Deleted exchange rates successfully';
+	String get historical => 'Historical rates';
+	String get exchange_rate => 'Exchange rate';
+	String get exchange_rates => 'Exchange rates';
+	String get empty => 'Add exchange rates here so that if you have accounts in currencies other than your base currency our charts are more accurate';
+	String get select_a_currency => 'Select a currency';
+	String get search_placeholder => 'Search by name or by currency code';
 }
 
 // Path: categories
@@ -699,6 +708,20 @@ class _TranslationsAccountSelectEn {
 	String get multiple => 'Select accounts';
 }
 
+// Path: currencies.form
+class _TranslationsCurrenciesFormEn {
+	_TranslationsCurrenciesFormEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get date => 'Date';
+	String get equal_to_preferred_warn => 'The currency cannot be equal to the user currency';
+	String get specify_a_currency => 'Please specify a currency';
+	String get add => 'Add exchange rate';
+	String get add_success => 'Exchange rate added successfully';
+}
+
 // Path: categories.select
 class _TranslationsCategoriesSelectEn {
 	_TranslationsCategoriesSelectEn._(this._root);
@@ -995,7 +1018,6 @@ class _TranslationsTransferFormCurrencyExchangeSelectorEn {
 
 	// Translations
 	String get title => 'Edit exchange between currencies';
-	String get exchange_rate => 'Exchange rate';
 	String get value_in_destiny => 'Amount transferred in destination';
 }
 
@@ -1244,10 +1266,19 @@ class _TranslationsCurrenciesEs extends _TranslationsCurrenciesEn {
 
 	// Translations
 	@override String get currency_converter => 'Conversor de divisas';
+	@override String get currency_manager => 'Administrador de divisas';
 	@override String get currency => 'Divisa';
+	@override String get preferred_currency => 'Divisa predeterminada/base';
+	@override String get change_preferred_currency_title => 'Cambiar divisa predeterminada';
+	@override String get change_preferred_currency_msg => 'Todas las estadisticas y presupuestos serán mostradas en esta divisa a partir de ahora. Las cuentas y transacciones mantendrán la divisa que tenían. Todos los tipos de cambios guardados serán eliminados si ejecutas esta acción, ¿Desea continuar?';
+	@override late final _TranslationsCurrenciesFormEs form = _TranslationsCurrenciesFormEs._(_root);
+	@override String get delete_all_success => 'Tipos de cambio borrados con exito';
+	@override String get historical => 'Histórico de tasas';
+	@override String get exchange_rate => 'Tipo de cambio';
+	@override String get exchange_rates => 'Tipos de cambio';
+	@override String get empty => 'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos';
 	@override String get select_a_currency => 'Selecciona una divisa';
 	@override String get search_placeholder => 'Busca por nombre o por código de la divisa';
-	@override String days_without_update({required Object x}) => 'Tipos de cambio actualizados por última vez hace ${x} día(s)';
 }
 
 // Path: categories
@@ -1578,6 +1609,20 @@ class _TranslationsAccountSelectEs extends _TranslationsAccountSelectEn {
 	@override String get all => 'Todas las cuentas';
 }
 
+// Path: currencies.form
+class _TranslationsCurrenciesFormEs extends _TranslationsCurrenciesFormEn {
+	_TranslationsCurrenciesFormEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get date => 'Fecha';
+	@override String get equal_to_preferred_warn => 'The currency can not be equal to the user currency';
+	@override String get specify_a_currency => 'Por favor, especifica una divisa';
+	@override String get add => 'Añadir tipo de cambio';
+	@override String get add_success => 'Tipo de cambio añadido correctamente';
+}
+
 // Path: categories.select
 class _TranslationsCategoriesSelectEs extends _TranslationsCategoriesSelectEn {
 	_TranslationsCategoriesSelectEs._(_TranslationsEs root) : this._root = root, super._(root);
@@ -1672,7 +1717,6 @@ class _TranslationsSettingsGeneralEs extends _TranslationsSettingsGeneralEn {
 
 	// Translations
 	@override String get display => 'Ajustes generales';
-	@override String get currency => 'Divisa predeterminada';
 	@override String get categories_descr => 'Crea y edita categorías a tu gusto';
 	@override String get other => 'Ajustes avanzados';
 	@override String get other_descr => 'Otros ajustes generales de personalización de la app';
@@ -1874,7 +1918,6 @@ class _TranslationsTransferFormCurrencyExchangeSelectorEs extends _TranslationsT
 
 	// Translations
 	@override String get title => 'Editar cambio entre divisas';
-	@override String get exchange_rate => 'Tipo de cambio';
 	@override String get value_in_destiny => 'Cantidad transferida en destino';
 }
 
@@ -2054,7 +2097,6 @@ extension on _TranslationsEn {
 			case 'transfer.form.currency_info_add': return ({required Object x}) => '${x} will be transferred to the destination account &#183; Click to edit';
 			case 'transfer.form.currency_info_edit': return ({required Object x}) => '${x} have been transferred to the destination account &#183; Click to edit';
 			case 'transfer.form.currency_exchange_selector.title': return 'Edit exchange between currencies';
-			case 'transfer.form.currency_exchange_selector.exchange_rate': return 'Exchange rate';
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Amount transferred in destination';
 			case 'recurrent_transactions.title': return 'Recurrent transactions';
 			case 'recurrent_transactions.empty': return 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
@@ -2091,10 +2133,23 @@ extension on _TranslationsEn {
 			case 'account.select.all': return 'All accounts';
 			case 'account.select.multiple': return 'Select accounts';
 			case 'currencies.currency_converter': return 'Currency converter';
-			case 'currencies.select_a_currency': return 'Select a currency';
 			case 'currencies.currency': return 'Currency';
-			case 'currencies.search_placeholder': return 'Search by currency name, code...';
-			case 'currencies.days_without_update': return ({required Object x}) => 'Exchange rates last updated ${x} day(s) ago';
+			case 'currencies.currency_manager': return 'Currency manager';
+			case 'currencies.preferred_currency': return 'Preferred/base currency';
+			case 'currencies.change_preferred_currency_title': return 'Change preferred currency';
+			case 'currencies.change_preferred_currency_msg': return 'All stats and budgets will be displayed in this currency from now on. Accounts and transactions will keep the currency they had. All saved exchange rates will be deleted if you execute this action. Do you wish to continue?';
+			case 'currencies.form.date': return 'Date';
+			case 'currencies.form.equal_to_preferred_warn': return 'The currency cannot be equal to the user currency';
+			case 'currencies.form.specify_a_currency': return 'Please specify a currency';
+			case 'currencies.form.add': return 'Add exchange rate';
+			case 'currencies.form.add_success': return 'Exchange rate added successfully';
+			case 'currencies.delete_all_success': return 'Deleted exchange rates successfully';
+			case 'currencies.historical': return 'Historical rates';
+			case 'currencies.exchange_rate': return 'Exchange rate';
+			case 'currencies.exchange_rates': return 'Exchange rates';
+			case 'currencies.empty': return 'Add exchange rates here so that if you have accounts in currencies other than your base currency our charts are more accurate';
+			case 'currencies.select_a_currency': return 'Select a currency';
+			case 'currencies.search_placeholder': return 'Search by name or by currency code';
 			case 'categories.unknown': return 'Unknown category';
 			case 'categories.create': return 'Create category';
 			case 'categories.create_success': return 'Category created correctly';
@@ -2403,7 +2458,6 @@ extension on _TranslationsEs {
 			case 'transfer.form.currency_info_add': return ({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino &#183; Pulsa para editar';
 			case 'transfer.form.currency_info_edit': return ({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino &#183; Pulsa para editar';
 			case 'transfer.form.currency_exchange_selector.title': return 'Editar cambio entre divisas';
-			case 'transfer.form.currency_exchange_selector.exchange_rate': return 'Tipo de cambio';
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Cantidad transferida en destino';
 			case 'recurrent_transactions.title': return 'Movimientos recurrentes';
 			case 'recurrent_transactions.empty': return 'Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
@@ -2440,10 +2494,23 @@ extension on _TranslationsEs {
 			case 'account.select.multiple': return 'Selecciona cuentas';
 			case 'account.select.all': return 'Todas las cuentas';
 			case 'currencies.currency_converter': return 'Conversor de divisas';
+			case 'currencies.currency_manager': return 'Administrador de divisas';
 			case 'currencies.currency': return 'Divisa';
+			case 'currencies.preferred_currency': return 'Divisa predeterminada/base';
+			case 'currencies.change_preferred_currency_title': return 'Cambiar divisa predeterminada';
+			case 'currencies.change_preferred_currency_msg': return 'Todas las estadisticas y presupuestos serán mostradas en esta divisa a partir de ahora. Las cuentas y transacciones mantendrán la divisa que tenían. Todos los tipos de cambios guardados serán eliminados si ejecutas esta acción, ¿Desea continuar?';
+			case 'currencies.form.date': return 'Fecha';
+			case 'currencies.form.equal_to_preferred_warn': return 'The currency can not be equal to the user currency';
+			case 'currencies.form.specify_a_currency': return 'Por favor, especifica una divisa';
+			case 'currencies.form.add': return 'Añadir tipo de cambio';
+			case 'currencies.form.add_success': return 'Tipo de cambio añadido correctamente';
+			case 'currencies.delete_all_success': return 'Tipos de cambio borrados con exito';
+			case 'currencies.historical': return 'Histórico de tasas';
+			case 'currencies.exchange_rate': return 'Tipo de cambio';
+			case 'currencies.exchange_rates': return 'Tipos de cambio';
+			case 'currencies.empty': return 'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos';
 			case 'currencies.select_a_currency': return 'Selecciona una divisa';
 			case 'currencies.search_placeholder': return 'Busca por nombre o por código de la divisa';
-			case 'currencies.days_without_update': return ({required Object x}) => 'Tipos de cambio actualizados por última vez hace ${x} día(s)';
 			case 'categories.unknown': return 'Categoría desconocida';
 			case 'categories.create': return 'Crear categoría';
 			case 'categories.create_success': return 'Categoría creada correctamente';
@@ -2535,7 +2602,6 @@ extension on _TranslationsEs {
 			case 'settings.locale_warn': return 'Al cambiar de región la app se refrescará';
 			case 'settings.first_day_of_week': return 'Primer día de la semana';
 			case 'settings.general.display': return 'Ajustes generales';
-			case 'settings.general.currency': return 'Divisa predeterminada';
 			case 'settings.general.categories_descr': return 'Crea y edita categorías a tu gusto';
 			case 'settings.general.other': return 'Ajustes avanzados';
 			case 'settings.general.other_descr': return 'Otros ajustes generales de personalización de la app';

@@ -7,6 +7,7 @@ import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/utils/date_time_picker.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -62,14 +63,16 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
 
     _formKey.currentState!.save();
 
+    final t = Translations.of(context);
+
     ExchangeRateService.instance
         .insertOrUpdateExchangeRate(ExchangeRate(
             currency: _currency!,
             date: date,
             exchangeRate: double.parse(rateController.text)))
         .then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tipo de cambio creado con exito')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(t.currencies.form.add_success)));
     }).catchError((err) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
     }).whenComplete(() => Navigator.pop(context));
@@ -77,6 +80,8 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +93,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Create exchange rate',
+                  t.currencies.form.add,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(
@@ -102,14 +107,14 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                           controller: TextEditingController(
                               text: _currency != null
                                   ? _currency?.name
-                                  : 'Sin especificar'),
+                                  : t.general.unspecified),
                           readOnly: true,
                           validator: (value) {
                             if (_currency == null) {
-                              return 'Please specify a currency';
+                              return t.currencies.form.specify_a_currency;
                             } else if (_currency!.code ==
                                 userPreferredCurrency?.code) {
-                              return 'The currency can not be equal to the user currency';
+                              return t.currencies.form.equal_to_preferred_warn;
                             }
 
                             return null;
@@ -130,7 +135,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                 });
                           },
                           decoration: InputDecoration(
-                              labelText: 'Currency',
+                              labelText: t.currencies.currency,
                               suffixIcon: const Icon(Icons.arrow_drop_down),
                               prefixIcon: Container(
                                 margin: const EdgeInsets.all(10),
@@ -155,8 +160,8 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                               controller: TextEditingController(
                                   text: DateFormat.yMMMd().format(
                                       date)), //editing controller of this TextField
-                              decoration: const InputDecoration(
-                                labelText: 'Fecha *',
+                              decoration: InputDecoration(
+                                labelText: '${t.currencies.form.date} *',
                               ),
                               readOnly:
                                   true, //set it true, so that user will not able to edit text
@@ -183,8 +188,8 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                   isRequired: true),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
-                              decoration: const InputDecoration(
-                                labelText: 'Tipo de cambio *',
+                              decoration: InputDecoration(
+                                labelText: '${t.currencies.exchange_rate} *',
                                 hintText: 'Ex.: 2.14',
                               ),
                             ),

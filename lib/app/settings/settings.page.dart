@@ -66,7 +66,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
     final t = Translations.of(context);
 
     final settingService = UserSettingService.instance;
@@ -121,7 +120,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       }),
               const Divider(indent: 54),
               createSettingItem(
-                  title: 'Administrador de divisas',
+                  title: t.currencies.currency_manager,
                   subtitle:
                       'Configura tu divisa y sus tipos de cambio con otras',
                   icon: Icons.currency_exchange,
@@ -196,16 +195,16 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 22),
               createListSeparator('Project'),
               createSettingItem(
-                  title: 'Terms and privacy',
-                  subtitle: 'Check licenses and other legal terms of our app',
+                  title: t.settings.project.legal,
+                  subtitle: t.settings.project.legal_descr,
                   icon: Icons.inventory_outlined,
                   onTap: () async {
                     // TODO
                   }),
               const Divider(indent: 54),
               createSettingItem(
-                  title: 'Collaborators',
-                  subtitle: 'All the developers who have made Monekin grow',
+                  title: t.settings.project.contributors,
+                  subtitle: t.settings.project.contributors_descr,
                   icon: Icons.group_outlined,
                   onTap: () async {
                     openURL(context,
@@ -213,7 +212,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }),
               const Divider(indent: 54),
               createSettingItem(
-                  title: 'Contact us!',
+                  title: t.settings.project.contact,
                   icon: Icons.email_outlined,
                   onTap: () async {
                     openURL(context, 'mailto:lozin.technologies@gmail.com');

@@ -6,6 +6,7 @@ import 'package:finlytics/core/database/services/user-setting/user_setting_servi
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/empty_indicator.dart';
@@ -32,17 +33,18 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
   }
 
   changePreferredCurrency(Currency newCurrency) {
+    final t = Translations.of(context);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Change the base currency'),
-          content: const SingleChildScrollView(
-              child: Text(
-                  'All the saved exchange rates will be deleted if you perform this action')),
+          title: Text(t.currencies.change_preferred_currency_title),
+          content: SingleChildScrollView(
+              child: Text(t.currencies.change_preferred_currency_msg)),
           actions: [
             TextButton(
-              child: const Text('Approve'),
+              child: Text(t.general.confirm),
               onPressed: () {
                 UserSettingService.instance
                     .setSetting(SettingKey.preferredCurrency, newCurrency.code)
@@ -67,10 +69,10 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Currency manager'),
-      ),
+      appBar: AppBar(title: Text(t.currencies.currency_manager)),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +87,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                   ? _userCurrency!.displayFlagIcon(size: 42)
                   : const Skeleton(height: 42, width: 42),
             ),
-            title: const Text('Divisa base'),
+            title: Text(t.settings.general.currency),
             subtitle: _userCurrency != null
                 ? Text(_userCurrency!.name)
                 : const Skeleton(height: 12, width: 50),
@@ -113,7 +115,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Tipos de cambio'),
+                Text(t.currencies.exchange_rate),
                 TextButton(
                     onPressed: () async {
                       await showModalBottomSheet(
@@ -124,7 +126,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                             return const ExchangeRateFormDialog();
                           });
                     },
-                    child: const Text('Añadir'))
+                    child: Text(t.general.add))
               ],
             ),
           ),
@@ -137,11 +139,10 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
 
               if (snapshot.data!.isEmpty) {
                 // Data has loaded but is empty:
-                return const Expanded(
+                return Expanded(
                     child: EmptyIndicator(
-                        title: 'No hay registros',
-                        description:
-                            'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos'));
+                        title: t.general.empty_warn,
+                        description: t.currencies.empty));
               }
 
               final exchangeRates = snapshot.data!;

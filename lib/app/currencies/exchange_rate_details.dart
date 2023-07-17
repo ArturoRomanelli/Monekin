@@ -47,7 +47,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
       Navigator.pop(context);
 
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tipos de cambio borrados con exito')));
+          SnackBar(content: Text(t.currencies.delete_all_success)));
     });
   }
 
@@ -57,7 +57,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tipo de cambio'),
+        title: Text(t.currencies.exchange_rate),
         actions: [
           FinlyticsPopuMenuButton(actionItems: [
             ListTileActionItem(
@@ -104,7 +104,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
         const Divider(height: 10),
         Padding(
           padding: const EdgeInsets.all(8),
-          child: Text("Histórico de tasas"),
+          child: Text(t.currencies.historical),
         ),
         if (exchangeRates != null)
           SingleChildScrollView(
@@ -156,7 +156,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
               getExchangeRates();
             },
             icon: const Icon(Icons.add),
-            label: const Text('Añadir tipo de cambio'),
+            label: Text(t.currencies.form.add),
           ),
         )
       ],

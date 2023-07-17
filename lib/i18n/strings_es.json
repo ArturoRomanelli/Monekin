@@ -220,7 +220,6 @@
       "currency-info-edit": "Se han transpasado {{x}} a la cuenta de destino &#183; Pulsa para editar",
       "currency-exchange-selector": {
         "title": "Editar cambio entre divisas",
-        "exchange-rate": "Tipo de cambio",
         "value-in-destiny": "Cantidad transferida en destino"
       }
     }
@@ -275,10 +274,25 @@
   },
   "CURRENCIES": {
     "currency-converter": "Conversor de divisas",
+    "currency-manager": "Administrador de divisas",
     "currency": "Divisa",
+    "preferred-currency": "Divisa predeterminada/base",
+    "change-preferred-currency-title": "Cambiar divisa predeterminada",
+    "change-preferred-currency-msg": "Todas las estadisticas y presupuestos serán mostradas en esta divisa a partir de ahora. Las cuentas y transacciones mantendrán la divisa que tenían. Todos los tipos de cambios guardados serán eliminados si ejecutas esta acción, ¿Desea continuar?",
+    "FORM": {
+      "date": "Fecha",
+      "equal-to-preferred-warn": "The currency can not be equal to the user currency",
+      "specify-a-currency": "Por favor, especifica una divisa",
+      "add": "Añadir tipo de cambio",
+      "add-success": "Tipo de cambio añadido correctamente"
+    },
+    "delete-all-success": "Tipos de cambio borrados con exito",
+    "historical": "Histórico de tasas",
+    "exchange-rate": "Tipo de cambio",
+    "exchange-rates": "Tipos de cambio",
+    "empty": "Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos",
     "select-a-currency": "Selecciona una divisa",
-    "search-placeholder": "Busca por nombre o por código de la divisa",
-    "days-without-update": "Tipos de cambio actualizados por última vez hace {{x}} día(s)"
+    "search-placeholder": "Busca por nombre o por código de la divisa"
   },
   "CATEGORIES": {
     "unknown": "Categoría desconocida",
@@ -389,7 +403,6 @@
     "first_day_of_week": "Primer día de la semana",
     "GENERAL": {
       "display": "Ajustes generales",
-      "currency": "Divisa predeterminada",
       "categories.descr": "Crea y edita categorías a tu gusto",
       "other": "Ajustes avanzados",
       "other.descr": "Otros ajustes generales de personalización de la app"

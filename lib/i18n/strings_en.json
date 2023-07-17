@@ -219,7 +219,6 @@
       "currency-info-edit": "{{x}} have been transferred to the destination account &#183; Click to edit",
       "currency-exchange-selector": {
         "title": "Edit exchange between currencies",
-        "exchange-rate": "Exchange rate",
         "value-in-destiny": "Amount transferred in destination"
       }
     }
@@ -274,10 +273,25 @@
   },
   "CURRENCIES": {
     "currency-converter": "Currency converter",
-    "select-a-currency": "Select a currency",
     "currency": "Currency",
-    "search-placeholder": "Search by currency name, code...",
-    "days-without-update": "Exchange rates last updated {{x}} day(s) ago"
+    "currency-manager": "Currency manager",
+    "preferred-currency": "Preferred/base currency",
+    "change-preferred-currency-title": "Change preferred currency",
+    "change-preferred-currency-msg": "All stats and budgets will be displayed in this currency from now on. Accounts and transactions will keep the currency they had. All saved exchange rates will be deleted if you execute this action. Do you wish to continue?",
+    "FORM": {
+      "date": "Date",
+      "equal-to-preferred-warn": "The currency cannot be equal to the user currency",
+      "specify-a-currency": "Please specify a currency",
+      "add": "Add exchange rate",
+      "add-success": "Exchange rate added successfully"
+    },
+    "delete-all-success": "Deleted exchange rates successfully",
+    "historical": "Historical rates",
+    "exchange-rate": "Exchange rate",
+    "exchange-rates": "Exchange rates",
+    "empty": "Add exchange rates here so that if you have accounts in currencies other than your base currency our charts are more accurate",
+    "select-a-currency": "Select a currency",
+    "search-placeholder": "Search by name or by currency code"
   },
   "CATEGORIES": {
     "unknown": "Unknown category",

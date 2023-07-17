@@ -8,6 +8,7 @@ import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -59,216 +60,134 @@ class _OnboardingPageState extends State<OnboardingPage> {
       },
     ];
 
-    List<Widget> slides = items
-        .mapIndexed((index, item) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              children: [
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: SvgPicture.asset(
-                    item['image'],
-                    fit: BoxFit.fitWidth,
-                    width: 240.0,
-                    alignment: Alignment.bottomCenter,
+    List<PageViewModel> slides = items
+        .mapIndexed((index, item) => PageViewModel(
+            titleWidget: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              child: Text(
+                item['header'],
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            useRowInLandscape: true,
+            bodyWidget: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              child: Column(children: [
+                Text(
+                  item['description'],
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14.0,
                   ),
+                  textAlign: TextAlign.justify,
                 ),
-                const SizedBox(height: 120),
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(item['header'],
-                            style: Theme.of(context).textTheme.headlineLarge),
-                        const SizedBox(height: 20),
-                        Text(
-                          item['description'],
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.0,
-                          ),
-                        ),
-                        if (item['description2'] != null) ...[
-                          const SizedBox(height: 10),
-                          Text(
-                            item['description2'],
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14.0,
-                            ),
-                          ),
-                        ],
-                        if (index == 0) ...[
-                          const SizedBox(height: 40),
-                          FutureBuilder(
-                              future: CurrencyService.instance
-                                  .getUserPreferredCurrency(),
-                              builder: (context, snapshot) {
-                                final userCurrency = snapshot.data;
-
-                                return ListTile(
-                                  tileColor: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground
-                                      .withOpacity(0.04),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  trailing: Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 14,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
-                                        .withOpacity(0.45),
-                                  ),
-                                  leading: Container(
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                    child: userCurrency != null
-                                        ? userCurrency.displayFlagIcon(size: 42)
-                                        : const Skeleton(height: 42, width: 42),
-                                  ),
-                                  title: Text(t.intro.select_your_currency),
-                                  subtitle: userCurrency != null
-                                      ? Text(userCurrency.name)
-                                      : const Skeleton(height: 12, width: 50),
-                                  onTap: () {
-                                    if (userCurrency == null) return;
-
-                                    showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        showDragHandle: true,
-                                        builder: (context) {
-                                          return CurrencySelectorModal(
-                                              preselectedCurrency: userCurrency,
-                                              onCurrencySelected:
-                                                  (newCurrency) {
-                                                UserSettingService.instance
-                                                    .setSetting(
-                                                        SettingKey
-                                                            .preferredCurrency,
-                                                        newCurrency.code)
-                                                    .then((value) =>
-                                                        setState(() => {}));
-                                              });
-                                        });
-                                  },
-                                );
-                              }),
-                        ]
-                      ],
+                if (item['description2'] != null) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    item['description2'],
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14.0,
                     ),
+                    textAlign: TextAlign.justify,
                   ),
-                ),
-              ],
+                ],
+                if (index == 0) ...[
+                  const SizedBox(height: 40),
+                  FutureBuilder(
+                      future:
+                          CurrencyService.instance.getUserPreferredCurrency(),
+                      builder: (context, snapshot) {
+                        final userCurrency = snapshot.data;
+
+                        return ListTile(
+                          tileColor: Theme.of(context)
+                              .colorScheme
+                              .onBackground
+                              .withOpacity(0.04),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 14,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground
+                                .withOpacity(0.45),
+                          ),
+                          leading: Container(
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: userCurrency != null
+                                ? userCurrency.displayFlagIcon(size: 42)
+                                : const Skeleton(height: 42, width: 42),
+                          ),
+                          title: Text(t.intro.select_your_currency),
+                          subtitle: userCurrency != null
+                              ? Text(userCurrency.name)
+                              : const Skeleton(height: 12, width: 50),
+                          onTap: () {
+                            if (userCurrency == null) return;
+
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                showDragHandle: true,
+                                builder: (context) {
+                                  return CurrencySelectorModal(
+                                      preselectedCurrency: userCurrency,
+                                      onCurrencySelected: (newCurrency) {
+                                        UserSettingService.instance
+                                            .setSetting(
+                                                SettingKey.preferredCurrency,
+                                                newCurrency.code)
+                                            .then(
+                                                (value) => setState(() => {}));
+                                      });
+                                });
+                          },
+                        );
+                      }),
+                ],
+              ]),
+            ),
+            image: SvgPicture.asset(
+              item['image'],
+              fit: BoxFit.fitWidth,
+              width: 240.0,
+              alignment: Alignment.bottomCenter,
             )))
         .toList();
 
-    List<Widget> indicator() => List<Widget>.generate(
-        slides.length,
-        (index) => Container(
-              margin: const EdgeInsets.symmetric(horizontal: 3.0),
-              height: 10.0,
-              width: 10.0,
-              decoration: BoxDecoration(
-                  color: currentPage.round() == index
-                      ? Theme.of(context).primaryColor
-                      : Theme.of(context).primaryColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10.0)),
-            ));
-
-    bool isLastPage = currentPage == slides.length - 1;
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 0,
-      ),
-      persistentFooterButtons: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  child: !isLastPage
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextButton(
-                                onPressed: () => introFinished(),
-                                child: Text(t.intro.skip, softWrap: false)),
-                          ],
-                        )
-                      : Container(),
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: indicator(),
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: TextButton.icon(
-                          onPressed: () {
-                            if (isLastPage) {
-                              introFinished();
-
-                              return;
-                            }
-
-                            _pageViewController.nextPage(
-                                duration: const Duration(milliseconds: 100),
-                                curve: Curves.bounceIn);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_rounded,
-                            semanticLabel: t.general.continue_text,
-                          ),
-                          label: Text(t.intro.next, softWrap: false)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: 0,
+        ),
+        body: IntroductionScreen(
+          pages: slides,
+          showSkipButton: true,
+          skip: const Text("Next"),
+          next: const Text("Next"),
+          done:
+              const Text("Done", style: TextStyle(fontWeight: FontWeight.w700)),
+          onDone: () => introFinished(),
+          onSkip: () => introFinished(),
+          dotsDecorator: DotsDecorator(
+            size: const Size.square(10.0),
+            activeSize: const Size(20.0, 10.0),
+            activeColor: Theme.of(context).primaryColor,
+            color: Theme.of(context).primaryColor.withOpacity(0.3),
+            spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+            activeShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0)),
           ),
-        )
-      ],
-      body: PageView.builder(
-        controller: _pageViewController,
-        physics: const BouncingScrollPhysics(),
-        pageSnapping: true,
-        itemCount: slides.length,
-        itemBuilder: (BuildContext context, int index) {
-          _pageViewController.addListener(() {
-            if (_pageViewController.page == null) return;
-
-            setState(() {
-              currentPage = _pageViewController.page!;
-            });
-          });
-
-          return slides[index];
-        },
-      ),
-    );
+        ));
   }
 }

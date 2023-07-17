@@ -2,6 +2,7 @@ import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,6 +14,8 @@ class IncomeExpenseComparason extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return StreamBuilder(
         stream: AccountService.instance.getAccounts(),
         builder: (context, snapshot) {
@@ -81,7 +84,7 @@ class IncomeExpenseComparason extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Income"),
+                              Text(t.general.income),
                               CurrencyDisplayer(amountToConvert: income)
                             ],
                           ),
@@ -98,7 +101,7 @@ class IncomeExpenseComparason extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Expense"),
+                              Text(t.general.expense),
                               CurrencyDisplayer(amountToConvert: expense)
                             ],
                           ),

@@ -172,6 +172,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
   }
 
   submitForm() {
+    final messager = ScaffoldMessenger.of(context);
+
     if (categoryToEdit != null) {
       categoryToEdit = Category(
           id: categoryToEdit!.id,
@@ -182,11 +184,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
           type: categoryToEdit!.type);
 
       CategoryService.instance.updateCategory(categoryToEdit!).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Categoría editada con exito')));
+        messager
+            .showSnackBar(SnackBar(content: Text(t.categories.edit_success)));
       }).catchError((error) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error.toString())));
+        messager.showSnackBar(SnackBar(content: Text(error.toString())));
       });
     } else {
       CategoryService.instance
@@ -197,11 +198,10 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
               type: _type,
               color: _color))
           .then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Categoría creada con exito')));
+        messager
+            .showSnackBar(SnackBar(content: Text(t.categories.create_success)));
       }).catchError((error) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error.toString())));
+        messager.showSnackBar(SnackBar(content: Text(error.toString())));
       });
     }
   }
@@ -228,8 +228,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         ],
         appBar: AppBar(
             title: Text(widget.categoryUUID != null
-                ? 'Edit category'
-                : 'Create category'),
+                ? t.categories.edit
+                : t.categories.create),
             actions: [
               if (widget.categoryUUID != null)
                 PopupMenuButton(
@@ -345,19 +345,18 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                   height: 14,
                                 ),
                                 DropdownButtonFormField<CategoryType>(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Tipo de categoría *',
-                                  ),
-                                  items: const [
+                                  decoration: InputDecoration(
+                                      labelText: '${t.categories.type} *'),
+                                  items: [
                                     DropdownMenuItem(
                                         value: CategoryType.I,
-                                        child: Text('Income')),
+                                        child: Text(t.general.income)),
                                     DropdownMenuItem(
                                         value: CategoryType.E,
-                                        child: Text('Expense')),
+                                        child: Text(t.general.expense)),
                                     DropdownMenuItem(
                                         value: CategoryType.B,
-                                        child: Text('Both'))
+                                        child: Text(t.categories.both_types))
                                   ],
                                   value: _type,
                                   onChanged: widget.categoryUUID != null
@@ -431,13 +430,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     const SizedBox(
                       height: 20,
                     ),
-                    if (widget.categoryUUID != null)
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Text('Subcategories'),
+                    if (widget.categoryUUID != null) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Text(t.categories.subcategories),
                       ),
-                    if (widget.categoryUUID != null)
                       StreamBuilder(
                         initialData: const <Category>[],
                         stream: CategoryService.instance
@@ -471,14 +469,14 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                                 Text(t.categories.make_parent),
                                           )),
                                       const PopupMenuDivider(),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                           value: 'merge',
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
-                                            leading: Icon(Icons.merge_type),
+                                            leading:
+                                                const Icon(Icons.merge_type),
                                             minLeadingWidth: 26,
-                                            title: Text(
-                                                'Merge with another category'),
+                                            title: Text(t.categories.merge),
                                           )),
                                       const PopupMenuDivider(),
                                       PopupMenuItem(
@@ -524,7 +522,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                           }));
                         },
                       ),
-                    if (widget.categoryUUID != null)
                       ListTile(
                           leading: const Icon(Icons.add),
                           onTap: () {
@@ -538,6 +535,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                             });
                           },
                           title: Text(t.categories.subcategories_add))
+                    ]
                   ],
                 ),
               ));

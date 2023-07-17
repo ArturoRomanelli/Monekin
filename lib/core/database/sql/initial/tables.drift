@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   intervalPeriod ENUMNAME(TransactionPeriodicity) CHECK(intervalPeriod IN ('day','week','month','year')),
 
   -- Within the time range chosen in the `intervalPeriod` attribute, every few times new transactions will appear to be paid. For example, putting a 2 here and having monthly as `intervalPeriod`, new payments will appear every two months
-  intervalEach INTEGER DEFAULT 1,
+  intervalEach INTEGER,
 
   -- Date until which payments will continue to appear. If this field or the `remainingTransactions` field is not specified, the recurring transaction will never end.
   endDate DATETIME,
@@ -122,7 +122,6 @@ CREATE TABLE IF NOT EXISTS transactions (
 
   CHECK ((intervalPeriod IS NOT NULL) OR (endDate IS NULL)),
   CHECK ((intervalPeriod IS NOT NULL) OR (remainingTransactions IS NULL)),
-  CHECK ((remainingTransactions IS NULL) != (endDate IS NULL)),
 
   -- valueInDestiny can not be defined for non-transfer transactions:
   CHECK (categoryID IS NULL OR valueInDestiny IS NULL)

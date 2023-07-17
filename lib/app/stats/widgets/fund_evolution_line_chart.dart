@@ -5,6 +5,7 @@ import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -47,6 +48,8 @@ class FundEvolutionLineChart extends StatelessWidget {
 
     final accounts = accountsFilter ?? await accountService.getAccounts().first;
 
+    if (accounts.isEmpty) return null;
+
     DateTime currentDay =
         DateTime(startDate!.year, startDate!.month, startDate!.day);
 
@@ -75,6 +78,8 @@ class FundEvolutionLineChart extends StatelessWidget {
     ];
 
     final accountService = AccountService.instance;
+
+    final t = Translations.of(context);
 
     return Column(
       children: [
@@ -131,9 +136,9 @@ class FundEvolutionLineChart extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(
+                            const Text(
                               'Frente al periodo anterior',
-                              style: const TextStyle(fontSize: 12),
+                              style: TextStyle(fontSize: 12),
                             ),
                             if (startDate != null && endDate != null)
                               StreamBuilder(
@@ -177,7 +182,7 @@ class FundEvolutionLineChart extends StatelessWidget {
           child: FutureBuilder(
               future: getEvolutionData(context),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,110 +197,128 @@ class FundEvolutionLineChart extends StatelessWidget {
                   );
                 }
 
-                return LineChart(LineChartData(
-                  gridData: FlGridData(show: true, drawVerticalLine: false),
-                  lineTouchData: LineTouchData(
-                      touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: Colors.white,
-                    tooltipHorizontalAlignment: FLHorizontalAlignment.right,
-                    tooltipMargin: -10,
-                    getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map((barSpot) {
-                        final flSpot = barSpot;
-                        if (flSpot.x == 0 || flSpot.x == 6) {
-                          return null;
-                        }
+                return Stack(
+                  children: [
+                    LineChart(LineChartData(
+                      gridData: FlGridData(show: true, drawVerticalLine: false),
+                      lineTouchData: LineTouchData(
+                          enabled: snapshot.hasData,
+                          touchTooltipData: LineTouchTooltipData(
+                            tooltipMargin: -10,
+                            getTooltipItems: (touchedSpots) {
+                              return touchedSpots.map((barSpot) {
+                                final flSpot = barSpot;
+                                if (flSpot.x == 0 || flSpot.x == 6) {
+                                  return null;
+                                }
 
-                        return LineTooltipItem(
-                            '${snapshot.data!.labels[flSpot.x.toInt()]} \n',
-                            const TextStyle(),
-                            children: [
-                              TextSpan(
-                                  text:
-                                      '${snapshot.data!.balance[flSpot.x.toInt()]}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                            ]);
-                      }).toList();
-                    },
-                  )),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            snapshot
-                                .data!.labels[int.parse(meta.formattedValue)],
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w200),
-                          );
-                        },
-                      ),
-                    ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 46,
-                        getTitlesWidget: (value, meta) {
-                          if (value == meta.max || value == meta.min) {
-                            return Container();
-                          }
-
-                          return SideTitleWidget(
-                            axisSide: meta.axisSide,
-                            child: Text(
-                              meta.formattedValue,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  minY: snapshot.data!.balance.min -
-                      snapshot.data!.balance.min * 0.1,
-                  maxY: snapshot.data!.balance.max +
-                      snapshot.data!.balance.max * 0.1,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: List.generate(
-                          snapshot.data!.balance.length,
-                          (index) => FlSpot(
-                              index.toDouble(), snapshot.data!.balance[index])),
-                      isCurved: true,
-                      curveSmoothness: 0.025,
-                      color: gradientColors[0],
-                      barWidth: 5,
-                      isStrokeCapRound: true,
-                      dotData: FlDotData(
-                        show: false,
-                      ),
-                      belowBarData: BarAreaData(
+                                return LineTooltipItem(
+                                    '${snapshot.data!.labels[flSpot.x.toInt()]} \n',
+                                    const TextStyle(),
+                                    children: [
+                                      TextSpan(
+                                          text:
+                                              '${snapshot.data!.balance[flSpot.x.toInt()]}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold))
+                                    ]);
+                              }).toList();
+                            },
+                          )),
+                      titlesData: FlTitlesData(
                         show: true,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: gradientColors
-                              .map((color) => color.withOpacity(0.3))
-                              .toList(),
+                        leftTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: snapshot.hasData,
+                            reservedSize: 46,
+                            getTitlesWidget: (value, meta) {
+                              if (value == meta.max || value == meta.min) {
+                                return Container();
+                              }
+
+                              return SideTitleWidget(
+                                axisSide: meta.axisSide,
+                                child: Text(
+                                  meta.formattedValue,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
+                      borderData: FlBorderData(show: false),
+                      minY: snapshot.hasData
+                          ? snapshot.data!.balance.min -
+                              snapshot.data!.balance.min * 0.1
+                          : 2,
+                      maxY: snapshot.hasData
+                          ? snapshot.data!.balance.max +
+                              snapshot.data!.balance.max * 0.1
+                          : 5,
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: snapshot.hasData
+                              ? List.generate(
+                                  snapshot.data!.balance.length,
+                                  (index) => FlSpot(index.toDouble(),
+                                      snapshot.data!.balance[index]))
+                              : [
+                                  const FlSpot(0, 3),
+                                  const FlSpot(2.6, 2.2),
+                                  const FlSpot(4.9, 4.3),
+                                  const FlSpot(6.8, 3.1),
+                                  const FlSpot(8, 4),
+                                  const FlSpot(9.5, 3),
+                                  const FlSpot(11, 4),
+                                ],
+                          isCurved: true,
+                          curveSmoothness: snapshot.hasData ? 0.025 : 0.2,
+                          color: snapshot.hasData
+                              ? gradientColors[0]
+                              : Colors.grey.withOpacity(0.2),
+                          barWidth: 5,
+                          isStrokeCapRound: true,
+                          dotData: FlDotData(
+                            show: false,
+                          ),
+                          belowBarData: BarAreaData(
+                            show: true,
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: snapshot.hasData
+                                  ? gradientColors
+                                      .map((color) => color.withOpacity(0.3))
+                                      .toList()
+                                  : [Colors.grey, Colors.grey.lighten(0.3)]
+                                      .map((color) => color.withOpacity(0.15))
+                                      .toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                    if (!snapshot.hasData)
+                      Positioned.fill(
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              t.general.insufficient_data,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            )),
+                      ),
                   ],
-                ));
+                );
               }),
         ),
       ],

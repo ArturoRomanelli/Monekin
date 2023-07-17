@@ -293,10 +293,13 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
                     ),
                   ),
                   if (snapshot.data!.isEmpty)
-                    const Positioned.fill(
+                    Positioned.fill(
                       child: Align(
                           alignment: Alignment.center,
-                          child: Text("Datos insuficientes")),
+                          child: Text(
+                            t.general.insufficient_data,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )),
                     ),
                 ],
               ),

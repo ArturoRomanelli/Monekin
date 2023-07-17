@@ -1,3 +1,8 @@
+import 'package:flutter/services.dart';
+
+FilteringTextInputFormatter get decimalDigitFormatter =>
+    FilteringTextInputFormatter.allow(RegExp(r'\d*\.?\d*'));
+
 enum ValidatorType {
   text,
   double,

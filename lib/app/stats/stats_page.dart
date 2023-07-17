@@ -8,6 +8,7 @@ import 'package:finlytics/app/stats/widgets/income_expense_comparason.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/services/filters/date_range_service.dart';
@@ -56,16 +57,18 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return DefaultTabController(
       initialIndex: widget.initialIndex,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Stats'),
+          title: Text(t.stats.title),
           bottom: TabBar(tabs: [
-            Tab(text: 'Por categorías'),
+            Tab(text: t.stats.by_categories),
             Tab(text: 'Saldo'),
-            Tab(text: 'Flujo de fondos'),
+            Tab(text: t.stats.cash_flow),
           ], isScrollable: true),
         ),
         persistentFooterButtons: [
@@ -89,7 +92,7 @@ class _StatsPageState extends State<StatsPage> {
           buildContainerWithPadding(
             [
               CardWithHeader(
-                title: 'Tendencia de saldo',
+                title: t.stats.balance_evolution,
                 body: FundEvolutionLineChart(
                   showBalanceHeader: true,
                   startDate: currentStartDate,
@@ -99,12 +102,12 @@ class _StatsPageState extends State<StatsPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              const AllAccountBalancePage(),
+              AllAccountBalancePage(date: currentEndDate ?? DateTime.now()),
             ],
           ),
           buildContainerWithPadding([
             CardWithHeader(
-              title: 'Flujo de fondos',
+              title: t.stats.cash_flow,
               body: IncomeExpenseComparason(
                 startDate: currentStartDate,
                 endDate: currentEndDate,
@@ -112,7 +115,7 @@ class _StatsPageState extends State<StatsPage> {
             ),
             const SizedBox(height: 16),
             CardWithHeader(
-              title: 'Por periodos',
+              title: t.stats.by_periods,
               body: Padding(
                 padding: const EdgeInsets.only(bottom: 10, top: 16),
                 child: BalanceBarChart(

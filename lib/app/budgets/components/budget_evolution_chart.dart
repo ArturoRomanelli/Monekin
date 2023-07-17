@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/core/models/budget/budget.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -46,6 +47,8 @@ class BudgetEvolutionChart extends StatelessWidget {
       Theme.of(context).primaryColor.lighten(0.3),
     ];
 
+    final t = Translations.of(context);
+
     return SizedBox(
       height: 300,
       child: FutureBuilder(
@@ -68,6 +71,20 @@ class BudgetEvolutionChart extends StatelessWidget {
 
             return LineChart(LineChartData(
               gridData: FlGridData(show: true, drawVerticalLine: false),
+              extraLinesData: ExtraLinesData(horizontalLines: [
+                HorizontalLine(
+                    y: budget.limitAmount,
+                    color: Colors.orange,
+                    dashArray: [12, 2],
+                    label: HorizontalLineLabel(
+                      show: true,
+                      padding: const EdgeInsets.only(left: 2),
+                      style: const TextStyle(
+                        color: Colors.orange,
+                      ),
+                      labelResolver: (p0) => t.budgets.details.budget_value,
+                    ))
+              ]),
               lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
                 tooltipBgColor: Colors.white,
@@ -141,7 +158,7 @@ class BudgetEvolutionChart extends StatelessWidget {
               minY: 0,
               maxY: max(
                   snapshot.data!.balance.max + snapshot.data!.balance.max * 0.1,
-                  budget.limitAmount),
+                  budget.limitAmount * 1.1),
               lineBarsData: [
                 LineChartBarData(
                   spots: List.generate(

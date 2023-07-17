@@ -1166,8 +1166,7 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
       'intervalEach', aliasedName, true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      $customConstraints: 'DEFAULT 1',
-      defaultValue: const CustomExpression('1'));
+      $customConstraints: '');
   static const VerificationMeta _endDateMeta =
       const VerificationMeta('endDate');
   late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
@@ -1347,7 +1346,6 @@ class Transactions extends Table with TableInfo<Transactions, TransactionInDB> {
         'CHECK((intervalPeriod IS NULL)==(intervalEach IS NULL))',
         'CHECK((intervalPeriod IS NOT NULL)OR(endDate IS NULL))',
         'CHECK((intervalPeriod IS NOT NULL)OR(remainingTransactions IS NULL))',
-        'CHECK((remainingTransactions IS NULL)!=(endDate IS NULL))',
         'CHECK(categoryID IS NULL OR valueInDestiny IS NULL)'
       ];
   @override

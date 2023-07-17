@@ -18,6 +18,8 @@ import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/presentation/widgets/empty_indicator.dart';
+
 class BudgetDetailsPage extends StatefulWidget {
   const BudgetDetailsPage({super.key, required this.budget});
 
@@ -112,7 +114,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                               Column(
                                 children: [
                                   Text(
-                                    "Gastado hasta hoy",
+                                    t.budgets.details.you_already_expend,
                                     style:
                                         Theme.of(context).textTheme.labelSmall,
                                   ),
@@ -138,7 +140,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                               Column(
                                 children: [
                                   Text(
-                                    "Limite del presupuesto",
+                                    t.budgets.details.budget_value,
                                     style:
                                         Theme.of(context).textTheme.labelSmall,
                                   ),
@@ -192,8 +194,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                                 .format(widget.budget.currentDateRange[1]))),
                         const Divider(indent: 12),
                         ListTile(
-                          title:
-                              Text('Gasto medio diario restante recomendado'),
+                          title: Text(t.budgets.details.expend_diary_left),
                           trailing: StreamBuilder(
                               stream: widget.budget.currentValue,
                               builder: (context, snapshot) {
@@ -216,7 +217,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                     )),
                 const SizedBox(height: 16),
                 CardWithHeader(
-                    title: 'Evolución del presupuesto',
+                    title: t.budgets.details.expend_evolution,
                     body: BudgetEvolutionChart(budget: widget.budget))
               ],
             ),
@@ -245,8 +246,21 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                   );
                 }
 
+                final transactions = snapshot.data!;
+
+                if (transactions.isEmpty) {
+                  return Column(
+                    children: [
+                      Expanded(
+                          child: EmptyIndicator(
+                              title: t.general.empty_warn,
+                              description: t.budgets.details.no_transactions)),
+                    ],
+                  );
+                }
+
                 return TransactionListComponent(
-                    transactions: snapshot.data!,
+                    transactions: transactions,
                     prevPage: BudgetDetailsPage(
                       budget: widget.budget,
                     ));

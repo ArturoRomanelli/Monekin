@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 722 (361 per locale)
+/// Strings: 664 (332 per locale)
 ///
-/// Built on 2023-07-11 at 11:20 UTC
+/// Built on 2023-07-17 at 10:52 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -149,8 +149,9 @@ class _TranslationsEn implements BaseTranslations<AppLocale, _TranslationsEn> {
 	// Translations
 	late final _TranslationsGeneralEn general = _TranslationsGeneralEn._(_root);
 	late final _TranslationsIntroEn intro = _TranslationsIntroEn._(_root);
-	late final _TranslationsTabsEn tabs = _TranslationsTabsEn._(_root);
+	late final _TranslationsHomeEn home = _TranslationsHomeEn._(_root);
 	late final _TranslationsFinancialHealthEn financial_health = _TranslationsFinancialHealthEn._(_root);
+	late final _TranslationsStatsEn stats = _TranslationsStatsEn._(_root);
 	late final _TranslationsIconSelectorEn icon_selector = _TranslationsIconSelectorEn._(_root);
 	late final _TranslationsTransactionEn transaction = _TranslationsTransactionEn._(_root);
 	late final _TranslationsTransferEn transfer = _TranslationsTransferEn._(_root);
@@ -191,10 +192,11 @@ class _TranslationsGeneralEn {
 	String get category => 'Category';
 	String get transaction => 'Transaction';
 	String get transactions => 'Transactions';
-	String get store_limit => 'Size of the app reached. No action allowed';
 	String get today => 'Today';
 	String get yesterday => 'Yesterday';
 	String get filters => 'Filters';
+	String get empty_warn => 'Ops! This is very empty';
+	String get insufficient_data => 'Insufficient data';
 	late final _TranslationsGeneralClipboardEn clipboard = _TranslationsGeneralClipboardEn._(_root);
 	late final _TranslationsGeneralTimeEn time = _TranslationsGeneralTimeEn._(_root);
 	late final _TranslationsGeneralTransactionOrderEn transaction_order = _TranslationsGeneralTransactionOrderEn._(_root);
@@ -227,19 +229,21 @@ class _TranslationsIntroEn {
 	String get last_slide_descr2 => 'We hope you enjoy your experience! Do not hesitate to contact us in case of doubts, suggestions...';
 }
 
-// Path: tabs
-class _TranslationsTabsEn {
-	_TranslationsTabsEn._(this._root);
+// Path: home
+class _TranslationsHomeEn {
+	_TranslationsHomeEn._(this._root);
 
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
 	String get filter_transactions => 'Filter transactions';
-	String get should_create_account_header => 'Ops!';
+	String get hello_day => 'Good morning,';
+	String get hello_night => 'Good night,';
+	String get total_balance => 'Total balance';
+	String get my_accounts => 'My accounts';
+	String get last_transactions => 'Last transactions';
+	String get should_create_account_header => 'Oops!';
 	String get should_create_account_message => 'You must create an account before you can start creating transactions';
-	late final _TranslationsTabsTab1En tab1 = _TranslationsTabsTab1En._(_root);
-	late final _TranslationsTabsTab2En tab2 = _TranslationsTabsTab2En._(_root);
-	late final _TranslationsTabsTab3En tab3 = _TranslationsTabsTab3En._(_root);
 }
 
 // Path: financial_health
@@ -253,6 +257,22 @@ class _TranslationsFinancialHealthEn {
 	late final _TranslationsFinancialHealthReviewEn review = _TranslationsFinancialHealthReviewEn._(_root);
 	late final _TranslationsFinancialHealthMonthsWithoutIncomeEn months_without_income = _TranslationsFinancialHealthMonthsWithoutIncomeEn._(_root);
 	late final _TranslationsFinancialHealthSavingsPercentageEn savings_percentage = _TranslationsFinancialHealthSavingsPercentageEn._(_root);
+}
+
+// Path: stats
+class _TranslationsStatsEn {
+	_TranslationsStatsEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Statistics';
+	String get balance_by_account => 'Balance by accounts';
+	String get balance_by_currency => 'Balance by currency';
+	String get cash_flow => 'Cash flow';
+	String get balance_evolution => 'Balance evolution';
+	String get by_periods => 'By periods';
+	String get by_categories => 'By categories';
 }
 
 // Path: icon_selector
@@ -286,6 +306,7 @@ class _TranslationsTransactionEn {
 	String get delete => 'Delete transaction';
 	String get delete_warning_message => 'This action is irreversible. The current balance of your accounts and all your statistics will be recalculated';
 	String get delete_success => 'Transaction deleted correctly';
+	late final _TranslationsTransactionListEn list = _TranslationsTransactionListEn._(_root);
 	late final _TranslationsTransactionFormEn form = _TranslationsTransactionFormEn._(_root);
 	late final _TranslationsTransactionStatusEn status = _TranslationsTransactionStatusEn._(_root);
 }
@@ -314,7 +335,6 @@ class _TranslationsRecurrentTransactionsEn {
 	// Translations
 	String get title => 'Recurrent transactions';
 	String get empty => 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
-	String get balance => 'Total balance';
 	late final _TranslationsRecurrentTransactionsDetailsEn details = _TranslationsRecurrentTransactionsDetailsEn._(_root);
 }
 
@@ -330,6 +350,7 @@ class _TranslationsAccountEn {
 	String get n_transactions => 'Number of transactions';
 	String get add_money => 'Add money';
 	String get withdraw_money => 'Withdraw money';
+	String get no_accounts => 'There are no accounts to display in this section';
 	late final _TranslationsAccountTypesEn types = _TranslationsAccountTypesEn._(_root);
 	late final _TranslationsAccountFormEn form = _TranslationsAccountFormEn._(_root);
 	late final _TranslationsAccountDeleteEn delete = _TranslationsAccountDeleteEn._(_root);
@@ -420,7 +441,6 @@ class _TranslationsBackupEn {
 	// Translations
 	late final _TranslationsBackupExportEn export = _TranslationsBackupExportEn._(_root);
 	late final _TranslationsBackupImportEn import = _TranslationsBackupImportEn._(_root);
-	late final _TranslationsBackupGuideEn guide = _TranslationsBackupGuideEn._(_root);
 }
 
 // Path: settings
@@ -508,55 +528,6 @@ class _TranslationsGeneralValidationsEn {
 	String get required => 'Required field';
 }
 
-// Path: tabs.tab1
-class _TranslationsTabsTab1En {
-	_TranslationsTabsTab1En._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Home';
-	String get hello_day => 'Good morning,';
-	String get hello_night => 'Good evening,';
-	String get total_balance => 'Total balance';
-	String get my_accounts => 'My accounts';
-	String get tools => 'Tools';
-	String get important_expenses => 'Largest expenses';
-	String get empty_expenses => 'It looks like you don\'t have any transactions for this period yet. Add one by clicking the \'+\' button at the bottom';
-	late final _TranslationsTabsTab1AccountResumeEn account_resume = _TranslationsTabsTab1AccountResumeEn._(_root);
-}
-
-// Path: tabs.tab2
-class _TranslationsTabsTab2En {
-	_TranslationsTabsTab2En._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Transactions';
-	String get balance => 'Balance';
-	String get empty => 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
-	String get searcher_placeholder => 'Search by category, description...';
-	String get loading => 'Loading more transactions...';
-}
-
-// Path: tabs.tab3
-class _TranslationsTabsTab3En {
-	_TranslationsTabsTab3En._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Budgets';
-	String get without_subcat => 'Other - ';
-	String get average_by_transaction => 'Average/transaction';
-	String get average_by_day => 'Average/day';
-	String get balance => 'Final balance';
-	String get balance_by_period => 'Average balance/period';
-	String get cash_flow => 'Cash-flow';
-	String get balance_evolution => 'Fund evolution';
-}
-
 // Path: financial_health.review
 class _TranslationsFinancialHealthReviewEn {
 	_TranslationsFinancialHealthReviewEn._(this._root);
@@ -597,6 +568,18 @@ class _TranslationsFinancialHealthSavingsPercentageEn {
 	String normal({required Object value}) => 'Congratulations, you managed to save ${value}% of your income during this period. Visit the analysis tab to see where you can save even more!';
 	String bad({required Object value}) => 'You have managed to save ${value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
 	String get very_bad => 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
+}
+
+// Path: transaction.list
+class _TranslationsTransactionListEn {
+	_TranslationsTransactionListEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get empty => 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
+	String get searcher_placeholder => 'Search by category, description...';
+	String get loading => 'Loading more transactions...';
 }
 
 // Path: transaction.form
@@ -652,17 +635,6 @@ class _TranslationsRecurrentTransactionsDetailsEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get title => 'Transaction details';
-	String get each_week => 'Each week';
-	String get each_month => 'Each month';
-	String get each_year => 'Each year';
-	String get start_date => 'First move';
-	String get balance_expense => 'Paid so far';
-	String get balance_income => 'Income so far';
-	String get end_date => 'End Date';
-	String get pause_header => 'Pause payments';
-	String get pause_message => 'This action will terminate this transaction today, and no more payments will be made from now on. Payments made before today will not be removed from the balance';
-	String get pause_correctly => 'Transaction paused successfully';
 	String get delete_header => 'Delete recurring transaction';
 	String get delete_message => 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 }
@@ -766,12 +738,10 @@ class _TranslationsBudgetsDetailsEn {
 
 	// Translations
 	String get title => 'Budget Details';
-	String get budget_value => 'Budget';
+	String get budget_value => 'Budgeted';
 	String get statistics => 'Statistics';
-	String get you_already_expend => 'You have already spent the';
-	String get budget_exceeded_for => 'You have exceeded budget by';
-	String get of_the_budget => 'of the budget';
-	String get expend_diary_left => 'Remaining daily spend';
+	String get you_already_expend => 'Spent';
+	String get expend_diary_left => 'Remaining recommended daily spend';
 	String get expend_evolution => 'Expenditure evolution';
 	String get no_transactions => 'It seems that you have not made any expenses related to this budget';
 }
@@ -814,22 +784,6 @@ class _TranslationsBackupImportEn {
 	String get long_description => 'If you have already used our application before, you may have a backup saved on your device with the name Monekin_backup_YYYY_MM_DD. If you prefer, you can perform this data import later.';
 	String get success => 'Import performed successfully';
 	String get error => 'Error importing file. Please contact developer via lozin.technologies@gmail.com';
-}
-
-// Path: backup.guide
-class _TranslationsBackupGuideEn {
-	_TranslationsBackupGuideEn._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Guide on how to import/export your data';
-	String get title_short => 'Import/Export data';
-	String get message0 => 'So that you can recover your data if you uninstall the application, change your mobile or if they are lost by accident, it is recommended to export them from time to time. Thanks to this export you will be able to recover these data at any time in this window.';
-	String get message1 => 'To export your data press the \'Export data\' box. A dialog should immediately open for you to select where you want to save your data. It is recommended to save it directly to your device\'s storage, although any other option like saving it in Google Drive or send it by mail is also perfectly valid.';
-	String get message2 => 'Once you choose where to save/send your data, Monekin will save a file with all your information (transactions, budgets, categories, adjustments...). Absolutely everything will be saved in a JSON type file, with the name \'Monekin_backup_YEAR_MONTH_DAY\',';
-	String get message3 => 'Now you can recover your data at any time by selecting the \'Import data\' option. When you press the box, you will have to search for the file that you previously exported. Once you have selected all your data that you have in that file, they will be loaded into our app .';
-	String get message4 => 'When performing the data import, all the current data that the application has will be deleted and replaced by the new ones that you import.';
 }
 
 // Path: settings.general
@@ -1007,19 +961,6 @@ class _TranslationsGeneralTimeAllEn {
 	String get weekly => 'Every week';
 }
 
-// Path: tabs.tab1.account_resume
-class _TranslationsTabsTab1AccountResumeEn {
-	_TranslationsTabsTab1AccountResumeEn._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get link => 'See all';
-	String get display => 'Summary of accounts';
-	String get balance_by_account => 'Balance by accounts';
-	String get balance_by_currency => 'Balance by currency';
-}
-
 // Path: financial_health.review.descr
 class _TranslationsFinancialHealthReviewDescrEn {
 	_TranslationsFinancialHealthReviewDescrEn._(this._root);
@@ -1087,8 +1028,9 @@ class _TranslationsEs extends _TranslationsEn {
 	// Translations
 	@override late final _TranslationsGeneralEs general = _TranslationsGeneralEs._(_root);
 	@override late final _TranslationsIntroEs intro = _TranslationsIntroEs._(_root);
-	@override late final _TranslationsTabsEs tabs = _TranslationsTabsEs._(_root);
+	@override late final _TranslationsHomeEs home = _TranslationsHomeEs._(_root);
 	@override late final _TranslationsFinancialHealthEs financial_health = _TranslationsFinancialHealthEs._(_root);
+	@override late final _TranslationsStatsEs stats = _TranslationsStatsEs._(_root);
 	@override late final _TranslationsIconSelectorEs icon_selector = _TranslationsIconSelectorEs._(_root);
 	@override late final _TranslationsTransactionEs transaction = _TranslationsTransactionEs._(_root);
 	@override late final _TranslationsTransferEs transfer = _TranslationsTransferEs._(_root);
@@ -1129,10 +1071,11 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get category => 'Categoría';
 	@override String get transaction => 'Transacción';
 	@override String get transactions => 'Transacciones';
-	@override String get store_limit => 'Almacenamiento máximo de la app alcanzado. Acción cancelada';
 	@override String get today => 'Hoy';
 	@override String get yesterday => 'Ayer';
 	@override String get filters => 'Filtros';
+	@override String get empty_warn => 'Ops! Esto esta muy vacio';
+	@override String get insufficient_data => 'Datos insuficientes';
 	@override late final _TranslationsGeneralClipboardEs clipboard = _TranslationsGeneralClipboardEs._(_root);
 	@override late final _TranslationsGeneralTimeEs time = _TranslationsGeneralTimeEs._(_root);
 	@override late final _TranslationsGeneralTransactionOrderEs transaction_order = _TranslationsGeneralTransactionOrderEs._(_root);
@@ -1165,19 +1108,21 @@ class _TranslationsIntroEs extends _TranslationsIntroEn {
 	@override String get last_slide_descr2 => 'Esperemos que disfrutes de tu experiencia! No dudes en contactar con nosotros en caso de dudas, sugerencias...';
 }
 
-// Path: tabs
-class _TranslationsTabsEs extends _TranslationsTabsEn {
-	_TranslationsTabsEs._(_TranslationsEs root) : this._root = root, super._(root);
+// Path: home
+class _TranslationsHomeEs extends _TranslationsHomeEn {
+	_TranslationsHomeEs._(_TranslationsEs root) : this._root = root, super._(root);
 
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
 	@override String get filter_transactions => 'Filtrar transacciones';
+	@override String get hello_day => 'Buenos días,';
+	@override String get hello_night => 'Buenas noches,';
+	@override String get total_balance => 'Saldo total';
+	@override String get my_accounts => 'Mis cuentas';
+	@override String get last_transactions => 'Últimas transacciones';
 	@override String get should_create_account_header => 'Ops!';
 	@override String get should_create_account_message => 'Debes crear una cuenta antes de empezar a crear transacciones';
-	@override late final _TranslationsTabsTab1Es tab1 = _TranslationsTabsTab1Es._(_root);
-	@override late final _TranslationsTabsTab2Es tab2 = _TranslationsTabsTab2Es._(_root);
-	@override late final _TranslationsTabsTab3Es tab3 = _TranslationsTabsTab3Es._(_root);
 }
 
 // Path: financial_health
@@ -1191,6 +1136,22 @@ class _TranslationsFinancialHealthEs extends _TranslationsFinancialHealthEn {
 	@override late final _TranslationsFinancialHealthReviewEs review = _TranslationsFinancialHealthReviewEs._(_root);
 	@override late final _TranslationsFinancialHealthMonthsWithoutIncomeEs months_without_income = _TranslationsFinancialHealthMonthsWithoutIncomeEs._(_root);
 	@override late final _TranslationsFinancialHealthSavingsPercentageEs savings_percentage = _TranslationsFinancialHealthSavingsPercentageEs._(_root);
+}
+
+// Path: stats
+class _TranslationsStatsEs extends _TranslationsStatsEn {
+	_TranslationsStatsEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Estadísticas';
+	@override String get balance_by_account => 'Saldo por cuentas';
+	@override String get balance_by_currency => 'Saldo por divisas';
+	@override String get balance_evolution => 'Tendencia de saldo';
+	@override String get cash_flow => 'Flujo de caja';
+	@override String get by_periods => 'Por periodos';
+	@override String get by_categories => 'Por categorías';
 }
 
 // Path: icon_selector
@@ -1224,6 +1185,7 @@ class _TranslationsTransactionEs extends _TranslationsTransactionEn {
 	@override String get delete => 'Eliminar transacción';
 	@override String get delete_warning_message => 'Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas';
 	@override String get delete_success => 'Transacción eliminada correctamente';
+	@override late final _TranslationsTransactionListEs list = _TranslationsTransactionListEs._(_root);
 	@override late final _TranslationsTransactionFormEs form = _TranslationsTransactionFormEs._(_root);
 	@override late final _TranslationsTransactionStatusEs status = _TranslationsTransactionStatusEs._(_root);
 }
@@ -1267,6 +1229,7 @@ class _TranslationsAccountEs extends _TranslationsAccountEn {
 	@override String get n_transactions => 'Número de transacciones';
 	@override String get add_money => 'Añadir dinero';
 	@override String get withdraw_money => 'Retirar dinero';
+	@override String get no_accounts => 'No hay cuentas que mostrar en esta sección';
 	@override late final _TranslationsAccountTypesEs types = _TranslationsAccountTypesEs._(_root);
 	@override late final _TranslationsAccountFormEs form = _TranslationsAccountFormEs._(_root);
 	@override late final _TranslationsAccountDeleteEs delete = _TranslationsAccountDeleteEs._(_root);
@@ -1357,7 +1320,6 @@ class _TranslationsBackupEs extends _TranslationsBackupEn {
 	// Translations
 	@override late final _TranslationsBackupExportEs export = _TranslationsBackupExportEs._(_root);
 	@override late final _TranslationsBackupImportEs import = _TranslationsBackupImportEs._(_root);
-	@override late final _TranslationsBackupGuideEs guide = _TranslationsBackupGuideEs._(_root);
 }
 
 // Path: settings
@@ -1445,55 +1407,6 @@ class _TranslationsGeneralValidationsEs extends _TranslationsGeneralValidationsE
 	@override String get required => 'Campo obligatorio';
 }
 
-// Path: tabs.tab1
-class _TranslationsTabsTab1Es extends _TranslationsTabsTab1En {
-	_TranslationsTabsTab1Es._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Home';
-	@override String get hello_day => 'Buenos días,';
-	@override String get hello_night => 'Buenas noches,';
-	@override String get total_balance => 'Saldo total';
-	@override String get my_accounts => 'Mis cuentas';
-	@override String get tools => 'Herramientas';
-	@override String get important_expenses => 'Gastos mas grandes';
-	@override String get empty_expenses => 'Parece que aun no tienes transacciones para este periodo. Añade una pulsando el botón \'+\' de la parte inferior';
-	@override late final _TranslationsTabsTab1AccountResumeEs account_resume = _TranslationsTabsTab1AccountResumeEs._(_root);
-}
-
-// Path: tabs.tab2
-class _TranslationsTabsTab2Es extends _TranslationsTabsTab2En {
-	_TranslationsTabsTab2Es._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Transacciones';
-	@override String get balance => 'Balance';
-	@override String get empty => 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
-	@override String get searcher_placeholder => 'Busca por categoría, descripción...';
-	@override String get loading => 'Cargando más transacciones...';
-}
-
-// Path: tabs.tab3
-class _TranslationsTabsTab3Es extends _TranslationsTabsTab3En {
-	_TranslationsTabsTab3Es._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Presupuestos';
-	@override String get without_subcat => 'Otro - ';
-	@override String get average_by_transaction => 'Medía/transacción';
-	@override String get average_by_day => 'Medía/día';
-	@override String get balance => 'Balance final';
-	@override String get balance_by_period => 'Balance medio/periodo';
-	@override String get cash_flow => 'Flujo de caja';
-	@override String get balance_evolution => 'Evolución de fondos';
-}
-
 // Path: financial_health.review
 class _TranslationsFinancialHealthReviewEs extends _TranslationsFinancialHealthReviewEn {
 	_TranslationsFinancialHealthReviewEs._(_TranslationsEs root) : this._root = root, super._(root);
@@ -1534,6 +1447,18 @@ class _TranslationsFinancialHealthSavingsPercentageEs extends _TranslationsFinan
 	@override String normal({required Object value}) => 'Enhorabuena, has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Visita la pestaña de análisis para ver donde puedes ahorrar aun más!';
 	@override String bad({required Object value}) => 'Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 	@override String get very_bad => 'Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
+}
+
+// Path: transaction.list
+class _TranslationsTransactionListEs extends _TranslationsTransactionListEn {
+	_TranslationsTransactionListEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get empty => 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
+	@override String get searcher_placeholder => 'Busca por categoría, descripción...';
+	@override String get loading => 'Cargando más transacciones...';
 }
 
 // Path: transaction.form
@@ -1589,17 +1514,6 @@ class _TranslationsRecurrentTransactionsDetailsEs extends _TranslationsRecurrent
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Detalles del movimiento';
-	@override String get each_week => 'Cada semana';
-	@override String get each_month => 'Cada mes';
-	@override String get each_year => 'Cada año';
-	@override String get start_date => 'Primer movimiento';
-	@override String get balance_expense => 'Pagado hasta ahora';
-	@override String get balance_income => 'Ingresado hasta ahora';
-	@override String get end_date => 'Fecha de finalización';
-	@override String get pause_header => 'Pausar pagos';
-	@override String get pause_message => 'Con esta acción se dará por finalizada esta transacción hoy, y no se produciran mas pagos a partir de ahora. Pagos previos al día de hoy no serán eliminados del balance';
-	@override String get pause_correctly => 'Transacción pausada correctamente';
 	@override String get delete_header => 'Eliminar transacción recurrente';
 	@override String get delete_message => 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 }
@@ -1705,10 +1619,8 @@ class _TranslationsBudgetsDetailsEs extends _TranslationsBudgetsDetailsEn {
 	@override String get title => 'Detalles del presupuesto';
 	@override String get budget_value => 'Presupuestado';
 	@override String get statistics => 'Estadísticas';
-	@override String get you_already_expend => 'Ya has gastado el';
-	@override String get budget_exceeded_for => 'Has sobrepasado el presupuesto en';
-	@override String get of_the_budget => 'del presupuesto';
-	@override String get expend_diary_left => 'Gasto diario restante';
+	@override String get you_already_expend => 'Gastado';
+	@override String get expend_diary_left => 'Gasto diario restante recomendado';
 	@override String get expend_evolution => 'Evolución del gasto';
 	@override String get no_transactions => 'Parece que no has realizado ningún gasto relativo a este presupuesto';
 }
@@ -1750,22 +1662,6 @@ class _TranslationsBackupImportEs extends _TranslationsBackupImportEn {
 	@override String get long_description => 'Si ya has usado nuestra aplicación antes puede que tengas una copia de seguridad guardada en tu disposivo con el nombre Monekin_backup_YYYY_MM_DD. Si prefieres puedes realizar esta importación de datos mas adelante.';
 	@override String get success => 'Importación realizada con exito';
 	@override String get error => 'Error al importar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com';
-}
-
-// Path: backup.guide
-class _TranslationsBackupGuideEs extends _TranslationsBackupGuideEn {
-	_TranslationsBackupGuideEs._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Guía de como importar/exportar sus datos';
-	@override String get title_short => 'Importar/Exportar datos';
-	@override String get message0 => 'Para que puedas recuperar tus datos si desinstalas la aplicación, cambias de movil o estos son perdidos por accidente, se recomienda exportarlos cada cierto tiempo. Gracias a esta exportación podrás recuperar estos datos en cualquier momento en esta ventana.';
-	@override String get message1 => 'Para exportar tus datos pulsa el cuadro de \'Exportar datos\'. Inmediatamente se debería abrir un dialogo para que selecciones donde quieres guardar tus datos. Se recomienda guardarlos directamente en el almacenamineto de tu dispositvo, aunque cualquier otra opción como guardarlo en Google Drive o enviarlo por mail también es perfectamente valida.';
-	@override String get message2 => 'Una vez elijas donde guardar/enviar tus datos, Monekin guardará un fichero con toda tu información (transacciones, presupuestos, categorías, ajustes...). Absolutamnete todo será guardado en un fichero de tipo JSON, con el nombre \'Monekin_backup_AÑO_MES_DIA\',';
-	@override String get message3 => 'Ahora podrás recuperar tus datos en cualquier momento seleccionando la opción \'Importar datos\'. Al pulsar el cuadro, deberás buscar el fichero que exportaste previamente. Una vez seleccionado todos tus datos que teneis en ese fichero se cargaran en nuestra app.';
-	@override String get message4 => 'Al realizar la importación de datos, todos los datos actuales que tiene la aplicación serán borrados y reemplazados por los nuevos que importes.';
 }
 
 // Path: settings.general
@@ -1874,7 +1770,7 @@ class _TranslationsGeneralTimeRangesEs extends _TranslationsGeneralTimeRangesEn 
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get display => 'Time range';
+	@override String get display => 'Rango temporal';
 	@override String get it_repeat => 'Se repite';
 	@override String get it_ends => 'Termina';
 	@override String get forever => 'Para siempre';
@@ -1904,7 +1800,6 @@ class _TranslationsGeneralTimePeriodicityEs extends _TranslationsGeneralTimePeri
 
 	// Translations
 	@override String get display => 'Periodicidad';
-	@override String get range => 'Rango temporal';
 	@override String get no_repeat => 'Sin repetición';
 	@override String get diary => 'Diaría';
 	@override String get monthly => 'Mensual';
@@ -1943,19 +1838,6 @@ class _TranslationsGeneralTimeAllEs extends _TranslationsGeneralTimeAllEn {
 	@override String get annually => 'Todos los años';
 	@override String get quaterly => 'Todos los trimestres';
 	@override String get weekly => 'Todas las semanas';
-}
-
-// Path: tabs.tab1.account_resume
-class _TranslationsTabsTab1AccountResumeEs extends _TranslationsTabsTab1AccountResumeEn {
-	_TranslationsTabsTab1AccountResumeEs._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get link => 'Ver todas';
-	@override String get display => 'Resumen de cuentas';
-	@override String get balance_by_account => 'Saldo por cuentas';
-	@override String get balance_by_currency => 'Saldo por divisas';
 }
 
 // Path: financial_health.review.descr
@@ -2022,10 +1904,11 @@ extension on _TranslationsEn {
 			case 'general.category': return 'Category';
 			case 'general.transaction': return 'Transaction';
 			case 'general.transactions': return 'Transactions';
-			case 'general.store_limit': return 'Size of the app reached. No action allowed';
 			case 'general.today': return 'Today';
 			case 'general.yesterday': return 'Yesterday';
 			case 'general.filters': return 'Filters';
+			case 'general.empty_warn': return 'Ops! This is very empty';
+			case 'general.insufficient_data': return 'Insufficient data';
 			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
 			case 'general.clipboard.error': return 'Error al copiar';
 			case 'general.time.start_date': return 'Start date';
@@ -2092,34 +1975,14 @@ extension on _TranslationsEn {
 			case 'intro.last_slide_title': return 'All ready';
 			case 'intro.last_slide_descr': return 'With Monekin, you can finally achieve the financial independence you want so much. You will have graphs, budgets, tips, statistics and much more about your money.';
 			case 'intro.last_slide_descr2': return 'We hope you enjoy your experience! Do not hesitate to contact us in case of doubts, suggestions...';
-			case 'tabs.filter_transactions': return 'Filter transactions';
-			case 'tabs.should_create_account_header': return 'Ops!';
-			case 'tabs.should_create_account_message': return 'You must create an account before you can start creating transactions';
-			case 'tabs.tab1.title': return 'Home';
-			case 'tabs.tab1.hello_day': return 'Good morning,';
-			case 'tabs.tab1.hello_night': return 'Good evening,';
-			case 'tabs.tab1.total_balance': return 'Total balance';
-			case 'tabs.tab1.my_accounts': return 'My accounts';
-			case 'tabs.tab1.tools': return 'Tools';
-			case 'tabs.tab1.important_expenses': return 'Largest expenses';
-			case 'tabs.tab1.empty_expenses': return 'It looks like you don\'t have any transactions for this period yet. Add one by clicking the \'+\' button at the bottom';
-			case 'tabs.tab1.account_resume.link': return 'See all';
-			case 'tabs.tab1.account_resume.display': return 'Summary of accounts';
-			case 'tabs.tab1.account_resume.balance_by_account': return 'Balance by accounts';
-			case 'tabs.tab1.account_resume.balance_by_currency': return 'Balance by currency';
-			case 'tabs.tab2.title': return 'Transactions';
-			case 'tabs.tab2.balance': return 'Balance';
-			case 'tabs.tab2.empty': return 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
-			case 'tabs.tab2.searcher_placeholder': return 'Search by category, description...';
-			case 'tabs.tab2.loading': return 'Loading more transactions...';
-			case 'tabs.tab3.title': return 'Budgets';
-			case 'tabs.tab3.without_subcat': return 'Other - ';
-			case 'tabs.tab3.average_by_transaction': return 'Average/transaction';
-			case 'tabs.tab3.average_by_day': return 'Average/day';
-			case 'tabs.tab3.balance': return 'Final balance';
-			case 'tabs.tab3.balance_by_period': return 'Average balance/period';
-			case 'tabs.tab3.cash_flow': return 'Cash-flow';
-			case 'tabs.tab3.balance_evolution': return 'Fund evolution';
+			case 'home.filter_transactions': return 'Filter transactions';
+			case 'home.hello_day': return 'Good morning,';
+			case 'home.hello_night': return 'Good night,';
+			case 'home.total_balance': return 'Total balance';
+			case 'home.my_accounts': return 'My accounts';
+			case 'home.last_transactions': return 'Last transactions';
+			case 'home.should_create_account_header': return 'Oops!';
+			case 'home.should_create_account_message': return 'You must create an account before you can start creating transactions';
 			case 'financial_health.display': return 'Financial health';
 			case 'financial_health.review.very_good': return 'Very good!';
 			case 'financial_health.review.good': return 'Good';
@@ -2140,6 +2003,13 @@ extension on _TranslationsEn {
 			case 'financial_health.savings_percentage.normal': return ({required Object value}) => 'Congratulations, you managed to save ${value}% of your income during this period. Visit the analysis tab to see where you can save even more!';
 			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'You have managed to save ${value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
 			case 'financial_health.savings_percentage.very_bad': return 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
+			case 'stats.title': return 'Statistics';
+			case 'stats.balance_by_account': return 'Balance by accounts';
+			case 'stats.balance_by_currency': return 'Balance by currency';
+			case 'stats.cash_flow': return 'Cash flow';
+			case 'stats.balance_evolution': return 'Balance evolution';
+			case 'stats.by_periods': return 'By periods';
+			case 'stats.by_categories': return 'By categories';
 			case 'icon_selector.name': return 'Name:';
 			case 'icon_selector.icon': return 'Icon';
 			case 'icon_selector.color': return 'Colour';
@@ -2155,6 +2025,9 @@ extension on _TranslationsEn {
 			case 'transaction.delete': return 'Delete transaction';
 			case 'transaction.delete_warning_message': return 'This action is irreversible. The current balance of your accounts and all your statistics will be recalculated';
 			case 'transaction.delete_success': return 'Transaction deleted correctly';
+			case 'transaction.list.empty': return 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
+			case 'transaction.list.searcher_placeholder': return 'Search by category, description...';
+			case 'transaction.list.loading': return 'Loading more transactions...';
 			case 'transaction.form.status': return 'Status';
 			case 'transaction.form.validators.zero': return 'The value of a transaction cannot be equal to zero';
 			case 'transaction.form.validators.negative_transaction': return 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
@@ -2185,18 +2058,6 @@ extension on _TranslationsEn {
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Amount transferred in destination';
 			case 'recurrent_transactions.title': return 'Recurrent transactions';
 			case 'recurrent_transactions.empty': return 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
-			case 'recurrent_transactions.balance': return 'Total balance';
-			case 'recurrent_transactions.details.title': return 'Transaction details';
-			case 'recurrent_transactions.details.each_week': return 'Each week';
-			case 'recurrent_transactions.details.each_month': return 'Each month';
-			case 'recurrent_transactions.details.each_year': return 'Each year';
-			case 'recurrent_transactions.details.start_date': return 'First move';
-			case 'recurrent_transactions.details.balance_expense': return 'Paid so far';
-			case 'recurrent_transactions.details.balance_income': return 'Income so far';
-			case 'recurrent_transactions.details.end_date': return 'End Date';
-			case 'recurrent_transactions.details.pause_header': return 'Pause payments';
-			case 'recurrent_transactions.details.pause_message': return 'This action will terminate this transaction today, and no more payments will be made from now on. Payments made before today will not be removed from the balance';
-			case 'recurrent_transactions.details.pause_correctly': return 'Transaction paused successfully';
 			case 'recurrent_transactions.details.delete_header': return 'Delete recurring transaction';
 			case 'recurrent_transactions.details.delete_message': return 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 			case 'account.date': return 'Date created';
@@ -2204,6 +2065,7 @@ extension on _TranslationsEn {
 			case 'account.n_transactions': return 'Number of transactions';
 			case 'account.add_money': return 'Add money';
 			case 'account.withdraw_money': return 'Withdraw money';
+			case 'account.no_accounts': return 'There are no accounts to display in this section';
 			case 'account.types.title': return 'Account type';
 			case 'account.types.warning': return 'Once the type of account has been chosen, it cannot be changed in the future';
 			case 'account.types.normal': return 'Normal account';
@@ -2287,12 +2149,10 @@ extension on _TranslationsEn {
 			case 'budgets.form.edit': return 'Edit budget';
 			case 'budgets.form.negative_warn': return 'The budgets can not have a negative amount';
 			case 'budgets.details.title': return 'Budget Details';
-			case 'budgets.details.budget_value': return 'Budget';
+			case 'budgets.details.budget_value': return 'Budgeted';
 			case 'budgets.details.statistics': return 'Statistics';
-			case 'budgets.details.you_already_expend': return 'You have already spent the';
-			case 'budgets.details.budget_exceeded_for': return 'You have exceeded budget by';
-			case 'budgets.details.of_the_budget': return 'of the budget';
-			case 'budgets.details.expend_diary_left': return 'Remaining daily spend';
+			case 'budgets.details.you_already_expend': return 'Spent';
+			case 'budgets.details.expend_diary_left': return 'Remaining recommended daily spend';
 			case 'budgets.details.expend_evolution': return 'Expenditure evolution';
 			case 'budgets.details.no_transactions': return 'It seems that you have not made any expenses related to this budget';
 			case 'backup.export.title': return 'Export your data';
@@ -2317,13 +2177,6 @@ extension on _TranslationsEn {
 			case 'backup.import.long_description': return 'If you have already used our application before, you may have a backup saved on your device with the name Monekin_backup_YYYY_MM_DD. If you prefer, you can perform this data import later.';
 			case 'backup.import.success': return 'Import performed successfully';
 			case 'backup.import.error': return 'Error importing file. Please contact developer via lozin.technologies@gmail.com';
-			case 'backup.guide.title': return 'Guide on how to import/export your data';
-			case 'backup.guide.title_short': return 'Import/Export data';
-			case 'backup.guide.message0': return 'So that you can recover your data if you uninstall the application, change your mobile or if they are lost by accident, it is recommended to export them from time to time. Thanks to this export you will be able to recover these data at any time in this window.';
-			case 'backup.guide.message1': return 'To export your data press the \'Export data\' box. A dialog should immediately open for you to select where you want to save your data. It is recommended to save it directly to your device\'s storage, although any other option like saving it in Google Drive or send it by mail is also perfectly valid.';
-			case 'backup.guide.message2': return 'Once you choose where to save/send your data, Monekin will save a file with all your information (transactions, budgets, categories, adjustments...). Absolutely everything will be saved in a JSON type file, with the name \'Monekin_backup_YEAR_MONTH_DAY\',';
-			case 'backup.guide.message3': return 'Now you can recover your data at any time by selecting the \'Import data\' option. When you press the box, you will have to search for the file that you previously exported. Once you have selected all your data that you have in that file, they will be loaded into our app .';
-			case 'backup.guide.message4': return 'When performing the data import, all the current data that the application has will be deleted and replaced by the new ones that you import.';
 			case 'settings.title': return 'Settings';
 			case 'settings.edit_profile': return 'Edit profile';
 			case 'settings.display_name': return 'User name';
@@ -2399,15 +2252,16 @@ extension on _TranslationsEs {
 			case 'general.category': return 'Categoría';
 			case 'general.transaction': return 'Transacción';
 			case 'general.transactions': return 'Transacciones';
-			case 'general.store_limit': return 'Almacenamiento máximo de la app alcanzado. Acción cancelada';
 			case 'general.today': return 'Hoy';
 			case 'general.yesterday': return 'Ayer';
 			case 'general.filters': return 'Filtros';
+			case 'general.empty_warn': return 'Ops! Esto esta muy vacio';
+			case 'general.insufficient_data': return 'Datos insuficientes';
 			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
 			case 'general.clipboard.error': return 'Error al copiar';
 			case 'general.time.start_date': return 'Fecha de inicio';
 			case 'general.time.end_date': return 'Fecha de fin';
-			case 'general.time.ranges.display': return 'Time range';
+			case 'general.time.ranges.display': return 'Rango temporal';
 			case 'general.time.ranges.it_repeat': return 'Se repite';
 			case 'general.time.ranges.it_ends': return 'Termina';
 			case 'general.time.ranges.forever': return 'Para siempre';
@@ -2428,7 +2282,6 @@ extension on _TranslationsEs {
 				other: 'Semanas',
 			);
 			case 'general.time.periodicity.display': return 'Periodicidad';
-			case 'general.time.periodicity.range': return 'Rango temporal';
 			case 'general.time.periodicity.no_repeat': return 'Sin repetición';
 			case 'general.time.periodicity.diary': return 'Diaría';
 			case 'general.time.periodicity.monthly': return 'Mensual';
@@ -2471,34 +2324,14 @@ extension on _TranslationsEs {
 			case 'intro.last_slide_title': return 'Todo listo!';
 			case 'intro.last_slide_descr': return 'Con Monekin, podrás al fin lograr la independencia financiaria que tanto deseas. Podrás ver gráficas, presupuestos, consejos, estadisticas y mucho más sobre tu dinero.';
 			case 'intro.last_slide_descr2': return 'Esperemos que disfrutes de tu experiencia! No dudes en contactar con nosotros en caso de dudas, sugerencias...';
-			case 'tabs.filter_transactions': return 'Filtrar transacciones';
-			case 'tabs.should_create_account_header': return 'Ops!';
-			case 'tabs.should_create_account_message': return 'Debes crear una cuenta antes de empezar a crear transacciones';
-			case 'tabs.tab1.title': return 'Home';
-			case 'tabs.tab1.hello_day': return 'Buenos días,';
-			case 'tabs.tab1.hello_night': return 'Buenas noches,';
-			case 'tabs.tab1.total_balance': return 'Saldo total';
-			case 'tabs.tab1.my_accounts': return 'Mis cuentas';
-			case 'tabs.tab1.tools': return 'Herramientas';
-			case 'tabs.tab1.important_expenses': return 'Gastos mas grandes';
-			case 'tabs.tab1.empty_expenses': return 'Parece que aun no tienes transacciones para este periodo. Añade una pulsando el botón \'+\' de la parte inferior';
-			case 'tabs.tab1.account_resume.link': return 'Ver todas';
-			case 'tabs.tab1.account_resume.display': return 'Resumen de cuentas';
-			case 'tabs.tab1.account_resume.balance_by_account': return 'Saldo por cuentas';
-			case 'tabs.tab1.account_resume.balance_by_currency': return 'Saldo por divisas';
-			case 'tabs.tab2.title': return 'Transacciones';
-			case 'tabs.tab2.balance': return 'Balance';
-			case 'tabs.tab2.empty': return 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
-			case 'tabs.tab2.searcher_placeholder': return 'Busca por categoría, descripción...';
-			case 'tabs.tab2.loading': return 'Cargando más transacciones...';
-			case 'tabs.tab3.title': return 'Presupuestos';
-			case 'tabs.tab3.without_subcat': return 'Otro - ';
-			case 'tabs.tab3.average_by_transaction': return 'Medía/transacción';
-			case 'tabs.tab3.average_by_day': return 'Medía/día';
-			case 'tabs.tab3.balance': return 'Balance final';
-			case 'tabs.tab3.balance_by_period': return 'Balance medio/periodo';
-			case 'tabs.tab3.cash_flow': return 'Flujo de caja';
-			case 'tabs.tab3.balance_evolution': return 'Evolución de fondos';
+			case 'home.filter_transactions': return 'Filtrar transacciones';
+			case 'home.hello_day': return 'Buenos días,';
+			case 'home.hello_night': return 'Buenas noches,';
+			case 'home.total_balance': return 'Saldo total';
+			case 'home.my_accounts': return 'Mis cuentas';
+			case 'home.last_transactions': return 'Últimas transacciones';
+			case 'home.should_create_account_header': return 'Ops!';
+			case 'home.should_create_account_message': return 'Debes crear una cuenta antes de empezar a crear transacciones';
 			case 'financial_health.display': return 'Salud financiera';
 			case 'financial_health.review.very_good': return 'Muy buena!';
 			case 'financial_health.review.good': return 'Buena';
@@ -2519,6 +2352,13 @@ extension on _TranslationsEs {
 			case 'financial_health.savings_percentage.normal': return ({required Object value}) => 'Enhorabuena, has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Visita la pestaña de análisis para ver donde puedes ahorrar aun más!';
 			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 			case 'financial_health.savings_percentage.very_bad': return 'Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
+			case 'stats.title': return 'Estadísticas';
+			case 'stats.balance_by_account': return 'Saldo por cuentas';
+			case 'stats.balance_by_currency': return 'Saldo por divisas';
+			case 'stats.balance_evolution': return 'Tendencia de saldo';
+			case 'stats.cash_flow': return 'Flujo de caja';
+			case 'stats.by_periods': return 'Por periodos';
+			case 'stats.by_categories': return 'Por categorías';
 			case 'icon_selector.name': return 'Nombre:';
 			case 'icon_selector.icon': return 'Icono';
 			case 'icon_selector.color': return 'Color';
@@ -2534,6 +2374,9 @@ extension on _TranslationsEs {
 			case 'transaction.delete': return 'Eliminar transacción';
 			case 'transaction.delete_warning_message': return 'Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas';
 			case 'transaction.delete_success': return 'Transacción eliminada correctamente';
+			case 'transaction.list.empty': return 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
+			case 'transaction.list.searcher_placeholder': return 'Busca por categoría, descripción...';
+			case 'transaction.list.loading': return 'Cargando más transacciones...';
 			case 'transaction.form.status': return 'Estado';
 			case 'transaction.form.validators.zero': return 'El valor de una transacción no puede ser igual a cero';
 			case 'transaction.form.validators.negative_transaction': return 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
@@ -2564,17 +2407,6 @@ extension on _TranslationsEs {
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Cantidad transferida en destino';
 			case 'recurrent_transactions.title': return 'Movimientos recurrentes';
 			case 'recurrent_transactions.empty': return 'Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
-			case 'recurrent_transactions.details.title': return 'Detalles del movimiento';
-			case 'recurrent_transactions.details.each_week': return 'Cada semana';
-			case 'recurrent_transactions.details.each_month': return 'Cada mes';
-			case 'recurrent_transactions.details.each_year': return 'Cada año';
-			case 'recurrent_transactions.details.start_date': return 'Primer movimiento';
-			case 'recurrent_transactions.details.balance_expense': return 'Pagado hasta ahora';
-			case 'recurrent_transactions.details.balance_income': return 'Ingresado hasta ahora';
-			case 'recurrent_transactions.details.end_date': return 'Fecha de finalización';
-			case 'recurrent_transactions.details.pause_header': return 'Pausar pagos';
-			case 'recurrent_transactions.details.pause_message': return 'Con esta acción se dará por finalizada esta transacción hoy, y no se produciran mas pagos a partir de ahora. Pagos previos al día de hoy no serán eliminados del balance';
-			case 'recurrent_transactions.details.pause_correctly': return 'Transacción pausada correctamente';
 			case 'recurrent_transactions.details.delete_header': return 'Eliminar transacción recurrente';
 			case 'recurrent_transactions.details.delete_message': return 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 			case 'account.date': return 'Fecha de creación';
@@ -2582,6 +2414,7 @@ extension on _TranslationsEs {
 			case 'account.n_transactions': return 'Número de transacciones';
 			case 'account.add_money': return 'Añadir dinero';
 			case 'account.withdraw_money': return 'Retirar dinero';
+			case 'account.no_accounts': return 'No hay cuentas que mostrar en esta sección';
 			case 'account.types.title': return 'Tipo de cuenta';
 			case 'account.types.warning': return 'Una vez elegido el tipo de cuenta este no podrá cambiarse en un futuro';
 			case 'account.types.normal': return 'Cuenta corriente';
@@ -2667,10 +2500,8 @@ extension on _TranslationsEs {
 			case 'budgets.details.title': return 'Detalles del presupuesto';
 			case 'budgets.details.budget_value': return 'Presupuestado';
 			case 'budgets.details.statistics': return 'Estadísticas';
-			case 'budgets.details.you_already_expend': return 'Ya has gastado el';
-			case 'budgets.details.budget_exceeded_for': return 'Has sobrepasado el presupuesto en';
-			case 'budgets.details.of_the_budget': return 'del presupuesto';
-			case 'budgets.details.expend_diary_left': return 'Gasto diario restante';
+			case 'budgets.details.you_already_expend': return 'Gastado';
+			case 'budgets.details.expend_diary_left': return 'Gasto diario restante recomendado';
 			case 'budgets.details.expend_evolution': return 'Evolución del gasto';
 			case 'budgets.details.no_transactions': return 'Parece que no has realizado ningún gasto relativo a este presupuesto';
 			case 'backup.export.title': return 'Exportar datos';
@@ -2694,13 +2525,6 @@ extension on _TranslationsEs {
 			case 'backup.import.long_description': return 'Si ya has usado nuestra aplicación antes puede que tengas una copia de seguridad guardada en tu disposivo con el nombre Monekin_backup_YYYY_MM_DD. Si prefieres puedes realizar esta importación de datos mas adelante.';
 			case 'backup.import.success': return 'Importación realizada con exito';
 			case 'backup.import.error': return 'Error al importar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com';
-			case 'backup.guide.title': return 'Guía de como importar/exportar sus datos';
-			case 'backup.guide.title_short': return 'Importar/Exportar datos';
-			case 'backup.guide.message0': return 'Para que puedas recuperar tus datos si desinstalas la aplicación, cambias de movil o estos son perdidos por accidente, se recomienda exportarlos cada cierto tiempo. Gracias a esta exportación podrás recuperar estos datos en cualquier momento en esta ventana.';
-			case 'backup.guide.message1': return 'Para exportar tus datos pulsa el cuadro de \'Exportar datos\'. Inmediatamente se debería abrir un dialogo para que selecciones donde quieres guardar tus datos. Se recomienda guardarlos directamente en el almacenamineto de tu dispositvo, aunque cualquier otra opción como guardarlo en Google Drive o enviarlo por mail también es perfectamente valida.';
-			case 'backup.guide.message2': return 'Una vez elijas donde guardar/enviar tus datos, Monekin guardará un fichero con toda tu información (transacciones, presupuestos, categorías, ajustes...). Absolutamnete todo será guardado en un fichero de tipo JSON, con el nombre \'Monekin_backup_AÑO_MES_DIA\',';
-			case 'backup.guide.message3': return 'Ahora podrás recuperar tus datos en cualquier momento seleccionando la opción \'Importar datos\'. Al pulsar el cuadro, deberás buscar el fichero que exportaste previamente. Una vez seleccionado todos tus datos que teneis en ese fichero se cargaran en nuestra app.';
-			case 'backup.guide.message4': return 'Al realizar la importación de datos, todos los datos actuales que tiene la aplicación serán borrados y reemplazados por los nuevos que importes.';
 			case 'settings.title': return 'Ajustes';
 			case 'settings.edit_profile': return 'Editar perfil';
 			case 'settings.display_name': return 'Nombre de usuario';

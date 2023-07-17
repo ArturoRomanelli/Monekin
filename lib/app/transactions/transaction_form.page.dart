@@ -161,7 +161,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       onSuccess();
     }).catchError((error) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error)));
+          .showSnackBar(SnackBar(content: Text(error.toString())));
     });
   }
 
@@ -275,6 +275,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       },
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       textInputAction: TextInputAction.next,
+                      inputFormatters: [decimalDigitFormatter],
                       onChanged: (value) {
                         setState(() {});
                       },

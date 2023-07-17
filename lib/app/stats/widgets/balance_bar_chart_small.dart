@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,8 @@ class BalanceChartSmall extends StatefulWidget {
 class _BalanceChartSmallState extends State<BalanceChartSmall> {
   int touchedGroupIndex = -1;
 
-  BarChartGroupData makeGroupData(int x, double expense, double income) {
+  BarChartGroupData makeGroupData(int x, double expense, double income,
+      {bool disabled = false}) {
     const double width = 56;
 
     const radius = BorderRadius.vertical(
@@ -28,13 +30,21 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
       barRods: [
         BarChartRodData(
           toY: expense,
-          color: x == 0 ? Colors.red.withOpacity(0.4) : Colors.red,
+          color: disabled
+              ? Colors.grey.withOpacity(0.175)
+              : x == 0
+                  ? Colors.red.withOpacity(0.4)
+                  : Colors.red,
           borderRadius: radius,
           width: width,
         ),
         BarChartRodData(
           toY: income,
-          color: x == 0 ? Colors.green.withOpacity(0.4) : Colors.green,
+          color: disabled
+              ? Colors.grey.withOpacity(0.175)
+              : x == 0
+                  ? Colors.green.withOpacity(0.4)
+                  : Colors.green,
           borderRadius: radius,
           width: width,
         ),
@@ -42,8 +52,34 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
     );
   }
 
+  FlTitlesData getTitlesData() {
+    return FlTitlesData(
+      show: true,
+      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 24,
+          getTitlesWidget: (value, meta) {
+            return Text(
+              value == 0 ? 'Periodo anterior' : 'Este periodo',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w300,
+              ),
+            );
+          },
+        ),
+      ),
+      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     return SizedBox(
       height: 250,
       child: StreamBuilder(
@@ -53,28 +89,66 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
               return const CircularProgressIndicator();
             }
 
+            final accounts = accountsSnapshot.data!;
+
+            if (accounts.isEmpty) {
+              return Stack(
+                children: [
+                  BarChart(
+                    BarChartData(
+                      barTouchData: BarTouchData(
+                        touchTooltipData: BarTouchTooltipData(
+                          getTooltipItem: (a, b, c, d) => null,
+                        ),
+                      ),
+                      titlesData: getTitlesData(),
+                      borderData: FlBorderData(
+                        show: true,
+                        border: const Border(
+                            bottom:
+                                BorderSide(width: 1, color: Colors.black12)),
+                      ),
+                      barGroups: [
+                        makeGroupData(0, 4, 2, disabled: true),
+                        makeGroupData(1, 5, 7, disabled: true),
+                      ],
+                      gridData: FlGridData(show: false),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          t.general.insufficient_data,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )),
+                  )
+                ],
+              );
+            }
+
             return StreamBuilder(
                 stream: StreamZip([
                   AccountService.instance.getAccountsData(
-                    accountIds: accountsSnapshot.data!.map((e) => e.id),
+                    accountIds: accounts.map((e) => e.id),
                     accountDataFilter: AccountDataFilter.expense,
                     startDate: widget.dateRangeService.getDateRange(-1)[0],
                     endDate: widget.dateRangeService.getDateRange(-1)[1],
                   ),
                   AccountService.instance.getAccountsData(
-                    accountIds: accountsSnapshot.data!.map((e) => e.id),
+                    accountIds: accounts.map((e) => e.id),
                     accountDataFilter: AccountDataFilter.income,
                     startDate: widget.dateRangeService.getDateRange(-1)[0],
                     endDate: widget.dateRangeService.getDateRange(-1)[1],
                   ),
                   AccountService.instance.getAccountsData(
-                    accountIds: accountsSnapshot.data!.map((e) => e.id),
+                    accountIds: accounts.map((e) => e.id),
                     accountDataFilter: AccountDataFilter.expense,
                     startDate: widget.dateRangeService.startDate,
                     endDate: widget.dateRangeService.endDate,
                   ),
                   AccountService.instance.getAccountsData(
-                    accountIds: accountsSnapshot.data!.map((e) => e.id),
+                    accountIds: accounts.map((e) => e.id),
                     accountDataFilter: AccountDataFilter.income,
                     startDate: widget.dateRangeService.startDate,
                     endDate: widget.dateRangeService.endDate,
@@ -89,44 +163,16 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                     BarChartData(
                       barTouchData: BarTouchData(
                         touchTooltipData: BarTouchTooltipData(
-                          tooltipBgColor: Colors.grey,
                           getTooltipItem: (a, b, c, d) => null,
                         ),
                       ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        rightTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        topTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 24,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                value == 0
-                                    ? 'Periodo anterior'
-                                    : 'Este periodo',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                      ),
+                      titlesData: getTitlesData(),
                       borderData: FlBorderData(
-                          show: true,
-                          border: const Border(
-                              bottom:
-                                  BorderSide(width: 1, color: Colors.black12))),
+                        show: true,
+                        border: const Border(
+                            bottom:
+                                BorderSide(width: 1, color: Colors.black12)),
+                      ),
                       barGroups: [
                         makeGroupData(
                             0, -snapshpot.data![0], snapshpot.data![1]),

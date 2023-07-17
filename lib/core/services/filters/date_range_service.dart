@@ -1,3 +1,4 @@
+import 'package:finlytics/core/services/filters/custom_date_range_picker.dart';
 import 'package:finlytics/core/utils/date_getter.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -69,11 +70,13 @@ class DateRangeService {
     endDate = newRanges[1];
   }
 
-  Widget _buildDateButton(BuildContext context,
-      {IconData? icon,
-      required DateRange dateRange,
-      String? iconText,
-      required int index}) {
+  Widget _buildDateButton(
+    BuildContext context, {
+    required int index,
+    required DateRange dateRange,
+    IconData? icon,
+    String? iconText,
+  }) {
     assert(iconText != null || icon != null);
     assert(!(iconText != null && icon != null));
 
@@ -83,7 +86,7 @@ class DateRangeService {
     final selected = dateRange == selectedDateRange;
 
     return Material(
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
             color: selected
                 ? Theme.of(context).dividerColor.withOpacity(0.2)
@@ -170,6 +173,9 @@ class DateRangeService {
       text = DateFormat.y().format(startDate);
     } else if (dateRange == DateRange.quaterly) {
       text = 'Q${(startDate.month / 3).ceil()} - ${startDate.year}';
+    } else if (dateRange == DateRange.custom || dateRange == DateRange.weekly) {
+      text =
+          '${DateFormat.yMd().format(startDate)} - ${DateFormat.yMd().format(endDate)}';
     }
 
     return text;
@@ -189,7 +195,9 @@ class DateRangeService {
       startDate = DateTime(currentYear, currentMonth, 1);
       endDate = DateTime(currentYear, currentMonth + 1, 1);
     } else if (selectedDateRange == DateRange.weekly) {
-      // TODO
+      final now = DateTime.now();
+      startDate = now.subtract(Duration(days: now.weekday - 1));
+      endDate = now.add(Duration(days: DateTime.daysPerWeek - now.weekday));
     } else if (selectedDateRange == DateRange.quaterly) {
       final quarters = _getQuaterlyDates();
 
@@ -213,10 +221,11 @@ class DateRangeService {
     DateTime? endDateToReturn;
 
     if (selectedDateRange == DateRange.custom) {
-      startDateToReturn = startDate!.add(
-          Duration(days: startDate!.difference(endDate!).inDays) * multiplier);
-      endDateToReturn = endDate!.add(
-          Duration(days: endDate!.difference(endDate!).inDays) * multiplier);
+      final daysBetweenRange =
+          Duration(days: startDate!.difference(endDate!).inDays) * multiplier;
+
+      startDateToReturn = startDate!.add(daysBetweenRange);
+      endDateToReturn = endDate!.add(daysBetweenRange);
     } else if (selectedDateRange == DateRange.annualy) {
       startDateToReturn = DateTime(
         startDate!.year + 1 * multiplier,
@@ -277,56 +286,55 @@ class DateRangeService {
               mainAxisSize: MainAxisSize.min,
               children: [
                 AppBar(
-                  title: Text('Select date range'),
+                  title: Text(t.general.time.ranges.display),
+                  centerTitle: true,
                   automaticallyImplyLeading: false,
                   elevation: 4,
                 ),
-                Container(
-                    color: Theme.of(context).colorScheme.background,
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.8,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _buildDateButton(
-                          context,
-                          index: 0,
-                          icon: Icons.calendar_month,
-                          dateRange: DateRange.custom,
-                        ),
-                        _buildDateButton(
-                          context,
-                          index: 1,
-                          icon: Icons.all_inclusive,
-                          dateRange: DateRange.infinite,
-                        ),
-                        _buildDateButton(
-                          context,
-                          dateRange: DateRange.annualy,
-                          index: 2,
-                          iconText: '365',
-                        ),
-                        _buildDateButton(
-                          context,
-                          dateRange: DateRange.quaterly,
-                          index: 3,
-                          iconText: '90',
-                        ),
-                        _buildDateButton(
-                          context,
-                          dateRange: DateRange.monthly,
-                          index: 4,
-                          iconText: '30',
-                        ),
-                        _buildDateButton(
-                          context,
-                          dateRange: DateRange.weekly,
-                          index: 5,
-                          iconText: '7',
-                        ),
-                      ],
-                    )),
+                GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.8,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildDateButton(
+                      context,
+                      index: 0,
+                      icon: Icons.calendar_month,
+                      dateRange: DateRange.custom,
+                    ),
+                    _buildDateButton(
+                      context,
+                      index: 1,
+                      icon: Icons.all_inclusive,
+                      dateRange: DateRange.infinite,
+                    ),
+                    _buildDateButton(
+                      context,
+                      dateRange: DateRange.annualy,
+                      index: 2,
+                      iconText: '365',
+                    ),
+                    _buildDateButton(
+                      context,
+                      dateRange: DateRange.quaterly,
+                      index: 3,
+                      iconText: '90',
+                    ),
+                    _buildDateButton(
+                      context,
+                      dateRange: DateRange.monthly,
+                      index: 4,
+                      iconText: '30',
+                    ),
+                    _buildDateButton(
+                      context,
+                      dateRange: DateRange.weekly,
+                      index: 5,
+                      iconText: '7',
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -334,9 +342,39 @@ class DateRangeService {
       },
     );
 
-    if (result != null && result != selectedDateRange) {
+    if (result == DateRange.custom) {
+      final modalRes = await _openCustomDateRangePicker(context);
+
+      if (modalRes != null) {
+        selectedDateRange = result!;
+        startDate = modalRes.$1;
+        endDate = modalRes.$2;
+      }
+    } else if (result != null && result != selectedDateRange) {
       selectedDateRange = result;
+
       resetDateRanges();
     }
+  }
+
+  Future<(DateTime, DateTime)?> _openCustomDateRangePicker(
+    BuildContext context,
+  ) {
+    var selectedStartDate = startDate ?? DateTime.now();
+    var selectedEndDate =
+        endDate ?? DateTime.now().add(const Duration(days: 1));
+
+    return showDialog<(DateTime, DateTime)?>(
+      context: context,
+      builder: (context) {
+        return CustomDateRangePicker(
+          startDate: selectedStartDate,
+          endDate: selectedEndDate,
+          onConfirm: (selectedDates) {
+            Navigator.pop(context, selectedDates);
+          },
+        );
+      },
+    );
   }
 }

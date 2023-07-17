@@ -129,13 +129,12 @@ class BudgetsPage extends StatelessWidget {
                 final budgets = snapshot.data!;
 
                 if (budgets.isEmpty) {
-                  return const Column(
+                  return Column(
                     children: [
                       Expanded(
                           child: EmptyIndicator(
-                              title: 'Ops! Esto esta muy vacio',
-                              description:
-                                  'Añade una transacción pulsando el botón inferior para empezar a ver valores aquí')),
+                              title: t.general.empty_warn,
+                              description: t.budgets.no_budgets)),
                     ],
                   );
                 }
@@ -162,13 +161,12 @@ class BudgetsPage extends StatelessWidget {
                 final budgets = snapshot.data!;
 
                 if (budgets.isEmpty) {
-                  return const Column(
+                  return Column(
                     children: [
                       Expanded(
                           child: EmptyIndicator(
-                              title: 'Ops! Esto esta muy vacio',
-                              description:
-                                  'Añade una transacción pulsando el botón inferior para empezar a ver valores aquí')),
+                              title: t.general.empty_warn,
+                              description: t.budgets.no_budgets)),
                     ],
                   );
                 }

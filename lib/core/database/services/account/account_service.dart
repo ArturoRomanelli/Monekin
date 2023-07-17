@@ -83,7 +83,7 @@ class AccountService {
       bool convertToPreferredCurrency = true}) {
     date ??= DateTime.now();
 
-    // Get the accounts initial balance (converted to the preferred currency if necessary). Later we should get the balance of the accounts
+    // Get the accounts initial balance (converted to the preferred currency if necessary)
     final initialBalanceQuery = db
         .customSelect(
           """
@@ -110,6 +110,7 @@ class AccountService {
           return 0.0;
         });
 
+    // Sum the acount initial balance and the balance of the transactions
     return StreamZip([
       initialBalanceQuery,
       getAccountsData(

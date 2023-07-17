@@ -13,6 +13,7 @@ import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/app/transactions/transactions.page.dart';
+import 'package:finlytics/core/database/database_impl.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
@@ -79,32 +80,30 @@ class _HomePageState extends State<HomePage> {
         if (accounts.isEmpty) {
           return Column(
             children: [
-              Center(
-                child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Aun no hay cuentas creadas',
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Empieza a usar toda la magia de Finlytics. Crea al menos una cuenta para empezar a añadir tranacciones.',
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        FilledButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AccountFormPage())),
-                            child: Text(t.account.form.create))
-                      ],
-                    )),
-              )
+              Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Aun no hay cuentas creadas',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Empieza a usar toda la magia de Finlytics. Crea al menos una cuenta para empezar a añadir tranacciones.',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      FilledButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AccountFormPage())),
+                          child: Text(t.account.form.create))
+                    ],
+                  ))
             ],
           );
         }
@@ -175,6 +174,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  _showShouldCreateAccountWarn() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Ops!'),
+          content: const SingleChildScrollView(
+              child: Text(
+                  'You should create an account first to create this action perform this action')),
+          actions: [
+            TextButton(
+              child: const Text('Go for that!'),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountFormPage()));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
@@ -189,12 +213,18 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add_rounded),
-          onPressed: () => {
+          onPressed: () {
+            AccountService.instance.getAccounts(limit: 1).first.then((value) {
+              if (value.isEmpty) {
+                _showShouldCreateAccountWarn();
+              } else {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TransactionFormPage()))
-              }),
+                        builder: (context) => const TransactionFormPage()));
+              }
+            });
+          }),
       body: Column(
         children: [
           Container(
@@ -280,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(t.tabs.tab1.total_balance,
+                              Text(t.home.total_balance,
                                   style: const TextStyle(fontSize: 12)),
                               const Skeleton(width: 70, height: 40),
                               const Skeleton(width: 30, height: 14),
@@ -291,7 +321,7 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(t.tabs.tab1.total_balance,
+                              Text(t.home.total_balance,
                                   style: const TextStyle(fontSize: 12)),
                               StreamBuilder(
                                   stream: accountService.getAccountsMoney(
@@ -389,34 +419,73 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 16,
                     ),
-                    CardWithHeader(
-                        title: 'Últimos registros',
-                        onHeaderButtonClick: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const TransactionsPage()));
-                        },
-                        body: StreamBuilder(
-                            stream: TransactionService.instance.getTransactions(
-                                limit: 5,
-                                orderBy: (p0, p1, p2, p3, p4, p5, p6) =>
-                                    drift.OrderBy([
-                                      drift.OrderingTerm(
-                                          expression: p0.date,
-                                          mode: drift.OrderingMode.desc)
-                                    ])),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return const LinearProgressIndicator();
-                              }
+                    StreamBuilder(
+                        stream: AccountService.instance.getAccounts(limit: 1),
+                        builder: (context, accountSnapshot) {
+                          return CardWithHeader(
+                            title: t.home.last_transactions,
+                            onHeaderButtonClick: accountSnapshot.hasData &&
+                                    accountSnapshot.data!.isNotEmpty
+                                ? () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const TransactionsPage()));
+                                  }
+                                : null,
+                            body: StreamBuilder(
+                                stream: TransactionService.instance
+                                    .getTransactions(
+                                        predicate: (transaction,
+                                                account,
+                                                accountCurrency,
+                                                receivingAccount,
+                                                receivingAccountCurrency,
+                                                c,
+                                                p6) =>
+                                            DatabaseImpl.instance.buildExpr([
+                                              if (dateRangeService.startDate !=
+                                                  null)
+                                                transaction.date
+                                                    .isBiggerOrEqualValue(
+                                                        dateRangeService
+                                                            .startDate!),
+                                              if (dateRangeService.endDate !=
+                                                  null)
+                                                transaction.date
+                                                    .isSmallerThanValue(
+                                                        dateRangeService
+                                                            .endDate!)
+                                            ]),
+                                        limit: 5,
+                                        orderBy: (p0, p1, p2, p3, p4, p5, p6) =>
+                                            drift.OrderBy([
+                                              drift.OrderingTerm(
+                                                  expression: p0.date,
+                                                  mode: drift.OrderingMode.desc)
+                                            ])),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const LinearProgressIndicator();
+                                  }
 
-                              return TransactionListComponent(
-                                  transactions: snapshot.data!,
-                                  showGroupDivider: false,
-                                  prevPage: const HomePage());
-                            })),
+                                  if (snapshot.data!.isEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(24),
+                                      child: Text(
+                                        t.transaction.list.empty,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    );
+                                  }
+                                  return TransactionListComponent(
+                                      transactions: snapshot.data!,
+                                      showGroupDivider: false,
+                                      prevPage: const HomePage());
+                                }),
+                          );
+                        }),
                     const SizedBox(
                       height: 16,
                     ),
@@ -499,7 +568,7 @@ class _HomePageState extends State<HomePage> {
                         }),
                     const SizedBox(height: 16),
                     CardWithHeader(
-                        title: 'Por categorías',
+                        title: t.stats.by_categories,
                         body: ChartByCategories(
                           startDate: dateRangeService.startDate,
                           endDate: dateRangeService.endDate,
@@ -514,7 +583,7 @@ class _HomePageState extends State<HomePage> {
                         }),
                     const SizedBox(height: 16),
                     CardWithHeader(
-                        title: 'Flujo de fondos',
+                        title: t.stats.cash_flow,
                         body: Padding(
                           padding: const EdgeInsets.only(
                               top: 16, left: 16, right: 16),

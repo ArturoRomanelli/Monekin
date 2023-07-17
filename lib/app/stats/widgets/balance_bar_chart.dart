@@ -5,7 +5,6 @@ import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
-import 'package:finlytics/core/utils/date_getter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -131,14 +130,31 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
       }
     } else if (selectedDateRange == DateRange.quaterly) {
       for (var i = startDate.month; i < startDate.month + 3; i++) {
-        final startDate = DateTime(currentYear, i);
-        final endDate = DateTime(currentYear, i + 1);
+        final selStartDate = DateTime(startDate.year, i);
+        final endDate = DateTime(startDate.year, i + 1);
 
-        shortTitles.add(DateFormat.MMM().format(startDate));
-        longTitles.add(DateFormat.MMMM().format(startDate));
+        shortTitles.add(DateFormat.MMM().format(selStartDate));
+        longTitles.add(DateFormat.MMMM().format(selStartDate));
 
-        final incomeToAdd = await getIncomeData(startDate, endDate);
-        final expenseToAdd = await getExpenseData(startDate, endDate);
+        final incomeToAdd = await getIncomeData(selStartDate, endDate);
+        final expenseToAdd = await getExpenseData(selStartDate, endDate);
+
+        income.add(incomeToAdd);
+        expense.add(expenseToAdd);
+        balance.add(incomeToAdd + expenseToAdd);
+      }
+    } else if (selectedDateRange == DateRange.weekly) {
+      for (var i = 0; i < DateTime.daysPerWeek; i++) {
+        final selStartDate =
+            DateTime(startDate.year, startDate.month, startDate.day + i);
+        final endDate =
+            DateTime(startDate.year, startDate.month, startDate.day + i + 1);
+
+        shortTitles.add(DateFormat.E().format(selStartDate));
+        longTitles.add(DateFormat.yMMMEd().format(selStartDate));
+
+        final incomeToAdd = await getIncomeData(selStartDate, endDate);
+        final expenseToAdd = await getExpenseData(selStartDate, endDate);
 
         income.add(incomeToAdd);
         expense.add(expenseToAdd);
@@ -146,12 +162,15 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
       }
     }
 
+    //TODO: custom and infinite
+
     return IncomeExpenseChartDataItem(
-        income: income,
-        expense: expense,
-        balance: balance,
-        shortTitles: shortTitles,
-        longTitles: longTitles);
+      income: income,
+      expense: expense,
+      balance: balance,
+      shortTitles: shortTitles,
+      longTitles: longTitles,
+    );
   }
 
   BarChartGroupData makeGroupData(
@@ -223,8 +242,6 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               minY: min(-100, snapshot.data!.expense.min),
               barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(
-                  tooltipBgColor: Colors.white,
-                  tooltipHorizontalAlignment: FLHorizontalAlignment.right,
                   tooltipMargin: -10,
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
@@ -301,12 +318,10 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                     reservedSize: 46,
                   ),
                 ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                topTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(
                   show: true,

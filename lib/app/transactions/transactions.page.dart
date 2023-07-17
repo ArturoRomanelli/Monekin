@@ -63,7 +63,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               ? TextField(
                   focusNode: searchFocusNode,
                   decoration: InputDecoration(
-                      hintText: t.tabs.tab2.searcher_placeholder,
+                      hintText: t.transaction.list.searcher_placeholder,
                       border: const UnderlineInputBorder()),
                   onChanged: (value) {
                     setState(() {
@@ -147,13 +147,12 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 final transactions = snapshot.data!;
 
                 if (transactions.isEmpty) {
-                  return const Column(
+                  return Column(
                     children: [
                       Expanded(
                           child: EmptyIndicator(
-                              title: 'Ops! Esto esta muy vacio',
-                              description:
-                                  'Añade una transacción pulsando el botón inferior para empezar a ver valores aquí')),
+                              title: t.general.empty_warn,
+                              description: t.transaction.list.empty)),
                     ],
                   );
                 }

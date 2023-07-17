@@ -27,17 +27,20 @@ class CurrencyWithMoney {
 }
 
 class AllAccountBalancePage extends StatefulWidget {
-  const AllAccountBalancePage({super.key});
+  const AllAccountBalancePage({super.key, required this.date});
+
+  final DateTime date;
 
   @override
   State<AllAccountBalancePage> createState() => _AllAccountBalancePageState();
 }
 
-Stream<List<AccountWithMoney>> getAccountsWithMoney() {
+Stream<List<AccountWithMoney>> getAccountsWithMoney(DateTime date) {
   final accounts = AccountService.instance.getAccounts();
   final balances = accounts.asyncMap((accountList) => Future.wait(
       accountList.map((account) => AccountService.instance
-          .getAccountMoney(account: account, convertToPreferredCurrency: true)
+          .getAccountMoney(
+              account: account, convertToPreferredCurrency: true, date: date)
           .first)));
 
   return Rx.combineLatest2(accounts, balances, (accounts, balances) {
@@ -73,13 +76,20 @@ List<CurrencyWithMoney> getCurrenciesWithMoney(
   return toReturn;
 }
 
+Widget emptyAccountsIndicator() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+    child: Text(t.account.no_accounts, textAlign: TextAlign.center),
+  );
+}
+
 class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
     return StreamBuilder(
-        stream: getAccountsWithMoney(),
+        stream: getAccountsWithMoney(widget.date),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const LinearProgressIndicator();
@@ -92,59 +102,68 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CardWithHeader(
-                title: t.tabs.tab1.account_resume.balance_by_account,
-                body: ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final accountWithMoney = accounts[index];
+                title: t.stats.balance_by_account,
+                body: accounts.isEmpty
+                    ? emptyAccountsIndicator()
+                    : ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final accountWithMoney = accounts[index];
 
-                    return ListTile(
-                      leading: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 2,
-                                  color: Theme.of(context).primaryColor),
-                              borderRadius: BorderRadius.circular(1000)),
-                          child: accountWithMoney.account.icon.display(
-                              size: 22, color: Theme.of(context).primaryColor)),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AccountFormPage(
-                            prevPage: const AllAccountBalancePage(),
-                            account: accountWithMoney.account,
-                          ),
-                        ),
+                          return ListTile(
+                            leading: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 2,
+                                        color: Theme.of(context).primaryColor),
+                                    borderRadius: BorderRadius.circular(1000)),
+                                child: accountWithMoney.account.icon.display(
+                                    size: 22,
+                                    color: Theme.of(context).primaryColor)),
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => AccountFormPage(
+                                  prevPage:
+                                      AllAccountBalancePage(date: widget.date),
+                                  account: accountWithMoney.account,
+                                ),
+                              ),
+                            ),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(accountWithMoney.account.name),
+                                    CurrencyDisplayer(
+                                        amountToConvert: accountWithMoney.money)
+                                  ],
+                                ),
+                                AnimatedProgressBar(
+                                    value: accountWithMoney.money / totalMoney),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Divider(indent: 56);
+                        },
+                        itemCount: accounts.length,
+                        shrinkWrap: true,
                       ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(accountWithMoney.account.name),
-                              CurrencyDisplayer(
-                                  amountToConvert: accountWithMoney.money)
-                            ],
-                          ),
-                          AnimatedProgressBar(
-                              value: accountWithMoney.money / totalMoney),
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const Divider(indent: 56);
-                  },
-                  itemCount: accounts.length,
-                  shrinkWrap: true,
-                ),
               ),
               const SizedBox(height: 16),
               CardWithHeader(
-                title: t.tabs.tab1.account_resume.balance_by_currency,
+                title: t.stats.balance_by_currency,
                 body: Builder(builder: (context) {
                   final currenciesWithMoney = getCurrenciesWithMoney(accounts);
+
+                  if (currenciesWithMoney.isEmpty) {
+                    return emptyAccountsIndicator();
+                  }
 
                   return ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),

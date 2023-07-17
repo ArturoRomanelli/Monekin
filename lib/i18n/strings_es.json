@@ -20,10 +20,11 @@
     "category": "Categoría",
     "transaction": "Transacción",
     "transactions": "Transacciones",
-    "store-limit": "Almacenamiento máximo de la app alcanzado. Acción cancelada",
     "today": "Hoy",
     "yesterday": "Ayer",
     "filters": "Filtros",
+    "empty-warn": "Ops! Esto esta muy vacio",
+    "insufficient-data": "Datos insuficientes",
     "CLIPBOARD": {
       "success": "{{x}} copiado al portapapeles",
       "error": "Error al copiar"
@@ -32,7 +33,7 @@
       "start-date": "Fecha de inicio",
       "end-date": "Fecha de fin",
       "RANGES": {
-        "display": "Time range",
+        "display": "Rango temporal",
         "it-repeat": "Se repite",
         "it-ends": "Termina",
         "forever": "Para siempre",
@@ -55,7 +56,6 @@
       },
       "PERIODICITY": {
         "display": "Periodicidad",
-        "range": "Rango temporal",
         "no-repeat": "Sin repetición",
         "diary": "Diaría",
         "monthly": "Mensual",
@@ -111,43 +111,15 @@
     "lastSlideDescr": "Con Monekin, podrás al fin lograr la independencia financiaria que tanto deseas. Podrás ver gráficas, presupuestos, consejos, estadisticas y mucho más sobre tu dinero.",
     "lastSlideDescr2": "Esperemos que disfrutes de tu experiencia! No dudes en contactar con nosotros en caso de dudas, sugerencias..."
   },
-  "TABS": {
+  "HOME": {
     "filter-transactions": "Filtrar transacciones",
+    "hello-day": "Buenos días,",
+    "hello-night": "Buenas noches,",
+    "total-balance": "Saldo total",
+    "my-accounts": "Mis cuentas",
+    "last-transactions": "Últimas transacciones",
     "should-create-account.header": "Ops!",
-    "should-create-account.message": "Debes crear una cuenta antes de empezar a crear transacciones",
-    "TAB1": {
-      "title": "Home",
-      "hello-day": "Buenos días,",
-      "hello-night": "Buenas noches,",
-      "total-balance": "Saldo total",
-      "my-accounts": "Mis cuentas",
-      "tools": "Herramientas",
-      "important-expenses": "Gastos mas grandes",
-      "empty-expenses": "Parece que aun no tienes transacciones para este periodo. Añade una pulsando el botón '+' de la parte inferior",
-      "ACCOUNT-RESUME": {
-        "link": "Ver todas",
-        "display": "Resumen de cuentas",
-        "balance-by-account": "Saldo por cuentas",
-        "balance-by-currency": "Saldo por divisas"
-      }
-    },
-    "TAB2": {
-      "title": "Transacciones",
-      "balance": "Balance",
-      "empty": "No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón '+' de la parte inferior",
-      "searcher.placeholder": "Busca por categoría, descripción...",
-      "loading": "Cargando más transacciones..."
-    },
-    "TAB3": {
-      "title": "Presupuestos",
-      "without-subcat": "Otro - ",
-      "average-by-transaction": "Medía/transacción",
-      "average-by-day": "Medía/día",
-      "balance": "Balance final",
-      "balance-by-period": "Balance medio/periodo",
-      "cash-flow": "Flujo de caja",
-      "balance-evolution": "Evolución de fondos"
-    }
+    "should-create-account.message": "Debes crear una cuenta antes de empezar a crear transacciones"
   },
   "FINANCIAL-HEALTH": {
     "display": "Salud financiera",
@@ -180,6 +152,15 @@
       "very_bad": "Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas"
     }
   },
+  "STATS": {
+    "title": "Estadísticas",
+    "balance-by-account": "Saldo por cuentas",
+    "balance-by-currency": "Saldo por divisas",
+    "balance-evolution": "Tendencia de saldo",
+    "cash-flow": "Flujo de caja",
+    "by-periods": "Por periodos",
+    "by-categories": "Por categorías"
+  },
   "ICON-SELECTOR": {
     "name": "Nombre:",
     "icon": "Icono",
@@ -198,6 +179,11 @@
     "delete": "Eliminar transacción",
     "delete.warning-message": "Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas",
     "delete.success": "Transacción eliminada correctamente",
+    "LIST": {
+      "empty": "No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón '+' de la parte inferior",
+      "searcher.placeholder": "Busca por categoría, descripción...",
+      "loading": "Cargando más transacciones..."
+    },
     "FORM": {
       "status": "Estado",
       "VALIDATORS": {
@@ -243,17 +229,6 @@
     "title": "Movimientos recurrentes",
     "empty": "Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí",
     "DETAILS": {
-      "title": "Detalles del movimiento",
-      "each-week": "Cada semana",
-      "each-month": "Cada mes",
-      "each-year": "Cada año",
-      "start-date": "Primer movimiento",
-      "balance-expense": "Pagado hasta ahora",
-      "balance-income": "Ingresado hasta ahora",
-      "end-date": "Fecha de finalización",
-      "pause-header": "Pausar pagos",
-      "pause-message": "Con esta acción se dará por finalizada esta transacción hoy, y no se produciran mas pagos a partir de ahora. Pagos previos al día de hoy no serán eliminados del balance",
-      "pause-correctly": "Transacción pausada correctamente",
       "delete-header": "Eliminar transacción recurrente",
       "delete-message": "Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado"
     }
@@ -264,6 +239,7 @@
     "n_transactions": "Número de transacciones",
     "add_money": "Añadir dinero",
     "withdraw_money": "Retirar dinero",
+    "no-accounts": "No hay cuentas que mostrar en esta sección",
     "TYPES": {
       "title": "Tipo de cuenta",
       "warning": "Una vez elegido el tipo de cuenta este no podrá cambiarse en un futuro",
@@ -368,10 +344,8 @@
       "title": "Detalles del presupuesto",
       "budget-value": "Presupuestado",
       "statistics": "Estadísticas",
-      "you-already-expend": "Ya has gastado el",
-      "budget-exceeded-for": "Has sobrepasado el presupuesto en",
-      "of-the-budget": "del presupuesto",
-      "expend-diary-left": "Gasto diario restante",
+      "you-already-expend": "Gastado",
+      "expend-diary-left": "Gasto diario restante recomendado",
       "expend-evolution": "Evolución del gasto",
       "no-transactions": "Parece que no has realizado ningún gasto relativo a este presupuesto"
     }
@@ -401,15 +375,6 @@
       "longDescription": "Si ya has usado nuestra aplicación antes puede que tengas una copia de seguridad guardada en tu disposivo con el nombre Monekin_backup_YYYY_MM_DD. Si prefieres puedes realizar esta importación de datos mas adelante.",
       "success": "Importación realizada con exito",
       "error": "Error al importar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com"
-    },
-    "GUIDE": {
-      "title": "Guía de como importar/exportar sus datos",
-      "title.short": "Importar/Exportar datos",
-      "message0": "Para que puedas recuperar tus datos si desinstalas la aplicación, cambias de movil o estos son perdidos por accidente, se recomienda exportarlos cada cierto tiempo. Gracias a esta exportación podrás recuperar estos datos en cualquier momento en esta ventana.",
-      "message1": "Para exportar tus datos pulsa el cuadro de 'Exportar datos'. Inmediatamente se debería abrir un dialogo para que selecciones donde quieres guardar tus datos. Se recomienda guardarlos directamente en el almacenamineto de tu dispositvo, aunque cualquier otra opción como guardarlo en Google Drive o enviarlo por mail también es perfectamente valida.",
-      "message2": "Una vez elijas donde guardar/enviar tus datos, Monekin guardará un fichero con toda tu información (transacciones, presupuestos, categorías, ajustes...). Absolutamnete todo será guardado en un fichero de tipo JSON, con el nombre 'Monekin_backup_AÑO_MES_DIA',",
-      "message3": "Ahora podrás recuperar tus datos en cualquier momento seleccionando la opción 'Importar datos'. Al pulsar el cuadro, deberás buscar el fichero que exportaste previamente. Una vez seleccionado todos tus datos que teneis en ese fichero se cargaran en nuestra app.",
-      "message4": "Al realizar la importación de datos, todos los datos actuales que tiene la aplicación serán borrados y reemplazados por los nuevos que importes."
     }
   },
   "SETTINGS": {

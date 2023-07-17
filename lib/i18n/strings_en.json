@@ -20,10 +20,11 @@
     "category": "Category",
     "transaction": "Transaction",
     "transactions": "Transactions",
-    "store-limit": "Size of the app reached. No action allowed",
     "today": "Today",
     "yesterday": "Yesterday",
     "filters": "Filters",
+    "empty-warn": "Ops! This is very empty",
+    "insufficient-data": "Insufficient data",
     "CLIPBOARD": {
       "success": "{{x}} copiado al portapapeles",
       "error": "Error al copiar"
@@ -109,43 +110,15 @@
     "lastSlideDescr": "With Monekin, you can finally achieve the financial independence you want so much. You will have graphs, budgets, tips, statistics and much more about your money.",
     "lastSlideDescr2": "We hope you enjoy your experience! Do not hesitate to contact us in case of doubts, suggestions..."
   },
-  "TABS": {
+  "HOME": {
     "filter-transactions": "Filter transactions",
-    "should-create-account.header": "Ops!",
-    "should-create-account.message": "You must create an account before you can start creating transactions",
-    "TAB1": {
-      "title": "Home",
-      "hello-day": "Good morning,",
-      "hello-night": "Good evening,",
-      "total-balance": "Total balance",
-      "my-accounts": "My accounts",
-      "tools": "Tools",
-      "important-expenses": "Largest expenses",
-      "empty-expenses": "It looks like you don't have any transactions for this period yet. Add one by clicking the '+' button at the bottom",
-      "ACCOUNT-RESUME": {
-        "link": "See all",
-        "display": "Summary of accounts",
-        "balance-by-account": "Balance by accounts",
-        "balance-by-currency": "Balance by currency"
-      }
-    },
-    "TAB2": {
-      "title": "Transactions",
-      "balance": "Balance",
-      "empty": "No transactions found to display here. Add a transaction by clicking the '+' button at the bottom",
-      "searcher.placeholder": "Search by category, description...",
-      "loading": "Loading more transactions..."
-    },
-    "TAB3": {
-      "title": "Budgets",
-      "without-subcat": "Other - ",
-      "average-by-transaction": "Average/transaction",
-      "average-by-day": "Average/day",
-      "balance": "Final balance",
-      "balance-by-period": "Average balance/period",
-      "cash-flow": "Cash-flow",
-      "balance-evolution": "Fund evolution"
-    }
+    "hello-day": "Good morning,",
+    "hello-night": "Good night,",
+    "total-balance": "Total balance",
+    "my-accounts": "My accounts",
+    "last-transactions": "Last transactions",
+    "should-create-account.header": "Oops!",
+    "should-create-account.message": "You must create an account before you can start creating transactions"
   },
   "FINANCIAL-HEALTH": {
     "display": "Financial health",
@@ -178,6 +151,15 @@
       "very_bad": "Wow, you haven't managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn"
     }
   },
+  "STATS": {
+    "title": "Statistics",
+    "balance-by-account": "Balance by accounts",
+    "balance-by-currency": "Balance by currency",
+    "cash-flow": "Cash flow",
+    "balance-evolution": "Balance evolution",
+    "by-periods": "By periods",
+    "by-categories": "By categories"
+  },
   "ICON-SELECTOR": {
     "name": "Name:",
     "icon": "Icon",
@@ -196,6 +178,11 @@
     "delete": "Delete transaction",
     "delete.warning-message": "This action is irreversible. The current balance of your accounts and all your statistics will be recalculated",
     "delete.success": "Transaction deleted correctly",
+    "LIST": {
+      "empty": "No transactions found to display here. Add a transaction by clicking the '+' button at the bottom",
+      "searcher.placeholder": "Search by category, description...",
+      "loading": "Loading more transactions..."
+    },
     "FORM": {
       "status": "Status",
       "VALIDATORS": {
@@ -240,19 +227,7 @@
   "RECURRENT-TRANSACTIONS": {
     "title": "Recurrent transactions",
     "empty": "It looks like you don't have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here",
-    "balance": "Total balance",
     "DETAILS": {
-      "title": "Transaction details",
-      "each-week": "Each week",
-      "each-month": "Each month",
-      "each-year": "Each year",
-      "start-date": "First move",
-      "balance-expense": "Paid so far",
-      "balance-income": "Income so far",
-      "end-date": "End Date",
-      "pause-header": "Pause payments",
-      "pause-message": "This action will terminate this transaction today, and no more payments will be made from now on. Payments made before today will not be removed from the balance",
-      "pause-correctly": "Transaction paused successfully",
       "delete-header": "Delete recurring transaction",
       "delete-message": "This action is irreversible and will not affect transactions you have already confirmed/paid for"
     }
@@ -263,6 +238,7 @@
     "n_transactions": "Number of transactions",
     "add_money": "Add money",
     "withdraw_money": "Withdraw money",
+    "no-accounts": "There are no accounts to display in this section",
     "TYPES": {
       "title": "Account type",
       "warning": "Once the type of account has been chosen, it cannot be changed in the future",
@@ -365,12 +341,10 @@
     },
     "DETAILS": {
       "title": "Budget Details",
-      "budget-value": "Budget",
+      "budget-value": "Budgeted",
       "statistics": "Statistics",
-      "you-already-expend": "You have already spent the",
-      "budget-exceeded-for": "You have exceeded budget by",
-      "of-the-budget": "of the budget",
-      "expend-diary-left": "Remaining daily spend",
+      "you-already-expend": "Spent",
+      "expend-diary-left": "Remaining recommended daily spend",
       "expend-evolution": "Expenditure evolution",
       "no-transactions": "It seems that you have not made any expenses related to this budget"
     }
@@ -401,15 +375,6 @@
       "longDescription": "If you have already used our application before, you may have a backup saved on your device with the name Monekin_backup_YYYY_MM_DD. If you prefer, you can perform this data import later.",
       "success": "Import performed successfully",
       "error": "Error importing file. Please contact developer via lozin.technologies@gmail.com"
-    },
-    "GUIDE": {
-      "title": "Guide on how to import/export your data",
-      "title.short": "Import/Export data",
-      "message0": "So that you can recover your data if you uninstall the application, change your mobile or if they are lost by accident, it is recommended to export them from time to time. Thanks to this export you will be able to recover these data at any time in this window.",
-      "message1": "To export your data press the 'Export data' box. A dialog should immediately open for you to select where you want to save your data. It is recommended to save it directly to your device's storage, although any other option like saving it in Google Drive or send it by mail is also perfectly valid.",
-      "message2": "Once you choose where to save/send your data, Monekin will save a file with all your information (transactions, budgets, categories, adjustments...). Absolutely everything will be saved in a JSON type file, with the name 'Monekin_backup_YEAR_MONTH_DAY',",
-      "message3": "Now you can recover your data at any time by selecting the 'Import data' option. When you press the box, you will have to search for the file that you previously exported. Once you have selected all your data that you have in that file, they will be loaded into our app .",
-      "message4": "When performing the data import, all the current data that the application has will be deleted and replaced by the new ones that you import."
     }
   },
   "SETTINGS": {

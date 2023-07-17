@@ -22,8 +22,7 @@ class CategoryStatsModal extends StatelessWidget {
     List<Map<String, dynamic>> subcategories = [];
 
     for (final transaction in categoryData.transactions) {
-      final notBelongToAnySubcatName =
-          t.tabs.tab3.without_subcat + transaction.category!.name;
+      final notBelongToAnySubcatName = t.categories.select.without_subcategory;
 
       final categoryToEdit = subcategories.firstWhereOrNull((x) =>
           x['name'] == transaction.category!.name ||

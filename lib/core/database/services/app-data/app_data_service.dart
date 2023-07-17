@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:finlytics/core/database/database_impl.dart';
 
 /// The keys of the avalaible settings of the app
-enum AppDataKey { dbVersion, appVersion, introSeen, lastExportDate }
+enum AppDataKey { dbVersion, introSeen, lastExportDate }
 
 class AppDataService {
   final DatabaseImpl db;

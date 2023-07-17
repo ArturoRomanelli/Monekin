@@ -72,7 +72,7 @@ class DatabaseImpl extends _$DatabaseImpl {
             }
 
             await customStatement(
-                "INSERT INTO appData VALUES ('dbVersion', '${schemaVersion.toStringAsFixed(0)}'), ('appVersion', null), ('introSeen', 'false'), ('lastExportDate', null)");
+                "INSERT INTO appData VALUES ('dbVersion', '${schemaVersion.toStringAsFixed(0)}'), ('introSeen', 'false'), ('lastExportDate', null)");
 
             String defaultCategories = await rootBundle
                 .loadString('assets/sql/default_categories.json');

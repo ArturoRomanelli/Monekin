@@ -4,13 +4,15 @@ import 'package:finlytics/app/settings/advanced_settings_page.dart';
 import 'package:finlytics/app/settings/edit_profile_modal.dart';
 import 'package:finlytics/app/settings/export_page.dart';
 import 'package:finlytics/app/settings/import_page.dart';
+import 'package:finlytics/app/settings/legal_page.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
+import 'package:finlytics/core/utils/open_external_url.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -51,17 +53,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
         child: Text(title, style: const TextStyle(fontSize: 14)));
-  }
-
-  Future<void> openURL(BuildContext context, String urlToOpen) async {
-    final Uri url = Uri.parse(urlToOpen);
-
-    final messager = ScaffoldMessenger.of(context);
-
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      messager
-          .showSnackBar(const SnackBar(content: Text('Could not launch url')));
-    }
   }
 
   @override
@@ -111,38 +102,37 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: t.general.categories,
                   subtitle: t.settings.general.categories_descr,
                   icon: Icons.sell_outlined,
-                  onTap: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CategoriesList(
-                                    mode: CategoriesListMode.page)))
-                      }),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CategoriesList(
+                                mode: CategoriesListMode.page)));
+                  }),
               const Divider(indent: 54),
               createSettingItem(
                   title: t.currencies.currency_manager,
                   subtitle:
                       'Configura tu divisa y sus tipos de cambio con otras',
                   icon: Icons.currency_exchange,
-                  onTap: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const CurrencyManagerPage()))
-                      }),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CurrencyManagerPage()));
+                  }),
               const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.general.other,
                   subtitle: t.settings.general.other_descr,
                   icon: Icons.build_outlined,
-                  onTap: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AdvancedSettingsPage()))
-                      }),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const AdvancedSettingsPage()));
+                  }),
               const SizedBox(height: 22),
               createListSeparator(t.settings.data.display),
               createSettingItem(
@@ -171,8 +161,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: t.settings.help_us.rate_us,
                   subtitle: t.settings.help_us.rate_us_descr,
                   icon: Icons.star_rate_outlined,
-                  onTap: () async {
-                    openURL(context,
+                  onTap: () {
+                    openExternalURL(context,
                         'https://play.google.com/store/apps/details?id=com.monekin.app');
                   }),
               const Divider(indent: 54),
@@ -187,8 +177,8 @@ class _SettingsPageState extends State<SettingsPage> {
               createSettingItem(
                   title: t.settings.help_us.report,
                   icon: Icons.rate_review_outlined,
-                  onTap: () async {
-                    openURL(context,
+                  onTap: () {
+                    openExternalURL(context,
                         'https://github.com/enrique-lozano/Monekin/issues/new/choose');
                   }),
               const SizedBox(height: 22),
@@ -197,26 +187,51 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: t.settings.project.legal,
                   subtitle: t.settings.project.legal_descr,
                   icon: Icons.inventory_outlined,
-                  onTap: () async {
-                    // TODO
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LegalPage()));
                   }),
               const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.project.contributors,
                   subtitle: t.settings.project.contributors_descr,
                   icon: Icons.group_outlined,
-                  onTap: () async {
-                    openURL(context,
+                  onTap: () {
+                    openExternalURL(context,
                         'https://github.com/enrique-lozano/Monekin/graphs/contributors');
                   }),
               const Divider(indent: 54),
               createSettingItem(
                   title: t.settings.project.contact,
                   icon: Icons.email_outlined,
-                  onTap: () async {
-                    openURL(context, 'mailto:lozin.technologies@gmail.com');
+                  onTap: () {
+                    openExternalURL(
+                        context, 'mailto:lozin.technologies@gmail.com');
                   }),
-              const SizedBox(height: 20)
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: FutureBuilder(
+                    future: PackageInfo.fromPlatform(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Skeleton(width: 45, height: 12);
+                      }
+
+                      return Center(
+                        child: Text(
+                          '${snapshot.data!.appName} - v${snapshot.data!.version}',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(fontWeight: FontWeight.w300),
+                        ),
+                      );
+                    }),
+              ),
             ],
           ),
         ));

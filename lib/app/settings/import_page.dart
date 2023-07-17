@@ -11,9 +11,7 @@ class ImportPage extends StatelessWidget {
     final t = Translations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(t.backup.import.title),
-      ),
+      appBar: AppBar(title: Text(t.backup.import.title)),
       body: Column(
         children: [
           ListTile(

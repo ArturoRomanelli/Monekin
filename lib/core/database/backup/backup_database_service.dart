@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/utils/get_download_path.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class BackupDatabaseService {
-  DatabaseImpl db = DatabaseImpl.instance;
+  AppDB db = AppDB.instance;
 
   Future<void> downloadDatabaseFile(BuildContext context) async {
     final messeger = ScaffoldMessenger.of(context);

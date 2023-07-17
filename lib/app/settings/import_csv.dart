@@ -5,7 +5,7 @@ import 'package:finlytics/app/accounts/account_selector.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/core/database/backup/backup_database_service.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
@@ -168,7 +168,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
 
     try {
       final csvRows = csvData!.slice(1).toList();
-      final db = DatabaseImpl.instance;
+      final db = AppDB.instance;
 
       for (final row in csvRows) {
         final account = await (db.select(db.accounts)

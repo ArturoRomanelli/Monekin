@@ -13,7 +13,7 @@ import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/app/transactions/transactions.page.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
@@ -444,7 +444,7 @@ class _HomePageState extends State<HomePage> {
                                                 receivingAccountCurrency,
                                                 c,
                                                 p6) =>
-                                            DatabaseImpl.instance.buildExpr([
+                                            AppDB.instance.buildExpr([
                                               if (dateRangeService.startDate !=
                                                   null)
                                                 transaction.date

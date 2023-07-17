@@ -1,5 +1,5 @@
 import 'package:finlytics/app/categories/subcategory_form.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';

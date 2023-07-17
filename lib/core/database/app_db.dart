@@ -16,22 +16,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-part 'database_impl.g.dart';
+part 'app_db.g.dart';
 
-final databaseProvider = Provider<DatabaseImpl>(
-  (ref) => DatabaseImpl.instance,
+final databaseProvider = Provider<AppDB>(
+  (ref) => AppDB.instance,
 );
 
 @DriftDatabase(
     include: {'sql/initial/tables.drift', 'sql/queries/select-full-data.drift'})
-class DatabaseImpl extends _$DatabaseImpl {
-  DatabaseImpl._({
+class AppDB extends _$AppDB {
+  AppDB._({
     required this.dbName,
     required this.inMemory,
     required this.logStatements,
   }) : super(_openConnection(dbName, logStatements: logStatements));
 
-  static final DatabaseImpl instance = DatabaseImpl._(
+  static final AppDB instance = AppDB._(
     dbName: 'database.db',
     inMemory: false,
     logStatements: false,

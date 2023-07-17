@@ -1,17 +1,16 @@
 import 'package:async/async.dart' show StreamZip;
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/account/account.dart';
 
 enum AccountDataFilter { income, expense, balance }
 
 class AccountService {
-  final DatabaseImpl db;
+  final AppDB db;
 
   AccountService._(this.db);
-  static final AccountService instance =
-      AccountService._(DatabaseImpl.instance);
+  static final AccountService instance = AccountService._(AppDB.instance);
 
   Future<int> insertAccount(AccountInDB account) {
     return db.into(db.accounts).insert(account);

@@ -1,15 +1,14 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryService {
-  final DatabaseImpl db;
+  final AppDB db;
 
   CategoryService._(this.db);
-  static final CategoryService instance =
-      CategoryService._(DatabaseImpl.instance);
+  static final CategoryService instance = CategoryService._(AppDB.instance);
 
   Future<int> insertCategory(CategoryInDB category) {
     return db.into(db.categories).insert(category);

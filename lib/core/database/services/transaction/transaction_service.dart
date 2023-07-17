@@ -1,14 +1,14 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 
 class TransactionService {
-  final DatabaseImpl db;
+  final AppDB db;
 
   TransactionService._(this.db);
   static final TransactionService instance =
-      TransactionService._(DatabaseImpl.instance);
+      TransactionService._(AppDB.instance);
 
   Future<int> insertTransaction(TransactionInDB transaction) {
     return db.into(db.transactions).insert(transaction);

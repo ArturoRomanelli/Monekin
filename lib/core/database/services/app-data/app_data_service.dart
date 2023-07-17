@@ -1,15 +1,14 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 
 /// The keys of the avalaible settings of the app
 enum AppDataKey { dbVersion, introSeen, lastExportDate }
 
 class AppDataService {
-  final DatabaseImpl db;
+  final AppDB db;
 
   AppDataService._(this.db);
-  static final AppDataService instance =
-      AppDataService._(DatabaseImpl.instance);
+  static final AppDataService instance = AppDataService._(AppDB.instance);
 
   Future<int> setAppDataItem(AppDataKey appDataKey, String? appDataValue) {
     return db.into(db.appData).insert(

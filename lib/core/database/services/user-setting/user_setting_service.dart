@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 
 /// The keys of the avalaible settings of the app
 enum SettingKey { preferredCurrency, userName, avatar, appLanguage, themeMode }
 
 class UserSettingService {
-  final DatabaseImpl db;
+  final AppDB db;
 
   UserSettingService._(this.db);
   static final UserSettingService instance =
-      UserSettingService._(DatabaseImpl.instance);
+      UserSettingService._(AppDB.instance);
 
   Future<int> setSetting(SettingKey settingKey, String? settingValue) async {
     return db.into(db.userSettings).insert(

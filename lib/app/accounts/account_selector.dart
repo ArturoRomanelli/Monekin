@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
@@ -47,7 +47,7 @@ class _AccountSelectorState extends State<AccountSelector> {
 
     AccountService.instance
         .getAccounts(
-          predicate: (acc, curr) => DatabaseImpl.instance.buildExpr([
+          predicate: (acc, curr) => AppDB.instance.buildExpr([
             if (widget.filterSavingAccounts)
               acc.type.equalsValue(AccountType.saving).not()
           ]),

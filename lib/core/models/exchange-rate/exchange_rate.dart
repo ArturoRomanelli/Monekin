@@ -1,4 +1,4 @@
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 
 class ExchangeRate extends ExchangeRateInDB {
   CurrencyInDB currency;

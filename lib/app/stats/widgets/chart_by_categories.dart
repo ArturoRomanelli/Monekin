@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/stats/widgets/category_stats_modal.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/category/category.dart';
@@ -66,7 +66,7 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
     final transactions = await transactionService
         .getTransactions(
           predicate: (t, acc, p2, p3, p4, transCategory, p6) =>
-              DatabaseImpl.instance.buildExpr([
+              AppDB.instance.buildExpr([
             t.receivingAccountID.isNull(),
             if (widget.startDate != null)
               t.date.isBiggerThanValue(widget.startDate!),

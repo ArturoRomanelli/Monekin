@@ -1,12 +1,12 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/budget/budget.dart';
 
 class BudgetServive {
-  final DatabaseImpl db;
+  final AppDB db;
 
   BudgetServive._(this.db);
-  static final BudgetServive instance = BudgetServive._(DatabaseImpl.instance);
+  static final BudgetServive instance = BudgetServive._(AppDB.instance);
 
   Future<bool> insertBudget(Budget budget) {
     return db.transaction(() async {

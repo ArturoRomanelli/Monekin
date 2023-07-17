@@ -13,10 +13,7 @@ DatabaseConnection connect(
   return DatabaseConnection.delayed(Future.sync(() async {
     final response = await http.get(Uri.parse('sqlite3.wasm'));
     final fs = await IndexedDbFileSystem.open(dbName: '/db/');
-    final sqlite3 = await WasmSqlite3.load(
-      response.bodyBytes,
-      SqliteEnvironment(fileSystem: fs),
-    );
+    final sqlite3 = await WasmSqlite3.load(response.bodyBytes);
     if (inMemory) {
       return DatabaseConnection(WasmDatabase.inMemory(
         sqlite3,

@@ -2,7 +2,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/home/home.page.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
@@ -120,7 +120,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               stream: TransactionService.instance.getTransactions(
                 predicate: (t, account, accountCurrency, receivingAccount,
                         receivingAccountCurrency, c, p6) =>
-                    DatabaseImpl.instance.buildExpr([
+                    AppDB.instance.buildExpr([
                   if (searchValue != null && searchValue!.isNotEmpty)
                     (t.notes.contains(searchValue!) |
                         t.title.contains(searchValue!) |

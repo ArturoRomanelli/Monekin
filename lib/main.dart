@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/app/onboarding/onboarding.dart';
 import 'package:finlytics/app/home/home.page.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/app/onboarding/onboarding.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/app-data/app_data_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/presentation/theme.dart';
@@ -22,10 +22,12 @@ void main() {
                   p0.settingKey.equalsValue(SettingKey.appLanguage) |
                   p0.settingKey.equalsValue(SettingKey.themeMode)),
               AppDataService.instance
-                  .getAppDataItems((p0) => DatabaseImpl.instance.buildExpr([])),
+                  .getAppDataItems((p0) => AppDB.instance.buildExpr([])),
               (a, b) => (a, b)),
           builder: (context, snapshot) {
             print('Finding initial user settings...');
+
+            print(snapshot);
 
             if (snapshot.hasData) {
               final userSettings = snapshot.data!.$1;

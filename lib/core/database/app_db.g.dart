@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'database_impl.dart';
+part of 'app_db.dart';
 
 // ignore_for_file: type=lint
 class Currencies extends Table with TableInfo<Currencies, CurrencyInDB> {
@@ -3477,8 +3477,8 @@ class AppDataCompanion extends UpdateCompanion<AppDataData> {
   }
 }
 
-abstract class _$DatabaseImpl extends GeneratedDatabase {
-  _$DatabaseImpl(QueryExecutor e) : super(e);
+abstract class _$AppDB extends GeneratedDatabase {
+  _$AppDB(QueryExecutor e) : super(e);
   late final Currencies currencies = Currencies(this);
   late final Accounts accounts = Accounts(this);
   late final Categories categories = Categories(this);

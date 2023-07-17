@@ -1,14 +1,14 @@
 import 'package:drift/drift.dart';
 import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
 
-import '../../database_impl.dart';
+import '../../app_db.dart';
 
 class ExchangeRateService {
-  final DatabaseImpl db;
+  final AppDB db;
 
   ExchangeRateService._(this.db);
   static final ExchangeRateService instance =
-      ExchangeRateService._(DatabaseImpl.instance);
+      ExchangeRateService._(AppDB.instance);
 
   Future<int> insertOrUpdateExchangeRate(ExchangeRateInDB toInsert) {
     return db

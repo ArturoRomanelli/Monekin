@@ -1,4 +1,4 @@
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:drift/drift.dart';
@@ -11,11 +11,10 @@ class CurrencyService {
       'SELECT currency.code, currency.symbol, names.es as name FROM $_currencyTableName as currency'
       ' JOIN $_currencyNamesTableName as names ON currency.code = names.currencyCode';
 
-  final DatabaseImpl db;
+  final AppDB db;
 
   CurrencyService._(this.db);
-  static final CurrencyService instance =
-      CurrencyService._(DatabaseImpl.instance);
+  static final CurrencyService instance = CurrencyService._(AppDB.instance);
 
   Future<int> insertCurrency(CurrencyInDB currency) {
     return db.into(db.currencies).insert(currency);

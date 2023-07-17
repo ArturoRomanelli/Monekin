@@ -4,7 +4,7 @@ import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/budgets/components/budget_evolution_chart.dart';
 import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
-import 'package:finlytics/core/database/database_impl.dart';
+import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/budget/budget_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/budget/budget.dart';
@@ -226,7 +226,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
               stream: TransactionService.instance.getTransactions(
                 predicate: (transaction, account, accountCurrency,
                         receivingAccount, receivingAccountCurrency, c, p6) =>
-                    DatabaseImpl.instance.buildExpr([
+                    AppDB.instance.buildExpr([
                   c.id.isIn(widget.budget.categories) |
                       c.parentCategoryID.isIn(widget.budget.categories),
                   transaction.accountID.isIn(widget.budget.accounts),

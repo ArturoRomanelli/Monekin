@@ -113,7 +113,14 @@ class BackupDatabaseService {
   }
 
   Future<void> importDatabase() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result;
+
+    try {
+      result = await FilePicker.platform.pickFiles();
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+
     if (result != null) {
       File file = File(result.files.single.path!);
 

@@ -157,8 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }),
               const Divider(indent: 54),
               createSettingItem(
-                  title: t.settings.data.import,
-                  subtitle: t.settings.data.import_descr,
+                  title: t.backup.import.title,
                   icon: Icons.cloud_upload_outlined,
                   onTap: () {
                     Navigator.push(

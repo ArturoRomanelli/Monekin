@@ -255,7 +255,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
     final t = Translations.of(context);
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Importación manual')),
+        appBar: AppBar(title: Text(t.backup.import.manual_import)),
         body: Stepper(
           type: StepperType.vertical,
           currentStep: currentStep,

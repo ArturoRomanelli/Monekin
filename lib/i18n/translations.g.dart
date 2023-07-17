@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 687 (343 per locale)
+/// Strings: 692 (346 per locale)
 ///
-/// Built on 2023-07-17 at 18:10 UTC
+/// Built on 2023-07-17 at 18:34 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -798,6 +798,10 @@ class _TranslationsBackupImportEn {
 	// Translations
 	String get title => 'Import your data';
 	String get title_sort => 'Import';
+	String get manual_import => 'Manual import';
+	String get manual_import_descr => 'Import transactions from a .csv file manually';
+	String get restore_backup => 'Restore Backup';
+	String get restore_backup_descr => 'Import a previously saved database from Finlytics. This action will replace any current application data with the new data';
 	String get upload_file => 'Upload your data file';
 	String get touch_to_import => 'Touch to import';
 	String get touch_to_change => 'Touch to change';
@@ -832,8 +836,6 @@ class _TranslationsSettingsDataEn {
 	// Translations
 	String get display => 'Data';
 	String get export_descr => 'Download your data in different formats';
-	String get import => 'Restore Backup';
-	String get import_descr => 'Upload a .JSON file, and replace all your current data with the new one';
 	String get delete_all => 'Delete my data';
 	String get delete_all_header1 => 'Stop right there padawan ⚠️⚠️';
 	String get delete_all_message1 => 'Are you sure you want to continue? All your data will be permanently deleted and cannot be recovered';
@@ -1698,6 +1700,11 @@ class _TranslationsBackupImportEs extends _TranslationsBackupImportEn {
 
 	// Translations
 	@override String get title => 'Importar tus datos';
+	@override String get title_sort => 'Importar';
+	@override String get manual_import => 'Importación manual';
+	@override String get manual_import_descr => 'Importa transacciones desde un fichero .csv de forma manual';
+	@override String get restore_backup => 'Restaurar copia de seguridad';
+	@override String get restore_backup_descr => 'Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos';
 	@override String get upload_file => 'Sube tu archivo de datos';
 	@override String get touch_to_import => 'Toca para importar';
 	@override String get touch_to_change => 'Toca para cambiar';
@@ -1731,8 +1738,6 @@ class _TranslationsSettingsDataEs extends _TranslationsSettingsDataEn {
 	// Translations
 	@override String get display => 'Datos';
 	@override String get export_descr => 'Descarga tus datos en diferentes formatos';
-	@override String get import => 'Restaurar copia de seguridad';
-	@override String get import_descr => 'Sube un fichero .JSON, y reemplaza todos tus datos actuales por los nuevos';
 	@override String get delete_all => 'Eliminar mis datos';
 	@override String get delete_all_header1 => 'Alto ahí padawan ⚠️⚠️';
 	@override String get delete_all_message1 => '¿Estas seguro de que quieres continuar? Todos tus datos serán borrados permanentemente y no podrán ser recuperados';
@@ -2223,6 +2228,10 @@ extension on _TranslationsEn {
 			case 'backup.export.error': return 'Error downloading the file. Please contact the developer via lozin.technologies@gmail.com';
 			case 'backup.import.title': return 'Import your data';
 			case 'backup.import.title_sort': return 'Import';
+			case 'backup.import.manual_import': return 'Manual import';
+			case 'backup.import.manual_import_descr': return 'Import transactions from a .csv file manually';
+			case 'backup.import.restore_backup': return 'Restore Backup';
+			case 'backup.import.restore_backup_descr': return 'Import a previously saved database from Finlytics. This action will replace any current application data with the new data';
 			case 'backup.import.upload_file': return 'Upload your data file';
 			case 'backup.import.touch_to_import': return 'Touch to import';
 			case 'backup.import.touch_to_change': return 'Touch to change';
@@ -2248,8 +2257,6 @@ extension on _TranslationsEn {
 			case 'settings.general.other_descr': return 'Other general app customization settings';
 			case 'settings.data.display': return 'Data';
 			case 'settings.data.export_descr': return 'Download your data in different formats';
-			case 'settings.data.import': return 'Restore Backup';
-			case 'settings.data.import_descr': return 'Upload a .JSON file, and replace all your current data with the new one';
 			case 'settings.data.delete_all': return 'Delete my data';
 			case 'settings.data.delete_all_header1': return 'Stop right there padawan ⚠️⚠️';
 			case 'settings.data.delete_all_message1': return 'Are you sure you want to continue? All your data will be permanently deleted and cannot be recovered';
@@ -2583,6 +2590,11 @@ extension on _TranslationsEs {
 			case 'backup.export.success_in_data': return 'Archivo guardado/enviado correctamente';
 			case 'backup.export.error': return 'Error al descargar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com';
 			case 'backup.import.title': return 'Importar tus datos';
+			case 'backup.import.title_sort': return 'Importar';
+			case 'backup.import.manual_import': return 'Importación manual';
+			case 'backup.import.manual_import_descr': return 'Importa transacciones desde un fichero .csv de forma manual';
+			case 'backup.import.restore_backup': return 'Restaurar copia de seguridad';
+			case 'backup.import.restore_backup_descr': return 'Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos';
 			case 'backup.import.upload_file': return 'Sube tu archivo de datos';
 			case 'backup.import.touch_to_import': return 'Toca para importar';
 			case 'backup.import.touch_to_change': return 'Toca para cambiar';
@@ -2607,8 +2619,6 @@ extension on _TranslationsEs {
 			case 'settings.general.other_descr': return 'Otros ajustes generales de personalización de la app';
 			case 'settings.data.display': return 'Datos';
 			case 'settings.data.export_descr': return 'Descarga tus datos en diferentes formatos';
-			case 'settings.data.import': return 'Restaurar copia de seguridad';
-			case 'settings.data.import_descr': return 'Sube un fichero .JSON, y reemplaza todos tus datos actuales por los nuevos';
 			case 'settings.data.delete_all': return 'Eliminar mis datos';
 			case 'settings.data.delete_all_header1': return 'Alto ahí padawan ⚠️⚠️';
 			case 'settings.data.delete_all_message1': return '¿Estas seguro de que quieres continuar? Todos tus datos serán borrados permanentemente y no podrán ser recuperados';

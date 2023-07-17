@@ -13,6 +13,11 @@ class TransactionFilters {
   List<Category>? categories;
 
   TransactionFilters({this.accounts, this.categories});
+
+  clearAll() {
+    accounts = null;
+    categories = null;
+  }
 }
 
 class FilterSheetModal extends StatefulWidget {

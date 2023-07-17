@@ -380,6 +380,11 @@
     },
     "IMPORT": {
       "title": "Importar tus datos",
+      "title.sort": "Importar",
+      "manual-import": "Importación manual",
+      "manual-import-descr": "Importa transacciones desde un fichero .csv de forma manual",
+      "restore-backup": "Restaurar copia de seguridad",
+      "restore-backup-descr": "Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos",
       "upload_file": "Sube tu archivo de datos",
       "touch_to_import": "Toca para importar",
       "touch_to_change": "Toca para cambiar",
@@ -410,8 +415,6 @@
     "DATA": {
       "display": "Datos",
       "export.descr": "Descarga tus datos en diferentes formatos",
-      "import": "Restaurar copia de seguridad",
-      "import.descr": "Sube un fichero .JSON, y reemplaza todos tus datos actuales por los nuevos",
       "delete-all": "Eliminar mis datos",
       "delete-all-header1": "Alto ahí padawan ⚠️⚠️",
       "delete-all-message1": "¿Estas seguro de que quieres continuar? Todos tus datos serán borrados permanentemente y no podrán ser recuperados",

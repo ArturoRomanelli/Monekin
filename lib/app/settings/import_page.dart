@@ -17,9 +17,8 @@ class ImportPage extends StatelessWidget {
       body: Column(
         children: [
           ListTile(
-            title: Text(t.settings.data.import),
-            subtitle: Text(
-                "Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos"),
+            title: Text(t.backup.import.restore_backup),
+            subtitle: Text(t.backup.import.restore_backup_descr),
             trailing: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -31,15 +30,15 @@ class ImportPage extends StatelessWidget {
               BackupDatabaseService().importDatabase().then((value) {
                 print('EEEEEEEEEEE');
               }).catchError((err) {
-                print(err);
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(err.toString())));
               });
             },
           ),
           const Divider(),
           ListTile(
-            title: Text(t.settings.data.import),
-            subtitle: Text(
-                "Importa transacciones desde un fichero .csv de forma manual"),
+            title: Text(t.backup.import.manual_import),
+            subtitle: Text(t.backup.import.manual_import_descr),
             trailing: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -97,8 +97,8 @@ class AccountViewActionService {
                     Navigator.pop(context);
                   }
 
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Cuenta borrada con exito')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(t.account.delete.success)));
                 }).catchError((err) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text('$err')));

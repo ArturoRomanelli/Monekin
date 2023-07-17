@@ -380,6 +380,10 @@
     "IMPORT": {
       "title": "Import your data",
       "title.sort": "Import",
+      "manual-import": "Manual import",
+      "manual-import-descr": "Import transactions from a .csv file manually",
+      "restore-backup": "Restore Backup",
+      "restore-backup-descr": "Import a previously saved database from Finlytics. This action will replace any current application data with the new data",
       "upload_file": "Upload your data file",
       "touch_to_import": "Touch to import",
       "touch_to_change": "Touch to change",
@@ -411,8 +415,6 @@
     "DATA": {
       "display": "Data",
       "export.descr": "Download your data in different formats",
-      "import": "Restore Backup",
-      "import.descr": "Upload a .JSON file, and replace all your current data with the new one",
       "delete-all": "Delete my data",
       "delete-all-header1": "Stop right there padawan ⚠️⚠️",
       "delete-all-message1": "Are you sure you want to continue? All your data will be permanently deleted and cannot be recovered",

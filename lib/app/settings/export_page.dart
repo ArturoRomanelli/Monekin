@@ -50,6 +50,10 @@ class _ExportDataPageState extends State<ExportDataPage> {
         child: InkWell(
           onTap: () => setState(() {
             selectedExportFormat = exportFormat;
+
+            if (selectedExportFormat == _ExportFormats.db) {
+              filters.clearAll();
+            }
           }),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -86,7 +90,7 @@ class _ExportDataPageState extends State<ExportDataPage> {
   Widget selector({
     required String title,
     required String? inputValue,
-    required Function onClick,
+    required Function()? onClick,
   }) {
     final t = Translations.of(context);
 
@@ -94,7 +98,8 @@ class _ExportDataPageState extends State<ExportDataPage> {
         controller:
             TextEditingController(text: inputValue ?? t.general.unspecified),
         readOnly: true,
-        onTap: () => onClick(),
+        onTap: onClick,
+        enabled: onClick != null,
         decoration: InputDecoration(
           labelText: title,
           contentPadding: const EdgeInsets.only(left: 16, top: 16, bottom: 10),
@@ -178,33 +183,37 @@ class _ExportDataPageState extends State<ExportDataPage> {
                                     (snapshot.hasData &&
                                         filters.accounts!.length ==
                                             snapshot.data!.length)
-                                ? 'All accounts'
+                                ? t.account.select.all
                                 : filters.accounts
                                     ?.map((e) => e.name)
                                     .join(', '),
-                            onClick: () async {
-                              final modalRes =
-                                  await showAccountSelectorBottomSheet(
-                                      context,
-                                      AccountSelector(
-                                        allowMultiSelection: true,
-                                        filterSavingAccounts: false,
-                                        selectedAccounts: filters.accounts ??
-                                            (snapshot.hasData
-                                                ? [...snapshot.data!]
-                                                : []),
-                                      ));
+                            onClick: selectedExportFormat == _ExportFormats.db
+                                ? null
+                                : () async {
+                                    final modalRes =
+                                        await showAccountSelectorBottomSheet(
+                                            context,
+                                            AccountSelector(
+                                              allowMultiSelection: true,
+                                              filterSavingAccounts: false,
+                                              selectedAccounts:
+                                                  filters.accounts ??
+                                                      (snapshot.hasData
+                                                          ? [...snapshot.data!]
+                                                          : []),
+                                            ));
 
-                              if (modalRes != null && modalRes.isNotEmpty) {
-                                setState(() {
-                                  filters.accounts = snapshot.hasData &&
-                                          modalRes.length ==
-                                              snapshot.data!.length
-                                      ? null
-                                      : modalRes;
-                                });
-                              }
-                            });
+                                    if (modalRes != null &&
+                                        modalRes.isNotEmpty) {
+                                      setState(() {
+                                        filters.accounts = snapshot.hasData &&
+                                                modalRes.length ==
+                                                    snapshot.data!.length
+                                            ? null
+                                            : modalRes;
+                                      });
+                                    }
+                                  });
                       }),
 
                   /* ---------------------------------- */
@@ -220,36 +229,40 @@ class _ExportDataPageState extends State<ExportDataPage> {
                                     (snapshot.hasData &&
                                         filters.categories!.length ==
                                             snapshot.data!.length)
-                                ? 'All categories'
+                                ? t.categories.select.all
                                 : filters.categories
                                     ?.map((e) => e.name)
                                     .join(', '),
-                            onClick: () async {
-                              final modalRes =
-                                  await showModalBottomSheet<List<Category>>(
-                                context: context,
-                                builder: (context) {
-                                  return CategoriesList(
-                                    mode: CategoriesListMode
-                                        .modalSelectMultiCategory,
-                                    selectedCategories: filters.categories ??
-                                        (snapshot.hasData
-                                            ? [...snapshot.data!]
-                                            : []),
-                                  );
-                                },
-                              );
+                            onClick: selectedExportFormat == _ExportFormats.db
+                                ? null
+                                : () async {
+                                    final modalRes = await showModalBottomSheet<
+                                        List<Category>>(
+                                      context: context,
+                                      builder: (context) {
+                                        return CategoriesList(
+                                          mode: CategoriesListMode
+                                              .modalSelectMultiCategory,
+                                          selectedCategories:
+                                              filters.categories ??
+                                                  (snapshot.hasData
+                                                      ? [...snapshot.data!]
+                                                      : []),
+                                        );
+                                      },
+                                    );
 
-                              if (modalRes != null && modalRes.isNotEmpty) {
-                                setState(() {
-                                  filters.categories = snapshot.hasData &&
-                                          modalRes.length ==
-                                              snapshot.data!.length
-                                      ? null
-                                      : modalRes;
-                                });
-                              }
-                            });
+                                    if (modalRes != null &&
+                                        modalRes.isNotEmpty) {
+                                      setState(() {
+                                        filters.categories = snapshot.hasData &&
+                                                modalRes.length ==
+                                                    snapshot.data!.length
+                                            ? null
+                                            : modalRes;
+                                      });
+                                    }
+                                  });
                       }),
                 ],
               )

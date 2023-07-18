@@ -157,6 +157,11 @@ class MoneyTransaction extends TransactionInDB {
   }) : super(
           accountID: account.id,
           categoryID: category?.id,
+          intervalEach: recurrentInfo.intervalEach,
+          intervalPeriod: recurrentInfo.intervalPeriod,
+          endDate: recurrentInfo.ruleRecurrentLimit?.endDate,
+          remainingTransactions:
+              recurrentInfo.ruleRecurrentLimit?.remainingIterations,
         );
 
   MoneyTransaction.transfer(
@@ -174,6 +179,11 @@ class MoneyTransaction extends TransactionInDB {
       : super(
           accountID: account.id,
           receivingAccountID: receivingAccount?.id,
+          intervalEach: recurrentInfo.intervalEach,
+          intervalPeriod: recurrentInfo.intervalPeriod,
+          endDate: recurrentInfo.ruleRecurrentLimit?.endDate,
+          remainingTransactions:
+              recurrentInfo.ruleRecurrentLimit?.remainingIterations,
         );
 
   bool get isTransfer => receivingAccountID != null;

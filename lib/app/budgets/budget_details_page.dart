@@ -174,7 +174,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
                     )),
                 const SizedBox(height: 16),
                 CardWithHeader(
-                    title: 'Datos del presupuesto',
+                    title: 'Info',
                     body: Column(
                       children: [
                         ListTile(

@@ -1,6 +1,7 @@
 import 'package:finlytics/core/utils/open_external_url.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class LegalPage extends StatelessWidget {
   const LegalPage({super.key});
@@ -42,8 +43,17 @@ class LegalPage extends StatelessWidget {
           ),
           buildLinkItem(
             t.settings.licenses.title,
-            onTap: () {
-              showLicensePage(context: context);
+            onTap: () async {
+              openLicense({String? appName, String? version}) {
+                showLicensePage(
+                  context: context,
+                  applicationName: appName,
+                  applicationVersion: version,
+                );
+              }
+
+              final info = await PackageInfo.fromPlatform();
+              openLicense(appName: info.appName, version: info.version);
             },
           ),
         ],

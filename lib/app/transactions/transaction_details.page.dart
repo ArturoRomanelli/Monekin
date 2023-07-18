@@ -201,9 +201,12 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
     }
 
     final bool showRecurrencyStatus = (transaction.recurrentInfo.isRecurrent);
+    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
 
     final color = showRecurrencyStatus
-        ? Theme.of(context).colorScheme.primary.lighten(0.2)
+        ? isDarkTheme
+            ? Theme.of(context).colorScheme.secondary.darken(0.15)
+            : Theme.of(context).primaryColor.lighten(0.2)
         : transaction.status!.color;
 
     return Card(
@@ -226,8 +229,13 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                 status:
                                     transaction.status!.displayName(context))
                             .capitalize(),
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w700)),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: isDarkTheme
+                          ? Theme.of(context).colorScheme.background
+                          : null,
+                    )),
                 Icon(
                   showRecurrencyStatus
                       ? Icons.repeat_rounded
@@ -243,15 +251,21 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
-                Text(showRecurrencyStatus
-                    ? "El próximo pago de esta transacción recurrente esta previsto para el día ${DateFormat.yMMMMd().format(transaction.date)}. Puedes elegir si quieres saltar este pago o pagarlo eligiendo la fecha del pago"
-                    : transaction.status!.description(context)),
-                if (transaction.status == TransactionStatus.pending)
+                Text(
+                    showRecurrencyStatus
+                        ? "El próximo pago de esta transacción recurrente esta previsto para el día ${DateFormat.yMMMMd().format(transaction.date)}. Puedes elegir si quieres saltar este pago o pagarlo eligiendo la fecha del pago"
+                        : transaction.status!.description(context),
+                    style: TextStyle(
+                      color: isDarkTheme
+                          ? Theme.of(context).colorScheme.background
+                          : null,
+                    )),
+                if (transaction.status == TransactionStatus.pending ||
+                    transaction.recurrentInfo.isRecurrent) ...[
                   const SizedBox(height: 12),
-                if (transaction.status == TransactionStatus.pending)
                   Row(
                     children: [
-                      if (widget.transaction.recurrentInfo.isRecurrent) ...[
+                      if (transaction.recurrentInfo.isRecurrent) ...[
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () => false,
@@ -269,11 +283,17 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           onPressed: () => showPayModal(context, transaction),
                           style: FilledButton.styleFrom(
                               backgroundColor: color.darken(0.2)),
-                          child: const Text('Pagar'),
+                          child: Text('Pagar',
+                              style: TextStyle(
+                                color: isDarkTheme
+                                    ? Theme.of(context).colorScheme.onBackground
+                                    : null,
+                              )),
                         ),
                       ),
                     ],
                   ),
+                ]
               ],
             ),
           ),
@@ -364,7 +384,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                   transaction.recurrentInfo.isRecurrent)
                 statusDisplayer(),
               CardWithHeader(
-                title: 'Datos',
+                title: 'Info',
                 body: SizedBox(
                   width: double.infinity,
                   child: Column(

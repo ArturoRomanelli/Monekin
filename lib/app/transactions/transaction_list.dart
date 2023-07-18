@@ -71,10 +71,13 @@ class TransactionListComponent extends StatelessWidget {
               children: [
                 Text(transaction.displayName),
                 const SizedBox(width: 4),
-                if (transaction.status != null && !showRecurrentInfo)
+                if ((transaction.status != null ||
+                        transaction.recurrentInfo.isRecurrent) &&
+                    !showRecurrentInfo)
                   Icon(
-                    transaction.status!.icon,
-                    color: transaction.status!.color.darken(0.1),
+                    transaction.status?.icon ?? Icons.repeat,
+                    color: transaction.status?.color.darken(0.1) ??
+                        Theme.of(context).primaryColor,
                     size: 12,
                   )
               ],

@@ -59,7 +59,7 @@ void main() {
 
               return TranslationProvider(
                 child: MyApp(
-                  goToIntro: userHasSeenIntro != 'true',
+                  goToIntro: userHasSeenIntro != '1',
                   themeMode: ThemeMode.values.byName(userSettings
                       .firstWhere((element) =>
                           element.settingKey == SettingKey.themeMode)

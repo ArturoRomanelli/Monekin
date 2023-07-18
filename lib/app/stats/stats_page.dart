@@ -7,6 +7,7 @@ import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/app/stats/widgets/income_expense_comparason.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/presentation/widgets/filter_row_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,25 @@ class _StatsPageState extends State<StatsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(t.stats.title),
+          actions: [
+            IconButton(
+                onPressed: () async {
+                  final modalRes =
+                      await showModalBottomSheet<TransactionFilters>(
+                          context: context,
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          builder: (context) =>
+                              FilterSheetModal(preselectedFilter: filters));
+
+                  if (modalRes != null) {
+                    setState(() {
+                      filters = modalRes;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.filter_alt_outlined)),
+          ],
           bottom: TabBar(tabs: [
             Tab(text: t.stats.by_categories),
             Tab(text: 'Saldo'),
@@ -82,48 +102,73 @@ class _StatsPageState extends State<StatsPage> {
             },
           )
         ],
-        body: TabBarView(children: [
-          ChartByCategories(
-              startDate: currentStartDate,
-              endDate: currentEndDate,
-              showList: true,
-              initialSelectedType: TransactionType.income,
-              filters: filters),
-          buildContainerWithPadding(
-            [
-              CardWithHeader(
-                title: t.stats.balance_evolution,
-                body: FundEvolutionLineChart(
-                  showBalanceHeader: true,
+        body: Column(
+          children: [
+            if (filters.hasFilter) ...[
+              FilterRowIndicator(
+                filters: filters,
+                onChange: (newFilters) {
+                  setState(() {
+                    filters = newFilters;
+                  });
+                },
+              ),
+              const Divider()
+            ],
+            Expanded(
+              child: TabBarView(children: [
+                ChartByCategories(
                   startDate: currentStartDate,
                   endDate: currentEndDate,
-                  dateRange: currentDateRange,
-                  //accountsFilter: accountsToFilter,
+                  showList: true,
+                  initialSelectedType: TransactionType.income,
+                  filters: filters,
                 ),
-              ),
-              const SizedBox(height: 16),
-              AllAccountBalancePage(date: currentEndDate ?? DateTime.now()),
-            ],
-          ),
-          buildContainerWithPadding([
-            CardWithHeader(
-              title: t.stats.cash_flow,
-              body: IncomeExpenseComparason(
-                startDate: currentStartDate,
-                endDate: currentEndDate,
-              ),
+                buildContainerWithPadding(
+                  [
+                    CardWithHeader(
+                      title: t.stats.balance_evolution,
+                      body: FundEvolutionLineChart(
+                        showBalanceHeader: true,
+                        startDate: currentStartDate,
+                        endDate: currentEndDate,
+                        dateRange: currentDateRange,
+                        accountsFilter: filters.accounts,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    AllAccountBalancePage(
+                      date: currentEndDate ?? DateTime.now(),
+                      filters: filters,
+                    ),
+                  ],
+                ),
+                buildContainerWithPadding([
+                  CardWithHeader(
+                    title: t.stats.cash_flow,
+                    body: IncomeExpenseComparason(
+                      startDate: currentStartDate,
+                      endDate: currentEndDate,
+                      filters: filters,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  CardWithHeader(
+                    title: t.stats.by_periods,
+                    body: Padding(
+                      padding: const EdgeInsets.only(bottom: 10, top: 16),
+                      child: BalanceBarChart(
+                        startDate: currentStartDate,
+                        dateRange: currentDateRange,
+                        filters: filters,
+                      ),
+                    ),
+                  )
+                ]),
+              ]),
             ),
-            const SizedBox(height: 16),
-            CardWithHeader(
-              title: t.stats.by_periods,
-              body: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 16),
-                child: BalanceBarChart(
-                    startDate: currentStartDate, dateRange: currentDateRange),
-              ),
-            )
-          ]),
-        ]),
+          ],
+        ),
       ),
     );
   }

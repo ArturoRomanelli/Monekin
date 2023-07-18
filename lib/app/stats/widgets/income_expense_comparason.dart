@@ -1,23 +1,29 @@
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class IncomeExpenseComparason extends StatelessWidget {
-  const IncomeExpenseComparason({super.key, this.startDate, this.endDate});
+  const IncomeExpenseComparason(
+      {super.key, this.startDate, this.endDate, this.filters});
 
   final DateTime? startDate;
   final DateTime? endDate;
+
+  final TransactionFilters? filters;
 
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
     return StreamBuilder(
-        stream: AccountService.instance.getAccounts(),
+        stream: filters?.accounts != null
+            ? Stream.value(filters!.accounts)
+            : AccountService.instance.getAccounts(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const LinearProgressIndicator();
@@ -33,16 +39,18 @@ class IncomeExpenseComparason extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Balance"),
+                      Text(t.general.balance),
                       StreamBuilder(
                         stream: AccountService.instance.getAccountsData(
                             accountIds: accounts.map((e) => e.id),
                             accountDataFilter: AccountDataFilter.balance,
+                            categoriesIds:
+                                filters?.categories?.map((e) => e.id),
                             startDate: startDate,
                             endDate: endDate),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
-                            return Skeleton(width: 35, height: 32);
+                            return const Skeleton(width: 35, height: 32);
                           }
 
                           return CurrencyDisplayer(
@@ -60,11 +68,13 @@ class IncomeExpenseComparason extends StatelessWidget {
                     AccountService.instance.getAccountsData(
                         accountIds: accounts.map((e) => e.id),
                         accountDataFilter: AccountDataFilter.income,
+                        categoriesIds: filters?.categories?.map((e) => e.id),
                         startDate: startDate,
                         endDate: endDate),
                     AccountService.instance.getAccountsData(
                         accountIds: accounts.map((e) => e.id),
                         accountDataFilter: AccountDataFilter.expense,
+                        categoriesIds: filters?.categories?.map((e) => e.id),
                         startDate: startDate,
                         endDate: endDate),
                     (a, b) => [a, b]),

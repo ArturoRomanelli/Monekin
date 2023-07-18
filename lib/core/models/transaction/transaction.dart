@@ -131,10 +131,12 @@ class MoneyTransaction extends TransactionInDB {
         recurrentInfo = RecurrencyData(
           intervalEach: intervalEach,
           intervalPeriod: intervalPeriod,
-          ruleRecurrentLimit: RecurrentRuleLimit(
-            endDate: endDate,
-            remainingIterations: remainingTransactions,
-          ),
+          ruleRecurrentLimit: intervalEach != null
+              ? RecurrentRuleLimit(
+                  endDate: endDate,
+                  remainingIterations: remainingTransactions,
+                )
+              : null,
         ),
         super(
             accountID: account.id,

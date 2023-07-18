@@ -33,7 +33,7 @@ class RecurrencyData extends Equatable {
     this.intervalEach = 1,
   }) : ruleRecurrentLimit = const RecurrentRuleLimit.infinite();
 
-  bool get isNoRecurrent => ruleRecurrentLimit == null;
+  bool get isNoRecurrent => intervalEach == null;
   bool get isRecurrent => !isNoRecurrent;
 
   String formText(BuildContext context) {

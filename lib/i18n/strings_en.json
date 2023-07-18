@@ -8,6 +8,7 @@
     "continue_text": "Continue",
     "add": "Add",
     "edit": "Edit",
+    "balance": "Balance",
     "delete": "Delete",
     "income": "Income",
     "expense": "Expense",
@@ -23,6 +24,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "filters": "Filters",
+    "select-all": "Select all",
+    "deselect-all": "Deselect all",
     "empty-warn": "Ops! This is very empty",
     "insufficient-data": "Insufficient data",
     "CLIPBOARD": {
@@ -320,7 +323,6 @@
     "delete-warning-message": "This action will irreversibly delete all transactions <b>({{x}})</b> related to this category.",
     "SELECT": {
       "title": "Select categories",
-      "select-all": "Select all",
       "select-one": "Select a category",
       "select-subcategory": "Choose a subcategory",
       "without-subcategory": "Without subcategory",

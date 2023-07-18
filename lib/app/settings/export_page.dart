@@ -3,7 +3,6 @@ import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/i18n/translations.g.dart';
@@ -236,21 +235,18 @@ class _ExportDataPageState extends State<ExportDataPage> {
                             onClick: selectedExportFormat == _ExportFormats.db
                                 ? null
                                 : () async {
-                                    final modalRes = await showModalBottomSheet<
-                                        List<Category>>(
-                                      context: context,
-                                      builder: (context) {
-                                        return CategoriesList(
-                                          mode: CategoriesListMode
-                                              .modalSelectMultiCategory,
-                                          selectedCategories:
-                                              filters.categories ??
-                                                  (snapshot.hasData
-                                                      ? [...snapshot.data!]
-                                                      : []),
-                                        );
-                                      },
-                                    );
+                                    final modalRes =
+                                        await showCategoryListModal(
+                                            context,
+                                            CategoriesList(
+                                              mode: CategoriesListMode
+                                                  .modalSelectMultiCategory,
+                                              selectedCategories:
+                                                  filters.categories ??
+                                                      (snapshot.hasData
+                                                          ? [...snapshot.data!]
+                                                          : []),
+                                            ));
 
                                     if (modalRes != null &&
                                         modalRes.isNotEmpty) {

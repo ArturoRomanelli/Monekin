@@ -9,6 +9,7 @@
     "add": "Añadir",
     "edit": "Editar",
     "delete": "Eliminar",
+    "balance": "Balance",
     "income": "Ingreso",
     "expense": "Gasto",
     "incomes": "Ingresos",
@@ -23,6 +24,8 @@
     "today": "Hoy",
     "yesterday": "Ayer",
     "filters": "Filtros",
+    "select-all": "Seleccionar todo",
+    "deselect-all": "Deseleccionar todo",
     "empty-warn": "Ops! Esto esta muy vacio",
     "insufficient-data": "Datos insuficientes",
     "CLIPBOARD": {
@@ -192,7 +195,7 @@
         "negative-transfer": "El valor monetario de una transferencia no puede ser negativo"
       },
       "description": "Descripción",
-      "description-info": "Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro",
+      "description-info": "Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro",
       "exchange-to-preferred": "Actualmente equivalen aproximadamente a {{x}}"
     },
     "STATUS": {
@@ -321,7 +324,6 @@
     "delete-warning-message": "Esta acción borrará de forma irreversible todas las transacciones <b>({{x}})</b> relativas a esta categoría.",
     "SELECT": {
       "title": "Selecciona categorías",
-      "select-all": "Seleccionar todas",
       "select-one": "Selecciona una categoría",
       "select-subcategory": "Elige una subcategoría",
       "without-subcategory": "Sin subcategoría",

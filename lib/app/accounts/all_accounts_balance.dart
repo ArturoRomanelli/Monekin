@@ -7,6 +7,7 @@ import 'package:finlytics/core/database/services/currency/currency_service.dart'
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
+import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -27,20 +28,30 @@ class CurrencyWithMoney {
 }
 
 class AllAccountBalancePage extends StatefulWidget {
-  const AllAccountBalancePage({super.key, required this.date});
+  const AllAccountBalancePage({super.key, required this.date, this.filters});
 
   final DateTime date;
+
+  final TransactionFilters? filters;
 
   @override
   State<AllAccountBalancePage> createState() => _AllAccountBalancePageState();
 }
 
-Stream<List<AccountWithMoney>> getAccountsWithMoney(DateTime date) {
-  final accounts = AccountService.instance.getAccounts();
-  final balances = accounts.asyncMap((accountList) => Future.wait(
-      accountList.map((account) => AccountService.instance
+Stream<List<AccountWithMoney>> getAccountsWithMoney(
+    DateTime date, TransactionFilters? filters) {
+  final accounts = filters?.accounts != null
+      ? Stream.value(filters!.accounts!)
+      : AccountService.instance.getAccounts();
+
+  final balances = accounts.asyncMap((accountList) =>
+      Future.wait(accountList.map((account) => AccountService.instance
           .getAccountMoney(
-              account: account, convertToPreferredCurrency: true, date: date)
+            account: account,
+            categoriesIds: filters?.categories?.map((e) => e.id),
+            convertToPreferredCurrency: true,
+            date: date,
+          )
           .first)));
 
   return Rx.combineLatest2(accounts, balances, (accounts, balances) {
@@ -89,7 +100,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
     final t = Translations.of(context);
 
     return StreamBuilder(
-        stream: getAccountsWithMoney(widget.date),
+        stream: getAccountsWithMoney(widget.date, widget.filters),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const LinearProgressIndicator();

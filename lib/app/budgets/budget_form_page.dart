@@ -261,16 +261,12 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                         ? categories.map((e) => e.name).join(', ')
                         : null,
                     onClick: () async {
-                      final modalRes =
-                          await showModalBottomSheet<List<Category>>(
-                        context: context,
-                        builder: (context) {
-                          return CategoriesList(
+                      final modalRes = await showCategoryListModal(
+                          context,
+                          CategoriesList(
                             mode: CategoriesListMode.modalSelectMultiCategory,
                             selectedCategories: categories,
-                          );
-                        },
-                      );
+                          ));
 
                       if (modalRes != null) {
                         setState(() {

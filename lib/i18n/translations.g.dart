@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 692 (346 per locale)
+/// Strings: 696 (348 per locale)
 ///
-/// Built on 2023-07-17 at 21:38 UTC
+/// Built on 2023-07-18 at 16:21 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -183,6 +183,7 @@ class _TranslationsGeneralEn {
 	String get continue_text => 'Continue';
 	String get add => 'Add';
 	String get edit => 'Edit';
+	String get balance => 'Balance';
 	String get delete => 'Delete';
 	String get income => 'Income';
 	String get expense => 'Expense';
@@ -198,6 +199,8 @@ class _TranslationsGeneralEn {
 	String get today => 'Today';
 	String get yesterday => 'Yesterday';
 	String get filters => 'Filters';
+	String get select_all => 'Select all';
+	String get deselect_all => 'Deselect all';
 	String get empty_warn => 'Ops! This is very empty';
 	String get insufficient_data => 'Insufficient data';
 	late final _TranslationsGeneralClipboardEn clipboard = _TranslationsGeneralClipboardEn._(_root);
@@ -733,7 +736,6 @@ class _TranslationsCategoriesSelectEn {
 
 	// Translations
 	String get title => 'Select categories';
-	String get select_all => 'Select all';
 	String get select_one => 'Select a category';
 	String get select_subcategory => 'Choose a subcategory';
 	String get without_subcategory => 'Without subcategory';
@@ -1087,6 +1089,7 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get add => 'Añadir';
 	@override String get edit => 'Editar';
 	@override String get delete => 'Eliminar';
+	@override String get balance => 'Balance';
 	@override String get income => 'Ingreso';
 	@override String get expense => 'Gasto';
 	@override String get incomes => 'Ingresos';
@@ -1101,6 +1104,8 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get today => 'Hoy';
 	@override String get yesterday => 'Ayer';
 	@override String get filters => 'Filtros';
+	@override String get select_all => 'Seleccionar todo';
+	@override String get deselect_all => 'Deseleccionar todo';
 	@override String get empty_warn => 'Ops! Esto esta muy vacio';
 	@override String get insufficient_data => 'Datos insuficientes';
 	@override late final _TranslationsGeneralClipboardEs clipboard = _TranslationsGeneralClipboardEs._(_root);
@@ -1507,7 +1512,7 @@ class _TranslationsTransactionFormEs extends _TranslationsTransactionFormEn {
 	@override String get status => 'Estado';
 	@override late final _TranslationsTransactionFormValidatorsEs validators = _TranslationsTransactionFormValidatorsEs._(_root);
 	@override String get description => 'Descripción';
-	@override String get description_info => 'Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro';
+	@override String get description_info => 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
 	@override String exchange_to_preferred({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
 }
 
@@ -1636,7 +1641,6 @@ class _TranslationsCategoriesSelectEs extends _TranslationsCategoriesSelectEn {
 
 	// Translations
 	@override String get title => 'Selecciona categorías';
-	@override String get select_all => 'Seleccionar todas';
 	@override String get select_one => 'Selecciona una categoría';
 	@override String get select_subcategory => 'Elige una subcategoría';
 	@override String get without_subcategory => 'Sin subcategoría';
@@ -1943,6 +1947,7 @@ extension on _TranslationsEn {
 			case 'general.continue_text': return 'Continue';
 			case 'general.add': return 'Add';
 			case 'general.edit': return 'Edit';
+			case 'general.balance': return 'Balance';
 			case 'general.delete': return 'Delete';
 			case 'general.income': return 'Income';
 			case 'general.expense': return 'Expense';
@@ -1958,6 +1963,8 @@ extension on _TranslationsEn {
 			case 'general.today': return 'Today';
 			case 'general.yesterday': return 'Yesterday';
 			case 'general.filters': return 'Filters';
+			case 'general.select_all': return 'Select all';
+			case 'general.deselect_all': return 'Deselect all';
 			case 'general.empty_warn': return 'Ops! This is very empty';
 			case 'general.insufficient_data': return 'Insufficient data';
 			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
@@ -2183,7 +2190,6 @@ extension on _TranslationsEn {
 			case 'categories.delete_warning_header': return 'Delete category?';
 			case 'categories.delete_warning_message': return ({required Object x}) => 'This action will irreversibly delete all transactions <b>(${x})</b> related to this category.';
 			case 'categories.select.title': return 'Select categories';
-			case 'categories.select.select_all': return 'Select all';
 			case 'categories.select.select_one': return 'Select a category';
 			case 'categories.select.select_subcategory': return 'Choose a subcategory';
 			case 'categories.select.without_subcategory': return 'Without subcategory';
@@ -2306,6 +2312,7 @@ extension on _TranslationsEs {
 			case 'general.add': return 'Añadir';
 			case 'general.edit': return 'Editar';
 			case 'general.delete': return 'Eliminar';
+			case 'general.balance': return 'Balance';
 			case 'general.income': return 'Ingreso';
 			case 'general.expense': return 'Gasto';
 			case 'general.incomes': return 'Ingresos';
@@ -2320,6 +2327,8 @@ extension on _TranslationsEs {
 			case 'general.today': return 'Hoy';
 			case 'general.yesterday': return 'Ayer';
 			case 'general.filters': return 'Filtros';
+			case 'general.select_all': return 'Seleccionar todo';
+			case 'general.deselect_all': return 'Deseleccionar todo';
 			case 'general.empty_warn': return 'Ops! Esto esta muy vacio';
 			case 'general.insufficient_data': return 'Datos insuficientes';
 			case 'general.clipboard.success': return ({required Object x}) => '${x} copiado al portapapeles';
@@ -2447,7 +2456,7 @@ extension on _TranslationsEs {
 			case 'transaction.form.validators.negative_transaction': return 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
 			case 'transaction.form.validators.negative_transfer': return 'El valor monetario de una transferencia no puede ser negativo';
 			case 'transaction.form.description': return 'Descripción';
-			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar mas rapidamente esta transacción en un futuro';
+			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
 			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
 			case 'transaction.status.tr_status': return ({required Object status}) => 'Transacción ${status}';
 			case 'transaction.status.reconciled': return 'Reconciliada';
@@ -2546,7 +2555,6 @@ extension on _TranslationsEs {
 			case 'categories.delete_warning_header': return '¿Eliminar categoría?';
 			case 'categories.delete_warning_message': return ({required Object x}) => 'Esta acción borrará de forma irreversible todas las transacciones <b>(${x})</b> relativas a esta categoría.';
 			case 'categories.select.title': return 'Selecciona categorías';
-			case 'categories.select.select_all': return 'Seleccionar todas';
 			case 'categories.select.select_one': return 'Selecciona una categoría';
 			case 'categories.select.select_subcategory': return 'Elige una subcategoría';
 			case 'categories.select.without_subcategory': return 'Sin subcategoría';

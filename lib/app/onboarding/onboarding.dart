@@ -18,12 +18,11 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  double currentPage = 0.0;
-  final _pageViewController = PageController();
+  int currentPage = 0;
 
   introFinished() {
     AppDataService.instance
-        .setAppDataItem(AppDataKey.introSeen, 'true')
+        .setAppDataItem(AppDataKey.introSeen, '1')
         .then((value) => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -46,11 +45,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         'description': t.intro.sl2_descr,
         'description2': t.intro.sl2_descr2,
         'image': 'assets/icons/app_onboarding/security.svg'
-      },
-      {
-        'header': t.backup.import.title,
-        'description': t.backup.import.long_description,
-        'image': 'assets/icons/app_onboarding/upload.svg'
       },
       {
         'header': t.intro.last_slide_title,
@@ -79,9 +73,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 Text(
                   item['description'],
                   style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14.0,
-                  ),
+                      fontSize: 14.0, fontWeight: FontWeight.w300),
                   textAlign: TextAlign.justify,
                 ),
                 if (item['description2'] != null) ...[
@@ -89,9 +81,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   Text(
                     item['description2'],
                     style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.0,
-                    ),
+                        fontSize: 14.0, fontWeight: FontWeight.w300),
                     textAlign: TextAlign.justify,
                   ),
                 ],
@@ -173,10 +163,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
         body: IntroductionScreen(
           pages: slides,
           showSkipButton: true,
-          skip: const Text("Next"),
-          next: const Text("Next"),
-          done:
-              const Text("Done", style: TextStyle(fontWeight: FontWeight.w700)),
+          initialPage: currentPage,
+          onChange: (value) {
+            setState(() {
+              currentPage = value;
+            });
+          },
+          skip: Text(
+            t.intro.skip,
+            style: const TextStyle(fontWeight: FontWeight.w300),
+          ),
+          next: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(t.intro.next),
+              const SizedBox(width: 4),
+              const Icon(Icons.arrow_forward)
+            ],
+          ),
+          done: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(t.general.continue_text),
+              const SizedBox(width: 4),
+              const Icon(Icons.check)
+            ],
+          ),
           onDone: () => introFinished(),
           onSkip: () => introFinished(),
           dotsDecorator: DotsDecorator(

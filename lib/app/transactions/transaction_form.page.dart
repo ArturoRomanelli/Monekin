@@ -62,7 +62,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   DateTime date = DateTime.now();
 
   TransactionStatus? status;
-  bool isHidden = false;
 
   TextEditingController notesController = TextEditingController();
   TextEditingController titleController = TextEditingController();
@@ -137,7 +136,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           status: date.compareTo(DateTime.now()) > 0
               ? TransactionStatus.pending
               : status,
-          isHidden: isHidden,
           notes: notesController.text.isEmpty ? null : notesController.text,
           title: titleController.text.isEmpty ? null : titleController.text,
           recurrentInfo: recurrentRule);
@@ -151,7 +149,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           status: date.compareTo(DateTime.now()) > 0
               ? TransactionStatus.pending
               : status,
-          isHidden: isHidden,
           notes: notesController.text.isEmpty ? null : notesController.text,
           title: titleController.text.isEmpty ? null : titleController.text,
           recurrentInfo: recurrentRule);
@@ -193,7 +190,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
     setState(() {
       fromAccount = transaction.account;
       toAccount = transaction.receivingAccount;
-      isHidden = transaction.isHidden;
       date = transaction.date;
       status = transaction.status;
       selectedCategory = transaction.category;
@@ -335,21 +331,11 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               ? ColorHex.get(selectedCategory!.color)
                               : null,
                           onClick: () async {
-                            final modalRes =
-                                await showModalBottomSheet<List<Category>>(
-                              context: context,
-                              builder: (context) {
-                                return const ClipRRect(
-                                  borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20)),
-                                  child: Scaffold(
-                                    body: CategoriesList(
-                                      mode: CategoriesListMode
-                                          .modalSelectSubcategory,
-                                    ),
-                                  ),
-                                );
-                              },
+                            final modalRes = await showCategoryListModal(
+                              context,
+                              const CategoriesList(
+                                mode: CategoriesListMode.modalSelectSubcategory,
+                              ),
                             );
 
                             if (modalRes != null && modalRes.isNotEmpty) {
@@ -498,7 +484,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                 if (valueToNumber == null) {
                                   return null;
                                 } else if (valueToNumber! == 0) {
-                                  return 'Transactions amount can be zero';
+                                  return t.transaction.form.validators.zero;
                                 }
 
                                 return null;
@@ -525,26 +511,14 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                             minLines: 2,
                             maxLines: 10,
                             controller: notesController,
-                            decoration: const InputDecoration(
-                              labelText: 'Notas',
+                            decoration: InputDecoration(
+                              labelText: t.transaction.form.description,
                               alignLabelWithHint: true,
-                              hintText:
-                                  'Escribe información extra acerca de esta transacción',
+                              hintText: t.transaction.form.description_info,
                             ),
                           ),
                         ],
                       )),
-                  SwitchListTile(
-                    value: isHidden,
-                    title: const Text('Ocultar transacción'),
-                    subtitle: const Text(
-                        'No será mostrada en listados ni estadisticas'),
-                    onChanged: (value) {
-                      setState(() {
-                        isHidden = value;
-                      });
-                    },
-                  )
                 ],
               ),
             ),

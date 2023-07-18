@@ -2,7 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:finlytics/core/database/app_db.dart';
 
 /// The keys of the avalaible settings of the app
-enum SettingKey { preferredCurrency, userName, avatar, appLanguage, themeMode }
+enum SettingKey {
+  preferredCurrency,
+  userName,
+  avatar,
+  appLanguage,
+  themeMode,
+}
 
 class UserSettingService {
   final AppDB db;

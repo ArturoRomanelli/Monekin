@@ -63,23 +63,52 @@ class AccountService {
       AS $columnName ON accounts.currencyId = excRate.currencyCode
     ''';
 
-  /// Get the amount of money that an account have in a certain period of time, specified in the [date] param. If the [date] param is null, it will return the money of the account right now.
+  /// Get the amount of money that an account has in a certain period of time,
+  /// specified in the [date] param. If the [date] param is null, it will return
+  /// the money of the account right now.
   ///
-  /// By default, the returned amount will be in the account currency
-  Stream<double> getAccountMoney(
-      {required Account account,
-      DateTime? date,
-      bool convertToPreferredCurrency = false}) {
+  /// By default, the returned amount will be in the account currency.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// final account = Account(/*....*/)
+  ///
+  /// final moneyStream = getAccountMoney(
+  ///   account: account,
+  ///   date: DateTime.now(),
+  ///   convertToPreferredCurrency: true,
+  /// );
+  ///
+  /// moneyStream.listen((money) {
+  ///   print('Money: \$\${money.toStringAsFixed(2)}');
+  /// });
+  /// ```
+  Stream<double> getAccountMoney({
+    required Account account,
+    DateTime? date,
+    Iterable<String>? categoriesIds,
+    bool convertToPreferredCurrency = false,
+  }) {
     return getAccountsMoney(
-        accountIds: [account.id],
-        date: date,
-        convertToPreferredCurrency: convertToPreferredCurrency);
+      accountIds: [account.id],
+      date: date,
+      convertToPreferredCurrency: convertToPreferredCurrency,
+    );
   }
 
-  Stream<double> getAccountsMoney(
-      {required Iterable<String> accountIds,
-      DateTime? date,
-      bool convertToPreferredCurrency = true}) {
+  /// Get the amount of money that some accounts have in a certain period of time,
+  /// specified in the [date] param. If the [date] param is null, it will return
+  /// the money of the account right now.
+  ///
+  /// If [categoriesIds] is defined, it will only take into account the transactions
+  /// of this categories to get the final money.
+  Stream<double> getAccountsMoney({
+    required Iterable<String> accountIds,
+    DateTime? date,
+    Iterable<String>? categoriesIds,
+    bool convertToPreferredCurrency = true,
+  }) {
     date ??= DateTime.now();
 
     // Get the accounts initial balance (converted to the preferred currency if necessary)
@@ -114,6 +143,7 @@ class AccountService {
       initialBalanceQuery,
       getAccountsData(
         accountIds: accountIds,
+        categoriesIds: categoriesIds,
         accountDataFilter: AccountDataFilter.balance,
         convertToPreferredCurrency: convertToPreferredCurrency,
         endDate: date,
@@ -196,6 +226,9 @@ class AccountService {
         });
   }
 
+  /// Returns a stream of a double representing the variation in money for a list of accounts between two dates.
+  ///
+  /// If the user does not provide a value for endDate, the function sets it to the current date. If the user does not provide a value for startDate, the function sets it to the minimum date in the list of accounts.
   Stream<double> getAccountsMoneyVariation(
       {required List<Account> accounts,
       DateTime? startDate,

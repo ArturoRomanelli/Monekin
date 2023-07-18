@@ -72,7 +72,7 @@ class AppDB extends _$AppDB {
             }
 
             await customStatement(
-                "INSERT INTO appData VALUES ('dbVersion', '${schemaVersion.toStringAsFixed(0)}'), ('introSeen', 'false'), ('lastExportDate', null)");
+                "INSERT INTO appData VALUES ('dbVersion', '${schemaVersion.toStringAsFixed(0)}'), ('introSeen', '0'), ('lastExportDate', null)");
 
             String defaultCategories = await rootBundle
                 .loadString('assets/sql/default_categories.json');

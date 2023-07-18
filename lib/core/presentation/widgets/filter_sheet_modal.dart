@@ -18,6 +18,8 @@ class TransactionFilters {
     accounts = null;
     categories = null;
   }
+
+  get hasFilter => accounts != null || categories != null;
 }
 
 class FilterSheetModal extends StatefulWidget {
@@ -146,20 +148,17 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                       ?.map((e) => e.name)
                                       .join(', '),
                               onClick: () async {
-                                final modalRes =
-                                    await showModalBottomSheet<List<Category>>(
-                                  context: context,
-                                  builder: (context) {
-                                    return CategoriesList(
-                                      mode: CategoriesListMode
-                                          .modalSelectMultiCategory,
-                                      selectedCategories:
-                                          filtersToReturn.categories ??
-                                              (snapshot.hasData
-                                                  ? [...snapshot.data!]
-                                                  : []),
-                                    );
-                                  },
+                                final modalRes = await showCategoryListModal(
+                                  context,
+                                  CategoriesList(
+                                    mode: CategoriesListMode
+                                        .modalSelectMultiCategory,
+                                    selectedCategories:
+                                        filtersToReturn.categories ??
+                                            (snapshot.hasData
+                                                ? [...snapshot.data!]
+                                                : []),
+                                  ),
                                 );
 
                                 if (modalRes != null && modalRes.isNotEmpty) {

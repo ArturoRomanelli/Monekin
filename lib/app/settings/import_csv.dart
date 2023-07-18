@@ -4,8 +4,8 @@ import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/account_selector.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/home/home.page.dart';
-import 'package:finlytics/core/database/backup/backup_database_service.dart';
 import 'package:finlytics/core/database/app_db.dart';
+import 'package:finlytics/core/database/backup/backup_database_service.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
@@ -480,15 +480,11 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                         ? ColorHex.get(defaultCategory!.color)
                         : null,
                     onClick: () async {
-                      final modalRes =
-                          await showModalBottomSheet<List<Category>>(
-                        context: context,
-                        builder: (context) {
-                          return const CategoriesList(
+                      final modalRes = await showCategoryListModal(
+                          context,
+                          const CategoriesList(
                             mode: CategoriesListMode.modalSelectSubcategory,
-                          );
-                        },
-                      );
+                          ));
 
                       if (modalRes != null && modalRes.isNotEmpty) {
                         setState(() {

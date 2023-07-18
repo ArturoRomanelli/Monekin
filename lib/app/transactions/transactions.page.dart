@@ -5,6 +5,7 @@ import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
+import 'package:finlytics/core/presentation/widgets/filter_row_indicator.dart';
 import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -115,6 +116,17 @@ class _TransactionsPageState extends State<TransactionsPage> {
               }),
       body: Column(
         children: [
+          if (filters.hasFilter) ...[
+            FilterRowIndicator(
+              filters: filters,
+              onChange: (newFilters) {
+                setState(() {
+                  filters = newFilters;
+                });
+              },
+            ),
+            const Divider()
+          ],
           Expanded(
             child: StreamBuilder(
               stream: TransactionService.instance.getTransactions(

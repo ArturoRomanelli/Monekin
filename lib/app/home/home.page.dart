@@ -4,7 +4,6 @@ import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/home/card_with_header.dart';
-import 'package:finlytics/app/home/circular_arc.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
 import 'package:finlytics/app/stats/widgets/balance_bar_chart_small.dart';
 import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
@@ -18,6 +17,7 @@ import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
@@ -179,13 +179,12 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Ops!'),
-          content: const SingleChildScrollView(
-              child: Text(
-                  'You should create an account first to create this action perform this action')),
+          title: Text(t.home.should_create_account_header),
+          content: SingleChildScrollView(
+              child: Text(t.home.should_create_account_message)),
           actions: [
             TextButton(
-              child: const Text('Go for that!'),
+              child: Text(t.general.continue_text),
               onPressed: () {
                 Navigator.push(
                     context,
@@ -486,9 +485,7 @@ class _HomePageState extends State<HomePage> {
                                 }),
                           );
                         }),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 16),
                     CardWithHeader(
                       title: t.financial_health.display,
                       body: StreamBuilder(
@@ -503,56 +500,107 @@ class _HomePageState extends State<HomePage> {
                             return Padding(
                                 padding: const EdgeInsets.all(16),
                                 child: StreamBuilder(
-                                    stream: FinanceHealthService()
-                                        .getHealthyValue(
-                                            accounts: accounts,
-                                            startDate:
-                                                dateRangeService.startDate,
-                                            endDate: dateRangeService.endDate),
+                                    initialData: 0.0,
+                                    stream:
+                                        FinanceHealthService().getHealthyValue(
+                                      accounts: accounts,
+                                      startDate: dateRangeService.startDate,
+                                      endDate: dateRangeService.endDate,
+                                    ),
                                     builder: (context, snapshot) {
-                                      return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          if (snapshot.hasData)
-                                            Flexible(
-                                                flex: 3,
-                                                child: Text(
-                                                    'Genial! Tu salud financiera es buena. Visita la pestaña de análisis para ver como ahorrar aun mas!')),
-                                          if (!snapshot.hasData)
-                                            const Column(
-                                              children: [
-                                                Skeleton(width: 50, height: 12),
-                                                Skeleton(width: 50, height: 12),
-                                                Skeleton(width: 50, height: 12),
-                                                Skeleton(width: 50, height: 12),
-                                              ],
+                                      Color getHealthyValueColor(
+                                              double healthyValue) =>
+                                          HSLColor.fromAHSL(
+                                                  1, healthyValue, 1, 0.35)
+                                              .toColor();
+
+                                      return ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxHeight: 200,
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            AnimatedProgressBar(
+                                              value: snapshot.data! / 100,
+                                              direction: Axis.vertical,
+                                              width: 16,
+                                              color: getHealthyValueColor(
+                                                  snapshot.data!),
                                             ),
-                                          const SizedBox(width: 24),
-                                          if (snapshot.hasData)
-                                            Flexible(
-                                                flex: 2,
-                                                child: LayoutBuilder(builder:
-                                                    (context, constraints) {
-                                                  return CircularArc(
-                                                    color: HSLColor.fromAHSL(
-                                                            1,
-                                                            snapshot.data!,
-                                                            1,
-                                                            0.35)
-                                                        .toColor(),
-                                                    value: snapshot.data! / 100,
-                                                    width: constraints.maxWidth,
-                                                  );
-                                                }))
-                                        ],
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            '${snapshot.data!}',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .headlineMedium!
+                                                                .copyWith(
+                                                                  color: getHealthyValueColor(
+                                                                      snapshot
+                                                                          .data!),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                ),
+                                                          ),
+                                                          const Text(" / 100")
+                                                        ],
+                                                      ),
+                                                      Text(
+                                                        FinanceHealthService()
+                                                            .getHealthyValueReviewTitle(
+                                                                context,
+                                                                snapshot.data!),
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleMedium!
+                                                            .copyWith(
+                                                              color:
+                                                                  getHealthyValueColor(
+                                                                      snapshot
+                                                                          .data!),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    FinanceHealthService()
+                                                        .getHealthyValueReviewDescr(
+                                                            context,
+                                                            snapshot.data!),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       );
                                     }));
                           }),
                     ),
                     const SizedBox(height: 16),
                     CardWithHeader(
-                        title: 'Tendencia de saldo',
+                        title: t.stats.balance_evolution,
                         body: FundEvolutionLineChart(
                           startDate: dateRangeService.startDate,
                           endDate: dateRangeService.endDate,
@@ -609,32 +657,34 @@ class _HomePageState extends State<HomePage> {
                         mainAxisSpacing: 8,
                         crossAxisCount: 4,
                         children: _tools
-                            .map((item) => Column(
-                                  children: [
-                                    IconButton.filledTonal(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      item['route']));
-                                        },
-                                        icon: Icon(
-                                          item['icon'],
-                                          size: 32,
-                                          color: Theme.of(context).primaryColor,
-                                        )),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      item['label'],
-                                      overflow: TextOverflow.fade,
-                                      softWrap: false,
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w300),
-                                    )
-                                  ],
-                                ))
+                            .map(
+                              (item) => Column(
+                                children: [
+                                  IconButton.filledTonal(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    item['route']));
+                                      },
+                                      icon: Icon(
+                                        item['icon'],
+                                        size: 32,
+                                        color: Theme.of(context).primaryColor,
+                                      )),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    item['label'],
+                                    overflow: TextOverflow.fade,
+                                    softWrap: false,
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w300),
+                                  )
+                                ],
+                              ),
+                            )
                             .toList(),
                       ),
                     ),

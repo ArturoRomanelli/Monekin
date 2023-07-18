@@ -2,6 +2,8 @@ import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/i18n/translations.g.dart';
+import 'package:flutter/material.dart';
 
 class FinanceHealthService {
   /// Returns the number of months that the user can live without income, taking into account their spending rate in the last 12 months.
@@ -87,5 +89,37 @@ class FinanceHealthService {
       return (0.5 * res[1]! +
           (res[0] != null ? 5 * [res[0] as int, 10].min : 5 * 2.5));
     });
+  }
+
+  String getHealthyValueReviewDescr(BuildContext context, double healthyValue) {
+    final t = Translations.of(context);
+
+    if (healthyValue < 20) {
+      return t.financial_health.review.descr.very_bad;
+    } else if (healthyValue < 40) {
+      return t.financial_health.review.descr.bad;
+    } else if (healthyValue < 60) {
+      return t.financial_health.review.descr.normal;
+    } else if (healthyValue < 80) {
+      return t.financial_health.review.descr.good;
+    } else {
+      return t.financial_health.review.descr.very_good;
+    }
+  }
+
+  String getHealthyValueReviewTitle(BuildContext context, double healthyValue) {
+    final t = Translations.of(context);
+
+    if (healthyValue < 20) {
+      return t.financial_health.review.very_bad;
+    } else if (healthyValue < 40) {
+      return t.financial_health.review.bad;
+    } else if (healthyValue < 60) {
+      return t.financial_health.review.normal;
+    } else if (healthyValue < 80) {
+      return t.financial_health.review.good;
+    } else {
+      return t.financial_health.review.very_good;
+    }
   }
 }

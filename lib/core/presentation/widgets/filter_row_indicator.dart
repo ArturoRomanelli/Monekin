@@ -23,8 +23,11 @@ class _FilterRowIndicatorState extends State<FilterRowIndicator> {
     filters = widget.filters;
   }
 
-  InputChip buildChip(BuildContext context,
-      {required String label, required void Function()? onDeleted}) {
+  InputChip buildChip(
+    BuildContext context, {
+    required String label,
+    required void Function()? onDeleted,
+  }) {
     return InputChip(
         padding: const EdgeInsets.all(0),
         onDeleted: onDeleted,

@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 696 (348 per locale)
+/// Strings: 758 (379 per locale)
 ///
-/// Built on 2023-07-18 at 16:21 UTC
+/// Built on 2023-07-22 at 09:38 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -292,6 +292,9 @@ class _TranslationsIconSelectorEn {
 	String get icon => 'Icon';
 	String get color => 'Colour';
 	String get select_icon => 'Select an icon';
+	String get select_account_icon => 'Identify your account';
+	String get select_category_icon => 'Identify your category';
+	late final _TranslationsIconSelectorScopesEn scopes = _TranslationsIconSelectorScopesEn._(_root);
 }
 
 // Path: transaction
@@ -308,10 +311,13 @@ class _TranslationsTransactionEn {
 	String get edit => 'Edit transaction';
 	String get edit_success => 'Transaction edited successfully';
 	String get duplicate => 'Clone transaction';
+	String get duplicate_short => 'Clone';
+	String get duplicate_warning_message => 'A transaction identical to this will be created with the same date, do you want to continue?';
 	String get duplicate_success => 'Transaction cloned successfully';
 	String get delete => 'Delete transaction';
 	String get delete_warning_message => 'This action is irreversible. The current balance of your accounts and all your statistics will be recalculated';
 	String get delete_success => 'Transaction deleted correctly';
+	late final _TranslationsTransactionNextPaymentsEn next_payments = _TranslationsTransactionNextPaymentsEn._(_root);
 	late final _TranslationsTransactionListEn list = _TranslationsTransactionListEn._(_root);
 	late final _TranslationsTransactionFormEn form = _TranslationsTransactionFormEn._(_root);
 	late final _TranslationsTransactionStatusEn status = _TranslationsTransactionStatusEn._(_root);
@@ -478,8 +484,8 @@ class _TranslationsSettingsEn {
 	late final _TranslationsSettingsDataEn data = _TranslationsSettingsDataEn._(_root);
 	late final _TranslationsSettingsProjectEn project = _TranslationsSettingsProjectEn._(_root);
 	late final _TranslationsSettingsHelpUsEn help_us = _TranslationsSettingsHelpUsEn._(_root);
-	late final _TranslationsSettingsLicensesEn licenses = _TranslationsSettingsLicensesEn._(_root);
 	late final _TranslationsSettingsPrivacyEn privacy = _TranslationsSettingsPrivacyEn._(_root);
+	late final _TranslationsSettingsLicensesEn licenses = _TranslationsSettingsLicensesEn._(_root);
 	late final _TranslationsSettingsTermsOfUseEn terms_of_use = _TranslationsSettingsTermsOfUseEn._(_root);
 }
 
@@ -514,6 +520,10 @@ class _TranslationsGeneralTimeEn {
 	// Translations
 	String get start_date => 'Start date';
 	String get end_date => 'End date';
+	String get date => 'Date';
+	String get datetime => 'Datetime';
+	String get each => 'Each';
+	String get after => 'After';
 	late final _TranslationsGeneralTimeRangesEn ranges = _TranslationsGeneralTimeRangesEn._(_root);
 	late final _TranslationsGeneralTimePeriodicityEn periodicity = _TranslationsGeneralTimePeriodicityEn._(_root);
 	late final _TranslationsGeneralTimeCurrentEn current = _TranslationsGeneralTimeCurrentEn._(_root);
@@ -585,6 +595,41 @@ class _TranslationsFinancialHealthSavingsPercentageEn {
 	String get very_bad => 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
 }
 
+// Path: icon_selector.scopes
+class _TranslationsIconSelectorScopesEn {
+	_TranslationsIconSelectorScopesEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get transport => 'Transport';
+	String get money => 'Money';
+	String get food => 'Food';
+	String get medical => 'Health';
+	String get entertainment => 'Leisure';
+	String get technology => 'Technology';
+	String get other => 'Others';
+}
+
+// Path: transaction.next_payments
+class _TranslationsTransactionNextPaymentsEn {
+	_TranslationsTransactionNextPaymentsEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get accept => 'Accept';
+	String get skip => 'Skip';
+	String get skip_success => 'Successfully skipped transaction';
+	String get skip_dialog_title => 'Skip payment';
+	String skip_dialog_msg({required Object date}) => 'This action is irreversible. We will move the date of the next move to ${date}';
+	String get accept_today => 'Accept today';
+	String accept_in_required_date({required Object date}) => 'Accept in required date (${date})';
+	String get accept_dialog_title => 'Accept transaction';
+	String accept_dialog_msg({required Object date}) => 'This action will create a new transaction with date ${date}. You will be able to check the details of this transaction on the transaction page';
+	String get recurrent_rule_finished => 'The recurring rule has been completed, there are no more payments to make!';
+}
+
 // Path: transaction.list
 class _TranslationsTransactionListEn {
 	_TranslationsTransactionListEn._(this._root);
@@ -606,6 +651,8 @@ class _TranslationsTransactionFormEn {
 	// Translations
 	String get status => 'Status';
 	late final _TranslationsTransactionFormValidatorsEn validators = _TranslationsTransactionFormValidatorsEn._(_root);
+	String get title => 'Transaction title';
+	String get value => 'Value of the transaction';
 	String get description => 'Description';
 	String get description_info => 'Adding a note will help you find this transaction faster in the future';
 	String exchange_to_preferred({required Object x}) => 'Currently equal to approximately ${x}';
@@ -650,6 +697,8 @@ class _TranslationsRecurrentTransactionsDetailsEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
+	String get title => 'Transaccion recurrente';
+	String next_payment_info({required Object date}) => 'The next movement of this transaction will take place on ${date}. You can choose whether you want to skip this movement or accept it on the date of your choice';
 	String get delete_header => 'Delete recurring transaction';
 	String get delete_message => 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 }
@@ -721,7 +770,6 @@ class _TranslationsCurrenciesFormEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get date => 'Date';
 	String get equal_to_preferred_warn => 'The currency cannot be equal to the user currency';
 	String get specify_a_currency => 'Please specify a currency';
 	String get add => 'Add exchange rate';
@@ -752,7 +800,6 @@ class _TranslationsBudgetsFormEn {
 	String get title => 'Add a budget';
 	String get name => 'Budget name';
 	String get value => 'Limit quantity';
-	String get repetition => 'Repetition';
 	String get create => 'Add budget';
 	String get edit => 'Edit budget';
 	String get negative_warn => 'The budgets can not have a negative amount';
@@ -878,23 +925,6 @@ class _TranslationsSettingsHelpUsEn {
 	String get report => 'Report bugs, leave suggestions...';
 }
 
-// Path: settings.licenses
-class _TranslationsSettingsLicensesEn {
-	_TranslationsSettingsLicensesEn._(this._root);
-
-	final _TranslationsEn _root; // ignore: unused_field
-
-	// Translations
-	String get title => 'Licenses';
-	String get footer => '<p>To build trust in us and help grow the app and its security, this project is 100% open source and 100% free. Anyone can see how it works inside and how data is stored Anyone can fix bugs, develop new features, etc.</p><p>Click <a href=\'https://github.com/enrique-lozano/Monekin\'>here</a> to see the application code and other useful information.</p>';
-	String get start => 'All content in this application, such as icons, fonts and other libraries, has been legally obtained. External code libraries have been downloaded and used via the npm package manager. Also, the project is open source and anyone can contribute to it.';
-	String get icons => 'Icons';
-	String get fonts => 'Typefaces & Fonts';
-	String get text1 => 'The icons of this app have been extracted from';
-	String get text2 => 'We should mention the following authors:';
-	String get text3 => 'A special mention should be made to the <a href=\'https://www.flaticon.com/packs/avatars-90?style_id=688&family_id=71&group_id=232\'>Vitaly Gorbachev avatar pack</a>, thanks to which you can configure your profile picture.';
-}
-
 // Path: settings.privacy
 class _TranslationsSettingsPrivacyEn {
 	_TranslationsSettingsPrivacyEn._(this._root);
@@ -903,6 +933,16 @@ class _TranslationsSettingsPrivacyEn {
 
 	// Translations
 	String get title => 'Privacy policy';
+}
+
+// Path: settings.licenses
+class _TranslationsSettingsLicensesEn {
+	_TranslationsSettingsLicensesEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Licences';
 }
 
 // Path: settings.terms_of_use
@@ -926,6 +966,22 @@ class _TranslationsGeneralTimeRangesEn {
 	String get it_repeat => 'Repeats';
 	String get it_ends => 'Ends';
 	String get forever => 'Forever';
+	String each_range({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Every ${range}',
+		other: 'Every ${n} ${range}',
+	);
+	String each_range_until_date({required num n, required Object range, required Object day}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Every ${range} until ${day}',
+		other: 'Every ${n} ${range} until ${day}',
+	);
+	String each_range_until_times({required num n, required Object range, required Object limit}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Every ${range} ${limit} times',
+		other: 'Every ${n} ${range} ${limit} times',
+	);
+	String each_range_until_once({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Every ${range} once',
+		other: 'Every ${n} ${range} once',
+	);
 	String month({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 		one: 'Month',
 		other: 'Months',
@@ -953,6 +1009,10 @@ class _TranslationsGeneralTimePeriodicityEn {
 	// Translations
 	String get display => 'Recurrence';
 	String get no_repeat => 'No repeat';
+	String repeat({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Repetition',
+		other: 'Repetitions',
+	);
 	String get diary => 'Daily';
 	String get monthly => 'Monthly';
 	String get annually => 'Annually';
@@ -1013,6 +1073,7 @@ class _TranslationsTransactionFormValidatorsEn {
 
 	// Translations
 	String get zero => 'The value of a transaction cannot be equal to zero';
+	String get date_max => 'The selected date is after the current one. The transaction will be added as pending';
 	String get negative_transaction => 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
 	String get negative_transfer => 'The monetary value of a transfer cannot be negative';
 }
@@ -1197,6 +1258,9 @@ class _TranslationsIconSelectorEs extends _TranslationsIconSelectorEn {
 	@override String get icon => 'Icono';
 	@override String get color => 'Color';
 	@override String get select_icon => 'Selecciona un icono';
+	@override String get select_account_icon => 'Identifica tu cuenta';
+	@override String get select_category_icon => 'Identifica tu categoría';
+	@override late final _TranslationsIconSelectorScopesEs scopes = _TranslationsIconSelectorScopesEs._(_root);
 }
 
 // Path: transaction
@@ -1213,10 +1277,13 @@ class _TranslationsTransactionEs extends _TranslationsTransactionEn {
 	@override String get edit => 'Editar transacción';
 	@override String get edit_success => 'Transacción editada correctamente';
 	@override String get duplicate => 'Clonar transacción';
+	@override String get duplicate_short => 'Clonar';
+	@override String get duplicate_warning_message => 'Se creará una transacción identica a esta con su misma fecha, ¿deseas continuar?';
 	@override String get duplicate_success => 'Transacción clonada con exito';
 	@override String get delete => 'Eliminar transacción';
 	@override String get delete_warning_message => 'Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas';
 	@override String get delete_success => 'Transacción eliminada correctamente';
+	@override late final _TranslationsTransactionNextPaymentsEs next_payments = _TranslationsTransactionNextPaymentsEs._(_root);
 	@override late final _TranslationsTransactionListEs list = _TranslationsTransactionListEs._(_root);
 	@override late final _TranslationsTransactionFormEs form = _TranslationsTransactionFormEs._(_root);
 	@override late final _TranslationsTransactionStatusEs status = _TranslationsTransactionStatusEs._(_root);
@@ -1383,8 +1450,8 @@ class _TranslationsSettingsEs extends _TranslationsSettingsEn {
 	@override late final _TranslationsSettingsDataEs data = _TranslationsSettingsDataEs._(_root);
 	@override late final _TranslationsSettingsProjectEs project = _TranslationsSettingsProjectEs._(_root);
 	@override late final _TranslationsSettingsHelpUsEs help_us = _TranslationsSettingsHelpUsEs._(_root);
-	@override late final _TranslationsSettingsLicensesEs licenses = _TranslationsSettingsLicensesEs._(_root);
 	@override late final _TranslationsSettingsPrivacyEs privacy = _TranslationsSettingsPrivacyEs._(_root);
+	@override late final _TranslationsSettingsLicensesEs licenses = _TranslationsSettingsLicensesEs._(_root);
 	@override late final _TranslationsSettingsTermsOfUseEs terms_of_use = _TranslationsSettingsTermsOfUseEs._(_root);
 }
 
@@ -1419,6 +1486,10 @@ class _TranslationsGeneralTimeEs extends _TranslationsGeneralTimeEn {
 	// Translations
 	@override String get start_date => 'Fecha de inicio';
 	@override String get end_date => 'Fecha de fin';
+	@override String get date => 'Fecha';
+	@override String get datetime => 'Fecha y hora';
+	@override String get each => 'Cada';
+	@override String get after => 'Tras';
 	@override late final _TranslationsGeneralTimeRangesEs ranges = _TranslationsGeneralTimeRangesEs._(_root);
 	@override late final _TranslationsGeneralTimePeriodicityEs periodicity = _TranslationsGeneralTimePeriodicityEs._(_root);
 	@override late final _TranslationsGeneralTimeCurrentEs current = _TranslationsGeneralTimeCurrentEs._(_root);
@@ -1490,6 +1561,41 @@ class _TranslationsFinancialHealthSavingsPercentageEs extends _TranslationsFinan
 	@override String get very_bad => 'Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 }
 
+// Path: icon_selector.scopes
+class _TranslationsIconSelectorScopesEs extends _TranslationsIconSelectorScopesEn {
+	_TranslationsIconSelectorScopesEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get transport => 'Transporte';
+	@override String get money => 'Dinero';
+	@override String get food => 'Comida';
+	@override String get medical => 'Salud';
+	@override String get entertainment => 'Entretenimiento';
+	@override String get technology => 'Technología';
+	@override String get other => 'Otros';
+}
+
+// Path: transaction.next_payments
+class _TranslationsTransactionNextPaymentsEs extends _TranslationsTransactionNextPaymentsEn {
+	_TranslationsTransactionNextPaymentsEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get skip => 'Saltar';
+	@override String get skip_success => 'Transacción saltada con exito';
+	@override String get skip_dialog_title => 'Saltar pago';
+	@override String skip_dialog_msg({required Object date}) => 'Esta acción es irreversible. Desplazaremos la fecha del proximo movimiento al día ${date}';
+	@override String get accept => 'Aceptar';
+	@override String get accept_today => 'Aceptar hoy';
+	@override String accept_in_required_date({required Object date}) => 'Aceptar en la fecha requerida (${date})';
+	@override String get accept_dialog_title => 'Aceptar transacción';
+	@override String accept_dialog_msg({required Object date}) => 'Esta acción creará una transacción nueva con fecha ${date}. Podrás consultar los detalles de esta transacción en la página de transacciones';
+	@override String get recurrent_rule_finished => 'La regla recurrente se ha completado, ya no hay mas pagos a realizar!';
+}
+
 // Path: transaction.list
 class _TranslationsTransactionListEs extends _TranslationsTransactionListEn {
 	_TranslationsTransactionListEs._(_TranslationsEs root) : this._root = root, super._(root);
@@ -1511,6 +1617,8 @@ class _TranslationsTransactionFormEs extends _TranslationsTransactionFormEn {
 	// Translations
 	@override String get status => 'Estado';
 	@override late final _TranslationsTransactionFormValidatorsEs validators = _TranslationsTransactionFormValidatorsEs._(_root);
+	@override String get title => 'Título de la transacción';
+	@override String get value => 'Valor de la transacción';
 	@override String get description => 'Descripción';
 	@override String get description_info => 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
 	@override String exchange_to_preferred({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
@@ -1543,8 +1651,8 @@ class _TranslationsTransferFormEs extends _TranslationsTransferFormEn {
 	// Translations
 	@override String get from => 'Cuenta origen';
 	@override String get to => 'Cuenta destino';
-	@override String currency_info_add({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino &#183; Pulsa para editar';
-	@override String currency_info_edit({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino &#183; Pulsa para editar';
+	@override String currency_info_add({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino';
+	@override String currency_info_edit({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino';
 	@override late final _TranslationsTransferFormCurrencyExchangeSelectorEs currency_exchange_selector = _TranslationsTransferFormCurrencyExchangeSelectorEs._(_root);
 }
 
@@ -1555,6 +1663,8 @@ class _TranslationsRecurrentTransactionsDetailsEs extends _TranslationsRecurrent
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get title => 'Transaccion recurrente';
+	@override String next_payment_info({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Puedes elegir si deseas saltar este movimiento o aceptarlo en la fecha que elijas';
 	@override String get delete_header => 'Eliminar transacción recurrente';
 	@override String get delete_message => 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 }
@@ -1626,7 +1736,6 @@ class _TranslationsCurrenciesFormEs extends _TranslationsCurrenciesFormEn {
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get date => 'Fecha';
 	@override String get equal_to_preferred_warn => 'The currency can not be equal to the user currency';
 	@override String get specify_a_currency => 'Por favor, especifica una divisa';
 	@override String get add => 'Añadir tipo de cambio';
@@ -1657,7 +1766,6 @@ class _TranslationsBudgetsFormEs extends _TranslationsBudgetsFormEn {
 	@override String get title => 'Añade un presupuesto';
 	@override String get name => 'Nombre del presupuesto';
 	@override String get value => 'Cantidad límite';
-	@override String get repetition => 'Repetición';
 	@override String get create => 'Añade el presupuesto';
 	@override String get edit => 'Editar presupuesto';
 	@override String get negative_warn => 'Los presupuestos no pueden tener un valor límite negativo';
@@ -1782,23 +1890,6 @@ class _TranslationsSettingsHelpUsEs extends _TranslationsSettingsHelpUsEn {
 	@override String get report => 'Reporta errores, deja sugerencias...';
 }
 
-// Path: settings.licenses
-class _TranslationsSettingsLicensesEs extends _TranslationsSettingsLicensesEn {
-	_TranslationsSettingsLicensesEs._(_TranslationsEs root) : this._root = root, super._(root);
-
-	@override final _TranslationsEs _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Licencias';
-	@override String get start => 'Todo el contenido de esta aplicación, como íconos, fuentes y otras bibliotecas, se ha obtenido legalmente. Se han descargado y utilizado bibliotecas de códigos externos a través del administrador de paquetes npm. Además, el proyecto es de código abierto y cualquiera puede colaborar en el.';
-	@override String get footer => '<p>Para generar confianza en nosotros y ayudar al crecimiento de la aplicación y su seguridad, este proyecto es 100 % de código abierto y 100 % gratuito. Cualquiera puede ver cómo funciona por dentro y cómo se almacenan los datos de los usuarios. Cualquiera puede solucionar errores, desarrollar nuevas funcionalidades, etc.</p><p>Pincha <a href=\'https://github.com/enrique-lozano/Monekin\'>aquí</a> para ver el código de la aplicación y más información de interés.</p>';
-	@override String get icons => 'Iconos';
-	@override String get fonts => 'Tipografías & Fuentes';
-	@override String get text1 => 'Los iconos usados en esta aplicación han sido extraidos desde';
-	@override String get text2 => 'Hemos de destacar a los siguientes autores:';
-	@override String get text3 => 'Hemos de hacer mención especial al <a href=\'https://www.flaticon.com/packs/avatars-90?style_id=688&family_id=71&group_id=232\'>paquete de avatares de Vitaly Gorbachev</a>, gracias al cual podeis configurar vuestra imagen de perfil.';
-}
-
 // Path: settings.privacy
 class _TranslationsSettingsPrivacyEs extends _TranslationsSettingsPrivacyEn {
 	_TranslationsSettingsPrivacyEs._(_TranslationsEs root) : this._root = root, super._(root);
@@ -1807,6 +1898,16 @@ class _TranslationsSettingsPrivacyEs extends _TranslationsSettingsPrivacyEn {
 
 	// Translations
 	@override String get title => 'Política de privacidad';
+}
+
+// Path: settings.licenses
+class _TranslationsSettingsLicensesEs extends _TranslationsSettingsLicensesEn {
+	_TranslationsSettingsLicensesEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Licencias';
 }
 
 // Path: settings.terms_of_use
@@ -1829,6 +1930,22 @@ class _TranslationsGeneralTimeRangesEs extends _TranslationsGeneralTimeRangesEn 
 	@override String get display => 'Rango temporal';
 	@override String get it_repeat => 'Se repite';
 	@override String get it_ends => 'Termina';
+	@override String each_range({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Cada ${range}',
+		other: 'Cada ${n} ${range}',
+	);
+	@override String each_range_until_date({required num n, required Object range, required Object day}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Cada ${range} hasta el ${day}',
+		other: 'Cada ${n} ${range} hasta el ${day}',
+	);
+	@override String each_range_until_times({required num n, required Object range, required Object limit}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Cada ${range} ${limit} veces',
+		other: 'Cada ${n} ${range} ${limit} veces',
+	);
+	@override String each_range_until_once({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Cada ${range} una vez',
+		other: 'Cada ${n} ${range} una vez',
+	);
 	@override String get forever => 'Para siempre';
 	@override String month({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
 		one: 'Mes',
@@ -1857,6 +1974,10 @@ class _TranslationsGeneralTimePeriodicityEs extends _TranslationsGeneralTimePeri
 	// Translations
 	@override String get display => 'Periodicidad';
 	@override String get no_repeat => 'Sin repetición';
+	@override String repeat({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+		one: 'Repetición',
+		other: 'Repeticiones',
+	);
 	@override String get diary => 'Diaría';
 	@override String get monthly => 'Mensual';
 	@override String get annually => 'Anual';
@@ -1918,6 +2039,7 @@ class _TranslationsTransactionFormValidatorsEs extends _TranslationsTransactionF
 
 	// Translations
 	@override String get zero => 'El valor de una transacción no puede ser igual a cero';
+	@override String get date_max => 'La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente';
 	@override String get negative_transaction => 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
 	@override String get negative_transfer => 'El valor monetario de una transferencia no puede ser negativo';
 }
@@ -1971,10 +2093,30 @@ extension on _TranslationsEn {
 			case 'general.clipboard.error': return 'Error al copiar';
 			case 'general.time.start_date': return 'Start date';
 			case 'general.time.end_date': return 'End date';
+			case 'general.time.date': return 'Date';
+			case 'general.time.datetime': return 'Datetime';
+			case 'general.time.each': return 'Each';
+			case 'general.time.after': return 'After';
 			case 'general.time.ranges.display': return 'Time range';
 			case 'general.time.ranges.it_repeat': return 'Repeats';
 			case 'general.time.ranges.it_ends': return 'Ends';
 			case 'general.time.ranges.forever': return 'Forever';
+			case 'general.time.ranges.each_range': return ({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Every ${range}',
+				other: 'Every ${n} ${range}',
+			);
+			case 'general.time.ranges.each_range_until_date': return ({required num n, required Object range, required Object day}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Every ${range} until ${day}',
+				other: 'Every ${n} ${range} until ${day}',
+			);
+			case 'general.time.ranges.each_range_until_times': return ({required num n, required Object range, required Object limit}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Every ${range} ${limit} times',
+				other: 'Every ${n} ${range} ${limit} times',
+			);
+			case 'general.time.ranges.each_range_until_once': return ({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Every ${range} once',
+				other: 'Every ${n} ${range} once',
+			);
 			case 'general.time.ranges.month': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 				one: 'Month',
 				other: 'Months',
@@ -1993,6 +2135,10 @@ extension on _TranslationsEn {
 			);
 			case 'general.time.periodicity.display': return 'Recurrence';
 			case 'general.time.periodicity.no_repeat': return 'No repeat';
+			case 'general.time.periodicity.repeat': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+				one: 'Repetition',
+				other: 'Repetitions',
+			);
 			case 'general.time.periodicity.diary': return 'Daily';
 			case 'general.time.periodicity.monthly': return 'Monthly';
 			case 'general.time.periodicity.annually': return 'Annually';
@@ -2072,6 +2218,15 @@ extension on _TranslationsEn {
 			case 'icon_selector.icon': return 'Icon';
 			case 'icon_selector.color': return 'Colour';
 			case 'icon_selector.select_icon': return 'Select an icon';
+			case 'icon_selector.select_account_icon': return 'Identify your account';
+			case 'icon_selector.select_category_icon': return 'Identify your category';
+			case 'icon_selector.scopes.transport': return 'Transport';
+			case 'icon_selector.scopes.money': return 'Money';
+			case 'icon_selector.scopes.food': return 'Food';
+			case 'icon_selector.scopes.medical': return 'Health';
+			case 'icon_selector.scopes.entertainment': return 'Leisure';
+			case 'icon_selector.scopes.technology': return 'Technology';
+			case 'icon_selector.scopes.other': return 'Others';
 			case 'transaction.create': return 'New transaction';
 			case 'transaction.new_income': return 'New income';
 			case 'transaction.new_expense': return 'New expense';
@@ -2079,17 +2234,32 @@ extension on _TranslationsEn {
 			case 'transaction.edit': return 'Edit transaction';
 			case 'transaction.edit_success': return 'Transaction edited successfully';
 			case 'transaction.duplicate': return 'Clone transaction';
+			case 'transaction.duplicate_short': return 'Clone';
+			case 'transaction.duplicate_warning_message': return 'A transaction identical to this will be created with the same date, do you want to continue?';
 			case 'transaction.duplicate_success': return 'Transaction cloned successfully';
 			case 'transaction.delete': return 'Delete transaction';
 			case 'transaction.delete_warning_message': return 'This action is irreversible. The current balance of your accounts and all your statistics will be recalculated';
 			case 'transaction.delete_success': return 'Transaction deleted correctly';
+			case 'transaction.next_payments.accept': return 'Accept';
+			case 'transaction.next_payments.skip': return 'Skip';
+			case 'transaction.next_payments.skip_success': return 'Successfully skipped transaction';
+			case 'transaction.next_payments.skip_dialog_title': return 'Skip payment';
+			case 'transaction.next_payments.skip_dialog_msg': return ({required Object date}) => 'This action is irreversible. We will move the date of the next move to ${date}';
+			case 'transaction.next_payments.accept_today': return 'Accept today';
+			case 'transaction.next_payments.accept_in_required_date': return ({required Object date}) => 'Accept in required date (${date})';
+			case 'transaction.next_payments.accept_dialog_title': return 'Accept transaction';
+			case 'transaction.next_payments.accept_dialog_msg': return ({required Object date}) => 'This action will create a new transaction with date ${date}. You will be able to check the details of this transaction on the transaction page';
+			case 'transaction.next_payments.recurrent_rule_finished': return 'The recurring rule has been completed, there are no more payments to make!';
 			case 'transaction.list.empty': return 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
 			case 'transaction.list.searcher_placeholder': return 'Search by category, description...';
 			case 'transaction.list.loading': return 'Loading more transactions...';
 			case 'transaction.form.status': return 'Status';
 			case 'transaction.form.validators.zero': return 'The value of a transaction cannot be equal to zero';
+			case 'transaction.form.validators.date_max': return 'The selected date is after the current one. The transaction will be added as pending';
 			case 'transaction.form.validators.negative_transaction': return 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
 			case 'transaction.form.validators.negative_transfer': return 'The monetary value of a transfer cannot be negative';
+			case 'transaction.form.title': return 'Transaction title';
+			case 'transaction.form.value': return 'Value of the transaction';
 			case 'transaction.form.description': return 'Description';
 			case 'transaction.form.description_info': return 'Adding a note will help you find this transaction faster in the future';
 			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Currently equal to approximately ${x}';
@@ -2115,6 +2285,8 @@ extension on _TranslationsEn {
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Amount transferred in destination';
 			case 'recurrent_transactions.title': return 'Recurrent transactions';
 			case 'recurrent_transactions.empty': return 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
+			case 'recurrent_transactions.details.title': return 'Transaccion recurrente';
+			case 'recurrent_transactions.details.next_payment_info': return ({required Object date}) => 'The next movement of this transaction will take place on ${date}. You can choose whether you want to skip this movement or accept it on the date of your choice';
 			case 'recurrent_transactions.details.delete_header': return 'Delete recurring transaction';
 			case 'recurrent_transactions.details.delete_message': return 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 			case 'account.date': return 'Date created';
@@ -2153,7 +2325,6 @@ extension on _TranslationsEn {
 			case 'currencies.preferred_currency': return 'Preferred/base currency';
 			case 'currencies.change_preferred_currency_title': return 'Change preferred currency';
 			case 'currencies.change_preferred_currency_msg': return 'All stats and budgets will be displayed in this currency from now on. Accounts and transactions will keep the currency they had. All saved exchange rates will be deleted if you execute this action. Do you wish to continue?';
-			case 'currencies.form.date': return 'Date';
 			case 'currencies.form.equal_to_preferred_warn': return 'The currency cannot be equal to the user currency';
 			case 'currencies.form.specify_a_currency': return 'Please specify a currency';
 			case 'currencies.form.add': return 'Add exchange rate';
@@ -2213,7 +2384,6 @@ extension on _TranslationsEn {
 			case 'budgets.form.title': return 'Add a budget';
 			case 'budgets.form.name': return 'Budget name';
 			case 'budgets.form.value': return 'Limit quantity';
-			case 'budgets.form.repetition': return 'Repetition';
 			case 'budgets.form.create': return 'Add budget';
 			case 'budgets.form.edit': return 'Edit budget';
 			case 'budgets.form.negative_warn': return 'The budgets can not have a negative amount';
@@ -2283,15 +2453,8 @@ extension on _TranslationsEn {
 			case 'settings.help_us.share': return 'Share Monekin';
 			case 'settings.help_us.share_text': return 'Monekin! The best personal finance app';
 			case 'settings.help_us.report': return 'Report bugs, leave suggestions...';
-			case 'settings.licenses.title': return 'Licenses';
-			case 'settings.licenses.footer': return '<p>To build trust in us and help grow the app and its security, this project is 100% open source and 100% free. Anyone can see how it works inside and how data is stored Anyone can fix bugs, develop new features, etc.</p><p>Click <a href=\'https://github.com/enrique-lozano/Monekin\'>here</a> to see the application code and other useful information.</p>';
-			case 'settings.licenses.start': return 'All content in this application, such as icons, fonts and other libraries, has been legally obtained. External code libraries have been downloaded and used via the npm package manager. Also, the project is open source and anyone can contribute to it.';
-			case 'settings.licenses.icons': return 'Icons';
-			case 'settings.licenses.fonts': return 'Typefaces & Fonts';
-			case 'settings.licenses.text1': return 'The icons of this app have been extracted from';
-			case 'settings.licenses.text2': return 'We should mention the following authors:';
-			case 'settings.licenses.text3': return 'A special mention should be made to the <a href=\'https://www.flaticon.com/packs/avatars-90?style_id=688&family_id=71&group_id=232\'>Vitaly Gorbachev avatar pack</a>, thanks to which you can configure your profile picture.';
 			case 'settings.privacy.title': return 'Privacy policy';
+			case 'settings.licenses.title': return 'Licences';
 			case 'settings.terms_of_use.title': return 'Terms of use';
 			case 'lang.es': return 'Spanish';
 			case 'lang.en': return 'English';
@@ -2335,9 +2498,29 @@ extension on _TranslationsEs {
 			case 'general.clipboard.error': return 'Error al copiar';
 			case 'general.time.start_date': return 'Fecha de inicio';
 			case 'general.time.end_date': return 'Fecha de fin';
+			case 'general.time.date': return 'Fecha';
+			case 'general.time.datetime': return 'Fecha y hora';
+			case 'general.time.each': return 'Cada';
+			case 'general.time.after': return 'Tras';
 			case 'general.time.ranges.display': return 'Rango temporal';
 			case 'general.time.ranges.it_repeat': return 'Se repite';
 			case 'general.time.ranges.it_ends': return 'Termina';
+			case 'general.time.ranges.each_range': return ({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Cada ${range}',
+				other: 'Cada ${n} ${range}',
+			);
+			case 'general.time.ranges.each_range_until_date': return ({required num n, required Object range, required Object day}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Cada ${range} hasta el ${day}',
+				other: 'Cada ${n} ${range} hasta el ${day}',
+			);
+			case 'general.time.ranges.each_range_until_times': return ({required num n, required Object range, required Object limit}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Cada ${range} ${limit} veces',
+				other: 'Cada ${n} ${range} ${limit} veces',
+			);
+			case 'general.time.ranges.each_range_until_once': return ({required num n, required Object range}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Cada ${range} una vez',
+				other: 'Cada ${n} ${range} una vez',
+			);
 			case 'general.time.ranges.forever': return 'Para siempre';
 			case 'general.time.ranges.month': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
 				one: 'Mes',
@@ -2357,6 +2540,10 @@ extension on _TranslationsEs {
 			);
 			case 'general.time.periodicity.display': return 'Periodicidad';
 			case 'general.time.periodicity.no_repeat': return 'Sin repetición';
+			case 'general.time.periodicity.repeat': return ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('es'))(n,
+				one: 'Repetición',
+				other: 'Repeticiones',
+			);
 			case 'general.time.periodicity.diary': return 'Diaría';
 			case 'general.time.periodicity.monthly': return 'Mensual';
 			case 'general.time.periodicity.annually': return 'Anual';
@@ -2437,6 +2624,15 @@ extension on _TranslationsEs {
 			case 'icon_selector.icon': return 'Icono';
 			case 'icon_selector.color': return 'Color';
 			case 'icon_selector.select_icon': return 'Selecciona un icono';
+			case 'icon_selector.select_account_icon': return 'Identifica tu cuenta';
+			case 'icon_selector.select_category_icon': return 'Identifica tu categoría';
+			case 'icon_selector.scopes.transport': return 'Transporte';
+			case 'icon_selector.scopes.money': return 'Dinero';
+			case 'icon_selector.scopes.food': return 'Comida';
+			case 'icon_selector.scopes.medical': return 'Salud';
+			case 'icon_selector.scopes.entertainment': return 'Entretenimiento';
+			case 'icon_selector.scopes.technology': return 'Technología';
+			case 'icon_selector.scopes.other': return 'Otros';
 			case 'transaction.create': return 'Nueva transacción';
 			case 'transaction.new_income': return 'Nuevo ingreso';
 			case 'transaction.new_expense': return 'Nuevo gasto';
@@ -2444,17 +2640,32 @@ extension on _TranslationsEs {
 			case 'transaction.edit': return 'Editar transacción';
 			case 'transaction.edit_success': return 'Transacción editada correctamente';
 			case 'transaction.duplicate': return 'Clonar transacción';
+			case 'transaction.duplicate_short': return 'Clonar';
+			case 'transaction.duplicate_warning_message': return 'Se creará una transacción identica a esta con su misma fecha, ¿deseas continuar?';
 			case 'transaction.duplicate_success': return 'Transacción clonada con exito';
 			case 'transaction.delete': return 'Eliminar transacción';
 			case 'transaction.delete_warning_message': return 'Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas';
 			case 'transaction.delete_success': return 'Transacción eliminada correctamente';
+			case 'transaction.next_payments.skip': return 'Saltar';
+			case 'transaction.next_payments.skip_success': return 'Transacción saltada con exito';
+			case 'transaction.next_payments.skip_dialog_title': return 'Saltar pago';
+			case 'transaction.next_payments.skip_dialog_msg': return ({required Object date}) => 'Esta acción es irreversible. Desplazaremos la fecha del proximo movimiento al día ${date}';
+			case 'transaction.next_payments.accept': return 'Aceptar';
+			case 'transaction.next_payments.accept_today': return 'Aceptar hoy';
+			case 'transaction.next_payments.accept_in_required_date': return ({required Object date}) => 'Aceptar en la fecha requerida (${date})';
+			case 'transaction.next_payments.accept_dialog_title': return 'Aceptar transacción';
+			case 'transaction.next_payments.accept_dialog_msg': return ({required Object date}) => 'Esta acción creará una transacción nueva con fecha ${date}. Podrás consultar los detalles de esta transacción en la página de transacciones';
+			case 'transaction.next_payments.recurrent_rule_finished': return 'La regla recurrente se ha completado, ya no hay mas pagos a realizar!';
 			case 'transaction.list.empty': return 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
 			case 'transaction.list.searcher_placeholder': return 'Busca por categoría, descripción...';
 			case 'transaction.list.loading': return 'Cargando más transacciones...';
 			case 'transaction.form.status': return 'Estado';
 			case 'transaction.form.validators.zero': return 'El valor de una transacción no puede ser igual a cero';
+			case 'transaction.form.validators.date_max': return 'La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente';
 			case 'transaction.form.validators.negative_transaction': return 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
 			case 'transaction.form.validators.negative_transfer': return 'El valor monetario de una transferencia no puede ser negativo';
+			case 'transaction.form.title': return 'Título de la transacción';
+			case 'transaction.form.value': return 'Valor de la transacción';
 			case 'transaction.form.description': return 'Descripción';
 			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
 			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
@@ -2474,12 +2685,14 @@ extension on _TranslationsEs {
 			case 'transfer.need_two_accounts_warning_message': return 'Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar';
 			case 'transfer.form.from': return 'Cuenta origen';
 			case 'transfer.form.to': return 'Cuenta destino';
-			case 'transfer.form.currency_info_add': return ({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino &#183; Pulsa para editar';
-			case 'transfer.form.currency_info_edit': return ({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino &#183; Pulsa para editar';
+			case 'transfer.form.currency_info_add': return ({required Object x}) => 'Se transpasarán ${x} a la cuenta de destino';
+			case 'transfer.form.currency_info_edit': return ({required Object x}) => 'Se han transpasado ${x} a la cuenta de destino';
 			case 'transfer.form.currency_exchange_selector.title': return 'Editar cambio entre divisas';
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Cantidad transferida en destino';
 			case 'recurrent_transactions.title': return 'Movimientos recurrentes';
 			case 'recurrent_transactions.empty': return 'Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
+			case 'recurrent_transactions.details.title': return 'Transaccion recurrente';
+			case 'recurrent_transactions.details.next_payment_info': return ({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Puedes elegir si deseas saltar este movimiento o aceptarlo en la fecha que elijas';
 			case 'recurrent_transactions.details.delete_header': return 'Eliminar transacción recurrente';
 			case 'recurrent_transactions.details.delete_message': return 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 			case 'account.date': return 'Fecha de creación';
@@ -2518,7 +2731,6 @@ extension on _TranslationsEs {
 			case 'currencies.preferred_currency': return 'Divisa predeterminada/base';
 			case 'currencies.change_preferred_currency_title': return 'Cambiar divisa predeterminada';
 			case 'currencies.change_preferred_currency_msg': return 'Todas las estadisticas y presupuestos serán mostradas en esta divisa a partir de ahora. Las cuentas y transacciones mantendrán la divisa que tenían. Todos los tipos de cambios guardados serán eliminados si ejecutas esta acción, ¿Desea continuar?';
-			case 'currencies.form.date': return 'Fecha';
 			case 'currencies.form.equal_to_preferred_warn': return 'The currency can not be equal to the user currency';
 			case 'currencies.form.specify_a_currency': return 'Por favor, especifica una divisa';
 			case 'currencies.form.add': return 'Añadir tipo de cambio';
@@ -2578,7 +2790,6 @@ extension on _TranslationsEs {
 			case 'budgets.form.title': return 'Añade un presupuesto';
 			case 'budgets.form.name': return 'Nombre del presupuesto';
 			case 'budgets.form.value': return 'Cantidad límite';
-			case 'budgets.form.repetition': return 'Repetición';
 			case 'budgets.form.create': return 'Añade el presupuesto';
 			case 'budgets.form.edit': return 'Editar presupuesto';
 			case 'budgets.form.negative_warn': return 'Los presupuestos no pueden tener un valor límite negativo';
@@ -2647,15 +2858,8 @@ extension on _TranslationsEs {
 			case 'settings.help_us.share': return 'Comparte Monekin';
 			case 'settings.help_us.share_text': return 'Monekin! La mejor app de finanzas personales';
 			case 'settings.help_us.report': return 'Reporta errores, deja sugerencias...';
-			case 'settings.licenses.title': return 'Licencias';
-			case 'settings.licenses.start': return 'Todo el contenido de esta aplicación, como íconos, fuentes y otras bibliotecas, se ha obtenido legalmente. Se han descargado y utilizado bibliotecas de códigos externos a través del administrador de paquetes npm. Además, el proyecto es de código abierto y cualquiera puede colaborar en el.';
-			case 'settings.licenses.footer': return '<p>Para generar confianza en nosotros y ayudar al crecimiento de la aplicación y su seguridad, este proyecto es 100 % de código abierto y 100 % gratuito. Cualquiera puede ver cómo funciona por dentro y cómo se almacenan los datos de los usuarios. Cualquiera puede solucionar errores, desarrollar nuevas funcionalidades, etc.</p><p>Pincha <a href=\'https://github.com/enrique-lozano/Monekin\'>aquí</a> para ver el código de la aplicación y más información de interés.</p>';
-			case 'settings.licenses.icons': return 'Iconos';
-			case 'settings.licenses.fonts': return 'Tipografías & Fuentes';
-			case 'settings.licenses.text1': return 'Los iconos usados en esta aplicación han sido extraidos desde';
-			case 'settings.licenses.text2': return 'Hemos de destacar a los siguientes autores:';
-			case 'settings.licenses.text3': return 'Hemos de hacer mención especial al <a href=\'https://www.flaticon.com/packs/avatars-90?style_id=688&family_id=71&group_id=232\'>paquete de avatares de Vitaly Gorbachev</a>, gracias al cual podeis configurar vuestra imagen de perfil.';
 			case 'settings.privacy.title': return 'Política de privacidad';
+			case 'settings.licenses.title': return 'Licencias';
 			case 'settings.terms_of_use.title': return 'Términos de uso';
 			case 'lang.es': return 'Español';
 			case 'lang.en': return 'Inglés';

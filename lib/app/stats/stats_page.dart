@@ -47,13 +47,11 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Widget buildContainerWithPadding(List<Widget> children) {
-    return Padding(
-        padding: const EdgeInsets.all(12),
-        child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: children)));
+    return SingleChildScrollView(
+        padding:
+            const EdgeInsets.only(bottom: 24, left: 16, right: 16, top: 24),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: children));
   }
 
   @override

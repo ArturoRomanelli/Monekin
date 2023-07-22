@@ -58,7 +58,9 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Select an icon',
+                  widget.name.isEmpty
+                      ? t.categories.subcategories_add
+                      : t.categories.edit,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(
@@ -76,6 +78,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                             builder: (context) {
                               return IconSelectorModal(
                                 preselectedIconID: _icon.id,
+                                subtitle: t.icon_selector.select_category_icon,
                                 onIconSelected: (selectedIcon) {
                                   setState(() {
                                     _icon = selectedIcon;

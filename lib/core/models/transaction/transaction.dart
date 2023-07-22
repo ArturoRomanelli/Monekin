@@ -204,28 +204,39 @@ class MoneyTransaction extends TransactionInDB {
           ? TransactionType.expense
           : TransactionType.income;
 
-  List<DateTime> getNextDatesOfRecurrency({DateTime? untilDate}) {
-    if (!recurrentInfo.isNoRecurrent) {
+  /// Get the following dates of a recurring transaction, disregarding the most immediate upcoming transaction, referenced in the `date` attribute of this class.
+  ///
+  /// You can pass certain limits (date or number of iter.) as parameters so that the function does not return an array of infinite dates. These limits will not be taken into account if there is already a stricter limit in the transaction.
+  List<DateTime> getNextDatesOfRecurrency({DateTime? untilDate, int? limit}) {
+    if (recurrentInfo.isNoRecurrent) {
       throw Exception(
           'The transaction should be recurrent to get the following dates');
     }
 
     List<DateTime> toReturn = [];
 
-    final remainingIterations =
+    final trRemainingIter =
         recurrentInfo.ruleRecurrentLimit?.remainingIterations;
+    if (trRemainingIter != null && (limit == null || trRemainingIter < limit)) {
+      limit = trRemainingIter;
+    }
 
-    if ((recurrentInfo.ruleRecurrentLimit?.endDate ?? untilDate) == null &&
-        remainingIterations == null) {
+    final trEndDate = recurrentInfo.ruleRecurrentLimit?.endDate;
+
+    if (trEndDate != null &&
+        (untilDate == null || trEndDate.compareTo(untilDate) < 0)) {
+      untilDate = trEndDate;
+    }
+
+    if (untilDate == null && limit == null) {
       throw Exception('Trying to calculate infinite dates');
     }
 
-    if (remainingIterations == 0) {
+    if (limit == 0) {
       return toReturn;
     }
 
-    while (
-        remainingIterations == null || toReturn.length < remainingIterations) {
+    while (limit == null || toReturn.length < limit) {
       late DateTime toPush;
 
       if (recurrentInfo.intervalPeriod == TransactionPeriodicity.day) {
@@ -243,10 +254,7 @@ class MoneyTransaction extends TransactionInDB {
         toPush = date.copyWith(year: date.year + recurrentInfo.intervalEach!);
       }
 
-      if ((recurrentInfo.ruleRecurrentLimit?.endDate != null &&
-              toPush.compareTo(recurrentInfo.ruleRecurrentLimit!.endDate!) >
-                  0) ||
-          (untilDate != null && toPush.compareTo(untilDate) > 0)) {
+      if (untilDate != null && toPush.compareTo(untilDate) > 0) {
         break;
       }
 

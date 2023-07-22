@@ -35,10 +35,30 @@
     "TIME": {
       "start-date": "Fecha de inicio",
       "end-date": "Fecha de fin",
+      "date": "Fecha",
+      "datetime": "Fecha y hora",
+      "each": "Cada",
+      "after": "Tras",
       "RANGES": {
         "display": "Rango temporal",
         "it-repeat": "Se repite",
         "it-ends": "Termina",
+        "each-range": {
+          "one": "Cada {{range}}",
+          "other": "Cada {{n}} {{range}}"
+        },
+        "each-range-until-date": {
+          "one": "Cada {{range}} hasta el {{day}}",
+          "other": "Cada {{n}} {{range}} hasta el {{day}}"
+        },
+        "each-range-until-times": {
+          "one": "Cada {{range}} {{limit}} veces",
+          "other": "Cada {{n}} {{range}} {{limit}} veces"
+        },
+        "each-range-until-once": {
+          "one": "Cada {{range}} una vez",
+          "other": "Cada {{n}} {{range}} una vez"
+        },
         "forever": "Para siempre",
         "month": {
           "one": "Mes",
@@ -60,6 +80,10 @@
       "PERIODICITY": {
         "display": "Periodicidad",
         "no-repeat": "Sin repetición",
+        "repeat": {
+          "one": "Repetición",
+          "other": "Repeticiones"
+        },
         "diary": "Diaría",
         "monthly": "Mensual",
         "annually": "Anual",
@@ -168,7 +192,18 @@
     "name": "Nombre:",
     "icon": "Icono",
     "color": "Color",
-    "select-icon": "Selecciona un icono"
+    "select-icon": "Selecciona un icono",
+    "select-account-icon": "Identifica tu cuenta",
+    "select-category-icon": "Identifica tu categoría",
+    "SCOPES": {
+      "transport": "Transporte",
+      "money": "Dinero",
+      "food": "Comida",
+      "medical": "Salud",
+      "entertainment": "Entretenimiento",
+      "technology": "Technología",
+      "other": "Otros"
+    }
   },
   "TRANSACTION": {
     "create": "Nueva transacción",
@@ -178,10 +213,24 @@
     "edit": "Editar transacción",
     "edit.success": "Transacción editada correctamente",
     "duplicate": "Clonar transacción",
+    "duplicate.short": "Clonar",
+    "duplicate.warning-message": "Se creará una transacción identica a esta con su misma fecha, ¿deseas continuar?",
     "duplicate.success": "Transacción clonada con exito",
     "delete": "Eliminar transacción",
     "delete.warning-message": "Esta acción es irreversible. El balance actual de tus cuentas y todas tus estadisticas serán recalculadas",
     "delete.success": "Transacción eliminada correctamente",
+    "NEXT-PAYMENTS": {
+      "skip": "Saltar",
+      "skip.success": "Transacción saltada con exito",
+      "skip-dialog.title": "Saltar pago",
+      "skip-dialog.msg": "Esta acción es irreversible. Desplazaremos la fecha del proximo movimiento al día {{date}}",
+      "accept": "Aceptar",
+      "accept-today": "Aceptar hoy",
+      "accept-in-required-date": "Aceptar en la fecha requerida ({{date}})",
+      "accept-dialog.title": "Aceptar transacción",
+      "accept-dialog.msg": "Esta acción creará una transacción nueva con fecha {{date}}. Podrás consultar los detalles de esta transacción en la página de transacciones",
+      "recurrent-rule-finished": "La regla recurrente se ha completado, ya no hay mas pagos a realizar!"
+    },
     "LIST": {
       "empty": "No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón '+' de la parte inferior",
       "searcher.placeholder": "Busca por categoría, descripción...",
@@ -191,9 +240,12 @@
       "status": "Estado",
       "VALIDATORS": {
         "zero": "El valor de una transacción no puede ser igual a cero",
+        "date-max": "La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente",
         "negative-transaction": "No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso",
         "negative-transfer": "El valor monetario de una transferencia no puede ser negativo"
       },
+      "title": "Título de la transacción",
+      "value": "Valor de la transacción",
       "description": "Descripción",
       "description-info": "Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro",
       "exchange-to-preferred": "Actualmente equivalen aproximadamente a {{x}}"
@@ -219,8 +271,8 @@
     "FORM": {
       "from": "Cuenta origen",
       "to": "Cuenta destino",
-      "currency-info-add": "Se transpasarán {{x}} a la cuenta de destino &#183; Pulsa para editar",
-      "currency-info-edit": "Se han transpasado {{x}} a la cuenta de destino &#183; Pulsa para editar",
+      "currency-info-add": "Se transpasarán {{x}} a la cuenta de destino",
+      "currency-info-edit": "Se han transpasado {{x}} a la cuenta de destino",
       "currency-exchange-selector": {
         "title": "Editar cambio entre divisas",
         "value-in-destiny": "Cantidad transferida en destino"
@@ -230,7 +282,10 @@
   "RECURRENT-TRANSACTIONS": {
     "title": "Movimientos recurrentes",
     "empty": "Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí",
+
     "DETAILS": {
+      "title": "Transaccion recurrente",
+      "next-payment-info": "El próximo movimiento de esta transacción tendrá lugar el día {{date}}. Puedes elegir si deseas saltar este movimiento o aceptarlo en la fecha que elijas",
       "delete-header": "Eliminar transacción recurrente",
       "delete-message": "Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado"
     }
@@ -283,7 +338,6 @@
     "change-preferred-currency-title": "Cambiar divisa predeterminada",
     "change-preferred-currency-msg": "Todas las estadisticas y presupuestos serán mostradas en esta divisa a partir de ahora. Las cuentas y transacciones mantendrán la divisa que tenían. Todos los tipos de cambios guardados serán eliminados si ejecutas esta acción, ¿Desea continuar?",
     "FORM": {
-      "date": "Fecha",
       "equal-to-preferred-warn": "The currency can not be equal to the user currency",
       "specify-a-currency": "Por favor, especifica una divisa",
       "add": "Añadir tipo de cambio",
@@ -351,7 +405,6 @@
       "title": "Añade un presupuesto",
       "name": "Nombre del presupuesto",
       "value": "Cantidad límite",
-      "repetition": "Repetición",
       "create": "Añade el presupuesto",
       "edit": "Editar presupuesto",
       "negative-warn": "Los presupuestos no pueden tener un valor límite negativo"
@@ -439,18 +492,11 @@
       "share.text": "Monekin! La mejor app de finanzas personales",
       "report": "Reporta errores, deja sugerencias..."
     },
-    "LICENSES": {
-      "title": "Licencias",
-      "start": "Todo el contenido de esta aplicación, como íconos, fuentes y otras bibliotecas, se ha obtenido legalmente. Se han descargado y utilizado bibliotecas de códigos externos a través del administrador de paquetes npm. Además, el proyecto es de código abierto y cualquiera puede colaborar en el.",
-      "footer": "<p>Para generar confianza en nosotros y ayudar al crecimiento de la aplicación y su seguridad, este proyecto es 100 % de código abierto y 100 % gratuito. Cualquiera puede ver cómo funciona por dentro y cómo se almacenan los datos de los usuarios. Cualquiera puede solucionar errores, desarrollar nuevas funcionalidades, etc.</p><p>Pincha <a href='https://github.com/enrique-lozano/Monekin'>aquí</a> para ver el código de la aplicación y más información de interés.</p>",
-      "icons": "Iconos",
-      "fonts": "Tipografías & Fuentes",
-      "text1": "Los iconos usados en esta aplicación han sido extraidos desde",
-      "text2": "Hemos de destacar a los siguientes autores:",
-      "text3": "Hemos de hacer mención especial al <a href='https://www.flaticon.com/packs/avatars-90?style_id=688&family_id=71&group_id=232'>paquete de avatares de Vitaly Gorbachev</a>, gracias al cual podeis configurar vuestra imagen de perfil."
-    },
     "PRIVACY": {
       "title": "Política de privacidad"
+    },
+    "LICENSES": {
+      "title": "Licencias"
     },
     "TERMS-OF-USE": {
       "title": "Términos de uso"

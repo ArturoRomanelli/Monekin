@@ -161,7 +161,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                   text: DateFormat.yMMMd().format(
                                       date)), //editing controller of this TextField
                               decoration: InputDecoration(
-                                labelText: '${t.currencies.form.date} *',
+                                labelText: '${t.general.time.date} *',
                               ),
                               readOnly:
                                   true, //set it true, so that user will not able to edit text

@@ -294,6 +294,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                             builder: (context) {
                                               return IconSelectorModal(
                                                 preselectedIconID: _icon.id,
+                                                subtitle: t.icon_selector
+                                                    .select_category_icon,
                                                 onIconSelected: (selectedIcon) {
                                                   setState(() {
                                                     _icon = selectedIcon;

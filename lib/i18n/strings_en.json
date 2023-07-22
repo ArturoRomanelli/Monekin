@@ -35,11 +35,31 @@
     "TIME": {
       "start-date": "Start date",
       "end-date": "End date",
+      "date": "Date",
+      "datetime": "Datetime",
+      "each": "Each",
+      "after": "After",
       "RANGES": {
         "display": "Time range",
         "it-repeat": "Repeats",
         "it-ends": "Ends",
         "forever": "Forever",
+        "each-range": {
+          "one": "Every {{range}}",
+          "other": "Every {{n}} {{range}}"
+        },
+        "each-range-until-date": {
+          "one": "Every {{range}} until {{day}}",
+          "other": "Every {{n}} {{range}} until {{day}}"
+        },
+        "each-range-until-times": {
+          "one": "Every {{range}} {{limit}} times",
+          "other": "Every {{n}} {{range}} {{limit}} times"
+        },
+        "each-range-until-once": {
+          "one": "Every {{range}} once",
+          "other": "Every {{n}} {{range}} once"
+        },
         "month": {
           "one": "Month",
           "other": "Months"
@@ -60,6 +80,10 @@
       "PERIODICITY": {
         "display": "Recurrence",
         "no-repeat": "No repeat",
+        "repeat": {
+          "one": "Repetition",
+          "other": "Repetitions"
+        },
         "diary": "Daily",
         "monthly": "Monthly",
         "annually": "Annually",
@@ -167,7 +191,18 @@
     "name": "Name:",
     "icon": "Icon",
     "color": "Colour",
-    "select-icon": "Select an icon"
+    "select-icon": "Select an icon",
+    "select-account-icon": "Identify your account",
+    "select-category-icon": "Identify your category",
+    "SCOPES": {
+      "transport": "Transport",
+      "money": "Money",
+      "food": "Food",
+      "medical": "Health",
+      "entertainment": "Leisure",
+      "technology": "Technology",
+      "other": "Others"
+    }
   },
   "TRANSACTION": {
     "create": "New transaction",
@@ -177,10 +212,24 @@
     "edit": "Edit transaction",
     "edit.success": "Transaction edited successfully",
     "duplicate": "Clone transaction",
+    "duplicate.short": "Clone",
+    "duplicate.warning-message": "A transaction identical to this will be created with the same date, do you want to continue?",
     "duplicate.success": "Transaction cloned successfully",
     "delete": "Delete transaction",
     "delete.warning-message": "This action is irreversible. The current balance of your accounts and all your statistics will be recalculated",
     "delete.success": "Transaction deleted correctly",
+    "NEXT-PAYMENTS": {
+      "accept": "Accept",
+      "skip": "Skip",
+      "skip.success": "Successfully skipped transaction",
+      "skip-dialog.title": "Skip payment",
+      "skip-dialog.msg": "This action is irreversible. We will move the date of the next move to {{date}}",
+      "accept-today": "Accept today",
+      "accept-in-required-date": "Accept in required date ({{date}})",
+      "accept-dialog.title": "Accept transaction",
+      "accept-dialog.msg": "This action will create a new transaction with date {{date}}. You will be able to check the details of this transaction on the transaction page",
+      "recurrent-rule-finished": "The recurring rule has been completed, there are no more payments to make!"
+    },
     "LIST": {
       "empty": "No transactions found to display here. Add a transaction by clicking the '+' button at the bottom",
       "searcher.placeholder": "Search by category, description...",
@@ -190,9 +239,12 @@
       "status": "Status",
       "VALIDATORS": {
         "zero": "The value of a transaction cannot be equal to zero",
+        "date-max": "The selected date is after the current one. The transaction will be added as pending",
         "negative-transaction": "Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income",
         "negative-transfer": "The monetary value of a transfer cannot be negative"
       },
+      "title": "Transaction title",
+      "value": "Value of the transaction",
       "description": "Description",
       "description-info": "Adding a note will help you find this transaction faster in the future",
       "exchange-to-preferred": "Currently equal to approximately {{x}}"
@@ -230,6 +282,8 @@
     "title": "Recurrent transactions",
     "empty": "It looks like you don't have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here",
     "DETAILS": {
+      "title": "Transaccion recurrente",
+      "next-payment-info": "The next movement of this transaction will take place on {{date}}. You can choose whether you want to skip this movement or accept it on the date of your choice",
       "delete-header": "Delete recurring transaction",
       "delete-message": "This action is irreversible and will not affect transactions you have already confirmed/paid for"
     }
@@ -282,7 +336,6 @@
     "change-preferred-currency-title": "Change preferred currency",
     "change-preferred-currency-msg": "All stats and budgets will be displayed in this currency from now on. Accounts and transactions will keep the currency they had. All saved exchange rates will be deleted if you execute this action. Do you wish to continue?",
     "FORM": {
-      "date": "Date",
       "equal-to-preferred-warn": "The currency cannot be equal to the user currency",
       "specify-a-currency": "Please specify a currency",
       "add": "Add exchange rate",
@@ -350,7 +403,6 @@
       "title": "Add a budget",
       "name": "Budget name",
       "value": "Limit quantity",
-      "repetition": "Repetition",
       "create": "Add budget",
       "edit": "Edit budget",
       "negative-warn": "The budgets can not have a negative amount"
@@ -439,18 +491,11 @@
       "share.text": "Monekin! The best personal finance app",
       "report": "Report bugs, leave suggestions..."
     },
-    "LICENSES": {
-      "title": "Licenses",
-      "footer": "<p>To build trust in us and help grow the app and its security, this project is 100% open source and 100% free. Anyone can see how it works inside and how data is stored Anyone can fix bugs, develop new features, etc.</p><p>Click <a href='https://github.com/enrique-lozano/Monekin'>here</a> to see the application code and other useful information.</p>",
-      "start": "All content in this application, such as icons, fonts and other libraries, has been legally obtained. External code libraries have been downloaded and used via the npm package manager. Also, the project is open source and anyone can contribute to it.",
-      "icons": "Icons",
-      "fonts": "Typefaces & Fonts",
-      "text1": "The icons of this app have been extracted from",
-      "text2": "We should mention the following authors:",
-      "text3": "A special mention should be made to the <a href='https://www.flaticon.com/packs/avatars-90?style_id=688&family_id=71&group_id=232'>Vitaly Gorbachev avatar pack</a>, thanks to which you can configure your profile picture."
-    },
     "PRIVACY": {
       "title": "Privacy policy"
+    },
+    "LICENSES": {
+      "title": "Licences"
     },
     "TERMS-OF-USE": {
       "title": "Terms of use"

@@ -4,7 +4,7 @@ class ListTileActionItem {
   final String label;
   final IconData icon;
 
-  final void Function() onClick;
+  final void Function()? onClick;
 
   ListTileActionItem({
     required this.label,

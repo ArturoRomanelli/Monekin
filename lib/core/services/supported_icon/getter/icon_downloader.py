@@ -30,7 +30,9 @@ def download_google_font_icons(data, path: str):
 with open(os.path.join(current_path, "supported_icons.json"), "r") as f:
     data = json.load(f)
 
-download_google_font_icons(data, "./../../../assets/icons")
+download_google_font_icons(
+    data, "./../../../../../assets/icons/supported_selectable_icons"
+)
 
 with open(os.path.join(current_path, "supported_icons.dart"), "wb") as dart_file:
     dart_file.write(

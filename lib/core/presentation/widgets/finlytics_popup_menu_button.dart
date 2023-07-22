@@ -24,7 +24,9 @@ class FinlyticsPopuMenuButton extends StatelessWidget {
         });
       },
       onSelected: (int value) {
-        actionItems[value].onClick();
+        if (actionItems[value].onClick != null) {
+          actionItems[value].onClick!();
+        }
       },
     );
   }

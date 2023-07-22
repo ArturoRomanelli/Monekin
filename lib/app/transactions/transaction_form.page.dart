@@ -223,8 +223,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
               }
             },
             icon: const Icon(Icons.save),
-            label:
-                Text(isEditMode ? t.transaction.create : t.transaction.create),
+            label: Text(isEditMode ? t.transaction.edit : t.transaction.create),
           ),
         )
       ],
@@ -242,7 +241,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     TextFormField(
                       controller: valueController,
                       decoration: InputDecoration(
-                          labelText: 'Amount *',
+                          labelText: '${t.transaction.form.value} *',
                           hintText: 'Ex.: 200',
                           suffix: fromAccount != null && valueToNumber != null
                               ? Padding(
@@ -301,7 +300,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     const SizedBox(height: 16),
                     if (widget.mode == TransactionFormMode.transfer)
                       selector(
-                          title: 'Receiving account *',
+                          title: '${t.transfer.form.to} *',
                           inputValue: toAccount?.name,
                           icon: toAccount?.icon,
                           iconColor: null,
@@ -348,13 +347,16 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     TextFormField(
                       controller: TextEditingController(
                           text: DateFormat.yMMMMd().add_Hm().format(date)),
-                      decoration: const InputDecoration(
-                        labelText: 'Fecha y hora *',
-                      ),
+                      decoration: InputDecoration(
+                          labelText: '${t.general.time.datetime} *'),
                       readOnly: true,
                       onTap: () async {
-                        DateTime? pickedDate = await openDateTimePicker(context,
-                            showTimePickerAfterDate: true);
+                        DateTime? pickedDate = await openDateTimePicker(
+                          context,
+                          initialDate: date,
+                          firstDate: fromAccount?.date,
+                          showTimePickerAfterDate: true,
+                        );
                         if (pickedDate == null) return;
 
                         setState(() {
@@ -364,9 +366,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     ),
                     if (date.compareTo(DateTime.now()) > 0) ...[
                       const SizedBox(height: 8),
-                      const InlineInfoCard(
-                          text:
-                              'La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente',
+                      InlineInfoCard(
+                          text: t.transaction.form.validators.date_max,
                           mode: InlineInfoCardMode.info),
                       const SizedBox(height: 4),
                     ],
@@ -404,11 +405,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                     TextFormField(
                       controller: titleController,
                       maxLength: 15,
-                      decoration: const InputDecoration(
-                        labelText: 'Título de la transacción',
-                        hintText:
-                            'Si no se especifica, se usará el nombre de la categoría',
-                      ),
+                      decoration:
+                          InputDecoration(labelText: t.transaction.form.title),
                     ),
                   ],
                 ),
@@ -457,7 +455,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                             TextFormField(
                               controller: valueInDestinyController,
                               decoration: InputDecoration(
-                                  labelText: 'Amount in destiny *',
+                                  labelText:
+                                      '${t.transfer.form.currency_exchange_selector.value_in_destiny}  *',
                                   hintText: 'Ex.: 200',
                                   suffix: fromAccount != null &&
                                           valueInDestinyToNumber != null
@@ -502,8 +501,11 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               valueInDestinyToNumber == null) ...[
                             const SizedBox(height: 16),
                             InlineInfoCard(
-                                text:
-                                    'Serán transpasados a la cuenta de destino especificada ${NumberFormat.currency(symbol: toAccount!.currency.symbol).format(valueToNumber)}',
+                                text: '${t.transfer.form.currency_info_add(
+                                  x: NumberFormat.currency(
+                                          symbol: toAccount!.currency.symbol)
+                                      .format(valueToNumber),
+                                )} ',
                                 mode: InlineInfoCardMode.info)
                           ],
                           const SizedBox(height: 16),

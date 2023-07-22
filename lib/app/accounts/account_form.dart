@@ -218,6 +218,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                   builder: (context) {
                                     return IconSelectorModal(
                                       preselectedIconID: _icon.id,
+                                      subtitle:
+                                          t.icon_selector.select_account_icon,
                                       onIconSelected: (selectedIcon) {
                                         setState(() {
                                           _icon = selectedIcon;

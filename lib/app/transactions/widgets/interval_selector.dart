@@ -10,7 +10,9 @@ import 'package:intl/intl.dart';
 import '../../../core/utils/date_time_picker.dart';
 
 class IntervalSelector extends StatefulWidget {
-  const IntervalSelector({super.key});
+  const IntervalSelector({super.key, this.preselectedRecurrentRule});
+
+  final RecurrencyData? preselectedRecurrentRule;
 
   @override
   State<IntervalSelector> createState() => _IntervalSelectorState();
@@ -21,10 +23,32 @@ class _IntervalSelectorState extends State<IntervalSelector> {
 
   TransactionPeriodicity intervalPeriod = TransactionPeriodicity.month;
   int intervalEach = 1;
-  int? remainingIterations = 1;
+  int remainingIterations = 1;
   DateTime endDate = DateTime.now();
 
   RuleUntilMode ruleUntilMode = RuleUntilMode.infinity;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.preselectedRecurrentRule != null) {
+      intervalEach = widget.preselectedRecurrentRule!.intervalEach ?? 1;
+      intervalPeriod = widget.preselectedRecurrentRule!.intervalPeriod ??
+          TransactionPeriodicity.month;
+
+      remainingIterations = widget.preselectedRecurrentRule!.ruleRecurrentLimit
+              ?.remainingIterations ??
+          1;
+
+      endDate = widget.preselectedRecurrentRule!.ruleRecurrentLimit?.endDate ??
+          DateTime.now();
+
+      ruleUntilMode =
+          widget.preselectedRecurrentRule!.ruleRecurrentLimit?.untilMode ??
+              RuleUntilMode.infinity;
+    }
+  }
 
   Widget buildRadioButton(RuleUntilMode item, Widget title) {
     return RadioListTile(
@@ -94,8 +118,8 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                         flex: 1,
                         child: TextFormField(
                           initialValue: intervalEach.toStringAsFixed(0),
-                          decoration: const InputDecoration(
-                            labelText: 'Cada *',
+                          decoration: InputDecoration(
+                            labelText: '${t.general.time.each} *',
                             helperText: '',
                           ),
                           onChanged: (value) {
@@ -162,8 +186,9 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                       child: TextFormField(
                         controller: TextEditingController(
                             text: DateFormat.yMMMMd().add_Hm().format(endDate)),
-                        decoration: const InputDecoration(
-                            labelText: 'Fecha y hora *', isDense: true),
+                        decoration: InputDecoration(
+                            labelText: '${t.general.time.datetime} *',
+                            isDense: true),
                         readOnly: true,
                         enabled: ruleUntilMode == RuleUntilMode.date,
                         onTap: () async {
@@ -189,18 +214,22 @@ class _IntervalSelectorState extends State<IntervalSelector> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Flexible(child: const Text('Tras')),
+                    Flexible(child: Text(t.general.time.after)),
                     const SizedBox(width: 8),
                     Flexible(
                         child: TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         isDense: true,
-                        labelText: 'Repeticiones *',
+                        labelText:
+                            '${t.general.time.periodicity.repeat(n: remainingIterations)} *',
                       ),
+                      initialValue: remainingIterations.toStringAsFixed(0),
                       enabled: ruleUntilMode == RuleUntilMode.nTimes,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       onChanged: (value) {
-                        remainingIterations = int.tryParse(value);
+                        if (value.isNotEmpty && int.tryParse(value) != null) {
+                          remainingIterations = int.parse(value);
+                        }
                       },
                       keyboardType: TextInputType.number,
                       validator: (value) => fieldValidator(value,

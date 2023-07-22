@@ -32,14 +32,18 @@ class TransactionListComponent extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: (TransactionViewActionService()
                   .transactionDetailsActions(context, transaction: transaction)
-                  .map((e) => ListTile(
-                        leading: Icon(e.icon),
-                        title: Text(e.label),
-                        onTap: () {
-                          Navigator.pop(context);
-                          e.onClick();
-                        },
-                      ))).toList());
+                  .map(
+                    (e) => ListTile(
+                      leading: Icon(e.icon),
+                      title: Text(e.label),
+                      onTap: e.onClick == null
+                          ? null
+                          : () {
+                              Navigator.pop(context);
+                              e.onClick!();
+                            },
+                    ),
+                  )).toList());
         });
   }
 

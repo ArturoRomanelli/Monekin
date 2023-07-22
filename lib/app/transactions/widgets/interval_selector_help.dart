@@ -4,6 +4,7 @@ import 'package:finlytics/app/transactions/widgets/interval_selector.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RecurrencyData extends Equatable {
   final RecurrentRuleLimit? ruleRecurrentLimit;
@@ -39,6 +40,8 @@ class RecurrencyData extends Equatable {
   String formText(BuildContext context) {
     final t = Translations.of(context);
 
+    print(ruleRecurrentLimit);
+
     if (isNoRecurrent) {
       return t.general.time.periodicity.no_repeat;
     } else if (ruleRecurrentLimit!.untilMode == RuleUntilMode.infinity &&
@@ -46,9 +49,38 @@ class RecurrencyData extends Equatable {
       return '${intervalPeriod?.allThePeriodsText(context)}';
     } else {
       if (ruleRecurrentLimit!.untilMode == RuleUntilMode.infinity) {
-        return 'Each $intervalEach ${intervalPeriod?.name}';
+        return t.general.time.ranges.each_range(
+          n: intervalEach!,
+          range:
+              intervalPeriod!.periodText(context, intervalEach!).toLowerCase(),
+        );
       } else {
-        return 'Each $intervalEach ${intervalPeriod?.name} hasta ....';
+        if (ruleRecurrentLimit!.untilMode == RuleUntilMode.date) {
+          return t.general.time.ranges.each_range_until_date(
+            n: intervalEach!,
+            day: DateFormat.yMMMd().format(ruleRecurrentLimit!.endDate!),
+            range: intervalPeriod!
+                .periodText(context, intervalEach!)
+                .toLowerCase(),
+          );
+        } else {
+          if (ruleRecurrentLimit!.remainingIterations! == 1) {
+            return t.general.time.ranges.each_range_until_once(
+              n: intervalEach!,
+              range: intervalPeriod!
+                  .periodText(context, intervalEach!)
+                  .toLowerCase(),
+            );
+          } else {
+            return t.general.time.ranges.each_range_until_times(
+              n: intervalEach!,
+              limit: ruleRecurrentLimit!.remainingIterations!,
+              range: intervalPeriod!
+                  .periodText(context, intervalEach!)
+                  .toLowerCase(),
+            );
+          }
+        }
       }
     }
   }
@@ -112,10 +144,12 @@ class _IntervalSelectorHelpState extends State<IntervalSelectorHelp> {
             groupValue: widget.selectedRecurrentRule,
             onChanged: (value) {
               Navigator.push<RecurrencyData>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const IntervalSelector()))
-                  .then((value) => Navigator.pop(context, value));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => IntervalSelector(
+                            preselectedRecurrentRule:
+                                widget.selectedRecurrentRule,
+                          ))).then((value) => Navigator.pop(context, value));
             }),
       ],
     );

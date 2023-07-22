@@ -10,7 +10,8 @@ class SupportedIcon {
 
   final String scope;
 
-  String get urlToAssets => 'assets/icons/$scope/$id.svg';
+  String get urlToAssets =>
+      'assets/icons/supported_selectable_icons/$scope/$id.svg';
 
   SupportedIcon({required this.id, required this.scope});
 

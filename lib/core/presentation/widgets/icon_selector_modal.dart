@@ -1,14 +1,18 @@
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class IconSelectorModal extends StatefulWidget {
   const IconSelectorModal(
-      {super.key, required this.preselectedIconID, this.onIconSelected});
+      {super.key,
+      required this.preselectedIconID,
+      this.onIconSelected,
+      required this.subtitle});
 
   final String preselectedIconID;
+  final String? subtitle;
 
   final void Function(SupportedIcon selectedIcon)? onIconSelected;
 
@@ -31,6 +35,8 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
+    final t = Translations.of(context);
+
     return DraggableScrollableSheet(
         expand: false,
         maxChildSize: 0.85,
@@ -51,12 +57,10 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Select an icon',
+                          t.icon_selector.select_icon,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        const Text(
-                          'Identify your account',
-                        ),
+                        if (widget.subtitle != null) Text(widget.subtitle!),
                       ],
                     ),
                     Chip(
@@ -87,8 +91,7 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 0, horizontal: 16),
                                   color: colors.background,
-                                  child:
-                                      Text(toBeginningOfSentenceCase(scope)!),
+                                  child: Text(t['icon_selector.scopes.$scope']),
                                 ),
                               ],
                             ),

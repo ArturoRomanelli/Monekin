@@ -278,7 +278,7 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                 DropdownButtonFormField(
                   value: intervalPeriod,
                   decoration: InputDecoration(
-                    labelText: '${t.budgets.form.repetition} *',
+                    labelText: '${t.general.time.periodicity.display} *',
                   ),
                   items: [
                     DropdownMenuItem(

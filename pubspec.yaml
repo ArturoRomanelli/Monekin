@@ -85,12 +85,13 @@ flutter:
     - assets/icons/avatars/
     - assets/icons/currency_flags/
     - assets/icons/page_states/
-    - assets/icons/entertainment/
-    - assets/icons/other/
-    - assets/icons/money/
-    - assets/icons/food/
-    - assets/icons/medical/
-    - assets/icons/transport/
+    - assets/icons/supported_selectable_icons/entertainment/
+    - assets/icons/supported_selectable_icons/other/
+    - assets/icons/supported_selectable_icons/money/
+    - assets/icons/supported_selectable_icons/food/
+    - assets/icons/supported_selectable_icons/medical/
+    - assets/icons/supported_selectable_icons/transport/
+    - assets/icons/supported_selectable_icons/technology/
     - assets/sql/
     - assets/icons/backup/
 

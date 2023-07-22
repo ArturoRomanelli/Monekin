@@ -59,11 +59,14 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Pagar transacción'),
+            title: Text(t.transaction.next_payments.accept_dialog_title),
             content: SingleChildScrollView(
-                child: Text(transaction.recurrentInfo.isRecurrent
-                    ? 'Esta acción creará una transacción nueva con fecha ${DateFormat.yMMMd().format(datetime)}. Podrás consultar los detalles de esta transacción en la página de transacciones'
-                    : 'La fecha de la transacción se cambiará a la especificada y el estado de la misma pasará a nulo')),
+              child: Text(
+                t.transaction.next_payments.accept_dialog_msg(
+                  date: DateFormat.yMMMd().format(datetime),
+                ),
+              ),
+            ),
             actions: [
               TextButton(
                 child: Text(t.general.continue_text),
@@ -72,23 +75,37 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       ? const Uuid().v4()
                       : transaction.id;
 
+                  const nullValue = drift.Value(null);
+
                   TransactionService.instance
                       .insertOrUpdateTransaction(transaction.copyWith(
-                          date: datetime,
-                          status: const drift.Value(null),
-                          id: newId))
+                    date: datetime,
+                    status: nullValue,
+                    id: newId,
+
+                    // The new transaction will be no-recurrent always
+                    intervalEach: nullValue,
+                    intervalPeriod: nullValue,
+                    endDate: nullValue,
+                    remainingTransactions: nullValue,
+                  ))
                       .then((value) {
                     if (value <= 0) return;
 
-                    // New transaction created successfully
+                    // Transaction created/updated successfully with a new empty status
 
                     if (transaction.recurrentInfo.isRecurrent) {
-                      if (transaction.getNextDatesOfRecurrency().isEmpty) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text(
-                              'Transacción creada correctamente. La regla recurrente se ha completado, ya no hay mas pagos a realizar!'),
-                        ));
+                      if (transaction
+                          .getNextDatesOfRecurrency(limit: 2)
+                          .isEmpty) {
+                        // NO MORE PAYMENTS NEEDED
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                '${t.transaction.new_success}. ${t.transaction.next_payments.recurrent_rule_finished}'),
+                          ),
+                        );
 
                         Navigator.pop(context);
                         Navigator.pop(context);
@@ -109,7 +126,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                         TransactionService.instance
                             .insertOrUpdateTransaction(
                           value.copyWith(
-                              date: transaction.getNextDatesOfRecurrency()[0],
+                              date: transaction.getNextDatesOfRecurrency(
+                                  limit: 2)[0],
                               remainingTransactions: remainingIterations != null
                                   ? drift.Value(remainingIterations - 1)
                                   : const drift.Value(null)),
@@ -164,17 +182,61 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
 
     return [
       ListTileActionItem(
-        label:
-            'Pay in the required date (${DateFormat.yMd().format(transaction.date)})',
+        label: t.transaction.next_payments.accept_in_required_date(
+          date: DateFormat.yMd().format(transaction.date),
+        ),
         icon: Icons.today_rounded,
-        onClick: () => payTransaction(transaction.date),
+        onClick: transaction.date.compareTo(DateTime.now()) < 0
+            ? () => payTransaction(transaction.date)
+            : null,
       ),
       ListTileActionItem(
-        label: 'Pay today',
+        label: t.transaction.next_payments.accept_today,
         icon: Icons.event_available_rounded,
         onClick: () => payTransaction(DateTime.now()),
       ),
     ];
+  }
+
+  showSkipTransactionModal(BuildContext context, MoneyTransaction transaction) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(t.transaction.next_payments.skip_dialog_title),
+            content: SingleChildScrollView(
+              child: Text(
+                t.transaction.next_payments.skip_dialog_msg(
+                  date: DateFormat.yMMMd().format(
+                      transaction.getNextDatesOfRecurrency(limit: 2)[0]),
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  final db = TransactionService.instance.db;
+
+                  (db.select(db.transactions)
+                        ..where((tbl) => tbl.id.isValue(transaction.id)))
+                      .getSingle()
+                      .then((value) {
+                    TransactionService.instance
+                        .insertOrUpdateTransaction(value.copyWith(
+                      date: transaction.getNextDatesOfRecurrency(limit: 2)[0],
+                    ))
+                        .then((inserted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(t.transaction.next_payments.skip_success),
+                      ));
+                    });
+                  });
+                },
+                child: Text(t.general.continue_text),
+              ),
+            ],
+          );
+        });
   }
 
   showPayModal(BuildContext context, MoneyTransaction transaction) {
@@ -182,16 +244,24 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return Column(mainAxisSize: MainAxisSize.min, children: [
-            ...(_getPayActions(context).map((e) => ListTile(
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ...(_getPayActions(context).map(
+                (e) => ListTile(
                   leading: Icon(e.icon),
                   title: Text(e.label),
-                  onTap: () {
-                    Navigator.pop(context);
-                    e.onClick();
-                  },
-                ))).toList(),
-          ]);
+                  enabled: e.onClick != null,
+                  onTap: e.onClick == null
+                      ? null
+                      : () {
+                          Navigator.pop(context);
+                          e.onClick!();
+                        },
+                ),
+              )).toList(),
+            ],
+          );
         });
   }
 
@@ -223,7 +293,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               children: [
                 Text(
                     showRecurrencyStatus
-                        ? "Transacción recurrente"
+                        ? t.recurrent_transactions.details.title
                         : t.transaction.status
                             .tr_status(
                                 status:
@@ -253,7 +323,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               children: [
                 Text(
                     showRecurrencyStatus
-                        ? "El próximo pago de esta transacción recurrente esta previsto para el día ${DateFormat.yMMMMd().format(transaction.date)}. Puedes elegir si quieres saltar este pago o pagarlo eligiendo la fecha del pago"
+                        ? t.recurrent_transactions.details.next_payment_info(
+                            date: DateFormat.yMMMMd().format(transaction.date))
                         : transaction.status!.description(context),
                     style: TextStyle(
                       color: isDarkTheme
@@ -273,7 +344,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                 side: BorderSide(color: color.darken(0.2)),
                                 backgroundColor: Colors.white.withOpacity(0.6),
                                 foregroundColor: color.darken(0.2)),
-                            child: const Text('Saltar pago'),
+                            child: Text(t.transaction.next_payments.skip),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -283,7 +354,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           onPressed: () => showPayModal(context, transaction),
                           style: FilledButton.styleFrom(
                               backgroundColor: color.darken(0.2)),
-                          child: Text('Pagar',
+                          child: Text(t.transaction.next_payments.accept,
                               style: TextStyle(
                                 color: isDarkTheme
                                     ? Theme.of(context).colorScheme.onBackground

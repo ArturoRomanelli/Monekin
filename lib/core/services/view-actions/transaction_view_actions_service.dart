@@ -6,6 +6,8 @@ import 'package:finlytics/core/utils/list_tile_action_item.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../i18n/translations.g.dart';
+
 class TransactionViewActionService {
   final TransactionService transactionService = TransactionService.instance;
 
@@ -17,7 +19,7 @@ class TransactionViewActionService {
 
     return [
       ListTileActionItem(
-          label: 'Edit',
+          label: t.general.edit,
           icon: Icons.edit,
           onClick: () => Navigator.push(
               context,
@@ -31,13 +33,13 @@ class TransactionViewActionService {
                       )))),
       if (transaction.recurrentInfo.isNoRecurrent)
         ListTileActionItem(
-            label: 'Clone',
+            label: t.transaction.duplicate_short,
             icon: Icons.control_point_duplicate,
             onClick: () => TransactionViewActionService()
                 .cloneTransactionWithAlertAndSnackBar(context,
                     transaction: transaction, returnPage: prevPage)),
       ListTileActionItem(
-          label: 'Delete',
+          label: t.general.delete,
           icon: Icons.delete,
           onClick: () => TransactionViewActionService()
               .deleteTransactionWithAlertAndSnackBar(context,
@@ -51,16 +53,19 @@ class TransactionViewActionService {
       {required String transactionId,
       Widget? returnPage,
       bool isRecurrent = false}) {
+    final t = Translations.of(context);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Borrar transacción'),
-          content: const SingleChildScrollView(
-              child: Text('Esta acción es irreversible, ¿deseas continuar?')),
+          title: Text(t.transaction.delete),
+          content: SingleChildScrollView(
+            child: Text(t.transaction.delete_warning_message),
+          ),
           actions: [
             TextButton(
-              child: const Text('Yes, continue'),
+              child: Text(t.general.continue_text),
               onPressed: () {
                 transactionService
                     .deleteTransaction(transactionId)
@@ -68,8 +73,7 @@ class TransactionViewActionService {
                   if (value == 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content:
-                              Text('No se ha podido eliminar el registro')),
+                          content: Text('Error removing the transaction')),
                     );
 
                     return;
@@ -85,8 +89,9 @@ class TransactionViewActionService {
                     Navigator.pop(context);
                   }
 
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Transacción borrada con exito')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(t.transaction.delete_success),
+                  ));
                 }).catchError((err) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text('$err')));
@@ -101,17 +106,18 @@ class TransactionViewActionService {
 
   cloneTransactionWithAlertAndSnackBar(BuildContext context,
       {required MoneyTransaction transaction, Widget? returnPage}) {
+    final t = Translations.of(context);
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Clonar transacción'),
-          content: const SingleChildScrollView(
-              child: Text(
-                  'Se creará una transacción identica a esta con su misma fecha, ¿deseas continuar?')),
+          title: Text(t.transaction.duplicate),
+          content: SingleChildScrollView(
+              child: Text(t.transaction.duplicate_warning_message)),
           actions: [
             TextButton(
-              child: const Text('Yes, continue'),
+              child: Text(t.general.continue_text),
               onPressed: () {
                 transactionService
                     .insertTransaction(TransactionInDB(
@@ -136,8 +142,9 @@ class TransactionViewActionService {
                     Navigator.pop(context);
                   }
 
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Transacción clonada con exito')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(t.transaction.duplicate_success),
+                  ));
                 }).catchError((err) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text('$err')));

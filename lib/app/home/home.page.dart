@@ -516,7 +516,7 @@ class _HomePageState extends State<HomePage> {
 
                                       return ConstrainedBox(
                                         constraints: const BoxConstraints(
-                                          maxHeight: 200,
+                                          maxHeight: 180,
                                         ),
                                         child: Row(
                                           crossAxisAlignment:

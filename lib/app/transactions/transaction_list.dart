@@ -73,7 +73,13 @@ class TransactionListComponent extends StatelessWidget {
           return ListTile(
             title: Row(
               children: [
-                Text(transaction.displayName),
+                Expanded(
+                  child: Text(
+                    transaction.displayName,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
                 const SizedBox(width: 4),
                 if ((transaction.status != null ||
                         transaction.recurrentInfo.isRecurrent) &&

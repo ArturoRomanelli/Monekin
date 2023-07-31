@@ -202,7 +202,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
     ];
   }
 
-  showSkipTransactionModal(BuildContext context, MoneyTransaction transaction) {
+  showSkipTransactionModal(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -240,12 +240,12 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           transaction = value;
                         });
 
-                        Navigator.pop(context);
-
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content:
                               Text(t.transaction.next_payments.skip_success),
                         ));
+
+                        Navigator.pop(context);
                       });
                     });
                   });
@@ -339,25 +339,28 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
-                Text(
-                    showRecurrencyStatus
-                        ? transaction
-                                .getNextDatesOfRecurrency(limit: 2)
-                                .isNotEmpty
-                            ? t.recurrent_transactions.details
-                                .next_payment_info(
-                                    date: DateFormat.yMMMMd()
-                                        .format(transaction.date))
-                            : t.recurrent_transactions.details
-                                .last_payment_info(
-                                    date: DateFormat.yMMMMd()
-                                        .format(transaction.date))
-                        : transaction.status!.description(context),
-                    style: TextStyle(
-                      color: isDarkTheme
-                          ? Theme.of(context).colorScheme.background
-                          : null,
-                    )),
+                Builder(builder: (context) {
+                  print("Rebuilding text");
+                  return Text(
+                      showRecurrencyStatus
+                          ? transaction
+                                  .getNextDatesOfRecurrency(limit: 2)
+                                  .isNotEmpty
+                              ? t.recurrent_transactions.details
+                                  .next_payment_info(
+                                      date: DateFormat.yMMMMd()
+                                          .format(transaction.date))
+                              : t.recurrent_transactions.details
+                                  .last_payment_info(
+                                      date: DateFormat.yMMMMd()
+                                          .format(transaction.date))
+                          : transaction.status!.description(context),
+                      style: TextStyle(
+                        color: isDarkTheme
+                            ? Theme.of(context).colorScheme.background
+                            : null,
+                      ));
+                }),
                 if (transaction.status == TransactionStatus.pending ||
                     transaction.recurrentInfo.isRecurrent) ...[
                   const SizedBox(height: 12),
@@ -369,8 +372,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                               .isNotEmpty) ...[
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () =>
-                                showSkipTransactionModal(context, transaction),
+                            onPressed: () => showSkipTransactionModal(context),
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: color.darken(0.2)),
                                 backgroundColor: Colors.white.withOpacity(0.6),

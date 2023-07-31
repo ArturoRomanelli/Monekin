@@ -231,12 +231,9 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
     onSuccess();
   }
 
-  Step buildStep(
-      {required int index,
-      required String title,
-      required List<Widget> content}) {
+  Step buildStep({required int index, required List<Widget> content}) {
     return Step(
-      title: Text(title),
+      title: Text(t.backup.import.steps[index]),
       isActive: currentStep >= index,
       state: currentStep > index
           ? StepState.complete
@@ -245,7 +242,11 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
               : StepState.disabled,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: content,
+        children: [
+          Text(t.backup.import.steps_descr[index]),
+          const SizedBox(height: 24),
+          ...content
+        ],
       ),
     );
   }
@@ -278,7 +279,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                       child: FilledButton.icon(
                         onPressed:
                             nextButtonDisabled ? null : () => addTransactions(),
-                        label: Text('Importar transacciones'),
+                        label: Text(t.backup.import.title),
                         icon: const Icon(Icons.check_rounded),
                       ),
                     )
@@ -295,7 +296,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                           OutlinedButton.icon(
                             onPressed: () => readFile(),
                             icon: const Icon(Icons.upload_file_rounded),
-                            label: const Text('Select other file'),
+                            label: Text(t.backup.import.select_other_file),
                           ),
                         ]
                       ],
@@ -306,12 +307,8 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
             setState(() => currentStep++);
           },
           steps: [
-            buildStep(index: 0, title: 'Select a file', content: [
-              const Text(
-                  'Selecciona un fichero .csv de tu dispositivo. Asegurate de que este tenga una primera fila que describa el nombre de cada columna'),
-              const SizedBox(height: 8),
-              if (csvData == null) ...[
-                const SizedBox(height: 12),
+            buildStep(index: 0, content: [
+              if (csvData == null)
                 InkWell(
                   onTap: () => readFile(),
                   child: DottedBorder(
@@ -336,7 +333,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                                 color: Colors.grey.withOpacity(0.95)),
                             const SizedBox(height: 4),
                             Text(
-                              'Pulsa para seleccionar un archivo',
+                              t.backup.import.tap_to_select_file,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
@@ -346,9 +343,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                     ),
                   ),
                 ),
-              ],
               if (csvData != null) ...[
-                const SizedBox(height: 12),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
@@ -378,7 +373,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                 ),
                 if (csvData!.length - 4 >= 1)
                   Text(
-                    '+${csvData!.length - 4} filas más',
+                    '+${csvData!.length - 4} rows',
                     textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
@@ -387,11 +382,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
             ]),
             buildStep(
               index: 1,
-              title: 'Select amount column',
               content: [
-                const Text(
-                    'Selecciona la columna donde se especifica el valor de cada transacción. Usa valores negativos para los gastos y positivos para los ingresos. Usa un punto como separador decimal'),
-                const SizedBox(height: 24),
                 if (csvHeaders != null)
                   buildColumnSelector(
                     value: amountColumn,
@@ -406,11 +397,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
             ),
             buildStep(
               index: 2,
-              title: 'Select account column',
               content: [
-                const Text(
-                    'Selecciona la columna donde se especifica la cuenta a la que pertenece cada transacción. Podrás también seleccionar una cuenta por defecto en el caso de que no encontremos la cuenta que desea. Si no se especifica una cuenta por defecto, crearemos una con el mismo nombre'),
-                const SizedBox(height: 24),
                 if (csvHeaders != null)
                   buildColumnSelector(
                     value: accountColumn,
@@ -449,11 +436,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
             ),
             buildStep(
               index: 3,
-              title: 'Select category options',
               content: [
-                const Text(
-                    'Especifica la columna donde se encuentra el nombre de la categoría de la transacción. Debes especificar una categoría por defecto para que asignemos esta categoría a las transacciones, en caso de que la categoría no se pueda encontrar'),
-                const SizedBox(height: 12),
                 if (csvHeaders != null)
                   Builder(builder: (context) {
                     final headersToSelect = csvHeaders!.whereIndexed(
@@ -496,11 +479,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
             ),
             buildStep(
               index: 4,
-              title: 'Select date column',
               content: [
-                const Text(
-                    'Selecciona la columna donde se especifica la fecha de cada transacción. En caso de no especificarse, se crearan transacciones con la fecha actual'),
-                const SizedBox(height: 24),
                 if (csvHeaders != null)
                   buildColumnSelector(
                     value: dateColumn,
@@ -526,11 +505,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
             ),
             buildStep(
               index: 5,
-              title: 'Other transactions attributes',
               content: [
-                const Text(
-                    'Especifica las columnas para otros atributos optativos de las transacciones'),
-                const SizedBox(height: 24),
                 if (csvHeaders != null)
                   Builder(builder: (context) {
                     final headersToSelect = csvHeaders!.whereIndexed((index,
@@ -544,16 +519,24 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                       children: [
                         buildColumnSelector(
                           value: notesColumn,
-                          labelText: 'Columna de notas/descripción',
+                          labelText: 'Note column',
                           headersToSelect: headersToSelect,
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              notesColumn = value;
+                            });
+                          },
                         ),
                         const SizedBox(height: 16),
                         buildColumnSelector(
                           value: titleColumn,
-                          labelText: 'Columna de título',
+                          labelText: 'Title column',
                           headersToSelect: headersToSelect,
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              titleColumn = value;
+                            });
+                          },
                         ),
                       ],
                     );

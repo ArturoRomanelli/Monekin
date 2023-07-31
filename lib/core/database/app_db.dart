@@ -29,7 +29,7 @@ class AppDB extends _$AppDB {
     required this.dbName,
     required this.inMemory,
     required this.logStatements,
-  }) : super(_openConnection(dbName, logStatements: logStatements));
+  }) : super(openConnection(dbName, logStatements: logStatements));
 
   static final AppDB instance = AppDB._(
     dbName: 'database.db',
@@ -41,6 +41,7 @@ class AppDB extends _$AppDB {
   final bool inMemory;
   final bool logStatements;
 
+  /// Get teh path to the DB, that is `xxxx/xxxx/.../filename.db`
   Future<String> get databasePath async =>
       join((await getApplicationDocumentsDirectory()).path, dbName);
 
@@ -118,7 +119,7 @@ class AppDB extends _$AppDB {
   }
 }
 
-LazyDatabase _openConnection(String dbName, {bool logStatements = false}) {
+LazyDatabase openConnection(String dbName, {bool logStatements = false}) {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(join(dbFolder.path, dbName));

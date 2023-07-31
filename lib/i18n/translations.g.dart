@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 758 (379 per locale)
+/// Strings: 781 (390 per locale)
 ///
-/// Built on 2023-07-22 at 09:38 UTC
+/// Built on 2023-07-31 at 13:54 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -179,6 +179,7 @@ class _TranslationsGeneralEn {
 	String get or => 'or';
 	String get understood => 'Understood';
 	String get unspecified => 'Sin especificar';
+	String get attention => 'Attention ⚠️';
 	String get confirm => 'Confirm';
 	String get continue_text => 'Continue';
 	String get add => 'Add';
@@ -273,6 +274,7 @@ class _TranslationsStatsEn {
 
 	// Translations
 	String get title => 'Statistics';
+	String get balance => 'Saldo';
 	String get balance_by_account => 'Balance by accounts';
 	String get balance_by_currency => 'Balance by currency';
 	String get cash_flow => 'Cash flow';
@@ -389,6 +391,7 @@ class _TranslationsCurrenciesEn {
 	String get exchange_rates => 'Exchange rates';
 	String get empty => 'Add exchange rates here so that if you have accounts in currencies other than your base currency our charts are more accurate';
 	String get select_a_currency => 'Select a currency';
+	String get search_title => 'Tap to search';
 	String get search_placeholder => 'Search by name or by currency code';
 }
 
@@ -699,6 +702,7 @@ class _TranslationsRecurrentTransactionsDetailsEn {
 	// Translations
 	String get title => 'Transaccion recurrente';
 	String next_payment_info({required Object date}) => 'The next movement of this transaction will take place on ${date}. You can choose whether you want to skip this movement or accept it on the date of your choice';
+	String last_payment_info({required Object date}) => 'The next move for this transaction will take place on ${date}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made';
 	String get delete_header => 'Delete recurring transaction';
 	String get delete_message => 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 }
@@ -853,14 +857,26 @@ class _TranslationsBackupImportEn {
 	String get manual_import => 'Manual import';
 	String get manual_import_descr => 'Import transactions from a .csv file manually';
 	String get restore_backup => 'Restore Backup';
+	String get restore_backup_warn => 'When importing a new database, you will lose all data currently saved in the app. It is recommended to make a backup before continuing. Do not upload here any file whose origin you do not know, upload only files that you have previously downloaded from Monekin';
 	String get restore_backup_descr => 'Import a previously saved database from Finlytics. This action will replace any current application data with the new data';
-	String get upload_file => 'Upload your data file';
-	String get touch_to_import => 'Touch to import';
-	String get touch_to_change => 'Touch to change';
-	String get onboarding_done => 'Backup uploaded';
-	String get file => 'Import file';
-	String get description => 'Replace all data currently in the app with data you have previously saved';
-	String get long_description => 'If you have already used our application before, you may have a backup saved on your device with the name Monekin_backup_YYYY_MM_DD. If you prefer, you can perform this data import later.';
+	String get select_other_file => 'Select other file';
+	String get tap_to_select_file => 'Tap to select a file';
+	List<String> get steps => [
+		'Select your file',
+		'Column for quantity',
+		'Column for account',
+		'Column for category',
+		'Column for date',
+		'Other column',
+	];
+	List<String> get steps_descr => [
+		'Select a .csv file from your device. Make sure it has a first row that describes the name of each column',
+		'Select the column where the value of each transaction is specified. Use negative values for expenses and positive values for income. Use a point as a decimal separator',
+		'Select the column where the account to which each transaction belongs is specified. You can also select a default account in case we cannot find the account you want. If a default account is not specified, we will create one with the same name',
+		'Specify the column where the transaction category name is located. You must specify a default category so that we assign this category to transactions, in case the category cannot be found',
+		'Select the column where the date of each transaction is specified. If not specified, transactions will be created with the current date',
+		'Specifies the columns for other optional transaction attributes',
+	];
 	String get success => 'Import performed successfully';
 	String get error => 'Error importing file. Please contact developer via lozin.technologies@gmail.com';
 }
@@ -873,7 +889,6 @@ class _TranslationsSettingsGeneralEn {
 
 	// Translations
 	String get display => 'General settings';
-	String get currency => 'Default currency';
 	String get categories_descr => 'Create and edit categories to your liking';
 	String get other => 'Advanced settings';
 	String get other_descr => 'Other general app customization settings';
@@ -1145,6 +1160,7 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get or => 'o';
 	@override String get understood => 'Entendido';
 	@override String get unspecified => 'Sin especificar';
+	@override String get attention => 'Atención ⚠️';
 	@override String get confirm => 'Confirmar';
 	@override String get continue_text => 'Continuar';
 	@override String get add => 'Añadir';
@@ -1239,6 +1255,7 @@ class _TranslationsStatsEs extends _TranslationsStatsEn {
 
 	// Translations
 	@override String get title => 'Estadísticas';
+	@override String get balance => 'Saldo';
 	@override String get balance_by_account => 'Saldo por cuentas';
 	@override String get balance_by_currency => 'Saldo por divisas';
 	@override String get balance_evolution => 'Tendencia de saldo';
@@ -1355,6 +1372,7 @@ class _TranslationsCurrenciesEs extends _TranslationsCurrenciesEn {
 	@override String get exchange_rates => 'Tipos de cambio';
 	@override String get empty => 'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos';
 	@override String get select_a_currency => 'Selecciona una divisa';
+	@override String get search_title => 'Toca para buscar';
 	@override String get search_placeholder => 'Busca por nombre o por código de la divisa';
 }
 
@@ -1665,6 +1683,7 @@ class _TranslationsRecurrentTransactionsDetailsEs extends _TranslationsRecurrent
 	// Translations
 	@override String get title => 'Transaccion recurrente';
 	@override String next_payment_info({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Puedes elegir si deseas saltar este movimiento o aceptarlo en la fecha que elijas';
+	@override String last_payment_info({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Este pago será el último de la regla recurrente, por lo que se eliminará esta regla de forma automática al realizar este pago';
 	@override String get delete_header => 'Eliminar transacción recurrente';
 	@override String get delete_message => 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 }
@@ -1819,14 +1838,26 @@ class _TranslationsBackupImportEs extends _TranslationsBackupImportEn {
 	@override String get manual_import => 'Importación manual';
 	@override String get manual_import_descr => 'Importa transacciones desde un fichero .csv de forma manual';
 	@override String get restore_backup => 'Restaurar copia de seguridad';
+	@override String get restore_backup_warn => 'All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin';
 	@override String get restore_backup_descr => 'Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos';
-	@override String get upload_file => 'Sube tu archivo de datos';
-	@override String get touch_to_import => 'Toca para importar';
-	@override String get touch_to_change => 'Toca para cambiar';
-	@override String get onboarding_done => 'Copia de seguridad subida';
-	@override String get file => 'Importar archivo';
-	@override String get description => 'Reemplaza todos los datos que hay actualmente en la app por otros que hayas guardado previamente';
-	@override String get long_description => 'Si ya has usado nuestra aplicación antes puede que tengas una copia de seguridad guardada en tu disposivo con el nombre Monekin_backup_YYYY_MM_DD. Si prefieres puedes realizar esta importación de datos mas adelante.';
+	@override String get tap_to_select_file => 'Pulsa para seleccionar un archivo';
+	@override String get select_other_file => 'Selecciona otro fichero';
+	@override List<String> get steps => [
+		'Selecciona tu fichero',
+		'Columna para la cantidad',
+		'Columna para la cuenta',
+		'Columna para la categoría',
+		'Columna para la fecha',
+		'Otras columnas',
+	];
+	@override List<String> get steps_descr => [
+		'Selecciona un fichero .csv de tu dispositivo. Asegurate de que este tenga una primera fila que describa el nombre de cada columna',
+		'Selecciona la columna donde se especifica el valor de cada transacción. Usa valores negativos para los gastos y positivos para los ingresos. Usa un punto como separador decimal',
+		'Selecciona la columna donde se especifica la cuenta a la que pertenece cada transacción. Podrás también seleccionar una cuenta por defecto en el caso de que no encontremos la cuenta que desea. Si no se especifica una cuenta por defecto, crearemos una con el mismo nombre',
+		'Especifica la columna donde se encuentra el nombre de la categoría de la transacción. Debes especificar una categoría por defecto para que asignemos esta categoría a las transacciones, en caso de que la categoría no se pueda encontrar',
+		'Selecciona la columna donde se especifica la fecha de cada transacción. En caso de no especificarse, se crearan transacciones con la fecha actual',
+		'Especifica las columnas para otros atributos optativos de las transacciones',
+	];
 	@override String get success => 'Importación realizada con exito';
 	@override String get error => 'Error al importar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com';
 }
@@ -2065,6 +2096,7 @@ extension on _TranslationsEn {
 			case 'general.or': return 'or';
 			case 'general.understood': return 'Understood';
 			case 'general.unspecified': return 'Sin especificar';
+			case 'general.attention': return 'Attention ⚠️';
 			case 'general.confirm': return 'Confirm';
 			case 'general.continue_text': return 'Continue';
 			case 'general.add': return 'Add';
@@ -2208,6 +2240,7 @@ extension on _TranslationsEn {
 			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'You have managed to save ${value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
 			case 'financial_health.savings_percentage.very_bad': return 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
 			case 'stats.title': return 'Statistics';
+			case 'stats.balance': return 'Saldo';
 			case 'stats.balance_by_account': return 'Balance by accounts';
 			case 'stats.balance_by_currency': return 'Balance by currency';
 			case 'stats.cash_flow': return 'Cash flow';
@@ -2287,6 +2320,7 @@ extension on _TranslationsEn {
 			case 'recurrent_transactions.empty': return 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
 			case 'recurrent_transactions.details.title': return 'Transaccion recurrente';
 			case 'recurrent_transactions.details.next_payment_info': return ({required Object date}) => 'The next movement of this transaction will take place on ${date}. You can choose whether you want to skip this movement or accept it on the date of your choice';
+			case 'recurrent_transactions.details.last_payment_info': return ({required Object date}) => 'The next move for this transaction will take place on ${date}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made';
 			case 'recurrent_transactions.details.delete_header': return 'Delete recurring transaction';
 			case 'recurrent_transactions.details.delete_message': return 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
 			case 'account.date': return 'Date created';
@@ -2335,6 +2369,7 @@ extension on _TranslationsEn {
 			case 'currencies.exchange_rates': return 'Exchange rates';
 			case 'currencies.empty': return 'Add exchange rates here so that if you have accounts in currencies other than your base currency our charts are more accurate';
 			case 'currencies.select_a_currency': return 'Select a currency';
+			case 'currencies.search_title': return 'Tap to search';
 			case 'currencies.search_placeholder': return 'Search by name or by currency code';
 			case 'categories.unknown': return 'Unknown category';
 			case 'categories.create': return 'Create category';
@@ -2410,14 +2445,22 @@ extension on _TranslationsEn {
 			case 'backup.import.manual_import': return 'Manual import';
 			case 'backup.import.manual_import_descr': return 'Import transactions from a .csv file manually';
 			case 'backup.import.restore_backup': return 'Restore Backup';
+			case 'backup.import.restore_backup_warn': return 'When importing a new database, you will lose all data currently saved in the app. It is recommended to make a backup before continuing. Do not upload here any file whose origin you do not know, upload only files that you have previously downloaded from Monekin';
 			case 'backup.import.restore_backup_descr': return 'Import a previously saved database from Finlytics. This action will replace any current application data with the new data';
-			case 'backup.import.upload_file': return 'Upload your data file';
-			case 'backup.import.touch_to_import': return 'Touch to import';
-			case 'backup.import.touch_to_change': return 'Touch to change';
-			case 'backup.import.onboarding_done': return 'Backup uploaded';
-			case 'backup.import.file': return 'Import file';
-			case 'backup.import.description': return 'Replace all data currently in the app with data you have previously saved';
-			case 'backup.import.long_description': return 'If you have already used our application before, you may have a backup saved on your device with the name Monekin_backup_YYYY_MM_DD. If you prefer, you can perform this data import later.';
+			case 'backup.import.select_other_file': return 'Select other file';
+			case 'backup.import.tap_to_select_file': return 'Tap to select a file';
+			case 'backup.import.steps.0': return 'Select your file';
+			case 'backup.import.steps.1': return 'Column for quantity';
+			case 'backup.import.steps.2': return 'Column for account';
+			case 'backup.import.steps.3': return 'Column for category';
+			case 'backup.import.steps.4': return 'Column for date';
+			case 'backup.import.steps.5': return 'Other column';
+			case 'backup.import.steps_descr.0': return 'Select a .csv file from your device. Make sure it has a first row that describes the name of each column';
+			case 'backup.import.steps_descr.1': return 'Select the column where the value of each transaction is specified. Use negative values for expenses and positive values for income. Use a point as a decimal separator';
+			case 'backup.import.steps_descr.2': return 'Select the column where the account to which each transaction belongs is specified. You can also select a default account in case we cannot find the account you want. If a default account is not specified, we will create one with the same name';
+			case 'backup.import.steps_descr.3': return 'Specify the column where the transaction category name is located. You must specify a default category so that we assign this category to transactions, in case the category cannot be found';
+			case 'backup.import.steps_descr.4': return 'Select the column where the date of each transaction is specified. If not specified, transactions will be created with the current date';
+			case 'backup.import.steps_descr.5': return 'Specifies the columns for other optional transaction attributes';
 			case 'backup.import.success': return 'Import performed successfully';
 			case 'backup.import.error': return 'Error importing file. Please contact developer via lozin.technologies@gmail.com';
 			case 'settings.title': return 'Settings';
@@ -2430,7 +2473,6 @@ extension on _TranslationsEn {
 			case 'settings.locale_warn': return 'When changing region the app will update';
 			case 'settings.first_day_of_week': return 'First day of week';
 			case 'settings.general.display': return 'General settings';
-			case 'settings.general.currency': return 'Default currency';
 			case 'settings.general.categories_descr': return 'Create and edit categories to your liking';
 			case 'settings.general.other': return 'Advanced settings';
 			case 'settings.general.other_descr': return 'Other general app customization settings';
@@ -2470,6 +2512,7 @@ extension on _TranslationsEs {
 			case 'general.or': return 'o';
 			case 'general.understood': return 'Entendido';
 			case 'general.unspecified': return 'Sin especificar';
+			case 'general.attention': return 'Atención ⚠️';
 			case 'general.confirm': return 'Confirmar';
 			case 'general.continue_text': return 'Continuar';
 			case 'general.add': return 'Añadir';
@@ -2614,6 +2657,7 @@ extension on _TranslationsEs {
 			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'Has conseguido ahorrar un ${value}% de tus ingresos durante este periodo. Sin embargo, creemos que aun puedes hacer mucho mas! Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 			case 'financial_health.savings_percentage.very_bad': return 'Vaya, no has conseguido ahorrar nada durante este periodo :( Visita la pestaña de análisis para ver donde estan tus debilidades financieras. Recuerda que es recomendable ahorrar al menos un 30% de lo que ingresas';
 			case 'stats.title': return 'Estadísticas';
+			case 'stats.balance': return 'Saldo';
 			case 'stats.balance_by_account': return 'Saldo por cuentas';
 			case 'stats.balance_by_currency': return 'Saldo por divisas';
 			case 'stats.balance_evolution': return 'Tendencia de saldo';
@@ -2693,6 +2737,7 @@ extension on _TranslationsEs {
 			case 'recurrent_transactions.empty': return 'Parece que no posees ninguna transacción recurrente. Crea una transacción que se repita mensual, anual o semanalmente y aparecerá aquí';
 			case 'recurrent_transactions.details.title': return 'Transaccion recurrente';
 			case 'recurrent_transactions.details.next_payment_info': return ({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Puedes elegir si deseas saltar este movimiento o aceptarlo en la fecha que elijas';
+			case 'recurrent_transactions.details.last_payment_info': return ({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Este pago será el último de la regla recurrente, por lo que se eliminará esta regla de forma automática al realizar este pago';
 			case 'recurrent_transactions.details.delete_header': return 'Eliminar transacción recurrente';
 			case 'recurrent_transactions.details.delete_message': return 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
 			case 'account.date': return 'Fecha de creación';
@@ -2741,6 +2786,7 @@ extension on _TranslationsEs {
 			case 'currencies.exchange_rates': return 'Tipos de cambio';
 			case 'currencies.empty': return 'Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos';
 			case 'currencies.select_a_currency': return 'Selecciona una divisa';
+			case 'currencies.search_title': return 'Toca para buscar';
 			case 'currencies.search_placeholder': return 'Busca por nombre o por código de la divisa';
 			case 'categories.unknown': return 'Categoría desconocida';
 			case 'categories.create': return 'Crear categoría';
@@ -2816,14 +2862,22 @@ extension on _TranslationsEs {
 			case 'backup.import.manual_import': return 'Importación manual';
 			case 'backup.import.manual_import_descr': return 'Importa transacciones desde un fichero .csv de forma manual';
 			case 'backup.import.restore_backup': return 'Restaurar copia de seguridad';
+			case 'backup.import.restore_backup_warn': return 'All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin';
 			case 'backup.import.restore_backup_descr': return 'Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos';
-			case 'backup.import.upload_file': return 'Sube tu archivo de datos';
-			case 'backup.import.touch_to_import': return 'Toca para importar';
-			case 'backup.import.touch_to_change': return 'Toca para cambiar';
-			case 'backup.import.onboarding_done': return 'Copia de seguridad subida';
-			case 'backup.import.file': return 'Importar archivo';
-			case 'backup.import.description': return 'Reemplaza todos los datos que hay actualmente en la app por otros que hayas guardado previamente';
-			case 'backup.import.long_description': return 'Si ya has usado nuestra aplicación antes puede que tengas una copia de seguridad guardada en tu disposivo con el nombre Monekin_backup_YYYY_MM_DD. Si prefieres puedes realizar esta importación de datos mas adelante.';
+			case 'backup.import.tap_to_select_file': return 'Pulsa para seleccionar un archivo';
+			case 'backup.import.select_other_file': return 'Selecciona otro fichero';
+			case 'backup.import.steps.0': return 'Selecciona tu fichero';
+			case 'backup.import.steps.1': return 'Columna para la cantidad';
+			case 'backup.import.steps.2': return 'Columna para la cuenta';
+			case 'backup.import.steps.3': return 'Columna para la categoría';
+			case 'backup.import.steps.4': return 'Columna para la fecha';
+			case 'backup.import.steps.5': return 'Otras columnas';
+			case 'backup.import.steps_descr.0': return 'Selecciona un fichero .csv de tu dispositivo. Asegurate de que este tenga una primera fila que describa el nombre de cada columna';
+			case 'backup.import.steps_descr.1': return 'Selecciona la columna donde se especifica el valor de cada transacción. Usa valores negativos para los gastos y positivos para los ingresos. Usa un punto como separador decimal';
+			case 'backup.import.steps_descr.2': return 'Selecciona la columna donde se especifica la cuenta a la que pertenece cada transacción. Podrás también seleccionar una cuenta por defecto en el caso de que no encontremos la cuenta que desea. Si no se especifica una cuenta por defecto, crearemos una con el mismo nombre';
+			case 'backup.import.steps_descr.3': return 'Especifica la columna donde se encuentra el nombre de la categoría de la transacción. Debes especificar una categoría por defecto para que asignemos esta categoría a las transacciones, en caso de que la categoría no se pueda encontrar';
+			case 'backup.import.steps_descr.4': return 'Selecciona la columna donde se especifica la fecha de cada transacción. En caso de no especificarse, se crearan transacciones con la fecha actual';
+			case 'backup.import.steps_descr.5': return 'Especifica las columnas para otros atributos optativos de las transacciones';
 			case 'backup.import.success': return 'Importación realizada con exito';
 			case 'backup.import.error': return 'Error al importar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com';
 			case 'settings.title': return 'Ajustes';

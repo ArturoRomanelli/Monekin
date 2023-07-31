@@ -2,13 +2,13 @@ import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/account_details.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/budgets/budgets_page.dart';
-import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
 import 'package:finlytics/app/stats/widgets/balance_bar_chart_small.dart';
 import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
+import 'package:finlytics/app/transactions/recurrent_transactions_page.dart';
 import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/app/transactions/transactions.page.dart';
@@ -21,14 +21,14 @@ import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
+import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
 import 'package:finlytics/core/services/filters/date_range_service.dart';
 import 'package:finlytics/core/services/finance_health_service.dart';
+import 'package:finlytics/core/utils/list_tile_action_item.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/presentation/widgets/user_avatar.dart';
 import '../stats/stats_page.dart';
-import '../transactions/recurrent_transactions_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,29 +38,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> _tools = [
-    {
-      'icon': Icons.calculate_outlined,
-      'label': t.budgets.title,
-      'route': const BudgetsPage()
-    },
-    {
-      'icon': Icons.sell_outlined,
-      'label': 'Categories',
-      'route': const CategoriesList(mode: CategoriesListMode.page)
-    },
-    {
-      'icon': Icons.repeat_rounded,
-      'label': 'Trans. recurrents',
-      'route': const RecurrentTransactionPage()
-    },
-    {
-      'icon': Icons.settings_outlined,
-      'label': 'Settings',
-      'route': const SettingsPage()
-    },
-  ];
-
   final dateRangeService = DateRangeService();
 
   late Stream<List<Account>> _accountsStream;
@@ -205,10 +182,64 @@ class _HomePageState extends State<HomePage> {
 
     final accountService = AccountService.instance;
 
+    List<ListTileActionItem> drawerActions = [
+      ListTileActionItem(
+        label: t.budgets.title,
+        icon: Icons.calculate,
+        onClick: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const BudgetsPage()),
+        ),
+      ),
+      ListTileActionItem(
+        label: t.general.transactions,
+        icon: Icons.app_registration_rounded,
+        onClick: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const TransactionsPage()),
+        ),
+      ),
+      ListTileActionItem(
+        label: t.recurrent_transactions.title,
+        icon: Icons.auto_mode_rounded,
+        onClick: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const RecurrentTransactionPage()),
+        ),
+      ),
+      ListTileActionItem(
+        label: t.stats.title,
+        icon: Icons.auto_graph_rounded,
+        onClick: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StatsPage()),
+        ),
+      ),
+      ListTileActionItem(
+        label: t.settings.title,
+        icon: Icons.settings,
+        onClick: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsPage()),
+        ),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        title: const Text('Monekin'),
+        elevation: 4,
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                dateRangeService
+                    .openDateRangeModal(context)
+                    .then((_) => setState(() {}));
+              },
+              icon: const Icon(Icons.calendar_today))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add_rounded),
@@ -224,272 +255,229 @@ class _HomePageState extends State<HomePage> {
               }
             });
           }),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
+      drawer: Drawer(
+        child: ListView(padding: EdgeInsets.zero, children: [
+          StreamBuilder(
+              stream: UserSettingService.instance.getSettings(
+                (p0) =>
+                    p0.settingKey.equalsValue(SettingKey.userName) |
+                    p0.settingKey.equalsValue(SettingKey.avatar),
+              ),
+              builder: (context, snapshot) {
+                final userName = snapshot.data
+                    ?.firstWhere(
+                      (element) => element.settingKey == SettingKey.userName,
+                    )
+                    .settingValue;
+                final userAvatar = snapshot.data
+                    ?.firstWhere(
+                      (element) => element.settingKey == SettingKey.avatar,
+                    )
+                    .settingValue;
+
+                return UserAccountsDrawerHeader(
+                  accountName: userName != null
+                      ? Text(userName)
+                      : const Skeleton(width: 25, height: 12),
+                  currentAccountPicture: UserAvatar(avatar: userAvatar),
+                  currentAccountPictureSize: const Size.fromRadius(24),
+                  accountEmail: Text(
+                    t.home.hello_day,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              }),
+          ...List.generate(drawerActions.length, (index) {
+            final item = drawerActions[index];
+            return ListTile(
+              title: Text(item.label),
+              leading: Icon(item.icon),
+              onTap: item.onClick,
+            );
+          }),
+        ]),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+        child: Column(
+          children: [
+            StreamBuilder(
+                stream: _accountsStream,
+                builder: (context, accounts) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                          '${t.home.total_balance} - ${dateRangeService.selectedDateRange.currentText(context)}',
+                          style: const TextStyle(fontSize: 12)),
+                      if (!accounts.hasData) ...[
+                        const Skeleton(width: 70, height: 40),
+                        const Skeleton(width: 30, height: 14),
+                      ],
+                      if (accounts.hasData) ...[
+                        StreamBuilder(
+                            stream: accountService.getAccountsMoney(
+                                accountIds: accounts.data!.map((e) => e.id)),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                print("BUILD");
+                                return CurrencyDisplayer(
+                                  amountToConvert: snapshot.data!,
+                                  textStyle: const TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w600),
+                                );
+                              }
+
+                              return const Skeleton(width: 90, height: 40);
+                            }),
+                        if (dateRangeService.startDate != null &&
+                            dateRangeService.endDate != null)
+                          StreamBuilder(
+                              stream: accountService.getAccountsMoneyVariation(
+                                  accounts: accounts.data!,
+                                  startDate: dateRangeService.startDate,
+                                  endDate: dateRangeService.endDate,
+                                  convertToPreferredCurrency: true),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Skeleton(width: 52, height: 22);
+                                }
+
+                                return TrendingValue(
+                                  percentage: snapshot.data!,
+                                  filled: true,
+                                  fontWeight: FontWeight.bold,
+                                  outlined: true,
+                                );
+                              }),
+                      ]
+                    ],
+                  );
+                }),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                IncomeOrExpenseCard(
+                  type: AccountDataFilter.income,
+                  startDate: dateRangeService.startDate,
+                  endDate: dateRangeService.endDate,
+                ),
+                IncomeOrExpenseCard(
+                  type: AccountDataFilter.expense,
+                  startDate: dateRangeService.startDate,
+                  endDate: dateRangeService.endDate,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            StreamBuilder(
+                stream: _accountsStream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return CardWithHeader(
+                        title: t.general.accounts,
+                        body: const LinearProgressIndicator());
+                  } else {
+                    final accounts = snapshot.data!;
+
+                    return CardWithHeader(
+                        title: t.general.accounts,
+                        headerButtonIcon: Icons.add_rounded,
+                        onHeaderButtonClick: accounts.isEmpty
+                            ? null
+                            : () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AccountFormPage()));
+                              },
+                        body: buildAccountList(accounts));
+                  }
+                }),
+            const SizedBox(
+              height: 16,
+            ),
+            StreamBuilder(
+                stream: AccountService.instance.getAccounts(limit: 1),
+                builder: (context, accountSnapshot) {
+                  return CardWithHeader(
+                    title: t.home.last_transactions,
+                    onHeaderButtonClick: accountSnapshot.hasData &&
+                            accountSnapshot.data!.isNotEmpty
+                        ? () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const SettingsPage()));
-                          },
-                          borderRadius: BorderRadius.circular(4),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                StreamBuilder(
-                                    stream: UserSettingService.instance
-                                        .getSetting(SettingKey.avatar),
-                                    builder: (context, snapshot) {
-                                      return UserAvatar(avatar: snapshot.data);
-                                    }),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Good evening,',
-                                        style: TextStyle(fontSize: 12)),
-                                    StreamBuilder(
-                                        stream: UserSettingService.instance
-                                            .getSetting(SettingKey.userName),
-                                        builder: (context, snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return const Skeleton(
-                                                width: 70, height: 14);
-                                          }
-
-                                          return Text(snapshot.data!,
-                                              style: const TextStyle(
-                                                  fontSize: 18));
-                                        }),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        ActionChip(
-                          onPressed: () {
-                            dateRangeService
-                                .openDateModal(context)
-                                .then((_) => setState(() {}));
-                          },
-                          label: Text(
-                            dateRangeService.selectedDateRange
-                                .currentText(context),
-                          ),
-                          avatar: Icon(
-                            Icons.calendar_month,
-                            color: colors.onBackground,
-                          ),
-                        )
-                      ]),
-                  Divider(
-                    height: 32,
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                  StreamBuilder(
-                      stream: accountService.getAccounts(),
-                      builder: (context, accounts) {
-                        if (!accounts.hasData) {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(t.home.total_balance,
-                                  style: const TextStyle(fontSize: 12)),
-                              const Skeleton(width: 70, height: 40),
-                              const Skeleton(width: 30, height: 14),
-                            ],
-                          );
-                        } else {
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(t.home.total_balance,
-                                  style: const TextStyle(fontSize: 12)),
-                              StreamBuilder(
-                                  stream: accountService.getAccountsMoney(
-                                      accountIds:
-                                          accounts.data!.map((e) => e.id)),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      return CurrencyDisplayer(
-                                          amountToConvert: snapshot.data!,
-                                          textStyle: const TextStyle(
-                                              fontSize: 40,
-                                              fontWeight: FontWeight.w600));
-                                    }
-
-                                    return const Skeleton(
-                                        width: 90, height: 40);
-                                  }),
-                              if (dateRangeService.startDate != null &&
-                                  dateRangeService.endDate != null)
-                                StreamBuilder(
-                                    stream: accountService
-                                        .getAccountsMoneyVariation(
-                                            accounts: accounts.data!,
-                                            startDate:
-                                                dateRangeService.startDate,
-                                            endDate: dateRangeService.endDate,
-                                            convertToPreferredCurrency: true),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return const Skeleton(
-                                            width: 52, height: 22);
-                                      }
-
-                                      return TrendingValue(
-                                        percentage: snapshot.data!,
-                                        filled: true,
-                                        fontWeight: FontWeight.bold,
-                                        outlined: true,
-                                      );
-                                    }),
-                            ],
-                          );
-                        }
-                      }),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IncomeOrExpenseCard(
-                          type: AccountDataFilter.income,
-                          startDate: dateRangeService.startDate,
-                          endDate: dateRangeService.endDate,
-                        ),
-                        IncomeOrExpenseCard(
-                          type: AccountDataFilter.expense,
-                          startDate: dateRangeService.startDate,
-                          endDate: dateRangeService.endDate,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    StreamBuilder(
-                        stream: _accountsStream,
+                                        const TransactionsPage()));
+                          }
+                        : null,
+                    body: StreamBuilder(
+                        stream: TransactionService.instance.getTransactions(
+                            predicate: (transaction,
+                                    account,
+                                    accountCurrency,
+                                    receivingAccount,
+                                    receivingAccountCurrency,
+                                    c,
+                                    p6) =>
+                                AppDB.instance.buildExpr([
+                                  if (dateRangeService.startDate != null)
+                                    transaction.date.isBiggerOrEqualValue(
+                                        dateRangeService.startDate!),
+                                  if (dateRangeService.endDate != null)
+                                    transaction.date.isSmallerThanValue(
+                                        dateRangeService.endDate!)
+                                ]),
+                            limit: 5,
+                            orderBy: (p0, p1, p2, p3, p4, p5, p6) =>
+                                drift.OrderBy([
+                                  drift.OrderingTerm(
+                                      expression: p0.date,
+                                      mode: drift.OrderingMode.desc)
+                                ])),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
-                            return CardWithHeader(
-                                title: t.general.accounts,
-                                body: const LinearProgressIndicator());
-                          } else {
-                            final accounts = snapshot.data!;
-
-                            return CardWithHeader(
-                                title: t.general.accounts,
-                                headerButtonIcon: Icons.add_rounded,
-                                onHeaderButtonClick: accounts.isEmpty
-                                    ? null
-                                    : () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const AccountFormPage()));
-                                      },
-                                body: buildAccountList(accounts));
+                            return const LinearProgressIndicator();
                           }
-                        }),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    StreamBuilder(
-                        stream: AccountService.instance.getAccounts(limit: 1),
-                        builder: (context, accountSnapshot) {
-                          return CardWithHeader(
-                            title: t.home.last_transactions,
-                            onHeaderButtonClick: accountSnapshot.hasData &&
-                                    accountSnapshot.data!.isNotEmpty
-                                ? () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const TransactionsPage()));
-                                  }
-                                : null,
-                            body: StreamBuilder(
-                                stream: TransactionService.instance
-                                    .getTransactions(
-                                        predicate: (transaction,
-                                                account,
-                                                accountCurrency,
-                                                receivingAccount,
-                                                receivingAccountCurrency,
-                                                c,
-                                                p6) =>
-                                            AppDB.instance.buildExpr([
-                                              if (dateRangeService.startDate !=
-                                                  null)
-                                                transaction.date
-                                                    .isBiggerOrEqualValue(
-                                                        dateRangeService
-                                                            .startDate!),
-                                              if (dateRangeService.endDate !=
-                                                  null)
-                                                transaction.date
-                                                    .isSmallerThanValue(
-                                                        dateRangeService
-                                                            .endDate!)
-                                            ]),
-                                        limit: 5,
-                                        orderBy: (p0, p1, p2, p3, p4, p5, p6) =>
-                                            drift.OrderBy([
-                                              drift.OrderingTerm(
-                                                  expression: p0.date,
-                                                  mode: drift.OrderingMode.desc)
-                                            ])),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const LinearProgressIndicator();
-                                  }
 
-                                  if (snapshot.data!.isEmpty) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(24),
-                                      child: Text(
-                                        t.transaction.list.empty,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    );
-                                  }
-                                  return TransactionListComponent(
-                                      transactions: snapshot.data!,
-                                      showGroupDivider: false,
-                                      prevPage: const HomePage());
-                                }),
-                          );
+                          if (snapshot.data!.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(
+                                t.transaction.list.empty,
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          }
+                          return TransactionListComponent(
+                              transactions: snapshot.data!,
+                              showGroupDivider: false,
+                              prevPage: const HomePage());
                         }),
-                    const SizedBox(height: 16),
-                    CardWithHeader(
+                  );
+                }),
+            const SizedBox(height: 16),
+            LayoutBuilder(builder: (context, constraints) {
+              return Wrap(
+                runSpacing: 16,
+                spacing: 16,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  SizedBox(
+                    width: constraints.maxWidth > 600
+                        ? constraints.maxWidth / 2 - 16
+                        : double.infinity,
+                    child: CardWithHeader(
                       title: t.financial_health.display,
                       body: StreamBuilder(
-                          stream: accountService.getAccounts(),
+                          stream: _accountsStream,
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const LinearProgressIndicator();
@@ -516,8 +504,7 @@ class _HomePageState extends State<HomePage> {
 
                                       return ConstrainedBox(
                                         constraints: const BoxConstraints(
-                                          maxHeight: 180,
-                                        ),
+                                            maxHeight: 180),
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -544,25 +531,32 @@ class _HomePageState extends State<HomePage> {
                                                             .start,
                                                     children: [
                                                       Row(
-                                                        children: [
-                                                          Text(
-                                                            '${snapshot.data!}',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .headlineMedium!
-                                                                .copyWith(
-                                                                  color: getHealthyValueColor(
-                                                                      snapshot
-                                                                          .data!),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                ),
-                                                          ),
-                                                          const Text(" / 100")
-                                                        ],
-                                                      ),
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .baseline,
+                                                          textBaseline:
+                                                              TextBaseline
+                                                                  .alphabetic,
+                                                          children: [
+                                                            Text(
+                                                              snapshot.data!
+                                                                  .toStringAsFixed(
+                                                                      0),
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .headlineMedium!
+                                                                  .copyWith(
+                                                                    color: getHealthyValueColor(
+                                                                        snapshot
+                                                                            .data!),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                  ),
+                                                            ),
+                                                            const Text(' / 100')
+                                                          ]),
                                                       Text(
                                                         FinanceHealthService()
                                                             .getHealthyValueReviewTitle(
@@ -598,8 +592,12 @@ class _HomePageState extends State<HomePage> {
                                     }));
                           }),
                     ),
-                    const SizedBox(height: 16),
-                    CardWithHeader(
+                  ),
+                  SizedBox(
+                    width: constraints.maxWidth > 600
+                        ? constraints.maxWidth / 2 - 16
+                        : double.infinity,
+                    child: CardWithHeader(
                         title: t.stats.balance_evolution,
                         body: FundEvolutionLineChart(
                           startDate: dateRangeService.startDate,
@@ -614,8 +612,22 @@ class _HomePageState extends State<HomePage> {
                                         initialIndex: 1,
                                       )));
                         }),
-                    const SizedBox(height: 16),
-                    CardWithHeader(
+                  )
+                ],
+              );
+            }),
+            const SizedBox(height: 16),
+            LayoutBuilder(builder: (context, constraints) {
+              return Wrap(
+                runSpacing: 16,
+                spacing: 16,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  SizedBox(
+                    width: constraints.maxWidth > 600
+                        ? constraints.maxWidth / 2 - 16
+                        : double.infinity,
+                    child: CardWithHeader(
                         title: t.stats.by_categories,
                         body: ChartByCategories(
                           startDate: dateRangeService.startDate,
@@ -629,8 +641,12 @@ class _HomePageState extends State<HomePage> {
                                         initialIndex: 0,
                                       )));
                         }),
-                    const SizedBox(height: 16),
-                    CardWithHeader(
+                  ),
+                  SizedBox(
+                    width: constraints.maxWidth > 600
+                        ? constraints.maxWidth / 2 - 16
+                        : double.infinity,
+                    child: CardWithHeader(
                         title: t.stats.cash_flow,
                         body: Padding(
                           padding: const EdgeInsets.only(
@@ -646,55 +662,13 @@ class _HomePageState extends State<HomePage> {
                                         initialIndex: 2,
                                       )));
                         }),
-                    const SizedBox(height: 16),
-                    CardWithHeader(
-                      title: 'Enlaces rápidos',
-                      body: GridView.count(
-                        primary: false,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(16),
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 8,
-                        crossAxisCount: 4,
-                        children: _tools
-                            .map(
-                              (item) => Column(
-                                children: [
-                                  IconButton.filledTonal(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    item['route']));
-                                      },
-                                      icon: Icon(
-                                        item['icon'],
-                                        size: 32,
-                                        color: Theme.of(context).primaryColor,
-                                      )),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item['label'],
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w300),
-                                  )
-                                ],
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 85)
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+                  )
+                ],
+              );
+            }),
+            const SizedBox(height: 64)
+          ],
+        ),
       ),
     );
   }

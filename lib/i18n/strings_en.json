@@ -4,6 +4,7 @@
     "or": "or",
     "understood": "Understood",
     "unspecified": "Sin especificar",
+    "attention": "Attention ⚠️",
     "confirm": "Confirm",
     "continue_text": "Continue",
     "add": "Add",
@@ -180,6 +181,7 @@
   },
   "STATS": {
     "title": "Statistics",
+    "balance": "Saldo",
     "balance-by-account": "Balance by accounts",
     "balance-by-currency": "Balance by currency",
     "cash-flow": "Cash flow",
@@ -284,6 +286,7 @@
     "DETAILS": {
       "title": "Transaccion recurrente",
       "next-payment-info": "The next movement of this transaction will take place on {{date}}. You can choose whether you want to skip this movement or accept it on the date of your choice",
+      "last-payment-info": "The next move for this transaction will take place on {{date}}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made",
       "delete-header": "Delete recurring transaction",
       "delete-message": "This action is irreversible and will not affect transactions you have already confirmed/paid for"
     }
@@ -347,6 +350,7 @@
     "exchange-rates": "Exchange rates",
     "empty": "Add exchange rates here so that if you have accounts in currencies other than your base currency our charts are more accurate",
     "select-a-currency": "Select a currency",
+    "search-title": "Tap to search",
     "search-placeholder": "Search by name or by currency code"
   },
   "CATEGORIES": {
@@ -437,14 +441,26 @@
       "manual-import": "Manual import",
       "manual-import-descr": "Import transactions from a .csv file manually",
       "restore-backup": "Restore Backup",
+      "restore-backup-warn": "When importing a new database, you will lose all data currently saved in the app. It is recommended to make a backup before continuing. Do not upload here any file whose origin you do not know, upload only files that you have previously downloaded from Monekin",
       "restore-backup-descr": "Import a previously saved database from Finlytics. This action will replace any current application data with the new data",
-      "upload_file": "Upload your data file",
-      "touch_to_import": "Touch to import",
-      "touch_to_change": "Touch to change",
-      "onboarding_done": "Backup uploaded",
-      "file": "Import file",
-      "description": "Replace all data currently in the app with data you have previously saved",
-      "longDescription": "If you have already used our application before, you may have a backup saved on your device with the name Monekin_backup_YYYY_MM_DD. If you prefer, you can perform this data import later.",
+      "select-other-file": "Select other file",
+      "tap-to-select-file": "Tap to select a file",
+      "steps": [
+        "Select your file",
+        "Column for quantity",
+        "Column for account",
+        "Column for category",
+        "Column for date",
+        "Other column"
+      ],
+      "steps-descr": [
+        "Select a .csv file from your device. Make sure it has a first row that describes the name of each column",
+        "Select the column where the value of each transaction is specified. Use negative values for expenses and positive values for income. Use a point as a decimal separator",
+        "Select the column where the account to which each transaction belongs is specified. You can also select a default account in case we cannot find the account you want. If a default account is not specified, we will create one with the same name",
+        "Specify the column where the transaction category name is located. You must specify a default category so that we assign this category to transactions, in case the category cannot be found",
+        "Select the column where the date of each transaction is specified. If not specified, transactions will be created with the current date",
+        "Specifies the columns for other optional transaction attributes"
+      ],
       "success": "Import performed successfully",
       "error": "Error importing file. Please contact developer via lozin.technologies@gmail.com"
     }
@@ -461,7 +477,6 @@
     "first_day_of_week": "First day of week",
     "GENERAL": {
       "display": "General settings",
-      "currency": "Default currency",
       "categories.descr": "Create and edit categories to your liking",
       "other": "Advanced settings",
       "other.descr": "Other general app customization settings"

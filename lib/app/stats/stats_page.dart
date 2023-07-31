@@ -46,12 +46,16 @@ class _StatsPageState extends State<StatsPage> {
     currentDateRange = dateRangeService.selectedDateRange;
   }
 
-  Widget buildContainerWithPadding(List<Widget> children) {
+  Widget buildContainerWithPadding(List<Widget> children,
+      {EdgeInsetsGeometry padding =
+          const EdgeInsets.symmetric(vertical: 24, horizontal: 16)}) {
     return SingleChildScrollView(
-        padding:
-            const EdgeInsets.only(bottom: 24, left: 16, right: 16, top: 24),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, children: children));
+      padding: padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
   }
 
   @override
@@ -85,7 +89,7 @@ class _StatsPageState extends State<StatsPage> {
           ],
           bottom: TabBar(tabs: [
             Tab(text: t.stats.by_categories),
-            Tab(text: 'Saldo'),
+            Tab(text: t.stats.balance),
             Tab(text: t.stats.cash_flow),
           ], isScrollable: true),
         ),
@@ -115,13 +119,15 @@ class _StatsPageState extends State<StatsPage> {
             ],
             Expanded(
               child: TabBarView(children: [
-                ChartByCategories(
-                  startDate: currentStartDate,
-                  endDate: currentEndDate,
-                  showList: true,
-                  initialSelectedType: TransactionType.income,
-                  filters: filters,
-                ),
+                buildContainerWithPadding([
+                  ChartByCategories(
+                    startDate: currentStartDate,
+                    endDate: currentEndDate,
+                    showList: true,
+                    initialSelectedType: TransactionType.income,
+                    filters: filters,
+                  ),
+                ], padding: const EdgeInsets.all(0)),
                 buildContainerWithPadding(
                   [
                     CardWithHeader(

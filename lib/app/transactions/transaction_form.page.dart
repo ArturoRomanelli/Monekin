@@ -8,7 +8,6 @@ import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
 import 'package:finlytics/core/presentation/widgets/inline_info_card.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
@@ -243,14 +242,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       decoration: InputDecoration(
                           labelText: '${t.transaction.form.value} *',
                           hintText: 'Ex.: 200',
-                          suffix: fromAccount != null && valueToNumber != null
-                              ? Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: CurrencyDisplayer(
-                                      amountToConvert: valueToNumber!,
-                                      currency: fromAccount!.currency),
-                                )
-                              : null),
+                          suffixText: fromAccount?.currency.symbol),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         final defaultNumberValidatorResult = fieldValidator(
@@ -270,7 +262,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                       },
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       textInputAction: TextInputAction.next,
-                      inputFormatters: [decimalDigitFormatter],
+                      inputFormatters: decimalDigitFormatter,
                       onChanged: (value) {
                         setState(() {});
                       },
@@ -458,18 +450,9 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                   labelText:
                                       '${t.transfer.form.currency_exchange_selector.value_in_destiny}  *',
                                   hintText: 'Ex.: 200',
-                                  suffix: fromAccount != null &&
-                                          valueInDestinyToNumber != null
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          child: CurrencyDisplayer(
-                                              amountToConvert:
-                                                  valueInDestinyToNumber!,
-                                              currency: fromAccount!.currency),
-                                        )
-                                      : null),
+                                  suffixText: toAccount?.currency.symbol),
                               keyboardType: TextInputType.number,
+                              inputFormatters: decimalDigitFormatter,
                               validator: (value) {
                                 final defaultNumberValidatorResult =
                                     fieldValidator(value,

@@ -4,6 +4,7 @@
     "or": "o",
     "understood": "Entendido",
     "unspecified": "Sin especificar",
+    "attention": "Atención ⚠️",
     "confirm": "Confirmar",
     "continue_text": "Continuar",
     "add": "Añadir",
@@ -181,6 +182,7 @@
   },
   "STATS": {
     "title": "Estadísticas",
+    "balance": "Saldo",
     "balance-by-account": "Saldo por cuentas",
     "balance-by-currency": "Saldo por divisas",
     "balance-evolution": "Tendencia de saldo",
@@ -286,6 +288,7 @@
     "DETAILS": {
       "title": "Transaccion recurrente",
       "next-payment-info": "El próximo movimiento de esta transacción tendrá lugar el día {{date}}. Puedes elegir si deseas saltar este movimiento o aceptarlo en la fecha que elijas",
+      "last-payment-info": "El próximo movimiento de esta transacción tendrá lugar el día {{date}}. Este pago será el último de la regla recurrente, por lo que se eliminará esta regla de forma automática al realizar este pago",
       "delete-header": "Eliminar transacción recurrente",
       "delete-message": "Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado"
     }
@@ -349,6 +352,7 @@
     "exchange-rates": "Tipos de cambio",
     "empty": "Añade tipos de cambio aqui para que en caso de tener cuentas en otras divisas distintas a tu divisa base nuestros gráficos sean mas exactos",
     "select-a-currency": "Selecciona una divisa",
+    "search-title": "Toca para buscar",
     "search-placeholder": "Busca por nombre o por código de la divisa"
   },
   "CATEGORIES": {
@@ -439,14 +443,27 @@
       "manual-import": "Importación manual",
       "manual-import-descr": "Importa transacciones desde un fichero .csv de forma manual",
       "restore-backup": "Restaurar copia de seguridad",
+      "restore-backup-warn": "All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin",
       "restore-backup-descr": "Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos",
-      "upload_file": "Sube tu archivo de datos",
-      "touch_to_import": "Toca para importar",
-      "touch_to_change": "Toca para cambiar",
-      "onboarding_done": "Copia de seguridad subida",
-      "file": "Importar archivo",
-      "description": "Reemplaza todos los datos que hay actualmente en la app por otros que hayas guardado previamente",
-      "longDescription": "Si ya has usado nuestra aplicación antes puede que tengas una copia de seguridad guardada en tu disposivo con el nombre Monekin_backup_YYYY_MM_DD. Si prefieres puedes realizar esta importación de datos mas adelante.",
+      "tap-to-select-file": "Pulsa para seleccionar un archivo",
+      "select-other-file": "Selecciona otro fichero",
+      "steps": [
+        "Selecciona tu fichero",
+        "Columna para la cantidad",
+        "Columna para la cuenta",
+        "Columna para la categoría",
+        "Columna para la fecha",
+        "Otras columnas"
+      ],
+      "steps-descr": [
+        "Selecciona un fichero .csv de tu dispositivo. Asegurate de que este tenga una primera fila que describa el nombre de cada columna",
+        "Selecciona la columna donde se especifica el valor de cada transacción. Usa valores negativos para los gastos y positivos para los ingresos. Usa un punto como separador decimal",
+        "Selecciona la columna donde se especifica la cuenta a la que pertenece cada transacción. Podrás también seleccionar una cuenta por defecto en el caso de que no encontremos la cuenta que desea. Si no se especifica una cuenta por defecto, crearemos una con el mismo nombre",
+        "Especifica la columna donde se encuentra el nombre de la categoría de la transacción. Debes especificar una categoría por defecto para que asignemos esta categoría a las transacciones, en caso de que la categoría no se pueda encontrar",
+        "Selecciona la columna donde se especifica la fecha de cada transacción. En caso de no especificarse, se crearan transacciones con la fecha actual",
+        "Especifica las columnas para otros atributos optativos de las transacciones"
+      ],
+
       "success": "Importación realizada con exito",
       "error": "Error al importar el archivo. Por favor contacte con el desarrollador via lozin.technologies@gmail.com"
     }

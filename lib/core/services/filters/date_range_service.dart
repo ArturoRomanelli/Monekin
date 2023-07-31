@@ -270,7 +270,7 @@ class DateRangeService {
     return [startDateToReturn, endDateToReturn];
   }
 
-  Future<void> openDateModal(BuildContext context) async {
+  Future<void> openDateRangeModal(BuildContext context) async {
     final t = Translations.of(context);
 
     final result = await showDialog<DateRange>(

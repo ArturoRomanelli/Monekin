@@ -187,7 +187,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
               }
             },
             icon: const Icon(Icons.save),
-            label: const Text('Guardar cuenta'),
+            label: Text(_accountToEdit != null
+                ? t.account.form.edit
+                : t.account.form.create),
           ),
         )
       ],
@@ -273,8 +275,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
                               ? '${t.account.form.current_balance} *'
                               : '${t.account.form.initial_balance} *',
                           hintText: 'Ex.: 200',
+                          suffixText: _currency?.symbol,
                         ),
                         keyboardType: TextInputType.number,
+                        inputFormatters: decimalDigitFormatter,
                         validator: (value) => fieldValidator(value,
                             validator: ValidatorType.double, isRequired: true),
                         autovalidateMode: AutovalidateMode.onUserInteraction,

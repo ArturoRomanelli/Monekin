@@ -7,6 +7,7 @@ import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/utils/get_download_path.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as path;
 
 class BackupDatabaseService {
   AppDB db = AppDB.instance;
@@ -17,8 +18,10 @@ class BackupDatabaseService {
     List<int> dbFileInBytes = await File(await db.databasePath).readAsBytes();
 
     String downloadPath = await getDownloadPath();
-    downloadPath =
-        '${downloadPath}finlytics-${DateFormat('yyyyMMdd-Hms').format(DateTime.now())}.db';
+    downloadPath = path.join(
+      downloadPath,
+      "finlytics-${DateFormat('yyyyMMdd-Hms').format(DateTime.now())}.db",
+    );
 
     File downloadFile = File(downloadPath);
 
@@ -127,10 +130,11 @@ class BackupDatabaseService {
       // Delete the previous database
       String path = await db.databasePath;
 
-      await file.writeAsString('');
-
       // Load the new database
-      await file.copy(path);
+      await File(path)
+          .writeAsBytes(await file.readAsBytes(), mode: FileMode.write);
+
+      db.markTablesUpdated(db.allTables);
     }
   }
 

@@ -25,6 +25,11 @@ class _TransactionsPageState extends State<TransactionsPage> {
   FocusNode searchFocusNode = FocusNode();
   String? searchValue;
 
+  ScrollController listController = ScrollController();
+
+  final int pageSize = 40;
+  late int currentPage = 1;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +38,15 @@ class _TransactionsPageState extends State<TransactionsPage> {
       if (!searchFocusNode.hasFocus) {
         setState(() {
           searchActive = false;
+        });
+      }
+    });
+
+    listController.addListener(() {
+      if (listController.offset >= listController.position.maxScrollExtent &&
+          !listController.position.outOfRange) {
+        setState(() {
+          currentPage += 1;
         });
       }
     });
@@ -144,6 +158,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         c.parentCategoryID
                             .isIn(filters.categories!.map((e) => e.id)),
                 ]),
+                limit: currentPage * pageSize,
                 orderBy: (p0, p1, p2, p3, p4, p5, p6) => drift.OrderBy([
                   drift.OrderingTerm(
                       expression: p0.date, mode: drift.OrderingMode.desc)
@@ -170,10 +185,22 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 }
 
                 return SingleChildScrollView(
+                  controller: listController,
                   padding: const EdgeInsets.only(bottom: 80),
-                  child: TransactionListComponent(
-                    transactions: transactions,
-                    prevPage: const HomePage(),
+                  child: Column(
+                    children: [
+                      TransactionListComponent(
+                        transactions: transactions,
+                        prevPage: const HomePage(),
+                      ),
+                      if (snapshot.connectionState ==
+                          ConnectionState.waiting) ...[
+                        const SizedBox(height: 10),
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 10),
+                        Text("Loading data")
+                      ]
+                    ],
                   ),
                 );
               },

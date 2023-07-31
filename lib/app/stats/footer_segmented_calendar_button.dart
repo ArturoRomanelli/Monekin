@@ -73,7 +73,7 @@ class _FooterSegmentedCalendarButtonState
             flex: 3,
             child: FilledButton(
               onPressed: () =>
-                  dateRangeService.openDateModal(context).then((value) {
+                  dateRangeService.openDateRangeModal(context).then((value) {
                 setState(() {});
                 sendNewDates();
               }),

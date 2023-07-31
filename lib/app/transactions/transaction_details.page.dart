@@ -100,15 +100,19 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           .isEmpty) {
                         // NO MORE PAYMENTS NEEDED
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                '${t.transaction.new_success}. ${t.transaction.next_payments.recurrent_rule_finished}'),
-                          ),
-                        );
+                        TransactionService.instance
+                            .deleteTransaction(newId)
+                            .then((value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  '${t.transaction.new_success}. ${t.transaction.next_payments.recurrent_rule_finished}'),
+                            ),
+                          );
 
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        });
 
                         return;
                       }
@@ -226,9 +230,31 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       date: transaction.getNextDatesOfRecurrency(limit: 2)[0],
                     ))
                         .then((inserted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(t.transaction.next_payments.skip_success),
-                      ));
+                      TransactionService.instance
+                          .getTransactionById(transaction.id)
+                          .first
+                          .then((value) {
+                        if (value == null) return;
+
+                        print("IN MODAL");
+                        print("VALUE TO SET");
+                        print(value);
+
+                        print(transaction);
+
+                        setState(() {
+                          transaction = value;
+                        });
+
+                        print(transaction);
+
+                        Navigator.pop(context);
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text(t.transaction.next_payments.skip_success),
+                        ));
+                      });
                     });
                   });
                 },
@@ -323,8 +349,17 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               children: [
                 Text(
                     showRecurrencyStatus
-                        ? t.recurrent_transactions.details.next_payment_info(
-                            date: DateFormat.yMMMMd().format(transaction.date))
+                        ? transaction
+                                .getNextDatesOfRecurrency(limit: 2)
+                                .isNotEmpty
+                            ? t.recurrent_transactions.details
+                                .next_payment_info(
+                                    date: DateFormat.yMMMMd()
+                                        .format(transaction.date))
+                            : t.recurrent_transactions.details
+                                .last_payment_info(
+                                    date: DateFormat.yMMMMd()
+                                        .format(transaction.date))
                         : transaction.status!.description(context),
                     style: TextStyle(
                       color: isDarkTheme
@@ -336,10 +371,14 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      if (transaction.recurrentInfo.isRecurrent) ...[
+                      if (transaction.recurrentInfo.isRecurrent &&
+                          transaction
+                              .getNextDatesOfRecurrency(limit: 2)
+                              .isNotEmpty) ...[
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => false,
+                            onPressed: () =>
+                                showSkipTransactionModal(context, transaction),
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: color.darken(0.2)),
                                 backgroundColor: Colors.white.withOpacity(0.6),
@@ -354,12 +393,14 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           onPressed: () => showPayModal(context, transaction),
                           style: FilledButton.styleFrom(
                               backgroundColor: color.darken(0.2)),
-                          child: Text(t.transaction.next_payments.accept,
-                              style: TextStyle(
-                                color: isDarkTheme
-                                    ? Theme.of(context).colorScheme.onBackground
-                                    : null,
-                              )),
+                          child: Text(
+                            t.transaction.next_payments.accept,
+                            style: TextStyle(
+                              color: isDarkTheme
+                                  ? Theme.of(context).colorScheme.onBackground
+                                  : null,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -380,6 +421,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             transaction: widget.transaction, prevPage: widget.prevPage);
 
     final t = Translations.of(context);
+
+    print("IN BUILD");
+    print(transaction);
 
     return Scaffold(
       appBar: AppBar(elevation: 0),
@@ -535,39 +579,38 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               const SizedBox(height: 16),
               CardWithHeader(
                 title: 'Acciones rápidas',
-                body: Column(
-                  children: [
-                    GridView.count(
-                      primary: false,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(16),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 8,
-                      crossAxisCount: 4,
-                      children: transactionDetailsActions
-                          .map((item) => Column(
-                                children: [
-                                  IconButton.filledTonal(
-                                      onPressed: item.onClick,
-                                      icon: Icon(
-                                        item.icon,
-                                        size: 32,
-                                        color: Theme.of(context).primaryColor,
-                                      )),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.label,
-                                    softWrap: false,
-                                    overflow: TextOverflow.fade,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w300),
-                                  )
-                                ],
-                              ))
-                          .toList(),
-                    ),
-                  ],
+                body: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Wrap(
+                        spacing: 24,
+                        runSpacing: 16,
+                        children: transactionDetailsActions
+                            .map((item) => Column(
+                                  children: [
+                                    IconButton.filledTonal(
+                                        onPressed: item.onClick,
+                                        icon: Icon(
+                                          item.icon,
+                                          size: 32,
+                                          color: Theme.of(context).primaryColor,
+                                        )),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.label,
+                                      softWrap: false,
+                                      overflow: TextOverflow.fade,
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300),
+                                    )
+                                  ],
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -1,8 +1,8 @@
-import 'package:async/async.dart' show StreamZip;
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:rxdart/rxdart.dart';
 
 enum AccountDataFilter { income, expense, balance }
 
@@ -139,7 +139,7 @@ class AccountService {
         });
 
     // Sum the acount initial balance and the balance of the transactions
-    return StreamZip([
+    return Rx.combineLatest([
       initialBalanceQuery,
       getAccountsData(
         accountIds: accountIds,
@@ -148,7 +148,7 @@ class AccountService {
         convertToPreferredCurrency: convertToPreferredCurrency,
         endDate: date,
       )
-    ]).map((res) => res[0] + res[1]);
+    ], (res) => res[0] + res[1]);
   }
 
   Stream<double> getAccountsData(
@@ -249,7 +249,8 @@ class AccountService {
         date: endDate,
         convertToPreferredCurrency: convertToPreferredCurrency);
 
-    return StreamZip([accountsBalanceStartPeriod, accountsBalanceEndPeriod])
-        .map((res) => (res[1] - res[0]) / res[0]);
+    return Rx.combineLatest(
+        [accountsBalanceStartPeriod, accountsBalanceEndPeriod],
+        (res) => (res[1] - res[0]) / res[0]);
   }
 }

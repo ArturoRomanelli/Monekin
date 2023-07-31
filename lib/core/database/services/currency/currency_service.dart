@@ -1,7 +1,7 @@
+import 'package:drift/drift.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:drift/drift.dart';
 
 class CurrencyService {
   final _currencyTableName = 'currencies';
@@ -53,7 +53,14 @@ class CurrencyService {
 
     return (db.customSelect(
             '$_baseQuery WHERE currency.code LIKE ? OR names.es LIKE ?',
-            readsFrom: {db.currencies, db.currencyNames}))
+            variables: [
+          Variable.withString(toSearch),
+          Variable.withString(toSearch)
+        ],
+            readsFrom: {
+          db.currencies,
+          db.currencyNames
+        }))
         .map((e) => Currency(
             name: e.data['name'],
             code: e.data['code'],

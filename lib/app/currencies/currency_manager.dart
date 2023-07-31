@@ -87,7 +87,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
                   ? _userCurrency!.displayFlagIcon(size: 42)
                   : const Skeleton(height: 42, width: 42),
             ),
-            title: Text(t.settings.general.currency),
+            title: Text(t.currencies.preferred_currency),
             subtitle: _userCurrency != null
                 ? Text(_userCurrency!.name)
                 : const Skeleton(height: 12, width: 50),

@@ -73,12 +73,10 @@ class TransactionListComponent extends StatelessWidget {
           return ListTile(
             title: Row(
               children: [
-                Expanded(
-                  child: Text(
-                    transaction.displayName,
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                  ),
+                Text(
+                  transaction.displayName,
+                  softWrap: false,
+                  overflow: TextOverflow.fade,
                 ),
                 const SizedBox(width: 4),
                 if ((transaction.status != null ||
@@ -121,8 +119,8 @@ class TransactionListComponent extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                             isPending
-                                ? "In ${dateDiff} days"
-                                : "Pendiente, hace ${dateDiff * -1} días",
+                                ? 'In ${dateDiff} days'
+                                : 'Pending, ${dateDiff * -1} days ago',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

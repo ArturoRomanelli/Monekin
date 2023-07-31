@@ -3,10 +3,10 @@ import 'package:finlytics/app/categories/categories_list.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/budget/budget_service.dart';
 import 'package:finlytics/core/database/services/category/category_service.dart';
+import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/models/budget/budget.dart';
 import 'package:finlytics/core/models/category/category.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -203,15 +203,15 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                 TextFormField(
                   controller: valueController,
                   decoration: InputDecoration(
-                      labelText: 'Amount *',
-                      hintText: 'Ex.: 200',
-                      suffix: valueToNumber != null
-                          ? Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: CurrencyDisplayer(
-                                  amountToConvert: valueToNumber!),
-                            )
-                          : null),
+                    labelText: '${t.budgets.form.value} *',
+                    hintText: 'Ex.: 200',
+                    suffix: FutureBuilder(
+                        future:
+                            CurrencyService.instance.getUserPreferredCurrency(),
+                        builder: (context, snapshot) {
+                          return Text(snapshot.data?.symbol ?? '');
+                        }),
+                  ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     final defaultNumberValidatorResult = fieldValidator(value,

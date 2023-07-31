@@ -163,6 +163,8 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                     BarChartData(
                       barTouchData: BarTouchData(
                         touchTooltipData: BarTouchTooltipData(
+                          tooltipBgColor:
+                              Theme.of(context).colorScheme.background,
                           getTooltipItem: (a, b, c, d) => null,
                         ),
                       ),

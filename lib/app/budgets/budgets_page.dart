@@ -123,7 +123,9 @@ class BudgetsPage extends StatelessWidget {
                   .getBudgets(predicate: (p0) => p0.intervalPeriod.isNotNull()),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const LinearProgressIndicator();
+                  return const Column(
+                    children: [LinearProgressIndicator()],
+                  );
                 }
 
                 final budgets = snapshot.data!;
@@ -155,7 +157,9 @@ class BudgetsPage extends StatelessWidget {
                   .getBudgets(predicate: (p0) => p0.intervalPeriod.isNull()),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const LinearProgressIndicator();
+                  return const Column(
+                    children: [LinearProgressIndicator()],
+                  );
                 }
 
                 final budgets = snapshot.data!;

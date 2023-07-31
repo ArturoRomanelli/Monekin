@@ -243,6 +243,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(
                   tooltipMargin: -10,
+                  tooltipBgColor: Theme.of(context).colorScheme.background,
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
                       '${snapshot.data!.longTitles[group.x]}\n',

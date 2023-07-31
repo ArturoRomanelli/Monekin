@@ -59,9 +59,13 @@ class TransactionViewActionService {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(t.transaction.delete),
+          title: Text(!isRecurrent
+              ? t.transaction.delete
+              : t.recurrent_transactions.details.delete_header),
           content: SingleChildScrollView(
-            child: Text(t.transaction.delete_warning_message),
+            child: Text(!isRecurrent
+                ? t.transaction.delete_warning_message
+                : t.recurrent_transactions.details.delete_message),
           ),
           actions: [
             TextButton(

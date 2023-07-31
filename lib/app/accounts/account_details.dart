@@ -52,11 +52,11 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(elevation: 0),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -95,8 +95,11 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                 )
               ],
             ),
-            const SizedBox(height: 24),
-            SingleChildScrollView(
+          ),
+          const SizedBox(height: 24),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   CardWithHeader(
@@ -138,42 +141,47 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                   const SizedBox(height: 16),
                   CardWithHeader(
                     title: 'Acciones rápidas',
-                    body: GridView.count(
-                      primary: false,
-                      shrinkWrap: true,
+                    body: Padding(
                       padding: const EdgeInsets.all(16),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 8,
-                      crossAxisCount: 4,
-                      children: transactionDetailsActions
-                          .map((item) => Column(
-                                children: [
-                                  IconButton.filledTonal(
-                                      onPressed: item.onClick,
-                                      icon: Icon(
-                                        item.icon,
-                                        size: 32,
-                                        color: Theme.of(context).primaryColor,
-                                      )),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.label,
-                                    softWrap: false,
-                                    overflow: TextOverflow.fade,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w300),
-                                  )
-                                ],
-                              ))
-                          .toList(),
+                      child: Row(
+                        children: [
+                          Wrap(
+                            spacing: 24,
+                            runSpacing: 16,
+                            children: transactionDetailsActions
+                                .map((item) => Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton.filledTonal(
+                                            onPressed: item.onClick,
+                                            icon: Icon(
+                                              item.icon,
+                                              size: 32,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            )),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          item.label,
+                                          softWrap: false,
+                                          overflow: TextOverflow.fade,
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300),
+                                        )
+                                      ],
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

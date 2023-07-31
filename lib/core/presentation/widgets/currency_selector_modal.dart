@@ -2,6 +2,7 @@ import 'package:finlytics/core/database/services/currency/currency_service.dart'
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -42,6 +43,8 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
+    final t = Translations.of(context);
+
     return DraggableScrollableSheet(
       expand: false,
       maxChildSize: 0.85,
@@ -58,7 +61,7 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Select a currency',
+                      t.currencies.select_a_currency,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Chip(
@@ -86,13 +89,14 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                 ),
               ),
               TextField(
-                decoration: const InputDecoration(
-                    hintText: 'Search for a currency by name or code',
-                    labelText: 'Tap to search',
-                    prefixIcon: Icon(Icons.search),
-                    border: UnderlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
+                decoration: InputDecoration(
+                  hintText: t.currencies.search_placeholder,
+                  labelText: t.currencies.search_title,
+                  prefixIcon: const Icon(Icons.search),
+                  border: const UnderlineInputBorder(),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
                 onChanged: (value) {
                   CurrencyService.instance
                       .searchCurrencies(value)

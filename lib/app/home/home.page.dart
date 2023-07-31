@@ -324,7 +324,6 @@ class _HomePageState extends State<HomePage> {
                                 accountIds: accounts.data!.map((e) => e.id)),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                print("BUILD");
                                 return CurrencyDisplayer(
                                   amountToConvert: snapshot.data!,
                                   textStyle: const TextStyle(

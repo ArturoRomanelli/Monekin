@@ -236,17 +236,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           .then((value) {
                         if (value == null) return;
 
-                        print("IN MODAL");
-                        print("VALUE TO SET");
-                        print(value);
-
-                        print(transaction);
-
                         setState(() {
                           transaction = value;
                         });
-
-                        print(transaction);
 
                         Navigator.pop(context);
 
@@ -421,9 +413,6 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             transaction: widget.transaction, prevPage: widget.prevPage);
 
     final t = Translations.of(context);
-
-    print("IN BUILD");
-    print(transaction);
 
     return Scaffold(
       appBar: AppBar(elevation: 0),

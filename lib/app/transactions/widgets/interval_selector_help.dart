@@ -40,8 +40,6 @@ class RecurrencyData extends Equatable {
   String formText(BuildContext context) {
     final t = Translations.of(context);
 
-    print(ruleRecurrentLimit);
-
     if (isNoRecurrent) {
       return t.general.time.periodicity.no_repeat;
     } else if (ruleRecurrentLimit!.untilMode == RuleUntilMode.infinity &&

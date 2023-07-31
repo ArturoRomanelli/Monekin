@@ -224,7 +224,7 @@
       "accept": "Accept",
       "skip": "Skip",
       "skip.success": "Successfully skipped transaction",
-      "skip-dialog.title": "Skip payment",
+      "skip-dialog.title": "Skip transaction",
       "skip-dialog.msg": "This action is irreversible. We will move the date of the next move to {{date}}",
       "accept-today": "Accept today",
       "accept-in-required-date": "Accept in required date ({{date}})",

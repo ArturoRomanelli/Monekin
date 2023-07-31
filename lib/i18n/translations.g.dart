@@ -6,7 +6,7 @@
 /// Locales: 2
 /// Strings: 781 (390 per locale)
 ///
-/// Built on 2023-07-31 at 13:54 UTC
+/// Built on 2023-07-31 at 14:42 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -624,7 +624,7 @@ class _TranslationsTransactionNextPaymentsEn {
 	String get accept => 'Accept';
 	String get skip => 'Skip';
 	String get skip_success => 'Successfully skipped transaction';
-	String get skip_dialog_title => 'Skip payment';
+	String get skip_dialog_title => 'Skip transaction';
 	String skip_dialog_msg({required Object date}) => 'This action is irreversible. We will move the date of the next move to ${date}';
 	String get accept_today => 'Accept today';
 	String accept_in_required_date({required Object date}) => 'Accept in required date (${date})';
@@ -1604,7 +1604,7 @@ class _TranslationsTransactionNextPaymentsEs extends _TranslationsTransactionNex
 	// Translations
 	@override String get skip => 'Saltar';
 	@override String get skip_success => 'Transacción saltada con exito';
-	@override String get skip_dialog_title => 'Saltar pago';
+	@override String get skip_dialog_title => 'Saltar transacción';
 	@override String skip_dialog_msg({required Object date}) => 'Esta acción es irreversible. Desplazaremos la fecha del proximo movimiento al día ${date}';
 	@override String get accept => 'Aceptar';
 	@override String get accept_today => 'Aceptar hoy';
@@ -2276,7 +2276,7 @@ extension on _TranslationsEn {
 			case 'transaction.next_payments.accept': return 'Accept';
 			case 'transaction.next_payments.skip': return 'Skip';
 			case 'transaction.next_payments.skip_success': return 'Successfully skipped transaction';
-			case 'transaction.next_payments.skip_dialog_title': return 'Skip payment';
+			case 'transaction.next_payments.skip_dialog_title': return 'Skip transaction';
 			case 'transaction.next_payments.skip_dialog_msg': return ({required Object date}) => 'This action is irreversible. We will move the date of the next move to ${date}';
 			case 'transaction.next_payments.accept_today': return 'Accept today';
 			case 'transaction.next_payments.accept_in_required_date': return ({required Object date}) => 'Accept in required date (${date})';
@@ -2692,7 +2692,7 @@ extension on _TranslationsEs {
 			case 'transaction.delete_success': return 'Transacción eliminada correctamente';
 			case 'transaction.next_payments.skip': return 'Saltar';
 			case 'transaction.next_payments.skip_success': return 'Transacción saltada con exito';
-			case 'transaction.next_payments.skip_dialog_title': return 'Saltar pago';
+			case 'transaction.next_payments.skip_dialog_title': return 'Saltar transacción';
 			case 'transaction.next_payments.skip_dialog_msg': return ({required Object date}) => 'Esta acción es irreversible. Desplazaremos la fecha del proximo movimiento al día ${date}';
 			case 'transaction.next_payments.accept': return 'Aceptar';
 			case 'transaction.next_payments.accept_today': return 'Aceptar hoy';

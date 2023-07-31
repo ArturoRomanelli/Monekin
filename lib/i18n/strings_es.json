@@ -224,7 +224,7 @@
     "NEXT-PAYMENTS": {
       "skip": "Saltar",
       "skip.success": "Transacción saltada con exito",
-      "skip-dialog.title": "Saltar pago",
+      "skip-dialog.title": "Saltar transacción",
       "skip-dialog.msg": "Esta acción es irreversible. Desplazaremos la fecha del proximo movimiento al día {{date}}",
       "accept": "Aceptar",
       "accept-today": "Aceptar hoy",

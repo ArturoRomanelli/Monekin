@@ -1,6 +1,6 @@
-import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
+import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/services/view-actions/account_view_actions_service.dart';
 import 'package:finlytics/i18n/translations.g.dart';
@@ -140,7 +140,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                       )),
                   const SizedBox(height: 16),
                   CardWithHeader(
-                    title: 'Acciones rápidas',
+                    title: t.general.quick_actions,
                     body: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Row(

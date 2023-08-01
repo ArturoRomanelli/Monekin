@@ -342,7 +342,6 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             child: Column(
               children: [
                 Builder(builder: (context) {
-                  print("Rebuilding text");
                   return Text(
                       showRecurrencyStatus
                           ? transaction
@@ -563,7 +562,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                           const Divider(indent: 12),
                         if (transaction.notes != null)
                           ListTile(
-                            title: const Text('Note'),
+                            title: Text(t.transaction.form.description),
                             subtitle: Text(transaction.notes!),
                           )
                       ]),
@@ -571,7 +570,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               ),
               const SizedBox(height: 16),
               CardWithHeader(
-                title: 'Acciones rápidas',
+                title: t.general.quick_actions,
                 body: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(

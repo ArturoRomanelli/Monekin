@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 797 (398 per locale)
+/// Strings: 799 (399 per locale)
 ///
-/// Built on 2023-08-01 at 18:02 UTC
+/// Built on 2023-08-01 at 18:21 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -182,6 +182,7 @@ class _TranslationsGeneralEn {
 	String get attention => 'Attention ⚠️';
 	String get confirm => 'Confirm';
 	String get continue_text => 'Continue';
+	String get quick_actions => 'Quick actions';
 	String get save => 'Save';
 	String get save_changes => 'Save changes';
 	String get close_and_save => 'Save and close';
@@ -1171,6 +1172,7 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get attention => 'Atención ⚠️';
 	@override String get confirm => 'Confirmar';
 	@override String get continue_text => 'Continuar';
+	@override String get quick_actions => 'Acciones rápidas';
 	@override String get save => 'Guardar';
 	@override String get save_changes => 'Guardar cambios';
 	@override String get close_and_save => 'Guardar y cerrar';
@@ -2115,6 +2117,7 @@ extension on _TranslationsEn {
 			case 'general.attention': return 'Attention ⚠️';
 			case 'general.confirm': return 'Confirm';
 			case 'general.continue_text': return 'Continue';
+			case 'general.quick_actions': return 'Quick actions';
 			case 'general.save': return 'Save';
 			case 'general.save_changes': return 'Save changes';
 			case 'general.close_and_save': return 'Save and close';
@@ -2539,6 +2542,7 @@ extension on _TranslationsEs {
 			case 'general.attention': return 'Atención ⚠️';
 			case 'general.confirm': return 'Confirmar';
 			case 'general.continue_text': return 'Continuar';
+			case 'general.quick_actions': return 'Acciones rápidas';
 			case 'general.save': return 'Guardar';
 			case 'general.save_changes': return 'Guardar cambios';
 			case 'general.close_and_save': return 'Guardar y cerrar';

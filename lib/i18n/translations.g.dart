@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 781 (390 per locale)
+/// Strings: 797 (398 per locale)
 ///
-/// Built on 2023-07-31 at 14:42 UTC
+/// Built on 2023-08-01 at 18:02 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -182,6 +182,9 @@ class _TranslationsGeneralEn {
 	String get attention => 'Attention ⚠️';
 	String get confirm => 'Confirm';
 	String get continue_text => 'Continue';
+	String get save => 'Save';
+	String get save_changes => 'Save changes';
+	String get close_and_save => 'Save and close';
 	String get add => 'Add';
 	String get edit => 'Edit';
 	String get balance => 'Balance';
@@ -248,6 +251,8 @@ class _TranslationsHomeEn {
 	String get hello_night => 'Good night,';
 	String get total_balance => 'Total balance';
 	String get my_accounts => 'My accounts';
+	String get no_accounts => 'No accounts created yet';
+	String get no_accounts_descr => 'Start using all the magic of Monekin. Create at least one account to start adding transactions';
 	String get last_transactions => 'Last transactions';
 	String get should_create_account_header => 'Oops!';
 	String get should_create_account_message => 'You must create an account before you can start creating transactions';
@@ -629,6 +634,7 @@ class _TranslationsTransactionNextPaymentsEn {
 	String get accept_today => 'Accept today';
 	String accept_in_required_date({required Object date}) => 'Accept in required date (${date})';
 	String get accept_dialog_title => 'Accept transaction';
+	String get accept_dialog_msg_single => 'The new status of the transaction will be null. You can re-edit the status of this transaction whenever you want';
 	String accept_dialog_msg({required Object date}) => 'This action will create a new transaction with date ${date}. You will be able to check the details of this transaction on the transaction page';
 	String get recurrent_rule_finished => 'The recurring rule has been completed, there are no more payments to make!';
 }
@@ -656,6 +662,7 @@ class _TranslationsTransactionFormEn {
 	late final _TranslationsTransactionFormValidatorsEn validators = _TranslationsTransactionFormValidatorsEn._(_root);
 	String get title => 'Transaction title';
 	String get value => 'Value of the transaction';
+	String get tap_to_see_more => 'Tap to see more details';
 	String get description => 'Description';
 	String get description_info => 'Adding a note will help you find this transaction faster in the future';
 	String exchange_to_preferred({required Object x}) => 'Currently equal to approximately ${x}';
@@ -669,12 +676,13 @@ class _TranslationsTransactionStatusEn {
 
 	// Translations
 	String tr_status({required Object status}) => '${status} transaction';
+	String get none => 'Sin estado';
 	String get reconciled => 'Reconciled';
 	String get reconciled_descr => 'This transaction has already been validated and corresponds to a real transaction from your bank';
 	String get unreconciled => 'Unreconciled';
 	String get unreconciled_descr => 'This transaction has not yet been validated and therefore does not yet appear in your real bank accounts. However, it counts for the calculation of balances and statistics in Finlytics';
 	String get pending => 'Pending';
-	String get pending_descr => 'This transaction is pending payment and therefore will not be taken into account when calculating balances and statistics';
+	String get pending_descr => 'This transaction is pending and therefore it will not be taken into account when calculating balances and statistics';
 	String get voided => 'Voided';
 	String get voided_descr => 'Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics';
 }
@@ -700,7 +708,7 @@ class _TranslationsRecurrentTransactionsDetailsEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get title => 'Transaccion recurrente';
+	String get title => 'Recurrent transaction';
 	String next_payment_info({required Object date}) => 'The next movement of this transaction will take place on ${date}. You can choose whether you want to skip this movement or accept it on the date of your choice';
 	String last_payment_info({required Object date}) => 'The next move for this transaction will take place on ${date}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made';
 	String get delete_header => 'Delete recurring transaction';
@@ -1163,6 +1171,9 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get attention => 'Atención ⚠️';
 	@override String get confirm => 'Confirmar';
 	@override String get continue_text => 'Continuar';
+	@override String get save => 'Guardar';
+	@override String get save_changes => 'Guardar cambios';
+	@override String get close_and_save => 'Guardar y cerrar';
 	@override String get add => 'Añadir';
 	@override String get edit => 'Editar';
 	@override String get delete => 'Eliminar';
@@ -1229,6 +1240,8 @@ class _TranslationsHomeEs extends _TranslationsHomeEn {
 	@override String get hello_night => 'Buenas noches,';
 	@override String get total_balance => 'Saldo total';
 	@override String get my_accounts => 'Mis cuentas';
+	@override String get no_accounts => 'Aun no hay cuentas creadas';
+	@override String get no_accounts_descr => 'Empieza a usar toda la magia de Monekin. Crea al menos una cuenta para empezar a añadir tranacciones';
 	@override String get last_transactions => 'Últimas transacciones';
 	@override String get should_create_account_header => 'Ops!';
 	@override String get should_create_account_message => 'Debes crear una cuenta antes de empezar a crear transacciones';
@@ -1610,6 +1623,7 @@ class _TranslationsTransactionNextPaymentsEs extends _TranslationsTransactionNex
 	@override String get accept_today => 'Aceptar hoy';
 	@override String accept_in_required_date({required Object date}) => 'Aceptar en la fecha requerida (${date})';
 	@override String get accept_dialog_title => 'Aceptar transacción';
+	@override String get accept_dialog_msg_single => 'El estado de la transacción pasará a ser nulo. Puedes volver a editar el estado de esta transacción cuando lo desees';
 	@override String accept_dialog_msg({required Object date}) => 'Esta acción creará una transacción nueva con fecha ${date}. Podrás consultar los detalles de esta transacción en la página de transacciones';
 	@override String get recurrent_rule_finished => 'La regla recurrente se ha completado, ya no hay mas pagos a realizar!';
 }
@@ -1637,6 +1651,7 @@ class _TranslationsTransactionFormEs extends _TranslationsTransactionFormEn {
 	@override late final _TranslationsTransactionFormValidatorsEs validators = _TranslationsTransactionFormValidatorsEs._(_root);
 	@override String get title => 'Título de la transacción';
 	@override String get value => 'Valor de la transacción';
+	@override String get tap_to_see_more => 'Toca para ver más detalles';
 	@override String get description => 'Descripción';
 	@override String get description_info => 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
 	@override String exchange_to_preferred({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
@@ -1650,12 +1665,13 @@ class _TranslationsTransactionStatusEs extends _TranslationsTransactionStatusEn 
 
 	// Translations
 	@override String tr_status({required Object status}) => 'Transacción ${status}';
+	@override String get none => 'Sin estado';
 	@override String get reconciled => 'Reconciliada';
 	@override String get reconciled_descr => 'Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco';
 	@override String get unreconciled => 'No reconciliada';
 	@override String get unreconciled_descr => 'Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics';
 	@override String get pending => 'Pendiente';
-	@override String get pending_descr => 'Esta transacción esta pendiente de pago y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas';
+	@override String get pending_descr => 'Esta transacción esta pendiente y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas';
 	@override String get voided => 'Nula';
 	@override String get voided_descr => 'Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas';
 }
@@ -2099,6 +2115,9 @@ extension on _TranslationsEn {
 			case 'general.attention': return 'Attention ⚠️';
 			case 'general.confirm': return 'Confirm';
 			case 'general.continue_text': return 'Continue';
+			case 'general.save': return 'Save';
+			case 'general.save_changes': return 'Save changes';
+			case 'general.close_and_save': return 'Save and close';
 			case 'general.add': return 'Add';
 			case 'general.edit': return 'Edit';
 			case 'general.balance': return 'Balance';
@@ -2216,6 +2235,8 @@ extension on _TranslationsEn {
 			case 'home.hello_night': return 'Good night,';
 			case 'home.total_balance': return 'Total balance';
 			case 'home.my_accounts': return 'My accounts';
+			case 'home.no_accounts': return 'No accounts created yet';
+			case 'home.no_accounts_descr': return 'Start using all the magic of Monekin. Create at least one account to start adding transactions';
 			case 'home.last_transactions': return 'Last transactions';
 			case 'home.should_create_account_header': return 'Oops!';
 			case 'home.should_create_account_message': return 'You must create an account before you can start creating transactions';
@@ -2281,6 +2302,7 @@ extension on _TranslationsEn {
 			case 'transaction.next_payments.accept_today': return 'Accept today';
 			case 'transaction.next_payments.accept_in_required_date': return ({required Object date}) => 'Accept in required date (${date})';
 			case 'transaction.next_payments.accept_dialog_title': return 'Accept transaction';
+			case 'transaction.next_payments.accept_dialog_msg_single': return 'The new status of the transaction will be null. You can re-edit the status of this transaction whenever you want';
 			case 'transaction.next_payments.accept_dialog_msg': return ({required Object date}) => 'This action will create a new transaction with date ${date}. You will be able to check the details of this transaction on the transaction page';
 			case 'transaction.next_payments.recurrent_rule_finished': return 'The recurring rule has been completed, there are no more payments to make!';
 			case 'transaction.list.empty': return 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
@@ -2293,16 +2315,18 @@ extension on _TranslationsEn {
 			case 'transaction.form.validators.negative_transfer': return 'The monetary value of a transfer cannot be negative';
 			case 'transaction.form.title': return 'Transaction title';
 			case 'transaction.form.value': return 'Value of the transaction';
+			case 'transaction.form.tap_to_see_more': return 'Tap to see more details';
 			case 'transaction.form.description': return 'Description';
 			case 'transaction.form.description_info': return 'Adding a note will help you find this transaction faster in the future';
 			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Currently equal to approximately ${x}';
 			case 'transaction.status.tr_status': return ({required Object status}) => '${status} transaction';
+			case 'transaction.status.none': return 'Sin estado';
 			case 'transaction.status.reconciled': return 'Reconciled';
 			case 'transaction.status.reconciled_descr': return 'This transaction has already been validated and corresponds to a real transaction from your bank';
 			case 'transaction.status.unreconciled': return 'Unreconciled';
 			case 'transaction.status.unreconciled_descr': return 'This transaction has not yet been validated and therefore does not yet appear in your real bank accounts. However, it counts for the calculation of balances and statistics in Finlytics';
 			case 'transaction.status.pending': return 'Pending';
-			case 'transaction.status.pending_descr': return 'This transaction is pending payment and therefore will not be taken into account when calculating balances and statistics';
+			case 'transaction.status.pending_descr': return 'This transaction is pending and therefore it will not be taken into account when calculating balances and statistics';
 			case 'transaction.status.voided': return 'Voided';
 			case 'transaction.status.voided_descr': return 'Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics';
 			case 'transfer.display': return 'Transfer';
@@ -2318,7 +2342,7 @@ extension on _TranslationsEn {
 			case 'transfer.form.currency_exchange_selector.value_in_destiny': return 'Amount transferred in destination';
 			case 'recurrent_transactions.title': return 'Recurrent transactions';
 			case 'recurrent_transactions.empty': return 'It looks like you don\'t have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here';
-			case 'recurrent_transactions.details.title': return 'Transaccion recurrente';
+			case 'recurrent_transactions.details.title': return 'Recurrent transaction';
 			case 'recurrent_transactions.details.next_payment_info': return ({required Object date}) => 'The next movement of this transaction will take place on ${date}. You can choose whether you want to skip this movement or accept it on the date of your choice';
 			case 'recurrent_transactions.details.last_payment_info': return ({required Object date}) => 'The next move for this transaction will take place on ${date}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made';
 			case 'recurrent_transactions.details.delete_header': return 'Delete recurring transaction';
@@ -2515,6 +2539,9 @@ extension on _TranslationsEs {
 			case 'general.attention': return 'Atención ⚠️';
 			case 'general.confirm': return 'Confirmar';
 			case 'general.continue_text': return 'Continuar';
+			case 'general.save': return 'Guardar';
+			case 'general.save_changes': return 'Guardar cambios';
+			case 'general.close_and_save': return 'Guardar y cerrar';
 			case 'general.add': return 'Añadir';
 			case 'general.edit': return 'Editar';
 			case 'general.delete': return 'Eliminar';
@@ -2633,6 +2660,8 @@ extension on _TranslationsEs {
 			case 'home.hello_night': return 'Buenas noches,';
 			case 'home.total_balance': return 'Saldo total';
 			case 'home.my_accounts': return 'Mis cuentas';
+			case 'home.no_accounts': return 'Aun no hay cuentas creadas';
+			case 'home.no_accounts_descr': return 'Empieza a usar toda la magia de Monekin. Crea al menos una cuenta para empezar a añadir tranacciones';
 			case 'home.last_transactions': return 'Últimas transacciones';
 			case 'home.should_create_account_header': return 'Ops!';
 			case 'home.should_create_account_message': return 'Debes crear una cuenta antes de empezar a crear transacciones';
@@ -2698,6 +2727,7 @@ extension on _TranslationsEs {
 			case 'transaction.next_payments.accept_today': return 'Aceptar hoy';
 			case 'transaction.next_payments.accept_in_required_date': return ({required Object date}) => 'Aceptar en la fecha requerida (${date})';
 			case 'transaction.next_payments.accept_dialog_title': return 'Aceptar transacción';
+			case 'transaction.next_payments.accept_dialog_msg_single': return 'El estado de la transacción pasará a ser nulo. Puedes volver a editar el estado de esta transacción cuando lo desees';
 			case 'transaction.next_payments.accept_dialog_msg': return ({required Object date}) => 'Esta acción creará una transacción nueva con fecha ${date}. Podrás consultar los detalles de esta transacción en la página de transacciones';
 			case 'transaction.next_payments.recurrent_rule_finished': return 'La regla recurrente se ha completado, ya no hay mas pagos a realizar!';
 			case 'transaction.list.empty': return 'No se han encontrado transacciones que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
@@ -2710,16 +2740,18 @@ extension on _TranslationsEs {
 			case 'transaction.form.validators.negative_transfer': return 'El valor monetario de una transferencia no puede ser negativo';
 			case 'transaction.form.title': return 'Título de la transacción';
 			case 'transaction.form.value': return 'Valor de la transacción';
+			case 'transaction.form.tap_to_see_more': return 'Toca para ver más detalles';
 			case 'transaction.form.description': return 'Descripción';
 			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
 			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
 			case 'transaction.status.tr_status': return ({required Object status}) => 'Transacción ${status}';
+			case 'transaction.status.none': return 'Sin estado';
 			case 'transaction.status.reconciled': return 'Reconciliada';
 			case 'transaction.status.reconciled_descr': return 'Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco';
 			case 'transaction.status.unreconciled': return 'No reconciliada';
 			case 'transaction.status.unreconciled_descr': return 'Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics';
 			case 'transaction.status.pending': return 'Pendiente';
-			case 'transaction.status.pending_descr': return 'Esta transacción esta pendiente de pago y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas';
+			case 'transaction.status.pending_descr': return 'Esta transacción esta pendiente y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas';
 			case 'transaction.status.voided': return 'Nula';
 			case 'transaction.status.voided_descr': return 'Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas';
 			case 'transfer.display': return 'Transferencia';

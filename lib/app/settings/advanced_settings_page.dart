@@ -81,6 +81,26 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                       },
                     ));
               }),
+          const Divider(),
+          StreamBuilder(
+              stream: UserSettingService.instance
+                  .getSetting(SettingKey.transactionMobileMode),
+              builder: (context, snapshot) {
+                bool isActive = snapshot.data == '1';
+
+                return SwitchListTile(
+                  title: Text("Hola"),
+                  subtitle: Text("Hdsujds dsusdjk"),
+                  value: isActive,
+                  onChanged: (bool value) {
+                    setState(() {
+                      UserSettingService.instance.setSetting(
+                          SettingKey.transactionMobileMode,
+                          isActive ? '0' : '1');
+                    });
+                  },
+                );
+              })
         ],
       ),
     );

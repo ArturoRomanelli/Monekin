@@ -119,7 +119,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                   'This action will irreversibly delete all transactions <b>({{x}})</b> related to this category.')),
           actions: [
             TextButton(
-              child: const Text('Approve'),
+              child: Text(t.general.understood),
               onPressed: () {
                 CategoryService.instance
                     .deleteCategory(categoryId)
@@ -150,8 +150,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
         color: categoryToEdit!.color,
         type: categoryToEdit!.type));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Categoría creada con exito')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(t.categories.create_success)));
   }
 
   openSubcategoryForm(
@@ -160,6 +160,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
+        showDragHandle: true,
         builder: (context) {
           return SubcategoryFormDialog(
             name: subcategory?.name ?? '',
@@ -222,7 +223,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                 }
               },
               icon: const Icon(Icons.check),
-              label: const Text('Guardar cambios'),
+              label: Text(t.general.save_changes),
             ),
           )
         ],
@@ -287,22 +288,19 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            showDragHandle: true,
-                                            builder: (context) {
-                                              return IconSelectorModal(
-                                                preselectedIconID: _icon.id,
-                                                subtitle: t.icon_selector
-                                                    .select_category_icon,
-                                                onIconSelected: (selectedIcon) {
-                                                  setState(() {
-                                                    _icon = selectedIcon;
-                                                  });
-                                                },
-                                              );
-                                            });
+                                        showIconSelectorModal(
+                                          context,
+                                          IconSelectorModal(
+                                            preselectedIconID: _icon.id,
+                                            subtitle: t.icon_selector
+                                                .select_category_icon,
+                                            onIconSelected: (selectedIcon) {
+                                              setState(() {
+                                                _icon = selectedIcon;
+                                              });
+                                            },
+                                          ),
+                                        );
                                       },
                                       child: Builder(builder: (context) {
                                         final iconColor = ColorHex.get(_color);

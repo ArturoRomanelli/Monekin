@@ -15,7 +15,8 @@ import 'package:rxdart/rxdart.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(ProviderScope(
+  runApp(
+    ProviderScope(
       child: StreamBuilder(
           stream: Rx.combineLatest2(
               UserSettingService.instance.getSettings((p0) =>
@@ -46,8 +47,10 @@ void main() {
                     'App language found. Setting the user device language...');
                 LocaleSettings.useDeviceLocale();
                 UserSettingService.instance
-                    .setSetting(SettingKey.appLanguage,
-                        LocaleSettings.currentLocale.languageTag)
+                    .setSetting(
+                      SettingKey.appLanguage,
+                      LocaleSettings.currentLocale.languageTag,
+                    )
                     .then((value) => null);
               }
 
@@ -69,7 +72,9 @@ void main() {
             }
 
             return Container();
-          })));
+          }),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {

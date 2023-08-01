@@ -8,6 +8,7 @@ enum SettingKey {
   avatar,
   appLanguage,
   themeMode,
+  transactionMobileMode
 }
 
 class UserSettingService {

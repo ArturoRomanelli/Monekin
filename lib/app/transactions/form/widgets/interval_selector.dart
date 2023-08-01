@@ -1,4 +1,4 @@
-import 'package:finlytics/app/transactions/widgets/interval_selector_help.dart';
+import 'package:finlytics/app/transactions/form/widgets/interval_selector_help.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:finlytics/core/utils/text_field_validator.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/utils/date_time_picker.dart';
+import '../../../../core/utils/date_time_picker.dart';
 
 class IntervalSelector extends StatefulWidget {
   const IntervalSelector({super.key, this.preselectedRecurrentRule});

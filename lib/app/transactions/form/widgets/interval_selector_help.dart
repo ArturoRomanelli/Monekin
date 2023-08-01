@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
-import 'package:finlytics/app/transactions/widgets/interval_selector.dart';
+import 'package:finlytics/app/transactions/form/widgets/interval_selector.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +85,22 @@ class RecurrencyData extends Equatable {
 
   @override
   List<dynamic> get props => [ruleRecurrentLimit, intervalEach, intervalPeriod];
+}
+
+Future<RecurrencyData?> showIntervalSelectoHelpDialog(BuildContext context,
+    {required RecurrencyData selectedRecurrentRule}) async {
+  return await showDialog<RecurrencyData?>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+        clipBehavior: Clip.hardEdge,
+        content: IntervalSelectorHelp(
+          selectedRecurrentRule: selectedRecurrentRule,
+        ),
+      );
+    },
+  );
 }
 
 class IntervalSelectorHelp extends StatefulWidget {

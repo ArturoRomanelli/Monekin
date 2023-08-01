@@ -1,4 +1,4 @@
-import 'package:finlytics/app/transactions/transaction_form.page.dart';
+import 'package:finlytics/app/transactions/form/transaction_form.page.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';

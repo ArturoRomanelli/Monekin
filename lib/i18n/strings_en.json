@@ -7,6 +7,9 @@
     "attention": "Attention ⚠️",
     "confirm": "Confirm",
     "continue_text": "Continue",
+    "save": "Save",
+    "save_changes": "Save changes",
+    "close_and_save": "Save and close",
     "add": "Add",
     "edit": "Edit",
     "balance": "Balance",
@@ -144,6 +147,8 @@
     "hello-night": "Good night,",
     "total-balance": "Total balance",
     "my-accounts": "My accounts",
+    "no-accounts": "No accounts created yet",
+    "no-accounts.descr": "Start using all the magic of Monekin. Create at least one account to start adding transactions",
     "last-transactions": "Last transactions",
     "should-create-account.header": "Oops!",
     "should-create-account.message": "You must create an account before you can start creating transactions"
@@ -229,6 +234,7 @@
       "accept-today": "Accept today",
       "accept-in-required-date": "Accept in required date ({{date}})",
       "accept-dialog.title": "Accept transaction",
+      "accept-dialog.msg-single": "The new status of the transaction will be null. You can re-edit the status of this transaction whenever you want",
       "accept-dialog.msg": "This action will create a new transaction with date {{date}}. You will be able to check the details of this transaction on the transaction page",
       "recurrent-rule-finished": "The recurring rule has been completed, there are no more payments to make!"
     },
@@ -247,18 +253,20 @@
       },
       "title": "Transaction title",
       "value": "Value of the transaction",
+      "tap-to-see-more": "Tap to see more details",
       "description": "Description",
       "description-info": "Adding a note will help you find this transaction faster in the future",
       "exchange-to-preferred": "Currently equal to approximately {{x}}"
     },
     "STATUS": {
       "tr_status": "{{ status }} transaction",
+      "none": "Sin estado",
       "reconciled": "Reconciled",
       "reconciled.descr": "This transaction has already been validated and corresponds to a real transaction from your bank",
       "unreconciled": "Unreconciled",
       "unreconciled.descr": "This transaction has not yet been validated and therefore does not yet appear in your real bank accounts. However, it counts for the calculation of balances and statistics in Finlytics",
       "pending": "Pending",
-      "pending.descr": "This transaction is pending payment and therefore will not be taken into account when calculating balances and statistics",
+      "pending.descr": "This transaction is pending and therefore it will not be taken into account when calculating balances and statistics",
       "voided": "Voided",
       "voided.descr": "Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics"
     }
@@ -284,7 +292,7 @@
     "title": "Recurrent transactions",
     "empty": "It looks like you don't have any recurring transactions. Create a monthly, yearly, or weekly recurring transaction and it will appear here",
     "DETAILS": {
-      "title": "Transaccion recurrente",
+      "title": "Recurrent transaction",
       "next-payment-info": "The next movement of this transaction will take place on {{date}}. You can choose whether you want to skip this movement or accept it on the date of your choice",
       "last-payment-info": "The next move for this transaction will take place on {{date}}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made",
       "delete-header": "Delete recurring transaction",

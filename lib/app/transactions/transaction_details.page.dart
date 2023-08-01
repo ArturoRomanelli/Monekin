@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart' as drift;
-import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:finlytics/core/utils/color_utils.dart';
@@ -62,9 +62,11 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
             title: Text(t.transaction.next_payments.accept_dialog_title),
             content: SingleChildScrollView(
               child: Text(
-                t.transaction.next_payments.accept_dialog_msg(
-                  date: DateFormat.yMMMd().format(datetime),
-                ),
+                transaction.recurrentInfo.isRecurrent
+                    ? t.transaction.next_payments.accept_dialog_msg(
+                        date: DateFormat.yMMMd().format(datetime),
+                      )
+                    : t.transaction.next_payments.accept_dialog_msg_single,
               ),
             ),
             actions: [

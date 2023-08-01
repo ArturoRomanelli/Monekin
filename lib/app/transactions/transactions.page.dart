@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/home/home.page.dart';
-import 'package:finlytics/app/transactions/transaction_form.page.dart';
+import 'package:finlytics/app/transactions/form/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/transaction/transaction_service.dart';

@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
-import 'package:finlytics/app/home/card_with_header.dart';
+import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/database/services/currency/currency_service.dart';

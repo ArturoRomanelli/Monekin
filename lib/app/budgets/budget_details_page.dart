@@ -2,7 +2,6 @@ import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/budgets/budget_form_page.dart';
 import 'package:finlytics/app/budgets/budgets_page.dart';
 import 'package:finlytics/app/budgets/components/budget_evolution_chart.dart';
-import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/database/services/budget/budget_service.dart';
@@ -10,6 +9,7 @@ import 'package:finlytics/core/database/services/transaction/transaction_service
 import 'package:finlytics/core/models/budget/budget.dart';
 import 'package:finlytics/core/models/transaction/transaction.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
+import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/finlytics_popup_menu_button.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';

@@ -1,6 +1,7 @@
 import 'package:finlytics/core/database/services/currency/currency_service.dart';
 import 'package:finlytics/core/models/currency/currency.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
+import 'package:finlytics/core/presentation/widgets/scrollable_with_bottom_gradient.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
@@ -169,23 +170,8 @@ class _CurrencySelectorModalState extends State<CurrencySelectorModal> {
                         },
                       );
                     }),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 18,
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        colors.background.withOpacity(0),
-                        colors.background
-                      ],
-                    )),
-                  ),
-                )
+                ScrollableWithBottomGradient.buildPositionedGradient(
+                    colors.background),
               ])),
               BottomSheetFooter(
                   onSaved: _selectedCurrency != null

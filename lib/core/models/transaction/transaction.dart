@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:finlytics/app/transactions/widgets/interval_selector_help.dart';
+import 'package:finlytics/app/transactions/form/widgets/interval_selector_help.dart';
 import 'package:finlytics/core/database/app_db.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/models/category/category.dart';

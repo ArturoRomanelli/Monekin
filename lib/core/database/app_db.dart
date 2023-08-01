@@ -75,6 +75,9 @@ class AppDB extends _$AppDB {
             await customStatement(
                 "INSERT INTO appData VALUES ('dbVersion', '${schemaVersion.toStringAsFixed(0)}'), ('introSeen', '0'), ('lastExportDate', null)");
 
+            await customStatement(
+                "INSERT INTO userSettings VALUES ('${SettingKey.transactionMobileMode.name}', '${Platform.isIOS || Platform.isAndroid ? '1' : '0'}')");
+
             String defaultCategories = await rootBundle
                 .loadString('assets/sql/default_categories.json');
 

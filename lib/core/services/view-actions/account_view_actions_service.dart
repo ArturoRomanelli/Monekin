@@ -1,5 +1,5 @@
 import 'package:finlytics/app/accounts/account_form.dart';
-import 'package:finlytics/app/transactions/transaction_form.page.dart';
+import 'package:finlytics/app/transactions/form/transaction_form.page.dart';
 import 'package:finlytics/core/database/services/account/account_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/utils/list_tile_action_item.dart';

@@ -2,14 +2,13 @@ import 'package:drift/drift.dart' as drift;
 import 'package:finlytics/app/accounts/account_details.dart';
 import 'package:finlytics/app/accounts/account_form.dart';
 import 'package:finlytics/app/budgets/budgets_page.dart';
-import 'package:finlytics/app/home/card_with_header.dart';
 import 'package:finlytics/app/settings/settings.page.dart';
 import 'package:finlytics/app/stats/widgets/balance_bar_chart_small.dart';
 import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
 import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:finlytics/app/stats/widgets/incomeOrExpenseCard.dart';
+import 'package:finlytics/app/transactions/form/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/recurrent_transactions_page.dart';
-import 'package:finlytics/app/transactions/transaction_form.page.dart';
 import 'package:finlytics/app/transactions/transaction_list.dart';
 import 'package:finlytics/app/transactions/transactions.page.dart';
 import 'package:finlytics/core/database/app_db.dart';
@@ -18,6 +17,7 @@ import 'package:finlytics/core/database/services/transaction/transaction_service
 import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
 import 'package:finlytics/core/models/account/account.dart';
 import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
+import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
 import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
 import 'package:finlytics/core/presentation/widgets/skeleton.dart';
 import 'package:finlytics/core/presentation/widgets/trending_value.dart';
@@ -62,13 +62,13 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       Text(
-                        'Aun no hay cuentas creadas',
+                        t.home.no_accounts,
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Empieza a usar toda la magia de Finlytics. Crea al menos una cuenta para empezar a añadir tranacciones.',
+                        t.home.no_accounts_descr,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
@@ -177,7 +177,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
     final t = Translations.of(context);
 
     final accountService = AccountService.instance;

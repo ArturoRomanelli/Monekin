@@ -161,6 +161,7 @@ class AccountService {
     String transactionWhereStatement = """
         isHidden = 0
         AND status IS NOT 'voided'      
+        AND status IS NOT 'pending'      
         ${categoriesIds != null ? ' AND transactions.categoryID IN (${List.filled(categoriesIds.length, '?').join(', ')}) ' : ''} 
         ${endDate != null ? ' AND date <= ?' : ''} 
         ${startDate != null ? ' AND date >= ?' : ''} 

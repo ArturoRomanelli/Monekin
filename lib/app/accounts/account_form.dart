@@ -213,22 +213,18 @@ class _AccountFormPageState extends State<AccountFormPage> {
                         children: [
                           InkWell(
                             onTap: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  showDragHandle: true,
-                                  builder: (context) {
-                                    return IconSelectorModal(
-                                      preselectedIconID: _icon.id,
-                                      subtitle:
-                                          t.icon_selector.select_account_icon,
-                                      onIconSelected: (selectedIcon) {
-                                        setState(() {
-                                          _icon = selectedIcon;
-                                        });
-                                      },
-                                    );
-                                  });
+                              showIconSelectorModal(
+                                context,
+                                IconSelectorModal(
+                                  preselectedIconID: _icon.id,
+                                  subtitle: t.icon_selector.select_account_icon,
+                                  onIconSelected: (selectedIcon) {
+                                    setState(() {
+                                      _icon = selectedIcon;
+                                    });
+                                  },
+                                ),
+                              );
                             },
                             child: Container(
                                 padding: const EdgeInsets.all(6),

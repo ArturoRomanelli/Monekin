@@ -7,6 +7,9 @@
     "attention": "Atención ⚠️",
     "confirm": "Confirmar",
     "continue_text": "Continuar",
+    "save": "Guardar",
+    "save_changes": "Guardar cambios",
+    "close_and_save": "Guardar y cerrar",
     "add": "Añadir",
     "edit": "Editar",
     "delete": "Eliminar",
@@ -145,6 +148,8 @@
     "hello-night": "Buenas noches,",
     "total-balance": "Saldo total",
     "my-accounts": "Mis cuentas",
+    "no-accounts": "Aun no hay cuentas creadas",
+    "no-accounts.descr": "Empieza a usar toda la magia de Monekin. Crea al menos una cuenta para empezar a añadir tranacciones",
     "last-transactions": "Últimas transacciones",
     "should-create-account.header": "Ops!",
     "should-create-account.message": "Debes crear una cuenta antes de empezar a crear transacciones"
@@ -230,6 +235,7 @@
       "accept-today": "Aceptar hoy",
       "accept-in-required-date": "Aceptar en la fecha requerida ({{date}})",
       "accept-dialog.title": "Aceptar transacción",
+      "accept-dialog.msg-single": "El estado de la transacción pasará a ser nulo. Puedes volver a editar el estado de esta transacción cuando lo desees",
       "accept-dialog.msg": "Esta acción creará una transacción nueva con fecha {{date}}. Podrás consultar los detalles de esta transacción en la página de transacciones",
       "recurrent-rule-finished": "La regla recurrente se ha completado, ya no hay mas pagos a realizar!"
     },
@@ -248,18 +254,20 @@
       },
       "title": "Título de la transacción",
       "value": "Valor de la transacción",
+      "tap-to-see-more": "Toca para ver más detalles",
       "description": "Descripción",
       "description-info": "Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro",
       "exchange-to-preferred": "Actualmente equivalen aproximadamente a {{x}}"
     },
     "STATUS": {
       "tr_status": "Transacción {{ status }}",
+      "none": "Sin estado",
       "reconciled": "Reconciliada",
       "reconciled.descr": "Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco",
       "unreconciled": "No reconciliada",
       "unreconciled.descr": "Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics",
       "pending": "Pendiente",
-      "pending.descr": "Esta transacción esta pendiente de pago y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas",
+      "pending.descr": "Esta transacción esta pendiente y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas",
       "voided": "Nula",
       "voided.descr": "Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas"
     }

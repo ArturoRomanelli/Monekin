@@ -70,23 +70,18 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            showDragHandle: true,
-                            builder: (context) {
-                              return IconSelectorModal(
-                                preselectedIconID: _icon.id,
-                                subtitle: t.icon_selector.select_category_icon,
-                                onIconSelected: (selectedIcon) {
-                                  setState(() {
-                                    _icon = selectedIcon;
-                                  });
-                                },
-                              );
+                      onTap: () => showIconSelectorModal(
+                        context,
+                        IconSelectorModal(
+                          preselectedIconID: _icon.id,
+                          subtitle: t.icon_selector.select_category_icon,
+                          onIconSelected: (selectedIcon) {
+                            setState(() {
+                              _icon = selectedIcon;
                             });
-                      },
+                          },
+                        ),
+                      ),
                       child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(

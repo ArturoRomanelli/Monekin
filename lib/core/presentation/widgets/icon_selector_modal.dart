@@ -1,8 +1,19 @@
 import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
 import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
+import 'package:finlytics/core/presentation/widgets/scrollable_with_bottom_gradient.dart';
 import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
 import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+
+showIconSelectorModal(BuildContext context, IconSelectorModal component) {
+  return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) {
+        return component;
+      });
+}
 
 class IconSelectorModal extends StatefulWidget {
   const IconSelectorModal(
@@ -47,7 +58,7 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
 
           return Scaffold(
             body: Column(children: [
-              Container(
+              Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,97 +84,70 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                 ),
               ),
               Expanded(
-                child: Stack(
-                  children: [
-                    SingleChildScrollView(
-                      controller: scrollController,
-                      scrollDirection: Axis.vertical,
-                      child: Column(
-                          children: iconsByScope.keys.toList().map((scope) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                child: ScrollableWithBottomGradient(
+                  child: Column(
+                      children: iconsByScope.keys.toList().map((scope) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Stack(
+                          alignment: AlignmentDirectional.center,
                           children: [
-                            Stack(
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                const Divider(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 16),
-                                  color: colors.background,
-                                  child: Text(t['icon_selector.scopes.$scope']),
-                                ),
-                              ],
+                            const Divider(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 16),
+                              color: colors.background,
+                              child: Text(t['icon_selector.scopes.$scope']),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Wrap(
-                                spacing: 8, // gap between adjacent cards
-                                runSpacing: 12, // gap between lines
-                                children: iconsByScope[scope]!
-                                    .map((e) => Card(
-                                          elevation:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? 4
-                                                  : 1,
-                                          clipBehavior: Clip.antiAlias,
-                                          color: _selectedIcon?.id == e.id
-                                              ? colors.primary
-                                              : null,
-                                          child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _selectedIcon = e;
-                                              });
-                                            },
-                                            child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(6),
-                                                child: e.display(
-                                                    size: 34,
-                                                    color: _selectedIcon?.id ==
-                                                            e.id
-                                                        ? colors.onPrimary
-                                                        : colors.onBackground)),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                            ),
-                            const SizedBox(
-                              // Margin between the icon groups
-                              height: 10,
-                            )
                           ],
-                        );
-                      }).toList()),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 18,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            colors.background.withOpacity(0),
-                            colors.background
-                          ],
-                        )),
-                      ),
-                    )
-                  ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Wrap(
+                            spacing: 8, // gap between adjacent cards
+                            runSpacing: 12, // gap between lines
+                            children: iconsByScope[scope]!
+                                .map((e) => Card(
+                                      elevation: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? 4
+                                          : 1,
+                                      clipBehavior: Clip.antiAlias,
+                                      color: _selectedIcon?.id == e.id
+                                          ? colors.primary
+                                          : null,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedIcon = e;
+                                          });
+                                        },
+                                        child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            child: e.display(
+                                                size: 34,
+                                                color: _selectedIcon?.id == e.id
+                                                    ? colors.onPrimary
+                                                    : colors.onBackground)),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                        const SizedBox(
+                          // Margin between the icon groups
+                          height: 10,
+                        )
+                      ],
+                    );
+                  }).toList()),
                 ),
               ),
-              BottomSheetFooter(
-                  onSaved: () => {
-                        widget.onIconSelected!(_selectedIcon!),
-                        Navigator.pop(context)
-                      })
+              BottomSheetFooter(onSaved: () {
+                widget.onIconSelected!(_selectedIcon!);
+                Navigator.pop(context);
+              })
             ]),
           );
         });

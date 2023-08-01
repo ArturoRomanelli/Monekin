@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:finlytics/core/presentation/animations/animation_controller.dart';
+import 'package:monekin/core/presentation/animations/animation_controller.dart';
 import 'package:flutter/material.dart';
 
 class ShakeWidget extends StatefulWidget {

@@ -1,15 +1,15 @@
-import 'package:finlytics/app/accounts/all_accounts_balance.dart';
-import 'package:finlytics/app/stats/footer_segmented_calendar_button.dart';
-import 'package:finlytics/app/stats/widgets/balance_bar_chart.dart';
-import 'package:finlytics/app/stats/widgets/chart_by_categories.dart';
-import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
-import 'package:finlytics/app/stats/widgets/income_expense_comparason.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
-import 'package:finlytics/core/presentation/widgets/filter_row_indicator.dart';
-import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/accounts/all_accounts_balance.dart';
+import 'package:monekin/app/stats/footer_segmented_calendar_button.dart';
+import 'package:monekin/app/stats/widgets/balance_bar_chart.dart';
+import 'package:monekin/app/stats/widgets/chart_by_categories.dart';
+import 'package:monekin/app/stats/widgets/fund_evolution_line_chart.dart';
+import 'package:monekin/app/stats/widgets/income_expense_comparason.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
+import 'package:monekin/core/presentation/widgets/card_with_header.dart';
+import 'package:monekin/core/presentation/widgets/filter_row_indicator.dart';
+import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/services/filters/date_range_service.dart';

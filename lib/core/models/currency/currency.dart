@@ -1,4 +1,4 @@
-import 'package:finlytics/core/database/app_db.dart';
+import 'package:monekin/core/database/app_db.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Currency extends CurrencyInDB {

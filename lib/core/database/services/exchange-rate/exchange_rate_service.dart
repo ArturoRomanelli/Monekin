@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
+import 'package:monekin/core/models/exchange-rate/exchange_rate.dart';
 
 import '../../app_db.dart';
 

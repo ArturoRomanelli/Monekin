@@ -266,7 +266,7 @@
       "reconciled": "Reconciliada",
       "reconciled.descr": "Esta transacción ha sido validada ya y se corresponde con una transacción real de su banco",
       "unreconciled": "No reconciliada",
-      "unreconciled.descr": "Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Finlytics",
+      "unreconciled.descr": "Esta transacción aun no ha sido validada y por tanto aun no figura en sus cuentas bancarias reales. Sin embargo, es tenida en cuenta para el calculo de balances y estadisticas en Monekin",
       "pending": "Pendiente",
       "pending.descr": "Esta transacción esta pendiente y por tanto no será tenida en cuenta a la hora de calcular balances y estadísticas",
       "voided": "Nula",
@@ -453,7 +453,7 @@
       "manual-import-descr": "Importa transacciones desde un fichero .csv de forma manual",
       "restore-backup": "Restaurar copia de seguridad",
       "restore-backup-warn": "All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin",
-      "restore-backup-descr": "Importa una base de datos anteriormente guardada desde Finlytics. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos",
+      "restore-backup-descr": "Importa una base de datos anteriormente guardada desde Monekin. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos",
       "tap-to-select-file": "Pulsa para seleccionar un archivo",
       "select-other-file": "Selecciona otro fichero",
       "steps": [

@@ -1,9 +1,9 @@
-import 'package:finlytics/app/accounts/account_form.dart';
-import 'package:finlytics/app/transactions/form/transaction_form.page.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/core/utils/list_tile_action_item.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/accounts/account_form.dart';
+import 'package:monekin/app/transactions/form/transaction_form.page.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/models/account/account.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class AccountViewActionService {

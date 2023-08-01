@@ -1,11 +1,11 @@
-import 'package:finlytics/app/categories/category_form.dart';
-import 'package:finlytics/app/categories/subcategory_selector.dart';
-import 'package:finlytics/core/database/services/category/category_service.dart';
-import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/categories/category_form.dart';
+import 'package:monekin/app/categories/subcategory_selector.dart';
+import 'package:monekin/core/database/services/category/category_service.dart';
+import 'package:monekin/core/models/category/category.dart';
+import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
+import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
+import 'package:monekin/core/utils/color_utils.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 enum CategoriesListMode {

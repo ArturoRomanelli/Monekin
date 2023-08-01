@@ -1,6 +1,6 @@
-import 'package:finlytics/core/utils/open_external_url.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:monekin/core/utils/open_external_url.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class LegalPage extends StatelessWidget {

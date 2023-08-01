@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
-import 'package:finlytics/core/models/currency/currency.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
+import 'package:monekin/core/models/currency/currency.dart';
 
 class CurrencyService {
   final _currencyTableName = 'currencies';

@@ -1,8 +1,8 @@
-import 'package:finlytics/core/utils/list_tile_action_item.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:flutter/material.dart';
 
-class FinlyticsPopuMenuButton extends StatelessWidget {
-  const FinlyticsPopuMenuButton({super.key, required this.actionItems});
+class MonekinPopuMenuButton extends StatelessWidget {
+  const MonekinPopuMenuButton({super.key, required this.actionItems});
 
   final List<ListTileActionItem> actionItems;
 

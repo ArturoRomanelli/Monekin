@@ -1,4 +1,4 @@
-import 'package:finlytics/core/models/account/account.dart';
+import 'package:monekin/core/models/account/account.dart';
 import 'package:flutter/material.dart';
 
 class AccountTypeSelector extends StatefulWidget {
@@ -35,7 +35,7 @@ class _AccountTypeSelectorState extends State<AccountTypeSelector> {
             final AccountType item = AccountType.values[index];
 
             return Flexible(
-              child: FinlyticsFilterChip(
+              child: MonekinFilterChip(
                 accountType: item,
                 onPressed: () {
                   setState(() {
@@ -53,8 +53,8 @@ class _AccountTypeSelectorState extends State<AccountTypeSelector> {
   }
 }
 
-class FinlyticsFilterChip extends StatelessWidget {
-  const FinlyticsFilterChip({
+class MonekinFilterChip extends StatelessWidget {
+  const MonekinFilterChip({
     super.key,
     required this.accountType,
     required this.onPressed,

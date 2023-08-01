@@ -1,11 +1,11 @@
-import 'package:finlytics/app/accounts/account_selector.dart';
-import 'package:finlytics/app/categories/categories_list.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/database/services/category/category_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/accounts/account_selector.dart';
+import 'package:monekin/app/categories/categories_list.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/database/services/category/category_service.dart';
+import 'package:monekin/core/models/account/account.dart';
+import 'package:monekin/core/models/category/category.dart';
+import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class TransactionFilters {

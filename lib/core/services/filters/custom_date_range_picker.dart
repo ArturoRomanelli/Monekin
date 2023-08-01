@@ -1,4 +1,4 @@
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

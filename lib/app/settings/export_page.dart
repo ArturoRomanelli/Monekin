@@ -1,13 +1,13 @@
-import 'package:finlytics/app/accounts/account_selector.dart';
-import 'package:finlytics/app/categories/categories_list.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/database/services/category/category_service.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
-import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:monekin/app/accounts/account_selector.dart';
+import 'package:monekin/app/categories/categories_list.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/database/services/category/category_service.dart';
+import 'package:monekin/core/database/services/transaction/transaction_service.dart';
+import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
+import 'package:monekin/i18n/translations.g.dart';
 
 import '../../core/database/backup/backup_database_service.dart';
 

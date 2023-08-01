@@ -1,15 +1,15 @@
-import 'package:finlytics/app/categories/subcategory_form.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/database/services/category/category_service.dart';
-import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/core/models/supported-icon/supported_icon.dart';
-import 'package:finlytics/core/presentation/widgets/icon_selector_modal.dart';
-import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
-import 'package:finlytics/core/services/supported_icon/supported_icon_service.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
-import 'package:finlytics/core/utils/text_field_validator.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:monekin/app/categories/subcategory_form.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/category/category_service.dart';
+import 'package:monekin/core/models/category/category.dart';
+import 'package:monekin/core/models/supported-icon/supported_icon.dart';
+import 'package:monekin/core/presentation/widgets/icon_selector_modal.dart';
+import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
+import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
+import 'package:monekin/core/utils/color_utils.dart';
+import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryFormPage extends StatefulWidget {

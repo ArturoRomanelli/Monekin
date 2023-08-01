@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/app/home/home.page.dart';
-import 'package:finlytics/app/onboarding/onboarding.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/database/services/app-data/app_data_service.dart';
-import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
-import 'package:finlytics/core/presentation/theme.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:monekin/app/home/home.page.dart';
+import 'package:monekin/app/onboarding/onboarding.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/app-data/app_data_service.dart';
+import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
+import 'package:monekin/core/presentation/theme.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:rxdart/rxdart.dart';
 
 void main() {

@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:finlytics/app/transactions/form/widgets/interval_selector_help.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/core/models/category/category.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/transactions/form/widgets/interval_selector_help.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/models/account/account.dart';
+import 'package:monekin/core/models/category/category.dart';
+import 'package:monekin/core/utils/color_utils.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 enum TransactionPeriodicity {

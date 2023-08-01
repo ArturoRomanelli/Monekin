@@ -1,4 +1,4 @@
-import 'package:finlytics/core/presentation/widgets/skeleton.dart';
+import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

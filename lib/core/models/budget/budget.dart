@@ -1,8 +1,8 @@
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/services/filters/date_range_service.dart';
-import 'package:finlytics/core/utils/date_getter.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
+import 'package:monekin/core/services/filters/date_range_service.dart';
+import 'package:monekin/core/utils/date_getter.dart';
 
 class Budget extends BudgetInDB {
   List<String> categories;

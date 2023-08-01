@@ -1,8 +1,8 @@
-import 'package:finlytics/app/transactions/form/transaction_form.page.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/utils/list_tile_action_item.dart';
+import 'package:monekin/app/transactions/form/transaction_form.page.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/transaction/transaction_service.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 

@@ -1,10 +1,10 @@
-import 'package:finlytics/app/transactions/transaction_details.page.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/services/view-actions/transaction_view_actions_service.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:monekin/app/transactions/transaction_details.page.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
+import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/services/view-actions/transaction_view_actions_service.dart';
+import 'package:monekin/core/utils/color_utils.dart';
 
 class TransactionListComponent extends StatelessWidget {
   const TransactionListComponent(

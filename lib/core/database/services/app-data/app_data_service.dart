@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/app_db.dart';
+import 'package:monekin/core/database/app_db.dart';
 
 /// The keys of the avalaible settings of the app
 enum AppDataKey { dbVersion, introSeen, lastExportDate }

@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:finlytics/app/stats/widgets/fund_evolution_line_chart.dart';
-import 'package:finlytics/core/models/budget/budget.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/stats/widgets/fund_evolution_line_chart.dart';
+import 'package:monekin/core/models/budget/budget.dart';
+import 'package:monekin/core/utils/color_utils.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

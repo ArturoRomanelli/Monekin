@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/models/account/account.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/models/account/account.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum AccountDataFilter { income, expense, balance }

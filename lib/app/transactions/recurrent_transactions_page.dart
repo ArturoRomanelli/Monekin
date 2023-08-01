@@ -1,8 +1,8 @@
-import 'package:finlytics/app/transactions/transaction_list.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:monekin/app/transactions/transaction_list.dart';
+import 'package:monekin/core/database/services/transaction/transaction_service.dart';
+import 'package:monekin/core/presentation/widgets/empty_indicator.dart';
+import 'package:monekin/i18n/translations.g.dart';
 
 class RecurrentTransactionPage extends StatefulWidget {
   const RecurrentTransactionPage({super.key});

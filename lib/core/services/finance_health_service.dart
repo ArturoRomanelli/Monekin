@@ -1,8 +1,8 @@
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/models/account/account.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class FinanceHealthService {

@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
 
 class TransactionService {
   final AppDB db;

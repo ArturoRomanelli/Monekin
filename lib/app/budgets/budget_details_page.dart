@@ -1,22 +1,22 @@
 import 'package:drift/drift.dart' as drift;
-import 'package:finlytics/app/budgets/budget_form_page.dart';
-import 'package:finlytics/app/budgets/budgets_page.dart';
-import 'package:finlytics/app/budgets/components/budget_evolution_chart.dart';
-import 'package:finlytics/app/transactions/transaction_list.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/database/services/budget/budget_service.dart';
-import 'package:finlytics/core/database/services/transaction/transaction_service.dart';
-import 'package:finlytics/core/models/budget/budget.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
-import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
-import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/presentation/widgets/finlytics_popup_menu_button.dart';
-import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/core/utils/list_tile_action_item.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:monekin/app/budgets/budget_form_page.dart';
+import 'package:monekin/app/budgets/budgets_page.dart';
+import 'package:monekin/app/budgets/components/budget_evolution_chart.dart';
+import 'package:monekin/app/transactions/transaction_list.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/budget/budget_service.dart';
+import 'package:monekin/core/database/services/transaction/transaction_service.dart';
+import 'package:monekin/core/models/budget/budget.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
+import 'package:monekin/core/presentation/widgets/animated_progress_bar.dart';
+import 'package:monekin/core/presentation/widgets/card_with_header.dart';
+import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/monekin_popup_menu_button.dart';
+import 'package:monekin/core/presentation/widgets/skeleton.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
+import 'package:monekin/i18n/translations.g.dart';
 
 import '../../core/presentation/widgets/empty_indicator.dart';
 
@@ -45,7 +45,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
             Tab(text: t.general.transactions),
           ]),
           actions: [
-            FinlyticsPopuMenuButton(actionItems: [
+            MonekinPopuMenuButton(actionItems: [
               ListTileActionItem(
                 label: t.budgets.form.edit,
                 icon: Icons.edit,

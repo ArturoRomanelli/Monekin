@@ -1,12 +1,12 @@
-import 'package:finlytics/app/currencies/exchange_rate_details.dart';
-import 'package:finlytics/app/currencies/exchange_rate_form.dart';
-import 'package:finlytics/core/database/services/currency/currency_service.dart';
-import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
-import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
-import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/core/presentation/widgets/currency_selector_modal.dart';
-import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/currencies/exchange_rate_details.dart';
+import 'package:monekin/app/currencies/exchange_rate_form.dart';
+import 'package:monekin/core/database/services/currency/currency_service.dart';
+import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
+import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
+import 'package:monekin/core/models/currency/currency.dart';
+import 'package:monekin/core/presentation/widgets/currency_selector_modal.dart';
+import 'package:monekin/core/presentation/widgets/skeleton.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/empty_indicator.dart';

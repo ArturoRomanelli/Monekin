@@ -1,11 +1,11 @@
-import 'package:finlytics/app/currencies/exchange_rate_form.dart';
-import 'package:finlytics/core/database/services/exchange-rate/exchange_rate_service.dart';
-import 'package:finlytics/core/models/currency/currency.dart';
-import 'package:finlytics/core/models/exchange-rate/exchange_rate.dart';
-import 'package:finlytics/core/presentation/widgets/finlytics_popup_menu_button.dart';
-import 'package:finlytics/core/presentation/widgets/persistent_footer_button.dart';
-import 'package:finlytics/core/utils/list_tile_action_item.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/currencies/exchange_rate_form.dart';
+import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
+import 'package:monekin/core/models/currency/currency.dart';
+import 'package:monekin/core/models/exchange-rate/exchange_rate.dart';
+import 'package:monekin/core/presentation/widgets/monekin_popup_menu_button.dart';
+import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -59,7 +59,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
       appBar: AppBar(
         title: Text(t.currencies.exchange_rate),
         actions: [
-          FinlyticsPopuMenuButton(actionItems: [
+          MonekinPopuMenuButton(actionItems: [
             ListTileActionItem(
                 label: t.general.delete,
                 icon: Icons.delete,

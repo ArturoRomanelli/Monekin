@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/presentation/widgets/filter_sheet_modal.dart';
-import 'package:finlytics/core/services/filters/date_range_service.dart';
-import 'package:finlytics/core/utils/color_utils.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:monekin/core/services/filters/date_range_service.dart';
+import 'package:monekin/core/utils/color_utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

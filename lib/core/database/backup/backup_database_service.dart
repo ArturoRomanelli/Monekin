@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:finlytics/core/database/app_db.dart';
-import 'package:finlytics/core/models/transaction/transaction.dart';
-import 'package:finlytics/core/utils/get_download_path.dart';
+import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/models/transaction/transaction.dart';
+import 'package:monekin/core/utils/get_download_path.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
@@ -20,7 +20,7 @@ class BackupDatabaseService {
     String downloadPath = await getDownloadPath();
     downloadPath = path.join(
       downloadPath,
-      "finlytics-${DateFormat('yyyyMMdd-Hms').format(DateTime.now())}.db",
+      "monekin-${DateFormat('yyyyMMdd-Hms').format(DateTime.now())}.db",
     );
 
     File downloadFile = File(downloadPath);

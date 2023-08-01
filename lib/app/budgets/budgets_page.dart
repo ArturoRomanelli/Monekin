@@ -1,12 +1,12 @@
-import 'package:finlytics/app/budgets/budget_details_page.dart';
-import 'package:finlytics/app/budgets/budget_form_page.dart';
-import 'package:finlytics/core/database/services/budget/budget_service.dart';
-import 'package:finlytics/core/models/budget/budget.dart';
-import 'package:finlytics/core/presentation/widgets/animated_progress_bar.dart';
-import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/presentation/widgets/empty_indicator.dart';
-import 'package:finlytics/core/presentation/widgets/skeleton.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/app/budgets/budget_details_page.dart';
+import 'package:monekin/app/budgets/budget_form_page.dart';
+import 'package:monekin/core/database/services/budget/budget_service.dart';
+import 'package:monekin/core/models/budget/budget.dart';
+import 'package:monekin/core/presentation/widgets/animated_progress_bar.dart';
+import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/empty_indicator.dart';
+import 'package:monekin/core/presentation/widgets/skeleton.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

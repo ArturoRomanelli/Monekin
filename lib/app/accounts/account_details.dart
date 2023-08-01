@@ -1,9 +1,9 @@
-import 'package:finlytics/core/database/services/account/account_service.dart';
-import 'package:finlytics/core/models/account/account.dart';
-import 'package:finlytics/core/presentation/widgets/card_with_header.dart';
-import 'package:finlytics/core/presentation/widgets/currency_displayer.dart';
-import 'package:finlytics/core/services/view-actions/account_view_actions_service.dart';
-import 'package:finlytics/i18n/translations.g.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/models/account/account.dart';
+import 'package:monekin/core/presentation/widgets/card_with_header.dart';
+import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/services/view-actions/account_view_actions_service.dart';
+import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';

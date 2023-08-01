@@ -1,4 +1,4 @@
-import 'package:finlytics/core/presentation/widgets/expansion_panel/expansion_panel_without_icon.dart';
+import 'package:monekin/core/presentation/widgets/expansion_panel/expansion_panel_without_icon.dart';
 import 'package:flutter/material.dart';
 
 class SingleExpansionPanel extends StatefulWidget {

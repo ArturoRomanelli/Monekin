@@ -1,10 +1,10 @@
-import 'package:finlytics/core/database/services/user-setting/user_setting_service.dart';
-import 'package:finlytics/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:finlytics/core/presentation/widgets/user_avatar.dart';
-import 'package:finlytics/core/utils/text_field_validator.dart';
-import 'package:finlytics/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
+import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
+import 'package:monekin/core/presentation/widgets/user_avatar.dart';
+import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/i18n/translations.g.dart';
 
 class EditProfileModal extends StatefulWidget {
   const EditProfileModal({super.key});

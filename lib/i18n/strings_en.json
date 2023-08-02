@@ -447,29 +447,36 @@
     "IMPORT": {
       "title": "Import your data",
       "title.sort": "Import",
-      "manual-import": "Manual import",
-      "manual-import-descr": "Import transactions from a .csv file manually",
       "restore-backup": "Restore Backup",
       "restore-backup-warn": "When importing a new database, you will lose all data currently saved in the app. It is recommended to make a backup before continuing. Do not upload here any file whose origin you do not know, upload only files that you have previously downloaded from Monekin",
       "restore-backup-descr": "Import a previously saved database from Monekin. This action will replace any current application data with the new data",
       "select-other-file": "Select other file",
       "tap-to-select-file": "Tap to select a file",
-      "steps": [
-        "Select your file",
-        "Column for quantity",
-        "Column for account",
-        "Column for category",
-        "Column for date",
-        "Other column"
-      ],
-      "steps-descr": [
-        "Select a .csv file from your device. Make sure it has a first row that describes the name of each column",
-        "Select the column where the value of each transaction is specified. Use negative values for expenses and positive values for income. Use a point as a decimal separator",
-        "Select the column where the account to which each transaction belongs is specified. You can also select a default account in case we cannot find the account you want. If a default account is not specified, we will create one with the same name",
-        "Specify the column where the transaction category name is located. You must specify a default category so that we assign this category to transactions, in case the category cannot be found",
-        "Select the column where the date of each transaction is specified. If not specified, transactions will be created with the current date",
-        "Specifies the columns for other optional transaction attributes"
-      ],
+      "MANUAL-IMPORT": {
+        "title": "Manual import",
+        "descr": "Import transactions from a .csv file manually",
+        "defaultAccount": "Default account",
+        "removeDefaultAccount": "Remove default account",
+        "defaultCategory": "Default Category",
+        "select-a-column": "Select a column from the .csv",
+        "steps": [
+          "Select your file",
+          "Column for quantity",
+          "Column for account",
+          "Column for category",
+          "Column for date",
+          "other columns"
+        ],
+        "steps-descr": [
+          "Select a .csv file from your device. Make sure it has a first row that describes the name of each column",
+          "Select the column where the value of each transaction is specified. Use negative values for expenses and positive values for income. Use a point as a decimal separator",
+          "Select the column where the account to which each transaction belongs is specified. You can also select a default account in case we cannot find the account you want. If a default account is not specified, we will create one with the same name ",
+          "Specify the column where the transaction category name is located. You must specify a default category so that we assign this category to transactions, in case the category cannot be found",
+          "Select the column where the date of each transaction is specified. If not specified, transactions will be created with the current date",
+          "Specifies the columns for other optional transaction attributes"
+        ],
+        "success": "Successfully imported {{x}} transactions"
+      },
       "success": "Import performed successfully",
       "error": "Error importing file. Please contact developer via lozin.technologies@gmail.com"
     }
@@ -488,7 +495,12 @@
       "display": "General settings",
       "categories.descr": "Create and edit categories to your liking",
       "other": "Advanced settings",
-      "other.descr": "Other general app customization settings"
+      "other.descr": "Other general app customization settings",
+      "theme": "Theme",
+      "theme.light": "Light",
+      "theme.dark": "Dark",
+      "prefer-calc": "Prefer calculator",
+      "prefer-calc-descr": "Displays on the transaction add/edit page a calculator that will make adding faster on devices without a keyboard"
     },
     "DATA": {
       "display": "Data",

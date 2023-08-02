@@ -60,8 +60,8 @@ class ImportPage extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            title: Text(t.backup.import.manual_import),
-            subtitle: Text(t.backup.import.manual_import_descr),
+            title: Text(t.backup.import.manual_import.title),
+            subtitle: Text(t.backup.import.manual_import.descr),
             trailing: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

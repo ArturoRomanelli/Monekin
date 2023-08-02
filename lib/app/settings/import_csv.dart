@@ -61,6 +61,9 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
           .then((parsedCSV) {
         final columnsLenght = parsedCSV.map((e) => e.length).toList();
 
+        print(columnsLenght);
+        print(parsedCSV);
+
         if (parsedCSV.length >= 2 &&
             columnsLenght.elementAt(0) == columnsLenght.elementAt(1) + 1) {
           parsedCSV[0].removeLast();
@@ -89,12 +92,14 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
     required Function onClick,
     bool isRequired = false,
   }) {
+    final t = Translations.of(context);
+
     icon ??= SupportedIconService.instance.defaultSupportedIcon;
     iconColor ??= Theme.of(context).colorScheme.primary;
 
     return TextFormField(
         controller:
-            TextEditingController(text: inputValue ?? 'Sin especificar'),
+            TextEditingController(text: inputValue ?? t.general.unspecified),
         readOnly: true,
         validator: (_) => fieldValidator(inputValue, isRequired: isRequired),
         onTap: () => onClick(),
@@ -115,7 +120,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
       String? labelText,
       bool isNullable = true,
       required void Function(int? value) onChanged}) {
-    labelText ??= 'Selecciona una columna del .csv';
+    labelText ??= t.backup.import.manual_import.select_a_column;
 
     return DropdownButtonFormField(
       value: value,
@@ -159,9 +164,12 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const HomePage()));
 
-      snackbarDisplayer(SnackBar(
-          content: Text(
-              'Se han importado correctamente ${csvData!.slice(1).length} transacciones')));
+      snackbarDisplayer(
+        SnackBar(
+          content: Text(t.backup.import.manual_import
+              .success(x: csvData!.slice(1).length)),
+        ),
+      );
     }
 
     loadingOverlay.show();
@@ -219,8 +227,12 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
           value: double.parse(row[amountColumn!].toString()),
           isHidden: false,
           categoryID: categoryID,
-          notes: notesColumn == null ? null : row[notesColumn!].toString(),
-          title: titleColumn == null ? null : row[titleColumn!].toString(),
+          notes: notesColumn == null || row[notesColumn!].toString().isEmpty
+              ? null
+              : row[notesColumn!].toString(),
+          title: titleColumn == null || row[titleColumn!].toString().isEmpty
+              ? null
+              : row[titleColumn!].toString(),
         ));
       }
     } catch (e) {
@@ -233,7 +245,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
 
   Step buildStep({required int index, required List<Widget> content}) {
     return Step(
-      title: Text(t.backup.import.steps[index]),
+      title: Text(t.backup.import.manual_import.steps[index]),
       isActive: currentStep >= index,
       state: currentStep > index
           ? StepState.complete
@@ -243,7 +255,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(t.backup.import.steps_descr[index]),
+          Text(t.backup.import.manual_import.steps_descr[index]),
           const SizedBox(height: 24),
           ...content
         ],
@@ -256,7 +268,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
     final t = Translations.of(context);
 
     return Scaffold(
-        appBar: AppBar(title: Text(t.backup.import.manual_import)),
+        appBar: AppBar(title: Text(t.backup.import.manual_import.title)),
         body: Stepper(
           type: StepperType.vertical,
           currentStep: currentStep,
@@ -297,6 +309,19 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                             onPressed: () => readFile(),
                             icon: const Icon(Icons.upload_file_rounded),
                             label: Text(t.backup.import.select_other_file),
+                          ),
+                        ],
+                        if (currentStep == 2) ...[
+                          const SizedBox(width: 8),
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                defaultAccount = null;
+                              });
+                            },
+                            icon: const Icon(Icons.delete_outline_rounded),
+                            label: Text(t.backup.import.manual_import
+                                .remove_default_account),
                           ),
                         ]
                       ],
@@ -411,7 +436,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                   ),
                 const SizedBox(height: 12),
                 selector(
-                    title: '${t.general.account} *',
+                    title: t.backup.import.manual_import.default_account,
                     inputValue: defaultAccount?.name,
                     icon: defaultAccount?.icon,
                     iconColor: null,
@@ -455,7 +480,8 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                   }),
                 const SizedBox(height: 12),
                 selector(
-                    title: '${t.general.category} *',
+                    title:
+                        '${t.backup.import.manual_import.default_category} *',
                     inputValue: defaultCategory?.name,
                     icon: defaultCategory?.icon,
                     isRequired: true,

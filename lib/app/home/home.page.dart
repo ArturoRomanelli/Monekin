@@ -1,32 +1,27 @@
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/material.dart';
 import 'package:monekin/app/accounts/account_details.dart';
 import 'package:monekin/app/accounts/account_form.dart';
-import 'package:monekin/app/budgets/budgets_page.dart';
-import 'package:monekin/app/settings/settings.page.dart';
+import 'package:monekin/app/home/widgets/drawer.dart';
 import 'package:monekin/app/stats/widgets/balance_bar_chart_small.dart';
 import 'package:monekin/app/stats/widgets/chart_by_categories.dart';
 import 'package:monekin/app/stats/widgets/fund_evolution_line_chart.dart';
 import 'package:monekin/app/stats/widgets/incomeOrExpenseCard.dart';
 import 'package:monekin/app/transactions/form/transaction_form.page.dart';
-import 'package:monekin/app/transactions/recurrent_transactions_page.dart';
 import 'package:monekin/app/transactions/transaction_list.dart';
 import 'package:monekin/app/transactions/transactions.page.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
-import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
 import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/presentation/widgets/trending_value.dart';
-import 'package:monekin/core/presentation/widgets/user_avatar.dart';
 import 'package:monekin/core/services/filters/date_range_service.dart';
 import 'package:monekin/core/services/finance_health_service.dart';
-import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 import '../stats/stats_page.dart';
 
@@ -181,50 +176,6 @@ class _HomePageState extends State<HomePage> {
 
     final accountService = AccountService.instance;
 
-    List<ListTileActionItem> drawerActions = [
-      ListTileActionItem(
-        label: t.budgets.title,
-        icon: Icons.calculate,
-        onClick: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const BudgetsPage()),
-        ),
-      ),
-      ListTileActionItem(
-        label: t.general.transactions,
-        icon: Icons.app_registration_rounded,
-        onClick: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const TransactionsPage()),
-        ),
-      ),
-      ListTileActionItem(
-        label: t.recurrent_transactions.title,
-        icon: Icons.auto_mode_rounded,
-        onClick: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const RecurrentTransactionPage()),
-        ),
-      ),
-      ListTileActionItem(
-        label: t.stats.title,
-        icon: Icons.auto_graph_rounded,
-        onClick: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const StatsPage()),
-        ),
-      ),
-      ListTileActionItem(
-        label: t.settings.title,
-        icon: Icons.settings,
-        onClick: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SettingsPage()),
-        ),
-      ),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Monekin'),
@@ -254,51 +205,7 @@ class _HomePageState extends State<HomePage> {
               }
             });
           }),
-      drawer: Drawer(
-        child: ListView(padding: EdgeInsets.zero, children: [
-          StreamBuilder(
-              stream: UserSettingService.instance.getSettings(
-                (p0) =>
-                    p0.settingKey.equalsValue(SettingKey.userName) |
-                    p0.settingKey.equalsValue(SettingKey.avatar),
-              ),
-              builder: (context, snapshot) {
-                final userName = snapshot.data
-                    ?.firstWhere(
-                      (element) => element.settingKey == SettingKey.userName,
-                    )
-                    .settingValue;
-                final userAvatar = snapshot.data
-                    ?.firstWhere(
-                      (element) => element.settingKey == SettingKey.avatar,
-                    )
-                    .settingValue;
-
-                return UserAccountsDrawerHeader(
-                  accountName: userName != null
-                      ? Text(userName)
-                      : const Skeleton(width: 25, height: 12),
-                  currentAccountPicture: UserAvatar(avatar: userAvatar),
-                  currentAccountPictureSize: const Size.fromRadius(24),
-                  accountEmail: Text(
-                    t.home.hello_day,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 12,
-                    ),
-                  ),
-                );
-              }),
-          ...List.generate(drawerActions.length, (index) {
-            final item = drawerActions[index];
-            return ListTile(
-              title: Text(item.label),
-              leading: Icon(item.icon),
-              onTap: item.onClick,
-            );
-          }),
-        ]),
-      ),
+      drawer: const HomeDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         child: Column(

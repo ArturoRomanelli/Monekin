@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/utils/get_download_path.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
 class BackupDatabaseService {
@@ -149,6 +149,6 @@ class BackupDatabaseService {
   }
 
   Future<List<List<dynamic>>> processCsv(String csvData) async {
-    return const CsvToListConverter().convert(csvData, eol: "\n");
+    return const CsvToListConverter().convert(csvData, eol: '\n');
   }
 }

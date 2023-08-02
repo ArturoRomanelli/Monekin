@@ -492,7 +492,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                   return Column(
                     children: [
                       SizedBox(
-                        height: constrains.maxHeight * 0.5,
+                        height: constrains.maxHeight * 0.6,
                         child: Column(
                           children: [
                             Expanded(
@@ -502,7 +502,8 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                   currency: fromAccount?.currency,
                                   textStyle: Theme.of(context)
                                       .textTheme
-                                      .headlineLarge!,
+                                      .headlineLarge!
+                                      .copyWith(fontSize: 32),
                                 ),
                               ),
                             ),
@@ -646,7 +647,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                             const Divider(),
                             InkWell(
                               child: Container(
-                                padding: const EdgeInsets.all(6),
+                                padding: const EdgeInsets.all(8),
                                 //color: trColorLighten,
                                 child: Center(
                                   child: Text(
@@ -704,7 +705,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                         ),
                       ),
                       Container(
-                        height: constrains.maxHeight * 0.5,
+                        height: constrains.maxHeight * 0.4,
                         padding: const EdgeInsets.all(6),
                         color: trColorLighten,
                         child: Row(

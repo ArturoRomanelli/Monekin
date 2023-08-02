@@ -63,12 +63,17 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                   UserSettingService.instance.getSetting(SettingKey.themeMode),
               builder: (context, snapshot) {
                 return buildSelector(
-                    title: 'Theme',
+                    title: t.settings.general.theme,
                     dropdown: DropdownButton(
-                      items: const [
-                        DropdownMenuItem(value: 'system', child: Text('Auto')),
-                        DropdownMenuItem(value: 'light', child: Text('Light')),
-                        DropdownMenuItem(value: 'dark', child: Text('Dark'))
+                      items: [
+                        const DropdownMenuItem(
+                            value: 'system', child: Text('Auto')),
+                        DropdownMenuItem(
+                            value: 'light',
+                            child: Text(t.settings.general.theme_light)),
+                        DropdownMenuItem(
+                            value: 'dark',
+                            child: Text(t.settings.general.theme_dark))
                       ],
                       value: snapshot.data ?? 'system',
                       underline: const SizedBox(),
@@ -89,8 +94,8 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage> {
                 bool isActive = snapshot.data == '1';
 
                 return SwitchListTile(
-                  title: Text("Hola"),
-                  subtitle: Text("Hdsujds dsusdjk"),
+                  title: Text(t.settings.general.prefer_calc),
+                  subtitle: Text(t.settings.general.prefer_calc_descr),
                   value: isActive,
                   onChanged: (bool value) {
                     setState(() {

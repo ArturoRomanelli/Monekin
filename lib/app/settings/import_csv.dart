@@ -204,18 +204,31 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                       .code));
         }
 
+        final categoryToFind =
+            row[categoryColumn!].toString().toLowerCase().trim();
+
         final String categoryID = (await CategoryService.instance
                     .getCategories(
-                      predicate: (catTable, parentCatTable) =>
-                          catTable.name.lower().isValue(
-                              row[categoryColumn!].toString().toLowerCase()) |
-                          parentCatTable.name.lower().isValue(
-                              row[categoryColumn!].toString().toLowerCase()),
+                      predicate: (catTable, pCatTable) =>
+                          catTable.name.lower().trim().isValue(categoryToFind) |
+                          pCatTable.name.lower().trim().isValue(categoryToFind),
                     )
                     .first)
                 .firstOrNull
                 ?.id ??
             defaultCategory!.id;
+
+        print((await CategoryService.instance
+                .getCategories(
+                  predicate: (catTable, pCatTable) =>
+                      catTable.name.lower().trim().isValue(categoryToFind) |
+                      pCatTable.name.lower().trim().isValue(categoryToFind),
+                )
+                .first)
+            .firstOrNull
+            ?.id);
+
+        print("---------");
 
         await TransactionService.instance.insertTransaction(TransactionInDB(
           id: const Uuid().v4(),
@@ -523,7 +536,7 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _dateFormatController,
-                  decoration: InputDecoration(labelText: t.account.form.notes),
+                  decoration: const InputDecoration(labelText: 'Date format'),
                   validator: (value) => fieldValidator(value),
                   autovalidateMode: AutovalidateMode.always,
                 ),

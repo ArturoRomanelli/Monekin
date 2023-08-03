@@ -335,21 +335,19 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                   ),
                 ),
                 leftTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(
                   show: true,
                   border: const Border(
                       bottom: BorderSide(width: 1, color: Colors.black12))),
-              gridData: FlGridData(
-                drawVerticalLine: false,
-              ),
+              gridData: const FlGridData(drawVerticalLine: false),
               barGroups: List.generate(snapshot.data!.income.length, (i) {
                 return makeGroupData(
                     i, snapshot.data!.income[i], snapshot.data!.expense[i],
-                    width: 142 / snapshot.data!.income.length);
+                    width: 156 / snapshot.data!.income.length);
               }),
             ));
           }),

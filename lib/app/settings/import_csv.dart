@@ -61,9 +61,6 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
           .then((parsedCSV) {
         final columnsLenght = parsedCSV.map((e) => e.length).toList();
 
-        print(columnsLenght);
-        print(parsedCSV);
-
         if (parsedCSV.length >= 2 &&
             columnsLenght.elementAt(0) == columnsLenght.elementAt(1) + 1) {
           parsedCSV[0].removeLast();
@@ -218,18 +215,6 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
                 ?.id ??
             defaultCategory!.id;
 
-        print((await CategoryService.instance
-                .getCategories(
-                  predicate: (catTable, pCatTable) =>
-                      catTable.name.lower().trim().isValue(categoryToFind) |
-                      pCatTable.name.lower().trim().isValue(categoryToFind),
-                )
-                .first)
-            .firstOrNull
-            ?.id);
-
-        print("---------");
-
         await TransactionService.instance.insertTransaction(TransactionInDB(
           id: const Uuid().v4(),
           date: dateColumn == null
@@ -248,12 +233,13 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
               : row[titleColumn!].toString(),
         ));
       }
+
+      loadingOverlay.hide();
+      onSuccess();
     } catch (e) {
+      loadingOverlay.hide();
       snackbarDisplayer(SnackBar(content: Text(e.toString())));
     }
-
-    loadingOverlay.hide();
-    onSuccess();
   }
 
   Step buildStep({required int index, required List<Widget> content}) {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:monekin/app/accounts/account_form.dart';
@@ -153,11 +155,11 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                                         amountToConvert: accountWithMoney.money)
                                   ],
                                 ),
-                                Builder(builder: (context) {
-                                  return AnimatedProgressBar(
-                                      value:
-                                          accountWithMoney.money / totalMoney);
-                                }),
+                                AnimatedProgressBar(
+                                    value: min(
+                                        max(accountWithMoney.money / totalMoney,
+                                            0),
+                                        1)),
                               ],
                             ),
                           );
@@ -221,14 +223,23 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
 
                                       final currency = snapshot.data!;
 
-                                      return Text(currency.name);
+                                      return Flexible(
+                                        child: Text(
+                                          currency.name,
+                                          softWrap: false,
+                                          overflow: TextOverflow.fade,
+                                        ),
+                                      );
                                     }),
                                 CurrencyDisplayer(
                                     amountToConvert: currencyWithMoney.money)
                               ],
                             ),
                             AnimatedProgressBar(
-                                value: currencyWithMoney.money / totalMoney),
+                                value: min(
+                                    max(currencyWithMoney.money / totalMoney,
+                                        0),
+                                    1)),
                           ],
                         ),
                       );

@@ -98,19 +98,19 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             children: [
-              icon.displayFilled(color: iconColor),
-              const SizedBox(width: 6),
+              icon.displayFilled(color: iconColor, size: 24),
+              const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title),
                   Text(
-                    inputValue ?? t.general.unspecified,
+                    title,
                     style: Theme.of(context)
                         .textTheme
                         .labelSmall!
                         .copyWith(fontWeight: FontWeight.w300),
-                  )
+                  ),
+                  Text(inputValue ?? t.general.unspecified)
                 ],
               )
             ],
@@ -373,7 +373,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
     Color? textColor = Colors.black,
   }) {
     onButtonPress() {
-      HapticFeedback.selectionClick();
+      HapticFeedback.lightImpact();
 
       final decimalPlaces = valueController.text.split('.').elementAtOrNull(1);
 

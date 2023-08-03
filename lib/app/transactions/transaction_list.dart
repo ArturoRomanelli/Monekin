@@ -73,10 +73,12 @@ class TransactionListComponent extends StatelessWidget {
           return ListTile(
             title: Row(
               children: [
-                Text(
-                  transaction.displayName,
-                  softWrap: false,
-                  overflow: TextOverflow.fade,
+                Flexible(
+                  child: Text(
+                    transaction.displayName,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  ),
                 ),
                 const SizedBox(width: 4),
                 if ((transaction.status != null ||
@@ -93,10 +95,14 @@ class TransactionListComponent extends StatelessWidget {
             subtitle: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${transaction.account.name} ${transaction.recurrentInfo.isRecurrent && showRecurrentInfo ? '' : ' • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} '}',
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w300),
+                Flexible(
+                  child: Text(
+                    '${transaction.account.name} ${transaction.recurrentInfo.isRecurrent && showRecurrentInfo ? '' : ' • ${DateFormat.yMMMd().format(transaction.date)} • ${DateFormat.Hm().format(transaction.date)} '}',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w300),
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  ),
                 ),
                 if (transaction.recurrentInfo.isRecurrent &&
                     showRecurrentInfo) ...[

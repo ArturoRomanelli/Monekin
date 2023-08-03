@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:monekin/app/transactions/transaction_details.page.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
-import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 

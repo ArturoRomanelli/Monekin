@@ -1,14 +1,15 @@
 import 'package:collection/collection.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/models/account/account.dart';
-import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/ui_number_formatter.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/presentation/widgets/trending_value.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/services/filters/date_range_service.dart';
 
@@ -218,23 +219,23 @@ class FundEvolutionLineChart extends StatelessWidget {
                                 return LineTooltipItem(
                                     '${snapshot.data!.labels[flSpot.x.toInt()]} \n',
                                     const TextStyle(),
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              '${snapshot.data!.balance[flSpot.x.toInt()]}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold))
-                                    ]);
+                                    children: UINumberFormatter(
+                                            UINumberFormatterMode.decimal,
+                                            amountToConvert: snapshot.data!
+                                                .balance[flSpot.x.toInt()],
+                                            textStyle: const TextStyle(
+                                                fontWeight: FontWeight.bold))
+                                        .getTextSpanList());
                               }).toList();
                             },
                           )),
                       titlesData: FlTitlesData(
                         show: true,
-                        leftTitles: AxisTitles(
+                        leftTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
-                        bottomTitles: AxisTitles(
+                        bottomTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
                         rightTitles: AxisTitles(
                           sideTitles: SideTitles(

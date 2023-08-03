@@ -9,7 +9,7 @@ import 'package:monekin/core/database/services/category/category_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/category/category.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
-import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';

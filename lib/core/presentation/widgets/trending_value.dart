@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/ui_number_formatter.dart';
 
 class TrendingValue extends StatelessWidget {
   const TrendingValue(
@@ -30,14 +30,14 @@ class TrendingValue extends StatelessWidget {
           color: _getColorBasedOnPercentage(),
         ),
         const SizedBox(width: 6),
-        Text(
-          NumberFormat.decimalPercentPattern(decimalDigits: decimalDigits)
-              .format(percentage),
-          style: TextStyle(
+        UINumberFormatter(
+          UINumberFormatterMode.percentage,
+          amountToConvert: percentage,
+          textStyle: TextStyle(
               fontSize: fontSize,
               fontWeight: fontWeight,
               color: _getColorBasedOnPercentage()),
-        )
+        ).getTextWidget()
       ],
     );
   }

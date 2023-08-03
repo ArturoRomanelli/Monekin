@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/ui_number_formatter.dart';
 import 'package:monekin/core/services/filters/date_range_service.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 
@@ -266,16 +267,10 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
-                      children: [
-                        TextSpan(
-                          text: (rod.toY - 1).toString(),
-                          style: TextStyle(
-                            color: rod.toY > 0 ? Colors.green : Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
+                      children: UINumberFormatter(UINumberFormatterMode.decimal,
+                              amountToConvert: rod.toY,
+                              textStyle: const TextStyle(fontSize: 16))
+                          .getTextSpanList(),
                     );
                   },
                 ),

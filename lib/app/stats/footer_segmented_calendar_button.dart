@@ -1,7 +1,7 @@
-import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
-import 'package:monekin/core/services/filters/date_range_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
+import 'package:monekin/core/services/filters/date_range_service.dart';
 
 class FooterSegmentedCalendarButton extends StatefulWidget {
   const FooterSegmentedCalendarButton(
@@ -94,7 +94,7 @@ class _FooterSegmentedCalendarButtonState
                     return Text(dateRangeService.getTextOfRange(
                         startDate: dates[0], endDate: dates[1]));
                   }),
-                  Icon(Icons.arrow_drop_down_rounded)
+                  const Icon(Icons.arrow_drop_down_rounded)
                 ],
               ),
             ),

@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/core/services/filters/custom_date_range_picker.dart';
 import 'package:monekin/core/utils/date_getter.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 enum DateRange {
   weekly,
@@ -222,7 +222,7 @@ class DateRangeService {
 
     if (selectedDateRange == DateRange.custom) {
       final daysBetweenRange =
-          Duration(days: startDate!.difference(endDate!).inDays) * multiplier;
+          Duration(days: endDate!.difference(startDate!).inDays) * multiplier;
 
       startDateToReturn = startDate!.add(daysBetweenRange);
       endDateToReturn = endDate!.add(daysBetweenRange);

@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:monekin/core/services/filters/date_range_service.dart';
 import 'package:monekin/core/utils/color_utils.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class IncomeExpenseChartDataItem {
   List<double> income;
@@ -29,10 +29,12 @@ class BalanceBarChart extends StatefulWidget {
   const BalanceBarChart(
       {super.key,
       required this.startDate,
+      required this.endDate,
       required this.dateRange,
       this.filters});
 
   final DateTime? startDate;
+  final DateTime? endDate;
   final DateRange dateRange;
 
   final TransactionFilters? filters;
@@ -46,7 +48,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
   int touchedRodDataIndex = -1;
 
   Future<IncomeExpenseChartDataItem?> getDataByPeriods(
-      BuildContext context, DateTime? startDate) async {
+      DateTime? startDate, DateTime? endDate, DateRange range) async {
     if (startDate == null) return null;
 
     List<String> shortTitles = [];
@@ -61,8 +63,6 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
     final accounts =
         widget.filters?.accounts ?? await accountService.getAccounts().first;
     final accountsIds = accounts.map((event) => event.id);
-
-    final selectedDateRange = widget.dateRange;
 
     getIncomeData(DateTime? startDate, DateTime? endDate) async =>
         await accountService
@@ -84,7 +84,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                 endDate: endDate)
             .first;
 
-    if (selectedDateRange == DateRange.monthly) {
+    if (range == DateRange.monthly) {
       for (final range in [
         [1, 6],
         [6, 10],
@@ -113,7 +113,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         expense.add(expenseToAdd);
         balance.add(incomeToAdd + expenseToAdd);
       }
-    } else if (selectedDateRange == DateRange.annualy) {
+    } else if (range == DateRange.annualy) {
       for (var i = 1; i <= 12; i++) {
         final selStartDate = DateTime(startDate.year, i);
         final endDate = DateTime(startDate.year, i + 1);
@@ -128,7 +128,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         expense.add(expenseToAdd);
         balance.add(incomeToAdd + expenseToAdd);
       }
-    } else if (selectedDateRange == DateRange.quaterly) {
+    } else if (range == DateRange.quaterly) {
       for (var i = startDate.month; i < startDate.month + 3; i++) {
         final selStartDate = DateTime(startDate.year, i);
         final endDate = DateTime(startDate.year, i + 1);
@@ -143,7 +143,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         expense.add(expenseToAdd);
         balance.add(incomeToAdd + expenseToAdd);
       }
-    } else if (selectedDateRange == DateRange.weekly) {
+    } else if (range == DateRange.weekly) {
       for (var i = 0; i < DateTime.daysPerWeek; i++) {
         final selStartDate =
             DateTime(startDate.year, startDate.month, startDate.day + i);
@@ -159,6 +159,20 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         income.add(incomeToAdd);
         expense.add(expenseToAdd);
         balance.add(incomeToAdd + expenseToAdd);
+      }
+    } else if (range == DateRange.custom) {
+      if (endDate == null) {
+        throw Exception("End date can not be null");
+      }
+
+      final dateDiff = endDate.difference(startDate).inDays;
+
+      if (dateDiff <= 7) {
+        return getDataByPeriods(startDate, endDate, DateRange.weekly);
+      } else if (dateDiff <= 31) {
+        return getDataByPeriods(startDate, endDate, DateRange.monthly);
+      } else if (dateDiff <= 365) {
+        return getDataByPeriods(startDate, endDate, DateRange.annualy);
       }
     }
 
@@ -220,7 +234,8 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
     return SizedBox(
       height: 300,
       child: FutureBuilder(
-          future: getDataByPeriods(context, widget.startDate),
+          future: getDataByPeriods(
+              widget.startDate, widget.endDate, widget.dateRange),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Column(

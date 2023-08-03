@@ -1,5 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/app/stats/widgets/category_stats_modal.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/category/category_service.dart';
@@ -10,9 +13,6 @@ import 'package:monekin/core/presentation/widgets/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/services/filters/date_range_service.dart';
 
@@ -142,7 +142,7 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
             type: CategoryType.B,
             color: 'DEDEDE'));
 
-    for (var item in unimportantItems) {
+    for (final item in unimportantItems) {
       toAdd.value += item.value;
       toAdd.transactions = [...toAdd.transactions, ...item.transactions];
     }

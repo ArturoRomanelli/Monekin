@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/app/transactions/form/transaction_form.page.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/utils/list_tile_action_item.dart';
-import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../i18n/translations.g.dart';
@@ -14,7 +14,8 @@ class TransactionViewActionService {
   TransactionViewActionService();
 
   List<ListTileActionItem> transactionDetailsActions(BuildContext context,
-      {required MoneyTransaction transaction, Widget? prevPage}) {
+      {required MoneyTransaction transaction,
+      bool navigateBackOnDelete = false}) {
     final isRecurrent = transaction.recurrentInfo.isRecurrent;
 
     return [
@@ -22,37 +23,40 @@ class TransactionViewActionService {
           label: t.general.edit,
           icon: Icons.edit,
           onClick: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TransactionFormPage(
-                        prevPage: prevPage,
-                        transactionToEdit: transaction,
-                        mode: transaction.isIncomeOrExpense
-                            ? TransactionFormMode.incomeOrExpense
-                            : TransactionFormMode.transfer,
-                      )))),
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TransactionFormPage(
+                          transactionToEdit: transaction,
+                          mode: transaction.isIncomeOrExpense
+                              ? TransactionFormMode.incomeOrExpense
+                              : TransactionFormMode.transfer,
+                        )),
+              )),
       if (transaction.recurrentInfo.isNoRecurrent)
         ListTileActionItem(
-            label: t.transaction.duplicate_short,
-            icon: Icons.control_point_duplicate,
-            onClick: () => TransactionViewActionService()
-                .cloneTransactionWithAlertAndSnackBar(context,
-                    transaction: transaction, returnPage: prevPage)),
+          label: t.transaction.duplicate_short,
+          icon: Icons.control_point_duplicate,
+          onClick: () => TransactionViewActionService()
+              .cloneTransactionWithAlertAndSnackBar(context,
+                  transaction: transaction),
+        ),
       ListTileActionItem(
           label: t.general.delete,
           icon: Icons.delete,
           onClick: () => TransactionViewActionService()
-              .deleteTransactionWithAlertAndSnackBar(context,
-                  transactionId: transaction.id,
-                  returnPage: prevPage,
-                  isRecurrent: isRecurrent))
+                  .deleteTransactionWithAlertAndSnackBar(
+                context,
+                transactionId: transaction.id,
+                isRecurrent: isRecurrent,
+                navigateBack: navigateBackOnDelete,
+              ))
     ];
   }
 
   deleteTransactionWithAlertAndSnackBar(BuildContext context,
       {required String transactionId,
-      Widget? returnPage,
-      bool isRecurrent = false}) {
+      bool isRecurrent = false,
+      required bool navigateBack}) {
     final t = Translations.of(context);
 
     showDialog(
@@ -83,13 +87,9 @@ class TransactionViewActionService {
                     return;
                   }
 
-                  if (returnPage != null) {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
+                  Navigator.pop(context);
 
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => returnPage));
-                  } else {
+                  if (navigateBack) {
                     Navigator.pop(context);
                   }
 
@@ -109,7 +109,7 @@ class TransactionViewActionService {
   }
 
   cloneTransactionWithAlertAndSnackBar(BuildContext context,
-      {required MoneyTransaction transaction, Widget? returnPage}) {
+      {required MoneyTransaction transaction}) {
     final t = Translations.of(context);
 
     showDialog(
@@ -124,31 +124,29 @@ class TransactionViewActionService {
               child: Text(t.general.continue_text),
               onPressed: () {
                 transactionService
-                    .insertTransaction(TransactionInDB(
-                        id: const Uuid().v4(),
-                        accountID: transaction.accountID,
-                        date: transaction.date,
-                        value: transaction.value,
-                        isHidden: transaction.isHidden,
-                        categoryID: transaction.categoryID,
-                        notes: transaction.notes,
-                        title: transaction.title,
-                        receivingAccountID: transaction.receivingAccountID,
-                        status: transaction.status,
-                        valueInDestiny: transaction.valueInDestiny))
+                    .insertTransaction(
+                  TransactionInDB(
+                    id: const Uuid().v4(),
+                    accountID: transaction.accountID,
+                    date: transaction.date,
+                    value: transaction.value,
+                    isHidden: transaction.isHidden,
+                    categoryID: transaction.categoryID,
+                    notes: transaction.notes,
+                    title: transaction.title,
+                    receivingAccountID: transaction.receivingAccountID,
+                    status: transaction.status,
+                    valueInDestiny: transaction.valueInDestiny,
+                  ),
+                )
                     .then((value) {
-                  if (returnPage != null) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => returnPage),
-                        (Route<dynamic> route) => false);
-                  } else {
-                    Navigator.pop(context);
-                  }
+                  Navigator.pop(context);
 
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(t.transaction.duplicate_success),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(t.transaction.duplicate_success),
+                    ),
+                  );
                 }).catchError((err) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text('$err')));

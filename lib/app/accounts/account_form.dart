@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:monekin/app/accounts/account_type_selector.dart';
-import 'package:monekin/app/home/home.page.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/database/services/currency/currency_service.dart';
 import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
@@ -22,13 +21,10 @@ import 'package:uuid/uuid.dart';
 import '../../core/utils/date_time_picker.dart';
 
 class AccountFormPage extends StatefulWidget {
-  const AccountFormPage({Key? key, this.account, this.prevPage})
-      : super(key: key);
+  const AccountFormPage({Key? key, this.account}) : super(key: key);
 
   /// Account UUID to edit (if any)
   final Account? account;
-
-  final Widget? prevPage;
 
   @override
   State<AccountFormPage> createState() => _AccountFormPageState();
@@ -74,11 +70,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
     double newBalance = double.parse(_balanceController.text);
 
-    navigateBack() => Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (context) => widget.prevPage ?? const HomePage()),
-        (Route<dynamic> route) => false);
+    navigateBack() => Navigator.pop(context);
 
     if (_accountToEdit != null) {
       newBalance = _accountToEdit!.iniValue +

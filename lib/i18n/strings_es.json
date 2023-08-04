@@ -506,7 +506,7 @@
       "theme.light": "Claro",
       "theme.dark": "Oscuro",
       "prefer-calc": "Preferir calculadora",
-      "prefer-calc-descr": "Muestra en la página de adición/edición de transacciones una calculadora que hará la adición mas rápida en dispositivos sin teclado"
+      "prefer-calc-descr": "Muestra en la página de adición/edición de transacciones una calculadora que simplificará las acciones en dispositivos sin teclado"
     },
     "DATA": {
       "display": "Datos",

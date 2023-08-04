@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/app/accounts/account_form.dart';
 import 'package:monekin/app/transactions/form/transaction_form.page.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 class AccountViewActionService {
   final AccountService accountService = AccountService.instance;
@@ -12,7 +12,7 @@ class AccountViewActionService {
   AccountViewActionService();
 
   List<ListTileActionItem> accountDetailsActions(BuildContext context,
-      {required Account account, Widget? prevPage}) {
+      {required Account account, bool navigateBackOnDelete = false}) {
     final t = Translations.of(context);
 
     return [
@@ -23,7 +23,6 @@ class AccountViewActionService {
               context,
               MaterialPageRoute(
                   builder: (context) => AccountFormPage(
-                        prevPage: prevPage,
                         account: account,
                       )))),
       ListTileActionItem(
@@ -51,7 +50,6 @@ class AccountViewActionService {
                 context,
                 MaterialPageRoute(
                     builder: (context) => TransactionFormPage(
-                          prevPage: prevPage,
                           fromAccount: account,
                           mode: TransactionFormMode.transfer,
                         )));
@@ -68,14 +66,17 @@ class AccountViewActionService {
       ListTileActionItem(
           label: t.general.delete,
           icon: Icons.delete,
-          onClick: () => AccountViewActionService()
-              .deleteTransactionWithAlertAndSnackBar(context,
-                  transactionId: account.id, returnPage: prevPage))
+          onClick: () =>
+              AccountViewActionService().deleteTransactionWithAlertAndSnackBar(
+                context,
+                transactionId: account.id,
+                navigateBack: navigateBackOnDelete,
+              ))
     ];
   }
 
   deleteTransactionWithAlertAndSnackBar(BuildContext context,
-      {required String transactionId, Widget? returnPage}) {
+      {required String transactionId, required bool navigateBack}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -88,12 +89,9 @@ class AccountViewActionService {
               child: Text(t.general.confirm),
               onPressed: () {
                 accountService.deleteAccount(transactionId).then((value) {
-                  if (returnPage != null) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => returnPage),
-                        (Route<dynamic> route) => false);
-                  } else {
+                  Navigator.pop(context);
+
+                  if (navigateBack) {
                     Navigator.pop(context);
                   }
 

@@ -45,16 +45,8 @@ class TransactionDetailsPage extends StatefulWidget {
 }
 
 class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
-  late MoneyTransaction transaction;
-
-  @override
-  void initState() {
-    super.initState();
-
-    transaction = widget.transaction;
-  }
-
-  List<ListTileActionItem> _getPayActions(BuildContext context) {
+  List<ListTileActionItem> _getPayActions(
+      BuildContext context, MoneyTransaction transaction) {
     final t = Translations.of(context);
 
     payTransaction(DateTime datetime) {
@@ -207,7 +199,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
     ];
   }
 
-  showSkipTransactionModal(BuildContext context) {
+  showSkipTransactionModal(BuildContext context, MoneyTransaction transaction) {
     showDialog(
         context: context,
         builder: (context) {
@@ -270,7 +262,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ...(_getPayActions(context).map(
+              ...(_getPayActions(context, transaction).map(
                 (e) => ListTile(
                   leading: Icon(e.icon),
                   title: Text(e.label),
@@ -288,7 +280,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
         });
   }
 
-  Widget statusDisplayer() {
+  Widget statusDisplayer(MoneyTransaction transaction) {
     if (transaction.status == null && transaction.recurrentInfo.isNoRecurrent) {
       throw Exception('Error');
     }
@@ -376,7 +368,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                               .isNotEmpty) ...[
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => showSkipTransactionModal(context),
+                            onPressed: () =>
+                                showSkipTransactionModal(context, transaction),
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(color: color.darken(0.2)),
                                 backgroundColor: Colors.white.withOpacity(0.6),
@@ -416,285 +409,328 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
   Widget build(BuildContext context) {
     final transactionDetailsActions = TransactionViewActionService()
         .transactionDetailsActions(context,
-            transaction: widget.transaction, prevPage: widget.prevPage);
+            transaction: widget.transaction, navigateBackOnDelete: true);
 
     final t = Translations.of(context);
 
-    return Scaffold(
-      appBar: AppBar(elevation: 0),
-      body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CurrencyDisplayer(
-                        amountToConvert: transaction.value,
-                        currency: transaction.account.currency,
-                        textStyle: const TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        transaction.displayName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (transaction.recurrentInfo.isNoRecurrent)
-                        Text(
-                          DateFormat.yMMMMd().add_Hm().format(transaction.date),
-                        )
-                      else
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.repeat_rounded,
-                              size: 14,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              transaction.recurrentInfo.formText(context),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  color: Theme.of(context).primaryColor),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                  Hero(
-                    tag: 'transaction-icon-${transaction.id}',
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: transaction.color(context).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: transaction.isIncomeOrExpense
-                          ? transaction.category!.icon.display(
-                              color: transaction.color(context),
-                              size: 42,
-                            )
-                          : const Icon(Icons.swap_vert, size: 42),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 24),
-              if (transaction.status != null ||
-                  transaction.recurrentInfo.isRecurrent)
-                statusDisplayer(),
-              CardWithHeader(
-                title: 'Info',
-                body: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          //contentPadding: const EdgeInsets.all(2),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(t.general.account),
-                              Chip(
-                                  label: Text(transaction.account.name),
-                                  padding: const EdgeInsets.all(2),
-                                  labelStyle: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                  side: BorderSide(
-                                      color: Theme.of(context).primaryColor),
-                                  backgroundColor: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.12),
-                                  avatar: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    child: transaction.account.icon.display(
-                                        color: Theme.of(context).primaryColor),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        const Divider(indent: 12),
-                        ListTile(
-                          //contentPadding: const EdgeInsets.all(2),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(transaction.isIncomeOrExpense
-                                  ? t.general.category
-                                  : t.transfer.form.to),
-                              Chip(
-                                  label: Text(transaction.isIncomeOrExpense
-                                      ? transaction.category!.name
-                                      : transaction.receivingAccount!.name),
-                                  padding: const EdgeInsets.all(2),
-                                  labelStyle: TextStyle(
-                                      color:
-                                          transaction.color(context).darken()),
-                                  side: BorderSide(
-                                      color:
-                                          transaction.color(context).darken()),
-                                  backgroundColor: transaction
-                                      .color(context)
-                                      .withOpacity(0.12),
-                                  avatar: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    child: transaction.isIncomeOrExpense
-                                        ? transaction.category!.icon.display(
-                                            color: transaction.color(context))
-                                        : widget
-                                            .transaction.receivingAccount!.icon
-                                            .display(
-                                                color:
-                                                    transaction.color(context)),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        StreamBuilder(
-                            stream: CurrencyService.instance
-                                .getUserPreferredCurrency(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData ||
-                                  snapshot.data!.code ==
-                                      transaction.account.currencyId) {
-                                return Container();
-                              }
+    return StreamBuilder(
+        stream: TransactionService.instance
+            .getTransactionById(widget.transaction.id),
+        initialData: widget.transaction,
+        builder: (context, snapshot) {
+          return Scaffold(
+            appBar: AppBar(elevation: 0),
+            body: Builder(builder: (context) {
+              if (!snapshot.hasData) {
+                return const LinearProgressIndicator();
+              }
 
-                              final userCurrency = snapshot.data!;
+              final transaction = snapshot.data!;
 
-                              return Column(
-                                children: [
-                                  const Divider(indent: 12),
-                                  ListTile(
-                                    title: Text(
-                                      t.transaction.form
-                                          .exchange_to_preferred_today(
-                                              currency: userCurrency.code),
-                                    ),
-                                    trailing: StreamBuilder(
-                                        stream: ExchangeRateService.instance
-                                            .calculateExchangeRate(
-                                          fromCurrency: userCurrency.code,
-                                          toCurrency:
-                                              transaction.account.currencyId,
-                                          amount: transaction.value,
-                                        ),
-                                        builder:
-                                            (context, exchangeRateSnapshot) {
-                                          if (!exchangeRateSnapshot.hasData) {
-                                            return const Skeleton(
-                                                width: 16, height: 14);
-                                          }
-
-                                          return CurrencyDisplayer(
-                                            currency: userCurrency,
-                                            textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                            amountToConvert:
-                                                exchangeRateSnapshot.data!,
-                                          );
-                                        }),
-                                  ),
-                                  const Divider(indent: 12),
-                                  ListTile(
-                                    title: Text(
-                                      t.transaction.form
-                                          .exchange_to_preferred_in_date(
-                                        currency: userCurrency.code,
-                                        date: DateFormat.yMd()
-                                            .format(transaction.date),
-                                      ),
-                                    ),
-                                    trailing: StreamBuilder(
-                                        stream: ExchangeRateService.instance
-                                            .calculateExchangeRate(
-                                          fromCurrency: userCurrency.code,
-                                          toCurrency:
-                                              transaction.account.currencyId,
-                                          amount: transaction.value,
-                                          date: transaction.date,
-                                        ),
-                                        builder:
-                                            (context, exchangeRateSnapshot) {
-                                          if (!exchangeRateSnapshot.hasData) {
-                                            return const Skeleton(
-                                                width: 16, height: 14);
-                                          }
-
-                                          return CurrencyDisplayer(
-                                            currency: userCurrency,
-                                            textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                            amountToConvert:
-                                                exchangeRateSnapshot.data!,
-                                          );
-                                        }),
-                                  )
-                                ],
-                              );
-                            }),
-                        if (transaction.notes != null) ...[
-                          const Divider(indent: 12),
-                          ListTile(
-                            title: Text(t.transaction.form.description),
-                            subtitle: Text(transaction.notes!),
-                          )
-                        ]
-                      ]),
-                ),
-              ),
-              const SizedBox(height: 16),
-              CardWithHeader(
-                title: t.general.quick_actions,
-                body: Padding(
+              return SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Wrap(
-                        spacing: 24,
-                        runSpacing: 16,
-                        children: transactionDetailsActions
-                            .map((item) => Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CurrencyDisplayer(
+                                amountToConvert: transaction.value,
+                                currency: transaction.account.currency,
+                                textStyle: const TextStyle(
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                transaction.displayName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              if (transaction.recurrentInfo.isNoRecurrent)
+                                Text(
+                                  DateFormat.yMMMMd()
+                                      .add_Hm()
+                                      .format(transaction.date),
+                                )
+                              else
+                                Row(
                                   children: [
-                                    IconButton.filledTonal(
-                                        onPressed: item.onClick,
-                                        icon: Icon(
-                                          item.icon,
-                                          size: 32,
-                                          color: Theme.of(context).primaryColor,
-                                        )),
-                                    const SizedBox(height: 4),
+                                    Icon(
+                                      Icons.repeat_rounded,
+                                      size: 14,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const SizedBox(width: 4),
                                     Text(
-                                      item.label,
-                                      softWrap: false,
-                                      overflow: TextOverflow.fade,
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w300),
-                                    )
+                                      transaction.recurrentInfo
+                                          .formText(context),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
                                   ],
-                                ))
-                            .toList(),
+                                ),
+                            ],
+                          ),
+                          Hero(
+                            tag: 'transaction-icon-${transaction.id}',
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color:
+                                    transaction.color(context).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: transaction.isIncomeOrExpense
+                                  ? transaction.category!.icon.display(
+                                      color: transaction.color(context),
+                                      size: 42,
+                                    )
+                                  : const Icon(Icons.swap_vert, size: 42),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      if (transaction.status != null ||
+                          transaction.recurrentInfo.isRecurrent)
+                        statusDisplayer(transaction),
+                      CardWithHeader(
+                        title: 'Info',
+                        body: SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  //contentPadding: const EdgeInsets.all(2),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(t.general.account),
+                                      Chip(
+                                          label: Text(transaction.account.name),
+                                          padding: const EdgeInsets.all(2),
+                                          labelStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          side: BorderSide(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                          backgroundColor: Theme.of(context)
+                                              .primaryColor
+                                              .withOpacity(0.12),
+                                          avatar: CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            child: transaction.account.icon
+                                                .display(
+                                                    color: Theme.of(context)
+                                                        .primaryColor),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(indent: 12),
+                                ListTile(
+                                  //contentPadding: const EdgeInsets.all(2),
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(transaction.isIncomeOrExpense
+                                          ? t.general.category
+                                          : t.transfer.form.to),
+                                      Chip(
+                                          label: Text(
+                                              transaction.isIncomeOrExpense
+                                                  ? transaction.category!.name
+                                                  : transaction
+                                                      .receivingAccount!.name),
+                                          padding: const EdgeInsets.all(2),
+                                          labelStyle: TextStyle(
+                                              color: transaction
+                                                  .color(context)
+                                                  .darken()),
+                                          side: BorderSide(
+                                              color: transaction
+                                                  .color(context)
+                                                  .darken()),
+                                          backgroundColor: transaction
+                                              .color(context)
+                                              .withOpacity(0.12),
+                                          avatar: CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            child: transaction.isIncomeOrExpense
+                                                ? transaction.category!.icon
+                                                    .display(
+                                                        color: transaction
+                                                            .color(context))
+                                                : widget.transaction
+                                                    .receivingAccount!.icon
+                                                    .display(
+                                                        color: transaction
+                                                            .color(context)),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                StreamBuilder(
+                                    stream: CurrencyService.instance
+                                        .getUserPreferredCurrency(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData ||
+                                          snapshot.data!.code ==
+                                              transaction.account.currencyId) {
+                                        return Container();
+                                      }
+
+                                      final userCurrency = snapshot.data!;
+
+                                      return Column(
+                                        children: [
+                                          const Divider(indent: 12),
+                                          ListTile(
+                                            title: Text(
+                                              t.transaction.form
+                                                  .exchange_to_preferred_today(
+                                                      currency:
+                                                          userCurrency.code),
+                                            ),
+                                            trailing: StreamBuilder(
+                                                stream: ExchangeRateService
+                                                    .instance
+                                                    .calculateExchangeRate(
+                                                  fromCurrency:
+                                                      userCurrency.code,
+                                                  toCurrency: transaction
+                                                      .account.currencyId,
+                                                  amount: transaction.value,
+                                                ),
+                                                builder: (context,
+                                                    exchangeRateSnapshot) {
+                                                  if (!exchangeRateSnapshot
+                                                      .hasData) {
+                                                    return const Skeleton(
+                                                        width: 16, height: 14);
+                                                  }
+
+                                                  return CurrencyDisplayer(
+                                                    currency: userCurrency,
+                                                    textStyle: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    amountToConvert:
+                                                        exchangeRateSnapshot
+                                                            .data!,
+                                                  );
+                                                }),
+                                          ),
+                                          const Divider(indent: 12),
+                                          ListTile(
+                                            title: Text(
+                                              t.transaction.form
+                                                  .exchange_to_preferred_in_date(
+                                                currency: userCurrency.code,
+                                                date: DateFormat.yMd()
+                                                    .format(transaction.date),
+                                              ),
+                                            ),
+                                            trailing: StreamBuilder(
+                                                stream: ExchangeRateService
+                                                    .instance
+                                                    .calculateExchangeRate(
+                                                  fromCurrency:
+                                                      userCurrency.code,
+                                                  toCurrency: transaction
+                                                      .account.currencyId,
+                                                  amount: transaction.value,
+                                                  date: transaction.date,
+                                                ),
+                                                builder: (context,
+                                                    exchangeRateSnapshot) {
+                                                  if (!exchangeRateSnapshot
+                                                      .hasData) {
+                                                    return const Skeleton(
+                                                        width: 16, height: 14);
+                                                  }
+
+                                                  return CurrencyDisplayer(
+                                                    currency: userCurrency,
+                                                    textStyle: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                    amountToConvert:
+                                                        exchangeRateSnapshot
+                                                            .data!,
+                                                  );
+                                                }),
+                                          )
+                                        ],
+                                      );
+                                    }),
+                                if (transaction.notes != null) ...[
+                                  const Divider(indent: 12),
+                                  ListTile(
+                                    title: Text(t.transaction.form.description),
+                                    subtitle: Text(transaction.notes!),
+                                  )
+                                ]
+                              ]),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      CardWithHeader(
+                        title: t.general.quick_actions,
+                        body: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Wrap(
+                                spacing: 24,
+                                runSpacing: 16,
+                                children: transactionDetailsActions
+                                    .map((item) => Column(
+                                          children: [
+                                            IconButton.filledTonal(
+                                                onPressed: item.onClick,
+                                                icon: Icon(
+                                                  item.icon,
+                                                  size: 32,
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                )),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              item.label,
+                                              softWrap: false,
+                                              overflow: TextOverflow.fade,
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w300),
+                                            )
+                                          ],
+                                        ))
+                                    .toList(),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-            ],
-          )),
-    );
+                  ));
+            }),
+          );
+        });
   }
 }

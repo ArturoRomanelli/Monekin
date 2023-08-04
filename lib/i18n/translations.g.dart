@@ -6,7 +6,7 @@
 /// Locales: 2
 /// Strings: 827 (413 per locale)
 ///
-/// Built on 2023-08-04 at 11:05 UTC
+/// Built on 2023-08-04 at 11:35 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -892,7 +892,7 @@ class _TranslationsSettingsGeneralEn {
 	String get theme_light => 'Light';
 	String get theme_dark => 'Dark';
 	String get prefer_calc => 'Prefer calculator';
-	String get prefer_calc_descr => 'Displays on the transaction add/edit page a calculator that will make adding faster on devices without a keyboard';
+	String get prefer_calc_descr => 'Displays a calculator on the add/edit transaction page that will simplify actions on devices without a keyboard';
 }
 
 // Path: settings.data
@@ -1906,7 +1906,7 @@ class _TranslationsSettingsGeneralEs extends _TranslationsSettingsGeneralEn {
 	@override String get theme_light => 'Claro';
 	@override String get theme_dark => 'Oscuro';
 	@override String get prefer_calc => 'Preferir calculadora';
-	@override String get prefer_calc_descr => 'Muestra en la página de adición/edición de transacciones una calculadora que hará la adición mas rápida en dispositivos sin teclado';
+	@override String get prefer_calc_descr => 'Muestra en la página de adición/edición de transacciones una calculadora que simplificará las acciones en dispositivos sin teclado';
 }
 
 // Path: settings.data
@@ -2564,7 +2564,7 @@ extension on _TranslationsEn {
 			case 'settings.general.theme_light': return 'Light';
 			case 'settings.general.theme_dark': return 'Dark';
 			case 'settings.general.prefer_calc': return 'Prefer calculator';
-			case 'settings.general.prefer_calc_descr': return 'Displays on the transaction add/edit page a calculator that will make adding faster on devices without a keyboard';
+			case 'settings.general.prefer_calc_descr': return 'Displays a calculator on the add/edit transaction page that will simplify actions on devices without a keyboard';
 			case 'settings.data.display': return 'Data';
 			case 'settings.data.export_descr': return 'Download your data in different formats';
 			case 'settings.data.delete_all': return 'Delete my data';
@@ -3004,7 +3004,7 @@ extension on _TranslationsEs {
 			case 'settings.general.theme_light': return 'Claro';
 			case 'settings.general.theme_dark': return 'Oscuro';
 			case 'settings.general.prefer_calc': return 'Preferir calculadora';
-			case 'settings.general.prefer_calc_descr': return 'Muestra en la página de adición/edición de transacciones una calculadora que hará la adición mas rápida en dispositivos sin teclado';
+			case 'settings.general.prefer_calc_descr': return 'Muestra en la página de adición/edición de transacciones una calculadora que simplificará las acciones en dispositivos sin teclado';
 			case 'settings.data.display': return 'Datos';
 			case 'settings.data.export_descr': return 'Descarga tus datos en diferentes formatos';
 			case 'settings.data.delete_all': return 'Eliminar mis datos';

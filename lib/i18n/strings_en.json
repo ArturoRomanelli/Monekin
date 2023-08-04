@@ -504,7 +504,7 @@
       "theme.light": "Light",
       "theme.dark": "Dark",
       "prefer-calc": "Prefer calculator",
-      "prefer-calc-descr": "Displays on the transaction add/edit page a calculator that will make adding faster on devices without a keyboard"
+      "prefer-calc-descr": "Displays a calculator on the add/edit transaction page that will simplify actions on devices without a keyboard"
     },
     "DATA": {
       "display": "Data",

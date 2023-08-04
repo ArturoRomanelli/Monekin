@@ -95,10 +95,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AccountDetailsPage(
-                              account: account,
-                              prevPage: const HomePage(),
-                            ))),
+                        builder: (context) =>
+                            AccountDetailsPage(account: account))),
                 leading: Hero(
                     tag: 'account-icon-${account.id}',
                     child: Container(

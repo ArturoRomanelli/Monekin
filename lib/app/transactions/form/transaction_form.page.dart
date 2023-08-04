@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:monekin/app/accounts/account_selector.dart';
 import 'package:monekin/app/categories/categories_list.dart';
-import 'package:monekin/app/home/home.page.dart';
 import 'package:monekin/app/transactions/form/widgets/interval_selector_help.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
@@ -31,14 +30,12 @@ enum TransactionFormMode { transfer, incomeOrExpense }
 class TransactionFormPage extends StatefulWidget {
   const TransactionFormPage({
     super.key,
-    this.prevPage,
     this.transactionToEdit,
     this.mode = TransactionFormMode.incomeOrExpense,
     this.fromAccount,
     this.toAccount,
   });
 
-  final Widget? prevPage;
   final MoneyTransaction? transactionToEdit;
   final TransactionFormMode mode;
 
@@ -150,10 +147,6 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
 
     onSuccess() {
       Navigator.pop(context);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => widget.prevPage ?? const HomePage()));
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(isEditMode

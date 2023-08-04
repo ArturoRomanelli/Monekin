@@ -9,8 +9,8 @@ import 'package:monekin/core/database/services/currency/currency_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
-import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/i18n/translations.g.dart';
 import 'package:rxdart/rxdart.dart';
@@ -137,10 +137,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                             onTap: () => Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => AccountFormPage(
-                                  prevPage:
-                                      AllAccountBalancePage(date: widget.date),
-                                  account: accountWithMoney.account,
-                                ),
+                                    account: accountWithMoney.account),
                               ),
                             ),
                             title: Column(

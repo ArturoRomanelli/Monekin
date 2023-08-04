@@ -124,9 +124,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TransactionFormPage(
-                              prevPage: TransactionsPage(),
-                            )))
+                        builder: (context) => const TransactionFormPage()))
               }),
       body: Column(
         children: [

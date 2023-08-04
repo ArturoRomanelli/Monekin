@@ -6,7 +6,7 @@
 /// Locales: 2
 /// Strings: 827 (413 per locale)
 ///
-/// Built on 2023-08-04 at 11:35 UTC
+/// Built on 2023-08-04 at 14:42 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -280,7 +280,7 @@ class _TranslationsStatsEn {
 
 	// Translations
 	String get title => 'Statistics';
-	String get balance => 'Saldo';
+	String get balance => 'Balance';
 	String get balance_by_account => 'Balance by accounts';
 	String get balance_by_currency => 'Balance by currency';
 	String get cash_flow => 'Cash flow';
@@ -2312,7 +2312,7 @@ extension on _TranslationsEn {
 			case 'financial_health.savings_percentage.bad': return ({required Object value}) => 'You have managed to save ${value}% of your income during this period. However, we believe that you can still do much more! Remember that it is recommended to save at least 30% of what you earn';
 			case 'financial_health.savings_percentage.very_bad': return 'Wow, you haven\'t managed to save anything during this period :( Visit the analysis tab to see where your financial weaknesses are. Remember that it is recommended to save at least 30% of what you earn';
 			case 'stats.title': return 'Statistics';
-			case 'stats.balance': return 'Saldo';
+			case 'stats.balance': return 'Balance';
 			case 'stats.balance_by_account': return 'Balance by accounts';
 			case 'stats.balance_by_currency': return 'Balance by currency';
 			case 'stats.cash_flow': return 'Cash flow';

@@ -37,9 +37,7 @@ class FundEvolutionLineChart extends StatelessWidget {
 
   final List<Account>? accountsFilter;
 
-  Future<LineChartDataItem?> getEvolutionData(
-    BuildContext context,
-  ) async {
+  Future<LineChartDataItem?> getEvolutionData() async {
     if (startDate == null || endDate == null) return null;
 
     List<Future<double>> balance = [];
@@ -86,7 +84,9 @@ class FundEvolutionLineChart extends StatelessWidget {
       children: [
         if (showBalanceHeader) ...[
           StreamBuilder(
-              stream: accountService.getAccounts(),
+              stream: accountsFilter != null
+                  ? Stream.value(accountsFilter)
+                  : accountService.getAccounts(),
               builder: (context, accountsSnapshot) {
                 if (!accountsSnapshot.hasData) {
                   return Column(
@@ -186,7 +186,7 @@ class FundEvolutionLineChart extends StatelessWidget {
         SizedBox(
           height: 300,
           child: FutureBuilder(
-              future: getEvolutionData(context),
+              future: getEvolutionData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Column(

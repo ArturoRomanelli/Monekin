@@ -187,7 +187,7 @@
   },
   "STATS": {
     "title": "Statistics",
-    "balance": "Saldo",
+    "balance": "Balance",
     "balance-by-account": "Balance by accounts",
     "balance-by-currency": "Balance by currency",
     "cash-flow": "Cash flow",

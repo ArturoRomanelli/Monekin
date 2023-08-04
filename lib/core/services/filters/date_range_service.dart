@@ -156,7 +156,8 @@ class DateRangeService {
   String getTextOfRange(
       {required DateTime? startDate,
       required DateTime? endDate,
-      DateRange? dateRange}) {
+      DateRange? dateRange,
+      bool showLongMonth = true}) {
     String text = '';
 
     if (startDate == null || endDate == null) return 'Por siempre';
@@ -167,7 +168,11 @@ class DateRangeService {
       if (startDate.year == currentYear) {
         text = DateFormat.MMMM().format(startDate);
       } else {
-        text = DateFormat.yMMMM().format(startDate);
+        if (showLongMonth) {
+          text = DateFormat.yMMMM().format(startDate);
+        } else {
+          text = DateFormat.yMMM().format(startDate);
+        }
       }
     } else if (dateRange == DateRange.annualy) {
       text = DateFormat.y().format(startDate);

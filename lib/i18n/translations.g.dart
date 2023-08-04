@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 819 (409 per locale)
+/// Strings: 821 (410 per locale)
 ///
-/// Built on 2023-08-02 at 06:50 UTC
+/// Built on 2023-08-03 at 21:15 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -285,6 +285,7 @@ class _TranslationsStatsEn {
 	String get balance_by_currency => 'Balance by currency';
 	String get cash_flow => 'Cash flow';
 	String get balance_evolution => 'Balance evolution';
+	String get compared_to_previous_period => 'Compared to the previous period';
 	String get by_periods => 'By periods';
 	String get by_categories => 'By categories';
 }
@@ -1294,6 +1295,7 @@ class _TranslationsStatsEs extends _TranslationsStatsEn {
 	@override String get balance_by_account => 'Saldo por cuentas';
 	@override String get balance_by_currency => 'Saldo por divisas';
 	@override String get balance_evolution => 'Tendencia de saldo';
+	@override String get compared_to_previous_period => 'Frente al periodo anterior';
 	@override String get cash_flow => 'Flujo de caja';
 	@override String get by_periods => 'Por periodos';
 	@override String get by_categories => 'Por categorías';
@@ -2309,6 +2311,7 @@ extension on _TranslationsEn {
 			case 'stats.balance_by_currency': return 'Balance by currency';
 			case 'stats.cash_flow': return 'Cash flow';
 			case 'stats.balance_evolution': return 'Balance evolution';
+			case 'stats.compared_to_previous_period': return 'Compared to the previous period';
 			case 'stats.by_periods': return 'By periods';
 			case 'stats.by_categories': return 'By categories';
 			case 'icon_selector.name': return 'Name:';
@@ -2744,6 +2747,7 @@ extension on _TranslationsEs {
 			case 'stats.balance_by_account': return 'Saldo por cuentas';
 			case 'stats.balance_by_currency': return 'Saldo por divisas';
 			case 'stats.balance_evolution': return 'Tendencia de saldo';
+			case 'stats.compared_to_previous_period': return 'Frente al periodo anterior';
 			case 'stats.cash_flow': return 'Flujo de caja';
 			case 'stats.by_periods': return 'Por periodos';
 			case 'stats.by_categories': return 'Por categorías';

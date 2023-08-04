@@ -113,7 +113,12 @@ class FundEvolutionLineChart extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                'Final balance - ${DateRangeService().getTextOfRange(startDate: startDate, endDate: endDate, dateRange: dateRange)}',
+                                'F. balance - ${DateRangeService().getTextOfRange(
+                                  showLongMonth: false,
+                                  startDate: startDate,
+                                  endDate: endDate,
+                                  dateRange: dateRange,
+                                )}',
                                 style: const TextStyle(fontSize: 12)),
                             StreamBuilder(
                                 stream: accountService.getAccountsMoney(
@@ -137,9 +142,9 @@ class FundEvolutionLineChart extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const Text(
-                              'Frente al periodo anterior',
-                              style: TextStyle(fontSize: 12),
+                            Text(
+                              t.stats.compared_to_previous_period,
+                              style: const TextStyle(fontSize: 12),
                             ),
                             if (startDate != null && endDate != null)
                               StreamBuilder(

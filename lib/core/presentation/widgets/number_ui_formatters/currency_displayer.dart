@@ -51,6 +51,16 @@ class _CurrencyDisplayerState extends State<CurrencyDisplayer> {
   Widget build(BuildContext context) {
     final valueFontSize = widget.textStyle.fontSize ?? 16;
 
+    if (widget.currency != null) {
+      return UINumberFormatter(
+        UINumberFormatterMode.currency,
+        amountToConvert: widget.amountToConvert,
+        currency: widget.currency,
+        showDecimals: widget.showDecimals,
+        textStyle: widget.textStyle,
+      ).getTextWidget();
+    }
+
     return FutureBuilder(
         future: CurrencyService.instance.getUserPreferredCurrency(),
         builder: (context, snapshot) {

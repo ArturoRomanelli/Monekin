@@ -378,10 +378,12 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       final decimalPlaces = valueController.text.split('.').elementAtOrNull(1);
 
       if (text == 'DONE') {
-        if (selectedCategory == null) {
+        if (widget.mode == TransactionFormMode.incomeOrExpense &&
+            selectedCategory == null) {
           _shakeKey.currentState?.shake();
           return;
         }
+
         submitForm();
         return;
       }

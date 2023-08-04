@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/app/accounts/account_type_selector.dart';
 import 'package:monekin/app/home/home.page.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
@@ -14,9 +17,6 @@ import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart'
 import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
 import 'package:monekin/core/utils/text_field_validator.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/utils/date_time_picker.dart';
@@ -46,6 +46,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   AccountType _type = AccountType.normal;
   SupportedIcon _icon = SupportedIconService.instance.defaultSupportedIcon;
   Currency? _currency;
+  Currency? _userPrCurrency;
 
   Account? _accountToEdit;
 
@@ -58,7 +59,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
         .getLastExchangeRateOf(currencyCode: currency.code)
         .first
         .then((value) {
-      if (value != null) {
+      if (value != null || currency == _userPrCurrency) {
         showCurrencyExchangesWarn = false;
       } else {
         showCurrencyExchangesWarn = true;
@@ -117,9 +118,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
       _accountToEdit = widget.account;
       _fillForm();
     } else {
-      CurrencyService.instance.getUserPreferredCurrency().then((value) {
+      CurrencyService.instance.getUserPreferredCurrency().first.then((value) {
         setState(() {
           _currency = value;
+          _userPrCurrency = value;
         });
       });
     }

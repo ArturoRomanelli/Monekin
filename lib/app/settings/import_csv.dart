@@ -196,9 +196,10 @@ class _ImportCSVPageState extends State<ImportCSVPage> {
               date: DateTime.now(),
               type: AccountType.normal,
               iconId: SupportedIconService.instance.defaultSupportedIcon.id,
-              currencyId:
-                  (await CurrencyService.instance.getUserPreferredCurrency())
-                      .code));
+              currencyId: (await CurrencyService.instance
+                      .getUserPreferredCurrency()
+                      .first)
+                  .code));
         }
 
         final categoryToFind =

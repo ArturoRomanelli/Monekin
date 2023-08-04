@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:monekin/core/models/exchange-rate/exchange_rate.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../app_db.dart';
 
@@ -55,5 +56,24 @@ class ExchangeRateService {
                 e.date.isSmallerOrEqualValue(date!),
             limit: 1)
         .watchSingleOrNull();
+  }
+
+  Stream<double> calculateExchangeRate({
+    required String fromCurrency,
+    required String toCurrency,
+    num amount = 1,
+    DateTime? date,
+  }) {
+    date ??= DateTime.now();
+
+    final fromExchangeRate =
+        getLastExchangeRateOf(currencyCode: fromCurrency, date: date)
+            .map((event) => event?.exchangeRate ?? 1);
+    final toExchangeRate =
+        getLastExchangeRateOf(currencyCode: toCurrency, date: date)
+            .map((event) => event?.exchangeRate ?? 1);
+
+    return Rx.combineLatest2(
+        fromExchangeRate, toExchangeRate, (a, b) => (b / a) * amount);
   }
 }

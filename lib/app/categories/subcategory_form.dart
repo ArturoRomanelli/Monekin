@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/core/models/supported-icon/supported_icon.dart';
 import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:monekin/core/utils/text_field_validator.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 class SubcategoryFormDialog extends StatefulWidget {
   const SubcategoryFormDialog(
@@ -47,7 +47,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
-    return Container(
+    return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(mainAxisSize: MainAxisSize.min, children: [

@@ -258,7 +258,8 @@
       "tap-to-see-more": "Tap to see more details",
       "description": "Description",
       "description-info": "Adding a note will help you find this transaction faster in the future",
-      "exchange-to-preferred": "Currently equal to approximately {{x}}"
+      "exchange-to-preferred-today": "Equivalent to {{ currency }} today:",
+      "exchange-to-preferred-in-date": "Equivalent to {{ currency }} on {{date}}:"
     },
     "STATUS": {
       "tr_status": "{{ status }} transaction",
@@ -352,7 +353,9 @@
       "equal-to-preferred-warn": "The currency cannot be equal to the user currency",
       "specify-a-currency": "Please specify a currency",
       "add": "Add exchange rate",
-      "add-success": "Exchange rate added successfully"
+      "add-success": "Exchange rate added successfully",
+      "edit": "Edit exchange rate",
+      "edit-success": "Exchange rate edited successfully"
     },
     "delete-all-success": "Deleted exchange rates successfully",
     "historical": "Historical rates",

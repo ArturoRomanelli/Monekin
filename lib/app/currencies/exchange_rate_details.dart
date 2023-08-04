@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/app/currencies/exchange_rate_form.dart';
 import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:monekin/core/models/currency/currency.dart';
@@ -6,8 +8,6 @@ import 'package:monekin/core/presentation/widgets/monekin_popup_menu_button.dart
 import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ExchangeRateDetailsPage extends StatefulWidget {
   const ExchangeRateDetailsPage({super.key, required this.currency});
@@ -120,16 +120,13 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
                     NumberFormat.currency(symbol: '', decimalDigits: 4)
                         .format(item.exchangeRate)),
                 onTap: () async {
-                  await showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (context) {
-                        return ExchangeRateFormDialog(
-                          preSelectedCurrency: widget.currency,
-                          preSelectedDate: item.date,
-                          preSelectedRate: item.exchangeRate,
-                        );
-                      });
+                  await showExchangeRateFormDialog(
+                      context,
+                      ExchangeRateFormDialog(
+                        preSelectedCurrency: widget.currency,
+                        preSelectedDate: item.date,
+                        preSelectedRate: item.exchangeRate,
+                      ));
 
                   getExchangeRates();
                 },
@@ -144,14 +141,10 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
         PersistentFooterButton(
           child: FilledButton.icon(
             onPressed: () async {
-              await showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return ExchangeRateFormDialog(
-                      preSelectedCurrency: widget.currency,
-                    );
-                  });
+              await showExchangeRateFormDialog(
+                context,
+                ExchangeRateFormDialog(preSelectedCurrency: widget.currency),
+              );
 
               getExchangeRates();
             },

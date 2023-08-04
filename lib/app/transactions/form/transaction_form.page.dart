@@ -669,35 +669,42 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                                     minChildSize: 0.5,
                                     initialChildSize: 0.55,
                                     builder: (context, scrollController) {
-                                      return Column(
-                                        children: [
-                                          Expanded(
-                                            child: ScrollableWithBottomGradient(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                vertical: 8,
-                                                horizontal: 16,
-                                              ),
-                                              controller: scrollController,
-                                              child: Column(
-                                                children: [
-                                                  buildTitleField(),
-                                                  const SizedBox(height: 16),
-                                                  ...buildExtraFields()
-                                                ],
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child:
+                                                  ScrollableWithBottomGradient(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 8,
+                                                  horizontal: 16,
+                                                ),
+                                                controller: scrollController,
+                                                child: Column(
+                                                  children: [
+                                                    buildTitleField(),
+                                                    const SizedBox(height: 16),
+                                                    ...buildExtraFields()
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          BottomSheetFooter(
-                                              submitText:
-                                                  t.general.close_and_save,
-                                              showCloseIcon: false,
-                                              submitIcon: Icons
-                                                  .keyboard_arrow_down_rounded,
-                                              onSaved: () {
-                                                Navigator.pop(context);
-                                              })
-                                        ],
+                                            BottomSheetFooter(
+                                                submitText:
+                                                    t.general.close_and_save,
+                                                showCloseIcon: false,
+                                                submitIcon: Icons
+                                                    .keyboard_arrow_down_rounded,
+                                                onSaved: () {
+                                                  Navigator.pop(context);
+                                                })
+                                          ],
+                                        ),
                                       );
                                     }),
                               ),

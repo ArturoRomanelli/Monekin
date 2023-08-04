@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 821 (410 per locale)
+/// Strings: 827 (413 per locale)
 ///
-/// Built on 2023-08-03 at 21:15 UTC
+/// Built on 2023-08-04 at 11:05 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -667,7 +667,8 @@ class _TranslationsTransactionFormEn {
 	String get tap_to_see_more => 'Tap to see more details';
 	String get description => 'Description';
 	String get description_info => 'Adding a note will help you find this transaction faster in the future';
-	String exchange_to_preferred({required Object x}) => 'Currently equal to approximately ${x}';
+	String exchange_to_preferred_today({required Object currency}) => 'Equivalent to ${currency} today:';
+	String exchange_to_preferred_in_date({required Object currency, required Object date}) => 'Equivalent to ${currency} on ${date}:';
 }
 
 // Path: transaction.status
@@ -788,6 +789,8 @@ class _TranslationsCurrenciesFormEn {
 	String get specify_a_currency => 'Please specify a currency';
 	String get add => 'Add exchange rate';
 	String get add_success => 'Exchange rate added successfully';
+	String get edit => 'Edit exchange rate';
+	String get edit_success => 'Exchange rate edited successfully';
 }
 
 // Path: categories.select
@@ -1678,7 +1681,8 @@ class _TranslationsTransactionFormEs extends _TranslationsTransactionFormEn {
 	@override String get tap_to_see_more => 'Toca para ver más detalles';
 	@override String get description => 'Descripción';
 	@override String get description_info => 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
-	@override String exchange_to_preferred({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
+	@override String exchange_to_preferred_today({required Object currency}) => 'Equivalencia a ${currency} hoy:';
+	@override String exchange_to_preferred_in_date({required Object currency, required Object date}) => 'Equivalencia a ${currency} el ${date}:';
 }
 
 // Path: transaction.status
@@ -1799,6 +1803,8 @@ class _TranslationsCurrenciesFormEs extends _TranslationsCurrenciesFormEn {
 	@override String get specify_a_currency => 'Por favor, especifica una divisa';
 	@override String get add => 'Añadir tipo de cambio';
 	@override String get add_success => 'Tipo de cambio añadido correctamente';
+	@override String get edit => 'Editar tipo de cambio';
+	@override String get edit_success => 'Tipo de cambio editado correctamente';
 }
 
 // Path: categories.select
@@ -2364,7 +2370,8 @@ extension on _TranslationsEn {
 			case 'transaction.form.tap_to_see_more': return 'Tap to see more details';
 			case 'transaction.form.description': return 'Description';
 			case 'transaction.form.description_info': return 'Adding a note will help you find this transaction faster in the future';
-			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Currently equal to approximately ${x}';
+			case 'transaction.form.exchange_to_preferred_today': return ({required Object currency}) => 'Equivalent to ${currency} today:';
+			case 'transaction.form.exchange_to_preferred_in_date': return ({required Object currency, required Object date}) => 'Equivalent to ${currency} on ${date}:';
 			case 'transaction.status.tr_status': return ({required Object status}) => '${status} transaction';
 			case 'transaction.status.none': return 'Sin estado';
 			case 'transaction.status.reconciled': return 'Reconciled';
@@ -2433,6 +2440,8 @@ extension on _TranslationsEn {
 			case 'currencies.form.specify_a_currency': return 'Please specify a currency';
 			case 'currencies.form.add': return 'Add exchange rate';
 			case 'currencies.form.add_success': return 'Exchange rate added successfully';
+			case 'currencies.form.edit': return 'Edit exchange rate';
+			case 'currencies.form.edit_success': return 'Exchange rate edited successfully';
 			case 'currencies.delete_all_success': return 'Deleted exchange rates successfully';
 			case 'currencies.historical': return 'Historical rates';
 			case 'currencies.exchange_rate': return 'Exchange rate';
@@ -2801,7 +2810,8 @@ extension on _TranslationsEs {
 			case 'transaction.form.tap_to_see_more': return 'Toca para ver más detalles';
 			case 'transaction.form.description': return 'Descripción';
 			case 'transaction.form.description_info': return 'Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro';
-			case 'transaction.form.exchange_to_preferred': return ({required Object x}) => 'Actualmente equivalen aproximadamente a ${x}';
+			case 'transaction.form.exchange_to_preferred_today': return ({required Object currency}) => 'Equivalencia a ${currency} hoy:';
+			case 'transaction.form.exchange_to_preferred_in_date': return ({required Object currency, required Object date}) => 'Equivalencia a ${currency} el ${date}:';
 			case 'transaction.status.tr_status': return ({required Object status}) => 'Transacción ${status}';
 			case 'transaction.status.none': return 'Sin estado';
 			case 'transaction.status.reconciled': return 'Reconciliada';
@@ -2870,6 +2880,8 @@ extension on _TranslationsEs {
 			case 'currencies.form.specify_a_currency': return 'Por favor, especifica una divisa';
 			case 'currencies.form.add': return 'Añadir tipo de cambio';
 			case 'currencies.form.add_success': return 'Tipo de cambio añadido correctamente';
+			case 'currencies.form.edit': return 'Editar tipo de cambio';
+			case 'currencies.form.edit_success': return 'Tipo de cambio editado correctamente';
 			case 'currencies.delete_all_success': return 'Tipos de cambio borrados con exito';
 			case 'currencies.historical': return 'Histórico de tasas';
 			case 'currencies.exchange_rate': return 'Tipo de cambio';

@@ -259,7 +259,8 @@
       "tap-to-see-more": "Toca para ver más detalles",
       "description": "Descripción",
       "description-info": "Añadir una nota te ayudará a encontrar más rapidamente esta transacción en un futuro",
-      "exchange-to-preferred": "Actualmente equivalen aproximadamente a {{x}}"
+      "exchange-to-preferred-today": "Equivalencia a {{ currency }} hoy:",
+      "exchange-to-preferred-in-date": "Equivalencia a {{ currency }} el {{date}}:"
     },
     "STATUS": {
       "tr_status": "Transacción {{ status }}",
@@ -354,7 +355,9 @@
       "equal-to-preferred-warn": "The currency can not be equal to the user currency",
       "specify-a-currency": "Por favor, especifica una divisa",
       "add": "Añadir tipo de cambio",
-      "add-success": "Tipo de cambio añadido correctamente"
+      "add-success": "Tipo de cambio añadido correctamente",
+      "edit": "Editar tipo de cambio",
+      "edit-success": "Tipo de cambio editado correctamente"
     },
     "delete-all-success": "Tipos de cambio borrados con exito",
     "historical": "Histórico de tasas",

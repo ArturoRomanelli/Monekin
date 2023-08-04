@@ -68,19 +68,20 @@ class CurrencyService {
         .watch();
   }
 
-  Future<Currency> getUserPreferredCurrency() async {
+  Stream<Currency> getUserPreferredCurrency() {
     final settingService = UserSettingService.instance;
 
-    String? currencyCode =
-        await (settingService.getSetting(SettingKey.preferredCurrency)).first;
+    return settingService
+        .getSetting(SettingKey.preferredCurrency)
+        .asyncMap((currencyCode) async {
+      if (currencyCode == null) {
+        currencyCode = 'USD';
 
-    if (currencyCode == null) {
-      currencyCode = 'USD';
+        await settingService.setSetting(
+            SettingKey.preferredCurrency, currencyCode);
+      }
 
-      await settingService.setSetting(
-          SettingKey.preferredCurrency, currencyCode);
-    }
-
-    return (await getCurrencyByCode(currencyCode).first)!;
+      return (await getCurrencyByCode(currencyCode).first)!;
+    });
   }
 }

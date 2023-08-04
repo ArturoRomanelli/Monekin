@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/app/currencies/exchange_rate_details.dart';
 import 'package:monekin/app/currencies/exchange_rate_form.dart';
 import 'package:monekin/core/database/services/currency/currency_service.dart';
@@ -7,7 +8,6 @@ import 'package:monekin/core/models/currency/currency.dart';
 import 'package:monekin/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 import '../../core/presentation/widgets/empty_indicator.dart';
 
@@ -25,7 +25,7 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
   void initState() {
     super.initState();
 
-    CurrencyService.instance.getUserPreferredCurrency().then((value) {
+    CurrencyService.instance.getUserPreferredCurrency().first.then((value) {
       setState(() {
         _userCurrency = value;
       });
@@ -115,16 +115,11 @@ class _CurrencyManagerPageState extends State<CurrencyManagerPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(t.currencies.exchange_rate),
+                Text(t.currencies.exchange_rates),
                 TextButton(
                     onPressed: () async {
-                      await showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          showDragHandle: true,
-                          builder: (context) {
-                            return const ExchangeRateFormDialog();
-                          });
+                      await showExchangeRateFormDialog(
+                          context, const ExchangeRateFormDialog());
                     },
                     child: Text(t.general.add))
               ],

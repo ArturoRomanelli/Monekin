@@ -1,10 +1,13 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:monekin/core/database/services/currency/currency_service.dart';
+import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
 import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
+import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/services/view-actions/transaction_view_actions_service.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/core/utils/list_tile_action_item.dart';
@@ -558,13 +561,98 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                             ],
                           ),
                         ),
-                        if (transaction.notes != null)
+                        StreamBuilder(
+                            stream: CurrencyService.instance
+                                .getUserPreferredCurrency(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.code ==
+                                      transaction.account.currencyId) {
+                                return Container();
+                              }
+
+                              final userCurrency = snapshot.data!;
+
+                              return Column(
+                                children: [
+                                  const Divider(indent: 12),
+                                  ListTile(
+                                    title: Text(
+                                      t.transaction.form
+                                          .exchange_to_preferred_today(
+                                              currency: userCurrency.code),
+                                    ),
+                                    trailing: StreamBuilder(
+                                        stream: ExchangeRateService.instance
+                                            .calculateExchangeRate(
+                                          fromCurrency: userCurrency.code,
+                                          toCurrency:
+                                              transaction.account.currencyId,
+                                          amount: transaction.value,
+                                        ),
+                                        builder:
+                                            (context, exchangeRateSnapshot) {
+                                          if (!exchangeRateSnapshot.hasData) {
+                                            return const Skeleton(
+                                                width: 16, height: 14);
+                                          }
+
+                                          return CurrencyDisplayer(
+                                            currency: userCurrency,
+                                            textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            amountToConvert:
+                                                exchangeRateSnapshot.data!,
+                                          );
+                                        }),
+                                  ),
+                                  const Divider(indent: 12),
+                                  ListTile(
+                                    title: Text(
+                                      t.transaction.form
+                                          .exchange_to_preferred_in_date(
+                                        currency: userCurrency.code,
+                                        date: DateFormat.yMd()
+                                            .format(transaction.date),
+                                      ),
+                                    ),
+                                    trailing: StreamBuilder(
+                                        stream: ExchangeRateService.instance
+                                            .calculateExchangeRate(
+                                          fromCurrency: userCurrency.code,
+                                          toCurrency:
+                                              transaction.account.currencyId,
+                                          amount: transaction.value,
+                                          date: transaction.date,
+                                        ),
+                                        builder:
+                                            (context, exchangeRateSnapshot) {
+                                          if (!exchangeRateSnapshot.hasData) {
+                                            return const Skeleton(
+                                                width: 16, height: 14);
+                                          }
+
+                                          return CurrencyDisplayer(
+                                            currency: userCurrency,
+                                            textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            amountToConvert:
+                                                exchangeRateSnapshot.data!,
+                                          );
+                                        }),
+                                  )
+                                ],
+                              );
+                            }),
+                        if (transaction.notes != null) ...[
                           const Divider(indent: 12),
-                        if (transaction.notes != null)
                           ListTile(
                             title: Text(t.transaction.form.description),
                             subtitle: Text(transaction.notes!),
                           )
+                        ]
                       ]),
                 ),
               ),

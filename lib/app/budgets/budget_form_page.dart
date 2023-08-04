@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:monekin/app/accounts/account_selector.dart';
 import 'package:monekin/app/categories/categories_list.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
@@ -9,8 +11,6 @@ import 'package:monekin/core/models/category/category.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/utils/text_field_validator.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/models/account/account.dart';
@@ -205,8 +205,8 @@ class _BudgetFormPageState extends State<BudgetFormPage> {
                   decoration: InputDecoration(
                     labelText: '${t.budgets.form.value} *',
                     hintText: 'Ex.: 200',
-                    suffix: FutureBuilder(
-                        future:
+                    suffix: StreamBuilder(
+                        stream:
                             CurrencyService.instance.getUserPreferredCurrency(),
                         builder: (context, snapshot) {
                           return Text(snapshot.data?.symbol ?? '');

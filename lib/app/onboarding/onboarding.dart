@@ -1,4 +1,7 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 import 'package:monekin/app/home/home.page.dart';
 import 'package:monekin/core/database/services/app-data/app_data_service.dart';
 import 'package:monekin/core/database/services/currency/currency_service.dart';
@@ -6,9 +9,6 @@ import 'package:monekin/core/database/services/user-setting/user_setting_service
 import 'package:monekin/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -87,8 +87,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ],
                 if (index == 0) ...[
                   const SizedBox(height: 40),
-                  FutureBuilder(
-                      future:
+                  StreamBuilder(
+                      stream:
                           CurrencyService.instance.getUserPreferredCurrency(),
                       builder: (context, snapshot) {
                         final userCurrency = snapshot.data;

@@ -55,7 +55,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final t = Translations.of(context);
 
-    return Container(
+    return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(mainAxisSize: MainAxisSize.min, children: [

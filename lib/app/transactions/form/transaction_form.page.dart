@@ -14,9 +14,9 @@ import 'package:monekin/core/models/supported-icon/supported_icon.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/presentation/animations/shake/shake_widget.dart';
 import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
-import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/expansion_panel/single_expansion_panel.dart';
 import 'package:monekin/core/presentation/widgets/inline_info_card.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:monekin/core/presentation/widgets/scrollable_with_bottom_gradient.dart';
 import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
@@ -361,7 +361,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   Widget buildTitleField() {
     return TextFormField(
       controller: titleController,
-      maxLength: 15,
+      maxLength: 20,
       decoration: InputDecoration(labelText: t.transaction.form.title),
     );
   }

@@ -89,7 +89,7 @@ class MyApp extends ConsumerWidget {
     Intl.defaultLocale = LocaleSettings.currentLocale.languageTag;
 
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Monekin',
         debugShowCheckedModeBanner: false,
         locale: TranslationProvider.of(context).flutterLocale,
         supportedLocales: AppLocaleUtils.supportedLocales,

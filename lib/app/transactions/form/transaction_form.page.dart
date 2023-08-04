@@ -252,6 +252,15 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
       status = transaction.status;
       selectedCategory = transaction.category;
       recurrentRule = transaction.recurrentInfo;
+
+      if (selectedCategory != null &&
+          selectedCategory!.type == CategoryType.B) {
+        if (transaction.value < 0) {
+          selectedCategory!.type = CategoryType.E;
+        } else {
+          selectedCategory!.type = CategoryType.I;
+        }
+      }
     });
 
     notesController.text = transaction.notes ?? '';

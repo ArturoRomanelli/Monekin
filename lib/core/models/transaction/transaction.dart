@@ -189,6 +189,7 @@ class MoneyTransaction extends TransactionInDB {
   bool get isTransfer => receivingAccountID != null;
   bool get isIncomeOrExpense => categoryID != null;
 
+  /// Display the title of the transaction, or the category in case the title is not specified for this transaction
   String displayName(BuildContext context) {
     final t = Translations.of(context);
 

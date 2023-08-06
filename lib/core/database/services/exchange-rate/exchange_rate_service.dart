@@ -74,6 +74,6 @@ class ExchangeRateService {
             .map((event) => event?.exchangeRate ?? 1);
 
     return Rx.combineLatest2(
-        fromExchangeRate, toExchangeRate, (a, b) => (b / a) * amount);
+        fromExchangeRate, toExchangeRate, (a, b) => (a / b) * amount);
   }
 }

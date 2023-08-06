@@ -40,63 +40,71 @@ class AllAccountBalancePage extends StatefulWidget {
   State<AllAccountBalancePage> createState() => _AllAccountBalancePageState();
 }
 
-Stream<List<AccountWithMoney>> getAccountsWithMoney(
-    DateTime date, TransactionFilters? filters) {
-  final accounts = filters?.accounts != null
-      ? Stream.value(filters!.accounts!)
-      : AccountService.instance.getAccounts();
+class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
+  Stream<List<AccountWithMoney>> getAccountsWithMoney(
+      DateTime date, TransactionFilters? filters) {
+    final accounts = filters?.accounts != null
+        ? Stream.value(filters!.accounts!)
+        : AccountService.instance.getAccounts();
 
-  final balances = accounts.asyncMap((accountList) =>
-      Future.wait(accountList.map((account) => AccountService.instance
-          .getAccountMoney(
-            account: account,
-            categoriesIds: filters?.categories?.map((e) => e.id),
-            convertToPreferredCurrency: true,
-            date: date,
-          )
-          .first)));
+    final balances = accounts.asyncMap(
+      (accountList) => Future.wait(
+        accountList.map((account) => AccountService.instance
+            .getAccountMoney(
+              account: account,
+              categoriesIds: filters?.categories?.map((e) => e.id),
+              convertToPreferredCurrency: true,
+              date: date,
+            )
+            .first),
+      ),
+    );
 
-  return Rx.combineLatest2(accounts, balances, (accounts, balances) {
-    final toReturn = accounts
-        .mapIndexed((index, element) =>
-            AccountWithMoney(money: balances[index], account: element))
-        .toList();
+    return Rx.combineLatest2(accounts, balances, (accounts, balances) {
+      final toReturn = accounts
+          .mapIndexed((index, element) =>
+              AccountWithMoney(money: balances[index], account: element))
+          .toList();
+
+      toReturn.sort((a, b) => b.money.compareTo(a.money));
+
+      return toReturn;
+    });
+  }
+
+  List<CurrencyWithMoney> getCurrenciesWithMoney(
+      List<AccountWithMoney> accountsWithMoney) {
+    final toReturn = <CurrencyWithMoney>[];
+
+    for (final account in accountsWithMoney) {
+      final currencyToPush = toReturn.firstWhereOrNull(
+          (e) => e.currency.code == account.account.currency.code);
+
+      if (currencyToPush != null) {
+        currencyToPush.money += account.money;
+      } else {
+        toReturn.add(CurrencyWithMoney(
+            money: account.money, currency: account.account.currency));
+      }
+    }
 
     toReturn.sort((a, b) => b.money.compareTo(a.money));
 
     return toReturn;
-  });
-}
-
-List<CurrencyWithMoney> getCurrenciesWithMoney(
-    List<AccountWithMoney> accountsWithMoney) {
-  final toReturn = <CurrencyWithMoney>[];
-
-  for (final account in accountsWithMoney) {
-    final currencyToPush = toReturn.firstWhereOrNull(
-        (e) => e.currency.code == account.account.currency.code);
-
-    if (currencyToPush != null) {
-      currencyToPush.money += account.money;
-    } else {
-      toReturn.add(CurrencyWithMoney(
-          money: account.money, currency: account.account.currency));
-    }
   }
 
-  toReturn.sort((a, b) => b.money.compareTo(a.money));
+  Widget emptyAccountsIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      child: Text(t.account.no_accounts, textAlign: TextAlign.center),
+    );
+  }
 
-  return toReturn;
-}
+  @override
+  void initState() {
+    super.initState();
+  }
 
-Widget emptyAccountsIndicator() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-    child: Text(t.account.no_accounts, textAlign: TextAlign.center),
-  );
-}
-
-class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);

@@ -6,11 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:monekin/app/stats/widgets/category_stats_modal.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/category/category_service.dart';
+import 'package:monekin/core/database/services/currency/currency_service.dart';
+import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/category/category.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
-import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
 
@@ -63,6 +65,9 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     final transactionService = TransactionService.instance;
 
+    final userCurrency =
+        await CurrencyService.instance.getUserPreferredCurrency().first;
+
     final transactions = await transactionService
         .getTransactions(
           predicate: (t, acc, p2, p3, p4, transCategory, p6) =>
@@ -88,22 +93,31 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
         .first;
 
     for (final transaction in transactions) {
+      final trValue = await ExchangeRateService.instance
+          .calculateExchangeRate(
+              fromCurrency: transaction.account.currencyId,
+              toCurrency: userCurrency.code,
+              amount: transaction.value.abs())
+          .first;
+
       final categoryToEdit = data.firstWhereOrNull((cat) =>
           cat.category.id == transaction.category?.id ||
           cat.category.id == transaction.category?.parentCategoryID);
 
       if (categoryToEdit != null) {
-        categoryToEdit.value += transaction.value.abs();
+        categoryToEdit.value += trValue;
         categoryToEdit.transactions.add(transaction);
       } else {
-        data.add(ChartByCategoriesDataItem(
-            category: transaction.category!.parentCategoryID == null
-                ? Category.fromDB(transaction.category!, null)
-                : (await CategoryService.instance
-                    .getCategoryById(transaction.category!.parentCategoryID!)
-                    .first)!,
-            transactions: [transaction],
-            value: transaction.value.abs()));
+        data.add(
+          ChartByCategoriesDataItem(
+              category: transaction.category!.parentCategoryID == null
+                  ? Category.fromDB(transaction.category!, null)
+                  : (await CategoryService.instance
+                      .getCategoryById(transaction.category!.parentCategoryID!)
+                      .first)!,
+              transactions: [transaction],
+              value: trValue),
+        );
       }
     }
 

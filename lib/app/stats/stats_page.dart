@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:monekin/app/accounts/all_accounts_balance.dart';
 import 'package:monekin/app/stats/footer_segmented_calendar_button.dart';
 import 'package:monekin/app/stats/widgets/balance_bar_chart.dart';
 import 'package:monekin/app/stats/widgets/chart_by_categories.dart';
@@ -141,10 +140,10 @@ class _StatsPageState extends State<StatsPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    AllAccountBalancePage(
+                    /*   AllAccountBalancePage(
                       date: currentEndDate ?? DateTime.now(),
                       filters: filters,
-                    ),
+                    ), */
                   ],
                 ),
                 buildContainerWithPadding([

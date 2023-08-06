@@ -277,7 +277,7 @@
   },
   "TRANSFER": {
     "display": "Transferencia",
-    "from-to-text": "Desde {{x}} hasta {{y}}",
+    "transfer-to": "Transferencia hacia {{ account }}",
     "create": "Nueva transferencia",
     "need-two-accounts.warning.header": "Ops!",
     "need-two-accounts.warning.message": "Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar",

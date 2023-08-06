@@ -6,7 +6,7 @@
 /// Locales: 2
 /// Strings: 827 (413 per locale)
 ///
-/// Built on 2023-08-04 at 14:42 UTC
+/// Built on 2023-08-06 at 11:28 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -340,7 +340,7 @@ class _TranslationsTransferEn {
 
 	// Translations
 	String get display => 'Transfer';
-	String from_to_text({required Object x, required Object y}) => 'From ${x} to ${y}';
+	String transfer_to({required Object account}) => 'Transfer to ${account}';
 	String get create => 'New Transfer';
 	String get need_two_accounts_warning_header => 'Ops!';
 	String get need_two_accounts_warning_message => 'At least two accounts are needed to perform this action. If you need to adjust or edit the current balance of this account, click the edit button';
@@ -1354,7 +1354,7 @@ class _TranslationsTransferEs extends _TranslationsTransferEn {
 
 	// Translations
 	@override String get display => 'Transferencia';
-	@override String from_to_text({required Object x, required Object y}) => 'Desde ${x} hasta ${y}';
+	@override String transfer_to({required Object account}) => 'Transferencia hacia ${account}';
 	@override String get create => 'Nueva transferencia';
 	@override String get need_two_accounts_warning_header => 'Ops!';
 	@override String get need_two_accounts_warning_message => 'Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar';
@@ -2383,7 +2383,7 @@ extension on _TranslationsEn {
 			case 'transaction.status.voided': return 'Voided';
 			case 'transaction.status.voided_descr': return 'Void/cancelled transaction due to payment error or any other reason. It will not be taken into account when calculating balances and statistics';
 			case 'transfer.display': return 'Transfer';
-			case 'transfer.from_to_text': return ({required Object x, required Object y}) => 'From ${x} to ${y}';
+			case 'transfer.transfer_to': return ({required Object account}) => 'Transfer to ${account}';
 			case 'transfer.create': return 'New Transfer';
 			case 'transfer.need_two_accounts_warning_header': return 'Ops!';
 			case 'transfer.need_two_accounts_warning_message': return 'At least two accounts are needed to perform this action. If you need to adjust or edit the current balance of this account, click the edit button';
@@ -2823,7 +2823,7 @@ extension on _TranslationsEs {
 			case 'transaction.status.voided': return 'Nula';
 			case 'transaction.status.voided_descr': return 'Transacción nula/cancelada debido a un error en el pago o cualquier otro motivo. No será tenida en cuenta a la hora de calcular balances y estadísticas';
 			case 'transfer.display': return 'Transferencia';
-			case 'transfer.from_to_text': return ({required Object x, required Object y}) => 'Desde ${x} hasta ${y}';
+			case 'transfer.transfer_to': return ({required Object account}) => 'Transferencia hacia ${account}';
 			case 'transfer.create': return 'Nueva transferencia';
 			case 'transfer.need_two_accounts_warning_header': return 'Ops!';
 			case 'transfer.need_two_accounts_warning_message': return 'Se necesitan al menos dos cuentas para realizar esta acción. Si lo que necesitas es ajustar o editar el balance actual de esta cuenta pulsa el botón de editar';

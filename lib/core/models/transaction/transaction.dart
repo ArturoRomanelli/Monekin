@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:monekin/app/transactions/form/widgets/interval_selector_help.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/models/category/category.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 enum TransactionPeriodicity {
   day,
@@ -189,8 +189,14 @@ class MoneyTransaction extends TransactionInDB {
   bool get isTransfer => receivingAccountID != null;
   bool get isIncomeOrExpense => categoryID != null;
 
-  String get displayName =>
-      title ?? (isIncomeOrExpense ? category!.name : 'Transfer');
+  String displayName(BuildContext context) {
+    final t = Translations.of(context);
+
+    return title ??
+        (isIncomeOrExpense
+            ? category!.name
+            : t.transfer.transfer_to(account: receivingAccount!.name));
+  }
 
   /// Get the color that represent this category. Will be the category color when the transaction is an income or an expense, and the primary color of the app otherwise
   Color color(context) => isIncomeOrExpense

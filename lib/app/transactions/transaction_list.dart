@@ -75,7 +75,7 @@ class TransactionListComponent extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    transaction.displayName,
+                    transaction.displayName(context),
                     softWrap: false,
                     overflow: TextOverflow.fade,
                   ),

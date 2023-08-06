@@ -163,8 +163,8 @@ class AccountService {
         AND status IS NOT 'voided'      
         AND status IS NOT 'pending'      
         ${categoriesIds != null ? ' AND transactions.categoryID IN (${List.filled(categoriesIds.length, '?').join(', ')}) ' : ''} 
-        ${endDate != null ? ' AND date <= ?' : ''} 
-        ${startDate != null ? ' AND date >= ?' : ''} 
+        ${endDate != null ? ' AND transactions.date <= ?' : ''} 
+        ${startDate != null ? ' AND transactions.date >= ?' : ''} 
         ${accountDataFilter == AccountDataFilter.expense ? ' AND value < 0 AND receivingAccountID IS NULL' : ''} 
         ${accountDataFilter == AccountDataFilter.income ? ' AND value > 0 AND receivingAccountID IS NULL' : ''}
       """;
@@ -178,49 +178,58 @@ class AccountService {
 
     return db
         .customSelect("""
-        SELECT (COALESCE(SUM(t.value ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}), 0) + 
-          COALESCE(SUM(tr.value ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''}), 0)) 
-        AS balance
-          FROM accounts
-              LEFT JOIN
-              (
-                  SELECT CASE
-                          WHEN receivingAccountID IS NOT NULL THEN (value * -1)
-                          ELSE value
-                          END as value,
-                        accountID
-                    FROM transactions
-                    WHERE $transactionWhereStatement
-              )
-              AS t ON accounts.id = t.accountID
-              LEFT JOIN
-              (
-                  SELECT CASE
-                          WHEN receivingAccountID IS NOT NULL THEN (COALESCE(valueInDestiny, value))
-                          ELSE value
-                          END as value,
-                        receivingAccountID
-                    FROM transactions
-                    WHERE $transactionWhereStatement
-              )
-              AS tr ON accounts.id = tr.receivingAccountID
-              ${convertToPreferredCurrency ? _joinAccountAndRate(endDate) : ''}
-        WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})   
-      """, readsFrom: {
+        SELECT SUM(balance) 
+          FROM (
+            SELECT accountID,
+                  accounts.name,
+                  accounts.currencyId,
+                  (SUM(CASE WHEN receivingAccountID IS NOT NULL THEN (COALESCE( -valueInDestiny, -value) ) ELSE value END) 
+                    ${convertToPreferredCurrency ? '* COALESCE(excRate.exchangeRate, 1)' : ''} ) 
+                  AS balance
+             FROM transactions
+                  LEFT JOIN
+                  ( SELECT * FROM accounts )
+                  AS accounts ON transactions.accountID = accounts.id
+                  ${convertToPreferredCurrency ? _joinAccountAndRate(endDate) : ''}
+                  WHERE accountID IN (${List.filled(accountIds.length, '?').join(', ')}) 
+                  AND $transactionWhereStatement
+            GROUP BY accountID
+            UNION
+            SELECT receivingAccountID,
+                  accounts.name,
+                  accounts.currencyId,
+                  (SUM(CASE WHEN receivingAccountID IS NOT NULL THEN (COALESCE(valueInDestiny, value) ) ELSE value END) 
+                    ${convertToPreferredCurrency ? '* COALESCE(excRate.exchangeRate, 1)' : ''} ) 
+                  AS balance
+             FROM transactions
+                  LEFT JOIN
+                  ( SELECT * FROM accounts )
+                  AS accounts ON transactions.receivingAccountID = accounts.id
+                  ${convertToPreferredCurrency ? _joinAccountAndRate(endDate) : ''}
+            WHERE receivingAccountID IS NOT NULL
+            AND receivingAccountID IN (${List.filled(accountIds.length, '?').join(', ')})
+            AND $transactionWhereStatement
+            GROUP BY receivingAccountID
+       )
+       AS balance
+    """, readsFrom: {
           db.accounts,
           db.transactions,
           if (convertToPreferredCurrency) db.exchangeRates
         }, variables: [
-          ...transactionWhereArgs,
+          if (endDate != null && convertToPreferredCurrency)
+            Variable.withDateTime(endDate),
+          for (var id in accountIds) Variable.withString(id),
           ...transactionWhereArgs,
           if (endDate != null && convertToPreferredCurrency)
             Variable.withDateTime(endDate),
-          for (var id in accountIds) Variable.withString(id)
+          for (var id in accountIds) Variable.withString(id),
+          ...transactionWhereArgs,
         ])
         .watchSingleOrNull()
         .map((res) {
           if (res?.data != null) {
-            return (res!.data['balance'] as num).toDouble();
+            return (res!.data['SUM(balance)'] as num? ?? 0).toDouble();
           }
 
           return 0.0;

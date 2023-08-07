@@ -9,8 +9,9 @@ import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/core/presentation/widgets/currency_selector_modal.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/utils/date_time_picker.dart';
-import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/core/utils/text_field_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
+import 'package:uuid/uuid.dart';
 
 showExchangeRateFormDialog(
   BuildContext context,
@@ -28,11 +29,14 @@ class ExchangeRateFormDialog extends StatefulWidget {
       {super.key,
       this.preSelectedCurrency,
       this.preSelectedDate,
-      this.preSelectedRate});
+      this.preSelectedRate,
+      this.idToEdit});
 
   final Currency? preSelectedCurrency;
   final DateTime? preSelectedDate;
   final double? preSelectedRate;
+
+  final String? idToEdit;
 
   @override
   State<ExchangeRateFormDialog> createState() => _ExchangeRateFormDialogState();
@@ -48,6 +52,8 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
   Currency? _currency;
 
   Currency? userPreferredCurrency;
+
+  bool get isEditMode => widget.idToEdit != null;
 
   @override
   void initState() {
@@ -78,12 +84,13 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
 
     ExchangeRateService.instance
         .insertOrUpdateExchangeRate(ExchangeRate(
+            id: widget.idToEdit ?? const Uuid().v4(),
             currency: _currency!,
             date: date,
             exchangeRate: double.parse(rateController.text)))
         .then((value) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(widget.preSelectedRate != null
+          content: Text(isEditMode
               ? t.currencies.form.edit_success
               : t.currencies.form.add_success)));
     }).catchError((err) {
@@ -109,9 +116,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.preSelectedRate != null
-                        ? t.currencies.form.edit
-                        : t.currencies.form.add,
+                    isEditMode ? t.currencies.form.edit : t.currencies.form.add,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(
@@ -182,8 +187,7 @@ class _ExchangeRateFormDialogState extends State<ExchangeRateFormDialog> {
                                 decoration: InputDecoration(
                                   labelText: '${t.general.time.date} *',
                                 ),
-                                readOnly:
-                                    true, //set it true, so that user will not able to edit text
+                                readOnly: true,
                                 onTap: () async {
                                   DateTime? pickedDate =
                                       await openDateTimePicker(context,

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +6,7 @@ import 'package:monekin/app/accounts/account_type_selector.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/database/services/currency/currency_service.dart';
 import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
+import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/models/currency/currency.dart';
 import 'package:monekin/core/models/supported-icon/supported_icon.dart';
@@ -14,7 +16,7 @@ import 'package:monekin/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:monekin/core/presentation/widgets/inline_info_card.dart';
 import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
-import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/core/utils/text_field_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
 import 'package:uuid/uuid.dart';
 
@@ -48,31 +50,31 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
   DateTime _openingDate = DateTime.now();
 
-  bool showCurrencyExchangesWarn = false;
-
-  getCurrencyExchange(Currency currency) {
-    ExchangeRateService.instance
-        .getLastExchangeRateOf(currencyCode: currency.code)
-        .first
-        .then((value) {
-      if (value != null || currency == _userPrCurrency) {
-        showCurrencyExchangesWarn = false;
-      } else {
-        showCurrencyExchangesWarn = true;
-      }
-
-      setState(() {});
-    });
-  }
-
   submitForm() async {
     final accountService = AccountService.instance;
 
     double newBalance = double.parse(_balanceController.text);
 
     navigateBack() => Navigator.pop(context);
+    final snackbarDisplayer = ScaffoldMessenger.of(context).showSnackBar;
 
     if (_accountToEdit != null) {
+      if ((await TransactionService.instance
+              .getTransactions(
+                predicate: (transaction, account, accountCurrency,
+                        receivingAccount, receivingAccountCurrency, c, p6) =>
+                    account.id.isValue(_accountToEdit!.id) &
+                    transaction.date.isSmallerThanValue(_openingDate),
+                limit: 2,
+              )
+              .first)
+          .isNotEmpty) {
+        snackbarDisplayer(
+            SnackBar(content: Text(t.account.form.tr_before_opening_date)));
+
+        return;
+      }
+
       newBalance = _accountToEdit!.iniValue +
           newBalance -
           await accountService.getAccountMoney(account: _accountToEdit!).first;
@@ -109,14 +111,16 @@ class _AccountFormPageState extends State<AccountFormPage> {
     if (widget.account != null) {
       _accountToEdit = widget.account;
       _fillForm();
-    } else {
-      CurrencyService.instance.getUserPreferredCurrency().first.then((value) {
-        setState(() {
-          _currency = value;
-          _userPrCurrency = value;
-        });
-      });
     }
+
+    CurrencyService.instance.getUserPreferredCurrency().first.then((value) {
+      setState(() {
+        if (widget.account == null) {
+          _currency = value;
+        }
+        _userPrCurrency = value;
+      });
+    });
   }
 
   void _fillForm() {
@@ -274,9 +278,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         textInputAction: TextInputAction.next,
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       TextField(
                           controller: TextEditingController(
                               text: _currency != null
@@ -297,8 +299,6 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                         setState(() {
                                           _currency = newCurrency;
                                         });
-
-                                        getCurrencyExchange(newCurrency);
                                       });
                                 });
                           },
@@ -310,29 +310,72 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                       margin: const EdgeInsets.all(10),
                                       clipBehavior: Clip.hardEdge,
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
                                       child: SvgPicture.asset(
-                                        'assets/icons/currency_flags/${_currency!.code.toLowerCase()}.svg',
+                                        _currency!.currencyIconPath,
                                         height: 25,
                                         width: 25,
                                       ),
                                     )
                                   : null)),
                       const SizedBox(height: 12),
-                      if (showCurrencyExchangesWarn)
-                        InlineInfoCard(
-                            text: t.account.form.currency_not_found_warn,
-                            mode: InlineInfoCardMode.warn),
-                      if (_accountToEdit == null) ...[
-                        const SizedBox(height: 12),
-                        AccountTypeSelector(onSelected: (newType) {
-                          setState(() {
-                            _type = newType;
-                          });
-                        })
-                      ],
+                      if (_currency != null)
+                        StreamBuilder(
+                            stream: ExchangeRateService.instance
+                                .getLastExchangeRateOf(
+                                    currencyCode: _currency!.code),
+                            builder: (context, snapshot) {
+                              print(_currency?.code);
+                              print(_userPrCurrency?.code);
+                              print("-----------------");
+                              if (snapshot.hasData ||
+                                  _currency?.code == _userPrCurrency?.code) {
+                                return Container();
+                              } else {
+                                return InlineInfoCard(
+                                    text:
+                                        t.account.form.currency_not_found_warn,
+                                    mode: InlineInfoCardMode.warn);
+                              }
+                            }),
+                      StreamBuilder(
+                        stream: _accountToEdit == null
+                            ? Stream.value(true)
+                            : TransactionService.instance
+                                .getTransactions(
+                                    predicate: (transaction,
+                                            account,
+                                            accountCurrency,
+                                            receivingAccount,
+                                            receivingAccountCurrency,
+                                            c,
+                                            p6) =>
+                                        transaction.receivingAccountID
+                                            .isNull() &
+                                        transaction.accountID
+                                            .isValue(_accountToEdit!.id),
+                                    limit: 1)
+                                .map((event) => event.isEmpty),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData || snapshot.data! == false) {
+                            return Container();
+                          }
+
+                          return Column(
+                            children: [
+                              const SizedBox(height: 12),
+                              AccountTypeSelector(
+                                  selectedType: _type,
+                                  onSelected: (newType) {
+                                    setState(() {
+                                      _type = newType;
+                                    });
+                                  })
+                            ],
+                          );
+                        },
+                      ),
                       const SizedBox(height: 16),
                       SingleExpansionPanel(
                         child: Column(
@@ -343,14 +386,14 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                   text: DateFormat.yMMMd()
                                       .add_jm()
                                       .format(_openingDate)),
-                              decoration: const InputDecoration(
-                                labelText: 'Fecha de apertura *',
-                              ),
+                              decoration: InputDecoration(
+                                  labelText: '${t.account.date} *'),
                               readOnly: true,
                               onTap: () async {
                                 DateTime? pickedDate = await openDateTimePicker(
                                   context,
                                   initialDate: _openingDate,
+                                  lastDate: DateTime.now(),
                                   showTimePickerAfterDate: true,
                                 );
 

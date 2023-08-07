@@ -8,7 +8,8 @@ import 'package:monekin/core/presentation/widgets/icon_selector_modal.dart';
 import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
 import 'package:monekin/core/utils/color_utils.dart';
-import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/core/utils/constants.dart';
+import 'package:monekin/core/utils/text_field_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
 import 'package:uuid/uuid.dart';
 
@@ -320,13 +321,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                                 size: 48, color: iconColor));
                                       }),
                                     ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
+                                    const SizedBox(width: 20),
                                     Expanded(
                                       child: TextFormField(
                                         controller: _nameController,
-                                        maxLength: 20,
+                                        maxLength:
+                                            maxLabelLenghtForDisplayNames,
                                         decoration: InputDecoration(
                                           labelText: '${t.categories.name} *',
                                           hintText: 'Ex.: Food',

@@ -608,10 +608,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                             trailing: StreamBuilder(
                                                 stream: ExchangeRateService
                                                     .instance
-                                                    .calculateExchangeRate(
-                                                  fromCurrency:
-                                                      userCurrency.code,
-                                                  toCurrency: transaction
+                                                    .calculateExchangeRateToPreferredCurrency(
+                                                  fromCurrency: transaction
                                                       .account.currencyId,
                                                   amount: transaction.value,
                                                 ),
@@ -648,10 +646,8 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                                             trailing: StreamBuilder(
                                                 stream: ExchangeRateService
                                                     .instance
-                                                    .calculateExchangeRate(
-                                                  fromCurrency:
-                                                      userCurrency.code,
-                                                  toCurrency: transaction
+                                                    .calculateExchangeRateToPreferredCurrency(
+                                                  fromCurrency: transaction
                                                       .account.currencyId,
                                                   amount: transaction.value,
                                                   date: transaction.date,

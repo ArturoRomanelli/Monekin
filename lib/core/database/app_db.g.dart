@@ -1850,6 +1850,12 @@ class ExchangeRates extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   ExchangeRates(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL PRIMARY KEY');
   static const VerificationMeta _dateMeta = const VerificationMeta('date');
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
       'date', aliasedName, false,
@@ -1872,7 +1878,7 @@ class ExchangeRates extends Table
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
   @override
-  List<GeneratedColumn> get $columns => [date, currencyCode, exchangeRate];
+  List<GeneratedColumn> get $columns => [id, date, currencyCode, exchangeRate];
   @override
   String get aliasedName => _alias ?? 'exchangeRates';
   @override
@@ -1882,6 +1888,11 @@ class ExchangeRates extends Table
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
     if (data.containsKey('date')) {
       context.handle(
           _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
@@ -1908,11 +1919,13 @@ class ExchangeRates extends Table
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {date, currencyCode};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   ExchangeRateInDB map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ExchangeRateInDB(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       date: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
       currencyCode: attachedDatabase.typeMapping
@@ -1928,24 +1941,24 @@ class ExchangeRates extends Table
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['PRIMARY KEY(date, currencyCode)'];
-  @override
   bool get dontWriteConstraints => true;
 }
 
 class ExchangeRateInDB extends DataClass
     implements Insertable<ExchangeRateInDB> {
+  final String id;
   final DateTime date;
   final String currencyCode;
   final double exchangeRate;
   const ExchangeRateInDB(
-      {required this.date,
+      {required this.id,
+      required this.date,
       required this.currencyCode,
       required this.exchangeRate});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
     map['date'] = Variable<DateTime>(date);
     map['currencyCode'] = Variable<String>(currencyCode);
     map['exchangeRate'] = Variable<double>(exchangeRate);
@@ -1954,6 +1967,7 @@ class ExchangeRateInDB extends DataClass
 
   ExchangeRatesCompanion toCompanion(bool nullToAbsent) {
     return ExchangeRatesCompanion(
+      id: Value(id),
       date: Value(date),
       currencyCode: Value(currencyCode),
       exchangeRate: Value(exchangeRate),
@@ -1964,6 +1978,7 @@ class ExchangeRateInDB extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ExchangeRateInDB(
+      id: serializer.fromJson<String>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
       currencyCode: serializer.fromJson<String>(json['currencyCode']),
       exchangeRate: serializer.fromJson<double>(json['exchangeRate']),
@@ -1973,6 +1988,7 @@ class ExchangeRateInDB extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
       'date': serializer.toJson<DateTime>(date),
       'currencyCode': serializer.toJson<String>(currencyCode),
       'exchangeRate': serializer.toJson<double>(exchangeRate),
@@ -1980,8 +1996,12 @@ class ExchangeRateInDB extends DataClass
   }
 
   ExchangeRateInDB copyWith(
-          {DateTime? date, String? currencyCode, double? exchangeRate}) =>
+          {String? id,
+          DateTime? date,
+          String? currencyCode,
+          double? exchangeRate}) =>
       ExchangeRateInDB(
+        id: id ?? this.id,
         date: date ?? this.date,
         currencyCode: currencyCode ?? this.currencyCode,
         exchangeRate: exchangeRate ?? this.exchangeRate,
@@ -1989,6 +2009,7 @@ class ExchangeRateInDB extends DataClass
   @override
   String toString() {
     return (StringBuffer('ExchangeRateInDB(')
+          ..write('id: $id, ')
           ..write('date: $date, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('exchangeRate: $exchangeRate')
@@ -1997,42 +2018,49 @@ class ExchangeRateInDB extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(date, currencyCode, exchangeRate);
+  int get hashCode => Object.hash(id, date, currencyCode, exchangeRate);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ExchangeRateInDB &&
+          other.id == this.id &&
           other.date == this.date &&
           other.currencyCode == this.currencyCode &&
           other.exchangeRate == this.exchangeRate);
 }
 
 class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateInDB> {
+  final Value<String> id;
   final Value<DateTime> date;
   final Value<String> currencyCode;
   final Value<double> exchangeRate;
   final Value<int> rowid;
   const ExchangeRatesCompanion({
+    this.id = const Value.absent(),
     this.date = const Value.absent(),
     this.currencyCode = const Value.absent(),
     this.exchangeRate = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ExchangeRatesCompanion.insert({
+    required String id,
     required DateTime date,
     required String currencyCode,
     required double exchangeRate,
     this.rowid = const Value.absent(),
-  })  : date = Value(date),
+  })  : id = Value(id),
+        date = Value(date),
         currencyCode = Value(currencyCode),
         exchangeRate = Value(exchangeRate);
   static Insertable<ExchangeRateInDB> custom({
+    Expression<String>? id,
     Expression<DateTime>? date,
     Expression<String>? currencyCode,
     Expression<double>? exchangeRate,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (id != null) 'id': id,
       if (date != null) 'date': date,
       if (currencyCode != null) 'currencyCode': currencyCode,
       if (exchangeRate != null) 'exchangeRate': exchangeRate,
@@ -2041,11 +2069,13 @@ class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateInDB> {
   }
 
   ExchangeRatesCompanion copyWith(
-      {Value<DateTime>? date,
+      {Value<String>? id,
+      Value<DateTime>? date,
       Value<String>? currencyCode,
       Value<double>? exchangeRate,
       Value<int>? rowid}) {
     return ExchangeRatesCompanion(
+      id: id ?? this.id,
       date: date ?? this.date,
       currencyCode: currencyCode ?? this.currencyCode,
       exchangeRate: exchangeRate ?? this.exchangeRate,
@@ -2056,6 +2086,9 @@ class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateInDB> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
@@ -2074,6 +2107,7 @@ class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRateInDB> {
   @override
   String toString() {
     return (StringBuffer('ExchangeRatesCompanion(')
+          ..write('id: $id, ')
           ..write('date: $date, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('exchangeRate: $exchangeRate, ')
@@ -3682,6 +3716,7 @@ abstract class _$AppDB extends GeneratedDatabase {
           currencies,
           ...generatedpredicate.watchedTables,
         }).asyncMap((QueryRow row) async => ExchangeRate(
+          id: row.read<String>('id'),
           date: row.read<DateTime>('date'),
           currency: await currencies.mapFromRow(row, tablePrefix: 'nested_0'),
           exchangeRate: row.read<double>('exchangeRate'),
@@ -3698,6 +3733,7 @@ abstract class _$AppDB extends GeneratedDatabase {
           exchangeRates,
           currencies,
         }).asyncMap((QueryRow row) async => ExchangeRate(
+          id: row.read<String>('id'),
           date: row.read<DateTime>('date'),
           currency: await currencies.mapFromRow(row, tablePrefix: 'nested_0'),
           exchangeRate: row.read<double>('exchangeRate'),

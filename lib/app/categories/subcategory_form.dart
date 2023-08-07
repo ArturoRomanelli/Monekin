@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:monekin/core/models/supported-icon/supported_icon.dart';
 import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/core/presentation/widgets/icon_selector_modal.dart';
-import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/core/utils/constants.dart';
+import 'package:monekin/core/utils/text_field_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
 
 class SubcategoryFormDialog extends StatefulWidget {
@@ -63,9 +64,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                       : t.categories.edit,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(
-                  height: 22,
-                ),
+                const SizedBox(height: 22),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -102,7 +101,7 @@ class _SubcategoryFormDialogState extends State<SubcategoryFormDialog> {
                         key: _formKey,
                         child: TextFormField(
                           controller: _nameController,
-                          maxLength: 20,
+                          maxLength: maxLabelLenghtForDisplayNames,
                           onChanged: (value) {
                             setState(() {});
                           },

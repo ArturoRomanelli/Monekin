@@ -20,8 +20,9 @@ import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart'
 import 'package:monekin/core/presentation/widgets/scrollable_with_bottom_gradient.dart';
 import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
 import 'package:monekin/core/utils/color_utils.dart';
+import 'package:monekin/core/utils/constants.dart';
 import 'package:monekin/core/utils/date_time_picker.dart';
-import 'package:monekin/core/utils/text_field_validator.dart';
+import 'package:monekin/core/utils/text_field_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
 import 'package:uuid/uuid.dart';
 
@@ -141,6 +142,16 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           content: Text(widget.mode == TransactionFormMode.incomeOrExpense
               ? t.transaction.form.validators.negative_transaction
               : t.transaction.form.validators.negative_transfer)));
+
+      return;
+    }
+
+    if (fromAccount != null && fromAccount!.date.compareTo(date) > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                t.transaction.form.validators.date_after_account_creation)),
+      );
 
       return;
     }
@@ -363,7 +374,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
   Widget buildTitleField() {
     return TextFormField(
       controller: titleController,
-      maxLength: 20,
+      maxLength: maxLabelLenghtForDisplayNames,
       decoration: InputDecoration(labelText: t.transaction.form.title),
     );
   }
@@ -515,9 +526,20 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: InlineInfoCard(
-                                    text:
-                                        t.transaction.form.validators.date_max,
-                                    mode: InlineInfoCardMode.info),
+                                  text: t.transaction.form.validators.date_max,
+                                  mode: InlineInfoCardMode.info,
+                                ),
+                              ),
+                            if (fromAccount != null &&
+                                fromAccount!.date.compareTo(date) > 0 &&
+                                !(date.compareTo(DateTime.now()) > 0))
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InlineInfoCard(
+                                  text: t.transaction.form.validators
+                                      .date_after_account_creation,
+                                  mode: InlineInfoCardMode.warn,
+                                ),
                               ),
                             const Divider(),
                             Row(

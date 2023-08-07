@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:monekin/app/stats/widgets/category_stats_modal.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/category/category_service.dart';
-import 'package:monekin/core/database/services/currency/currency_service.dart';
 import 'package:monekin/core/database/services/exchange-rate/exchange_rate_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/category/category.dart';
@@ -65,9 +64,6 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     final transactionService = TransactionService.instance;
 
-    final userCurrency =
-        await CurrencyService.instance.getUserPreferredCurrency().first;
-
     final transactions = await transactionService
         .getTransactions(
           predicate: (t, acc, p2, p3, p4, transCategory, p6) =>
@@ -94,9 +90,8 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
 
     for (final transaction in transactions) {
       final trValue = await ExchangeRateService.instance
-          .calculateExchangeRate(
+          .calculateExchangeRateToPreferredCurrency(
               fromCurrency: transaction.account.currencyId,
-              toCurrency: userCurrency.code,
               amount: transaction.value.abs())
           .first;
 

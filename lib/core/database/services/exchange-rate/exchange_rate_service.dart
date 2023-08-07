@@ -39,8 +39,9 @@ class ExchangeRateService {
 
     return db
         .getExchangeRates(
-            predicate: (e, currency) => e.currencyCode.equals(currencyCode),
-            limit: limit)
+          predicate: (e, currency) => e.currencyCode.equals(currencyCode),
+          limit: limit,
+        )
         .watch();
   }
 
@@ -56,6 +57,18 @@ class ExchangeRateService {
                 e.date.isSmallerOrEqualValue(date!),
             limit: 1)
         .watchSingleOrNull();
+  }
+
+  Stream<double> calculateExchangeRateToPreferredCurrency({
+    required String fromCurrency,
+    num amount = 1,
+    DateTime? date,
+  }) {
+    date ??= DateTime.now();
+
+    return getLastExchangeRateOf(currencyCode: fromCurrency, date: date)
+        .map((event) => event?.exchangeRate ?? 1)
+        .map((excRate) => excRate * amount);
   }
 
   Stream<double> calculateExchangeRate({

@@ -126,6 +126,7 @@ class _ExchangeRateDetailsPageState extends State<ExchangeRateDetailsPage> {
                         preSelectedCurrency: widget.currency,
                         preSelectedDate: item.date,
                         preSelectedRate: item.exchangeRate,
+                        idToEdit: item.id,
                       ));
 
                   getExchangeRates();

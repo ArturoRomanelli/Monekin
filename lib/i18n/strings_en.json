@@ -250,6 +250,7 @@
       "VALIDATORS": {
         "zero": "The value of a transaction cannot be equal to zero",
         "date-max": "The selected date is after the current one. The transaction will be added as pending",
+        "date-after-account-creation": "You cannot create a transaction whose date is before the creation date of the account it belongs to",
         "negative-transaction": "Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income",
         "negative-transfer": "The monetary value of a transfer cannot be negative"
       },
@@ -303,7 +304,7 @@
     }
   },
   "ACCOUNT": {
-    "date": "Date created",
+    "date": "Opening date",
     "balance": "Account balance",
     "n_transactions": "Number of transactions",
     "add_money": "Add money",
@@ -328,6 +329,7 @@
       "edit": "Edit account",
       "currency-not-found-warn": "You do not have information on exchange rates for this currency. 1.0 will be used as the default exchange rate. You can modify this in the settings",
       "already-exists": "There is already another one with the same name, please write another",
+      "tr-before-opening-date": "There are transactions in this account with a date before the opening date",
       "iban": "IBAN",
       "swift": "SWIFT"
     },

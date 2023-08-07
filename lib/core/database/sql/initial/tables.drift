@@ -18,11 +18,10 @@ CREATE TABLE IF NOT EXISTS currencies (
 ) AS CurrencyInDB;
 
 CREATE TABLE IF NOT EXISTS exchangeRates (
+    id TEXT NOT NULL PRIMARY KEY,
     date DATETIME NOT NULL,
     currencyCode TEXT NOT NULL REFERENCES currencies(code) ON DELETE CASCADE ON UPDATE CASCADE,
-    exchangeRate REAL NOT NULL,
-    
-    PRIMARY KEY (date, currencyCode)
+    exchangeRate REAL NOT NULL
 ) AS ExchangeRateInDB;
 
 CREATE TABLE IF NOT EXISTS currencyNames (

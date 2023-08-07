@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 827 (413 per locale)
+/// Strings: 831 (415 per locale)
 ///
-/// Built on 2023-08-06 at 11:28 UTC
+/// Built on 2023-08-07 at 12:25 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -366,7 +366,7 @@ class _TranslationsAccountEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get date => 'Date created';
+	String get date => 'Opening date';
 	String get balance => 'Account balance';
 	String get n_transactions => 'Number of transactions';
 	String get add_money => 'Add money';
@@ -750,6 +750,7 @@ class _TranslationsAccountFormEn {
 	String get edit => 'Edit account';
 	String get currency_not_found_warn => 'You do not have information on exchange rates for this currency. 1.0 will be used as the default exchange rate. You can modify this in the settings';
 	String get already_exists => 'There is already another one with the same name, please write another';
+	String get tr_before_opening_date => 'There are transactions in this account with a date before the opening date';
 	String get iban => 'IBAN';
 	String get swift => 'SWIFT';
 }
@@ -1090,6 +1091,7 @@ class _TranslationsTransactionFormValidatorsEn {
 	// Translations
 	String get zero => 'The value of a transaction cannot be equal to zero';
 	String get date_max => 'The selected date is after the current one. The transaction will be added as pending';
+	String get date_after_account_creation => 'You cannot create a transaction whose date is before the creation date of the account it belongs to';
 	String get negative_transaction => 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
 	String get negative_transfer => 'The monetary value of a transfer cannot be negative';
 }
@@ -1380,7 +1382,7 @@ class _TranslationsAccountEs extends _TranslationsAccountEn {
 	@override final _TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get date => 'Fecha de creación';
+	@override String get date => 'Fecha de apertura';
 	@override String get balance => 'Saldo de la cuenta';
 	@override String get n_transactions => 'Número de transacciones';
 	@override String get add_money => 'Añadir dinero';
@@ -1762,6 +1764,7 @@ class _TranslationsAccountFormEs extends _TranslationsAccountFormEn {
 	@override String get current_balance => 'Balance actual';
 	@override String get create => 'Crear cuenta';
 	@override String get edit => 'Editar cuenta';
+	@override String get tr_before_opening_date => 'Existen transacciones en esta cuenta con fecha anterior a la fecha de apertura';
 	@override String get currency_not_found_warn => 'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes';
 	@override String get already_exists => 'Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro';
 	@override String get iban => 'IBAN';
@@ -1882,7 +1885,7 @@ class _TranslationsBackupImportEs extends _TranslationsBackupImportEn {
 	@override String get title => 'Importar tus datos';
 	@override String get title_sort => 'Importar';
 	@override String get restore_backup => 'Restaurar copia de seguridad';
-	@override String get restore_backup_warn => 'All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin';
+	@override String get restore_backup_warn => 'Al importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin';
 	@override String get restore_backup_descr => 'Importa una base de datos anteriormente guardada desde Monekin. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos';
 	@override String get tap_to_select_file => 'Pulsa para seleccionar un archivo';
 	@override String get select_other_file => 'Selecciona otro fichero';
@@ -2105,6 +2108,7 @@ class _TranslationsTransactionFormValidatorsEs extends _TranslationsTransactionF
 	// Translations
 	@override String get zero => 'El valor de una transacción no puede ser igual a cero';
 	@override String get date_max => 'La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente';
+	@override String get date_after_account_creation => 'No puedes crear una transacción cuya fecha es anterior a la fecha de creación de la cuenta a la que pertenece';
 	@override String get negative_transaction => 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
 	@override String get negative_transfer => 'El valor monetario de una transferencia no puede ser negativo';
 }
@@ -2363,6 +2367,7 @@ extension on _TranslationsEn {
 			case 'transaction.form.status': return 'Status';
 			case 'transaction.form.validators.zero': return 'The value of a transaction cannot be equal to zero';
 			case 'transaction.form.validators.date_max': return 'The selected date is after the current one. The transaction will be added as pending';
+			case 'transaction.form.validators.date_after_account_creation': return 'You cannot create a transaction whose date is before the creation date of the account it belongs to';
 			case 'transaction.form.validators.negative_transaction': return 'Do not use negative amounts for your transaction. We will apply the sign depending on whether the selected category is expense/income';
 			case 'transaction.form.validators.negative_transfer': return 'The monetary value of a transfer cannot be negative';
 			case 'transaction.form.title': return 'Transaction title';
@@ -2400,7 +2405,7 @@ extension on _TranslationsEn {
 			case 'recurrent_transactions.details.last_payment_info': return ({required Object date}) => 'The next move for this transaction will take place on ${date}. This payment will be the last for the recurring rule, so this rule will be automatically removed when this payment is made';
 			case 'recurrent_transactions.details.delete_header': return 'Delete recurring transaction';
 			case 'recurrent_transactions.details.delete_message': return 'This action is irreversible and will not affect transactions you have already confirmed/paid for';
-			case 'account.date': return 'Date created';
+			case 'account.date': return 'Opening date';
 			case 'account.balance': return 'Account balance';
 			case 'account.n_transactions': return 'Number of transactions';
 			case 'account.add_money': return 'Add money';
@@ -2422,6 +2427,7 @@ extension on _TranslationsEn {
 			case 'account.form.edit': return 'Edit account';
 			case 'account.form.currency_not_found_warn': return 'You do not have information on exchange rates for this currency. 1.0 will be used as the default exchange rate. You can modify this in the settings';
 			case 'account.form.already_exists': return 'There is already another one with the same name, please write another';
+			case 'account.form.tr_before_opening_date': return 'There are transactions in this account with a date before the opening date';
 			case 'account.form.iban': return 'IBAN';
 			case 'account.form.swift': return 'SWIFT';
 			case 'account.delete.warning_header': return 'Are you sure?';
@@ -2803,6 +2809,7 @@ extension on _TranslationsEs {
 			case 'transaction.form.status': return 'Estado';
 			case 'transaction.form.validators.zero': return 'El valor de una transacción no puede ser igual a cero';
 			case 'transaction.form.validators.date_max': return 'La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente';
+			case 'transaction.form.validators.date_after_account_creation': return 'No puedes crear una transacción cuya fecha es anterior a la fecha de creación de la cuenta a la que pertenece';
 			case 'transaction.form.validators.negative_transaction': return 'No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso';
 			case 'transaction.form.validators.negative_transfer': return 'El valor monetario de una transferencia no puede ser negativo';
 			case 'transaction.form.title': return 'Título de la transacción';
@@ -2840,7 +2847,7 @@ extension on _TranslationsEs {
 			case 'recurrent_transactions.details.last_payment_info': return ({required Object date}) => 'El próximo movimiento de esta transacción tendrá lugar el día ${date}. Este pago será el último de la regla recurrente, por lo que se eliminará esta regla de forma automática al realizar este pago';
 			case 'recurrent_transactions.details.delete_header': return 'Eliminar transacción recurrente';
 			case 'recurrent_transactions.details.delete_message': return 'Esta acción es irreversible y no afectará a transacciones que ya hayas confirmado/pagado';
-			case 'account.date': return 'Fecha de creación';
+			case 'account.date': return 'Fecha de apertura';
 			case 'account.balance': return 'Saldo de la cuenta';
 			case 'account.n_transactions': return 'Número de transacciones';
 			case 'account.add_money': return 'Añadir dinero';
@@ -2860,6 +2867,7 @@ extension on _TranslationsEs {
 			case 'account.form.current_balance': return 'Balance actual';
 			case 'account.form.create': return 'Crear cuenta';
 			case 'account.form.edit': return 'Editar cuenta';
+			case 'account.form.tr_before_opening_date': return 'Existen transacciones en esta cuenta con fecha anterior a la fecha de apertura';
 			case 'account.form.currency_not_found_warn': return 'No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes';
 			case 'account.form.already_exists': return 'Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro';
 			case 'account.form.iban': return 'IBAN';
@@ -2962,7 +2970,7 @@ extension on _TranslationsEs {
 			case 'backup.import.title': return 'Importar tus datos';
 			case 'backup.import.title_sort': return 'Importar';
 			case 'backup.import.restore_backup': return 'Restaurar copia de seguridad';
-			case 'backup.import.restore_backup_warn': return 'All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin';
+			case 'backup.import.restore_backup_warn': return 'Al importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin';
 			case 'backup.import.restore_backup_descr': return 'Importa una base de datos anteriormente guardada desde Monekin. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos';
 			case 'backup.import.tap_to_select_file': return 'Pulsa para seleccionar un archivo';
 			case 'backup.import.select_other_file': return 'Selecciona otro fichero';

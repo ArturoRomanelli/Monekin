@@ -251,6 +251,7 @@
       "VALIDATORS": {
         "zero": "El valor de una transacción no puede ser igual a cero",
         "date-max": "La fecha seleccionada es posterior a la actual. Se añadirá la transacción como pendiente",
+        "date-after-account-creation": "No puedes crear una transacción cuya fecha es anterior a la fecha de creación de la cuenta a la que pertenece",
         "negative-transaction": "No uses cantidades negativas para tu transaccion. Aplicaremos el signo en función de si la categoría seleccionada es de tipo gasto/ingreso",
         "negative-transfer": "El valor monetario de una transferencia no puede ser negativo"
       },
@@ -305,7 +306,7 @@
     }
   },
   "ACCOUNT": {
-    "date": "Fecha de creación",
+    "date": "Fecha de apertura",
     "balance": "Saldo de la cuenta",
     "n_transactions": "Número de transacciones",
     "add_money": "Añadir dinero",
@@ -328,6 +329,7 @@
       "current-balance": "Balance actual",
       "create": "Crear cuenta",
       "edit": "Editar cuenta",
+      "tr-before-opening-date": "Existen transacciones en esta cuenta con fecha anterior a la fecha de apertura",
       "currency-not-found-warn": "No posees información sobre tipos de cambio para esta divisa. Se usará 1.0 como tipo de cambio por defecto. Puedes modificar esto en los ajustes",
       "already-exists": "Ya existe otra cuenta con el mismo nombre. Por favor, escriba otro",
       "iban": "IBAN",
@@ -454,7 +456,7 @@
       "title": "Importar tus datos",
       "title.sort": "Importar",
       "restore-backup": "Restaurar copia de seguridad",
-      "restore-backup-warn": "All importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin",
+      "restore-backup-warn": "Al importar una nueva base de datos, perderas toda la información actualmente guardada en la app. Se recomienda hacer una copia de seguridad antes de continuar. No subas aquí ningún fichero cuyo origen no conozcas, sube solo ficheros que hayas descargado previamente desde Monekin",
       "restore-backup-descr": "Importa una base de datos anteriormente guardada desde Monekin. Esta acción remplazará cualquier dato actual de la aplicación por los nuevos datos",
       "tap-to-select-file": "Pulsa para seleccionar un archivo",
       "select-other-file": "Selecciona otro fichero",

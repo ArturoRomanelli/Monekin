@@ -10,14 +10,25 @@ class TransactionService {
   static final TransactionService instance =
       TransactionService._(AppDB.instance);
 
-  Future<int> insertTransaction(TransactionInDB transaction) {
-    return db.into(db.transactions).insert(transaction);
+  Future<int> insertTransaction(TransactionInDB transaction) async {
+    final toReturn = await db.into(db.transactions).insert(transaction);
+
+    // To update the getAccountsData() function results
+    // TODO: Check why we need this. The function already listen to changes in the transactions table
+    db.markTablesUpdated([db.accounts]);
+    return toReturn;
   }
 
-  Future<int> insertOrUpdateTransaction(TransactionInDB transaction) {
-    return db
+  Future<int> insertOrUpdateTransaction(TransactionInDB transaction) async {
+    final toReturn = await db
         .into(db.transactions)
         .insert(transaction, mode: InsertMode.insertOrReplace);
+
+    // To update the getAccountsData() function results
+    // TODO: Check why we need this. The function already listen to changes in the transactions table
+    db.markTablesUpdated([db.accounts]);
+
+    return toReturn;
   }
 
   Future<int> deleteTransaction(String transactionId) {

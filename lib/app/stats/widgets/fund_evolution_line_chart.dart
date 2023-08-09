@@ -198,8 +198,13 @@ class FundEvolutionLineChart extends StatelessWidget {
                 return Stack(
                   children: [
                     LineChart(LineChartData(
-                      gridData:
-                          const FlGridData(show: true, drawVerticalLine: false),
+                      gridData: FlGridData(
+                        show: true,
+                        drawVerticalLine: false,
+                        getDrawingHorizontalLine: (value) =>
+                            defaultGridLine(value).copyWith(
+                                color: Colors.black12, strokeWidth: 0.5),
+                      ),
                       lineTouchData: LineTouchData(
                           enabled: snapshot.hasData,
                           touchTooltipData: LineTouchTooltipData(
@@ -226,6 +231,14 @@ class FundEvolutionLineChart extends StatelessWidget {
                               }).toList();
                             },
                           )),
+                      minY: snapshot.hasData
+                          ? snapshot.data!.balance.min -
+                              snapshot.data!.balance.min * 0.1
+                          : 2,
+                      maxY: snapshot.hasData
+                          ? snapshot.data!.balance.max +
+                              snapshot.data!.balance.max * 0.1
+                          : 5,
                       titlesData: FlTitlesData(
                         show: true,
                         leftTitles: const AxisTitles(
@@ -237,7 +250,7 @@ class FundEvolutionLineChart extends StatelessWidget {
                         rightTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: snapshot.hasData,
-                            reservedSize: 46,
+                            reservedSize: 42,
                             getTitlesWidget: (value, meta) {
                               if (value == meta.max || value == meta.min) {
                                 return Container();
@@ -245,27 +258,36 @@ class FundEvolutionLineChart extends StatelessWidget {
 
                               return SideTitleWidget(
                                 axisSide: meta.axisSide,
-                                child: Text(
-                                  meta.formattedValue,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
-                                  ),
+                                space: 0,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 5,
+                                      height: 1,
+                                      color: Colors.black12,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      meta.formattedValue,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
                           ),
                         ),
                       ),
-                      borderData: FlBorderData(show: false),
-                      minY: snapshot.hasData
-                          ? snapshot.data!.balance.min -
-                              snapshot.data!.balance.min * 0.1
-                          : 2,
-                      maxY: snapshot.hasData
-                          ? snapshot.data!.balance.max +
-                              snapshot.data!.balance.max * 0.1
-                          : 5,
+                      borderData: FlBorderData(
+                        show: false,
+                        border: const Border(
+                          bottom: BorderSide(color: Colors.black12, width: 1),
+                          right: BorderSide(color: Colors.black12, width: 1),
+                        ),
+                      ),
                       lineBarsData: [
                         LineChartBarData(
                           spots: snapshot.hasData

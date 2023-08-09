@@ -259,7 +259,6 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
           future: getDataByPeriods(
               widget.startDate, widget.endDate, widget.dateRange),
           builder: (context, snapshot) {
-            print(snapshot.data);
             if (!snapshot.hasData) {
               return const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -325,7 +324,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                         child: Text(
                           snapshot.data!.shortTitles[value.toInt()],
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                             fontWeight: FontWeight.w300,
                           ),
                         ),
@@ -339,16 +338,27 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                     getTitlesWidget: (value, meta) {
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
-                        child: Text(
-                          meta.formattedValue,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                          ),
+                        space: 0,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 5,
+                              height: 1,
+                              color: Colors.black12,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              meta.formattedValue,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },
-                    reservedSize: 46,
+                    reservedSize: 42,
                   ),
                 ),
                 leftTitles:
@@ -359,8 +369,21 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               borderData: FlBorderData(
                   show: true,
                   border: const Border(
-                      bottom: BorderSide(width: 1, color: Colors.black12))),
-              gridData: const FlGridData(drawVerticalLine: false),
+                    bottom: BorderSide(width: 1, color: Colors.black12),
+                    right: BorderSide(width: 1, color: Colors.black12),
+                  )),
+              gridData: FlGridData(
+                drawVerticalLine: false,
+                getDrawingHorizontalLine: (value) {
+                  if (value != 0) {
+                    return defaultGridLine(value)
+                        .copyWith(strokeWidth: 0.5, color: Colors.black12);
+                  }
+
+                  return defaultGridLine(value)
+                      .copyWith(strokeWidth: 0.75, color: Colors.black26);
+                },
+              ),
               barGroups: List.generate(snapshot.data!.income.length, (i) {
                 return makeGroupData(
                     i, snapshot.data!.income[i], snapshot.data!.expense[i],

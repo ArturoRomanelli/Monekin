@@ -20,112 +20,98 @@ class IncomeExpenseComparason extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
-    return StreamBuilder(
-        stream: filters?.accounts != null
-            ? Stream.value(filters!.accounts)
-            : AccountService.instance.getAccounts(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const LinearProgressIndicator();
-          }
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(t.general.balance),
+                StreamBuilder(
+                  stream: AccountService.instance.getAccountsData(
+                      accountIds: filters?.accounts?.map((e) => e.id),
+                      accountDataFilter: AccountDataFilter.balance,
+                      categoriesIds: filters?.categories?.map((e) => e.id),
+                      startDate: startDate,
+                      endDate: endDate),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Skeleton(width: 35, height: 32);
+                    }
 
-          final accounts = snapshot.data!;
+                    return CurrencyDisplayer(
+                        amountToConvert: snapshot.data!,
+                        textStyle: Theme.of(context).textTheme.headlineSmall!);
+                  },
+                )
+              ],
+            )
+          ]),
+        ),
+        StreamBuilder(
+          stream: Rx.combineLatest2(
+              AccountService.instance.getAccountsData(
+                  accountIds: filters?.accounts?.map((e) => e.id),
+                  accountDataFilter: AccountDataFilter.income,
+                  categoriesIds: filters?.categories?.map((e) => e.id),
+                  startDate: startDate,
+                  endDate: endDate),
+              AccountService.instance.getAccountsData(
+                  accountIds: filters?.accounts?.map((e) => e.id),
+                  accountDataFilter: AccountDataFilter.expense,
+                  categoriesIds: filters?.categories?.map((e) => e.id),
+                  startDate: startDate,
+                  endDate: endDate),
+              (a, b) => [a, b]),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const LinearProgressIndicator();
+            }
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(t.general.balance),
-                      StreamBuilder(
-                        stream: AccountService.instance.getAccountsData(
-                            accountIds: accounts.map((e) => e.id),
-                            accountDataFilter: AccountDataFilter.balance,
-                            categoriesIds:
-                                filters?.categories?.map((e) => e.id),
-                            startDate: startDate,
-                            endDate: endDate),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Skeleton(width: 35, height: 32);
-                          }
+            final income = snapshot.data![0];
+            final expense = snapshot.data![1].abs();
 
-                          return CurrencyDisplayer(
-                              amountToConvert: snapshot.data!,
-                              textStyle:
-                                  Theme.of(context).textTheme.headlineSmall!);
-                        },
-                      )
-                    ],
-                  )
-                ]),
-              ),
-              StreamBuilder(
-                stream: Rx.combineLatest2(
-                    AccountService.instance.getAccountsData(
-                        accountIds: accounts.map((e) => e.id),
-                        accountDataFilter: AccountDataFilter.income,
-                        categoriesIds: filters?.categories?.map((e) => e.id),
-                        startDate: startDate,
-                        endDate: endDate),
-                    AccountService.instance.getAccountsData(
-                        accountIds: accounts.map((e) => e.id),
-                        accountDataFilter: AccountDataFilter.expense,
-                        categoriesIds: filters?.categories?.map((e) => e.id),
-                        startDate: startDate,
-                        endDate: endDate),
-                    (a, b) => [a, b]),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const LinearProgressIndicator();
-                  }
-
-                  final income = snapshot.data![0];
-                  final expense = snapshot.data![1].abs();
-
-                  return Column(children: [
-                    ListTile(
-                        title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(t.general.income),
-                              CurrencyDisplayer(amountToConvert: income)
-                            ],
-                          ),
-                          AnimatedProgressBar(
-                              value: income + expense > 0
-                                  ? (income / (income + expense))
-                                  : 0,
-                              color: Colors.green),
-                        ])),
-                    ListTile(
-                        title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(t.general.expense),
-                              CurrencyDisplayer(amountToConvert: expense)
-                            ],
-                          ),
-                          AnimatedProgressBar(
-                              value: income + expense > 0
-                                  ? (expense / (income + expense))
-                                  : 0,
-                              color: Colors.red),
-                        ]))
-                  ]);
-                },
-              ),
-            ],
-          );
-        });
+            return Column(children: [
+              ListTile(
+                  title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(t.general.income),
+                        CurrencyDisplayer(amountToConvert: income)
+                      ],
+                    ),
+                    AnimatedProgressBar(
+                        value: income + expense > 0
+                            ? (income / (income + expense))
+                            : 0,
+                        color: Colors.green),
+                  ])),
+              ListTile(
+                  title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(t.general.expense),
+                        CurrencyDisplayer(amountToConvert: expense)
+                      ],
+                    ),
+                    AnimatedProgressBar(
+                        value: income + expense > 0
+                            ? (expense / (income + expense))
+                            : 0,
+                        color: Colors.red),
+                  ]))
+            ]);
+          },
+        ),
+      ],
+    );
   }
 }

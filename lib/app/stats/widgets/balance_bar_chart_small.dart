@@ -1,9 +1,9 @@
 import 'package:async/async.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/services/filters/date_range_service.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 
 class BalanceChartSmall extends StatefulWidget {
   const BalanceChartSmall({super.key, required this.dateRangeService});
@@ -55,8 +55,31 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
   FlTitlesData getTitlesData() {
     return FlTitlesData(
       show: true,
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+        showTitles: true,
+        reservedSize: 28,
+        getTitlesWidget: (value, meta) {
+          return Row(
+            children: [
+              Container(
+                width: 5,
+                height: 1,
+                color: Colors.black12,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                meta.formattedValue,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ],
+          );
+        },
+      )),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -72,7 +95,7 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
           },
         ),
       ),
-      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
     );
   }
 
@@ -105,8 +128,8 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                       borderData: FlBorderData(
                         show: true,
                         border: const Border(
-                            bottom:
-                                BorderSide(width: 1, color: Colors.black12)),
+                          bottom: BorderSide(width: 1, color: Colors.black12),
+                        ),
                       ),
                       barGroups: [
                         makeGroupData(0, 4, 2, disabled: true),
@@ -172,8 +195,9 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                       borderData: FlBorderData(
                         show: true,
                         border: const Border(
-                            bottom:
-                                BorderSide(width: 1, color: Colors.black12)),
+                          bottom: BorderSide(width: 1, color: Colors.black12),
+                          right: BorderSide(width: 1, color: Colors.black12),
+                        ),
                       ),
                       barGroups: [
                         makeGroupData(

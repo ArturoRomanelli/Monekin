@@ -52,7 +52,7 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
     );
   }
 
-  FlTitlesData getTitlesData() {
+  FlTitlesData getTitlesData(Color borderColor) {
     return FlTitlesData(
       show: true,
       rightTitles: AxisTitles(
@@ -65,7 +65,7 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
               Container(
                 width: 5,
                 height: 1,
-                color: Colors.black12,
+                color: borderColor,
               ),
               const SizedBox(width: 4),
               Text(
@@ -114,6 +114,11 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
 
             final accounts = accountsSnapshot.data!;
 
+            final ultraLightBorderColor =
+                Theme.of(context).brightness == Brightness.light
+                    ? Colors.black12
+                    : Colors.white12;
+
             if (accounts.isEmpty) {
               return Stack(
                 children: [
@@ -124,18 +129,19 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                           getTooltipItem: (a, b, c, d) => null,
                         ),
                       ),
-                      titlesData: getTitlesData(),
+                      titlesData: getTitlesData(ultraLightBorderColor),
                       borderData: FlBorderData(
                         show: true,
-                        border: const Border(
-                          bottom: BorderSide(width: 1, color: Colors.black12),
+                        border: Border(
+                          bottom: BorderSide(
+                              width: 1, color: ultraLightBorderColor),
                         ),
                       ),
                       barGroups: [
                         makeGroupData(0, 4, 2, disabled: true),
                         makeGroupData(1, 5, 7, disabled: true),
                       ],
-                      gridData: FlGridData(show: false),
+                      gridData: const FlGridData(show: false),
                     ),
                   ),
                   Positioned.fill(
@@ -191,12 +197,14 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                           getTooltipItem: (a, b, c, d) => null,
                         ),
                       ),
-                      titlesData: getTitlesData(),
+                      titlesData: getTitlesData(ultraLightBorderColor),
                       borderData: FlBorderData(
                         show: true,
-                        border: const Border(
-                          bottom: BorderSide(width: 1, color: Colors.black12),
-                          right: BorderSide(width: 1, color: Colors.black12),
+                        border: Border(
+                          bottom: BorderSide(
+                              width: 1, color: ultraLightBorderColor),
+                          right: BorderSide(
+                              width: 1, color: ultraLightBorderColor),
                         ),
                       ),
                       barGroups: [
@@ -205,7 +213,7 @@ class _BalanceChartSmallState extends State<BalanceChartSmall> {
                         makeGroupData(
                             1, -snapshpot.data![2], snapshpot.data![3]),
                       ],
-                      gridData: FlGridData(show: false),
+                      gridData: const FlGridData(show: false),
                     ),
                   );
                 });

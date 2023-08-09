@@ -274,6 +274,16 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               );
             }
 
+            final ultraLightBorderColor =
+                Theme.of(context).brightness == Brightness.light
+                    ? Colors.black12
+                    : Colors.white12;
+
+            final lightBorderColor =
+                Theme.of(context).brightness == Brightness.light
+                    ? Colors.black26
+                    : Colors.white24;
+
             return BarChart(BarChartData(
               maxY: max(100, snapshot.data!.income.max),
               minY: min(-100, snapshot.data!.expense.min),
@@ -344,7 +354,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
                             Container(
                               width: 5,
                               height: 1,
-                              color: Colors.black12,
+                              color: ultraLightBorderColor,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -368,20 +378,20 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
               ),
               borderData: FlBorderData(
                   show: true,
-                  border: const Border(
-                    bottom: BorderSide(width: 1, color: Colors.black12),
-                    right: BorderSide(width: 1, color: Colors.black12),
+                  border: Border(
+                    bottom: BorderSide(width: 1, color: ultraLightBorderColor),
+                    right: BorderSide(width: 1, color: ultraLightBorderColor),
                   )),
               gridData: FlGridData(
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) {
                   if (value != 0) {
-                    return defaultGridLine(value)
-                        .copyWith(strokeWidth: 0.5, color: Colors.black12);
+                    return defaultGridLine(value).copyWith(
+                        strokeWidth: 0.5, color: ultraLightBorderColor);
                   }
 
                   return defaultGridLine(value)
-                      .copyWith(strokeWidth: 0.75, color: Colors.black26);
+                      .copyWith(strokeWidth: 0.75, color: lightBorderColor);
                 },
               ),
               barGroups: List.generate(snapshot.data!.income.length, (i) {

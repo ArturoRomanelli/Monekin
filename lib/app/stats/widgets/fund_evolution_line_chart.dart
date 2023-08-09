@@ -195,6 +195,11 @@ class FundEvolutionLineChart extends StatelessWidget {
                   );
                 }
 
+                final ultraLightBorderColor =
+                    Theme.of(context).brightness == Brightness.light
+                        ? Colors.black12
+                        : Colors.white12;
+
                 return Stack(
                   children: [
                     LineChart(LineChartData(
@@ -203,7 +208,7 @@ class FundEvolutionLineChart extends StatelessWidget {
                         drawVerticalLine: false,
                         getDrawingHorizontalLine: (value) =>
                             defaultGridLine(value).copyWith(
-                                color: Colors.black12, strokeWidth: 0.5),
+                                color: ultraLightBorderColor, strokeWidth: 0.5),
                       ),
                       lineTouchData: LineTouchData(
                           enabled: snapshot.hasData,
@@ -264,7 +269,7 @@ class FundEvolutionLineChart extends StatelessWidget {
                                     Container(
                                       width: 5,
                                       height: 1,
-                                      color: Colors.black12,
+                                      color: ultraLightBorderColor,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
@@ -283,9 +288,11 @@ class FundEvolutionLineChart extends StatelessWidget {
                       ),
                       borderData: FlBorderData(
                         show: false,
-                        border: const Border(
-                          bottom: BorderSide(color: Colors.black12, width: 1),
-                          right: BorderSide(color: Colors.black12, width: 1),
+                        border: Border(
+                          bottom: BorderSide(
+                              color: ultraLightBorderColor, width: 1),
+                          right: BorderSide(
+                              color: ultraLightBorderColor, width: 1),
                         ),
                       ),
                       lineBarsData: [

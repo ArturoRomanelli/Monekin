@@ -10,6 +10,7 @@ import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/presentation/widgets/trending_value.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../core/services/filters/date_range_service.dart';
 
@@ -37,17 +38,11 @@ class FundEvolutionLineChart extends StatelessWidget {
 
   final List<Account>? accountsFilter;
 
-  Future<LineChartDataItem?> getEvolutionData() async {
-    if (startDate == null || endDate == null) return null;
+  Stream<LineChartDataItem?> getEvolutionData() {
+    if (startDate == null || endDate == null) return Stream.value(null);
 
-    List<Future<double>> balance = [];
+    List<Stream<double>> balance = [];
     List<String> labels = [];
-
-    final accountService = AccountService.instance;
-
-    final accounts = accountsFilter ?? await accountService.getAccounts().first;
-
-    if (accounts.isEmpty) return null;
 
     DateTime currentDay =
         DateTime(startDate!.year, startDate!.month, startDate!.day);
@@ -57,16 +52,14 @@ class FundEvolutionLineChart extends StatelessWidget {
     while (currentDay.compareTo(endDate!) < 0) {
       labels.add(DateFormat.yMMMMd().format(currentDay));
 
-      balance.add(accountService
-          .getAccountsMoney(
-              accountIds: accounts.map((e) => e.id), date: currentDay)
-          .first);
+      balance.add(AccountService.instance.getAccountsMoney(
+          accountIds: accountsFilter?.map((e) => e.id), date: currentDay));
 
       currentDay = currentDay.add(Duration(days: dayRange));
     }
 
-    return LineChartDataItem(
-        balance: await Future.wait(balance), labels: labels);
+    return Rx.combineLatest(balance,
+        (values) => LineChartDataItem(balance: values, labels: labels));
   }
 
   @override
@@ -184,8 +177,8 @@ class FundEvolutionLineChart extends StatelessWidget {
         ],
         SizedBox(
           height: 300,
-          child: FutureBuilder(
-              future: getEvolutionData(),
+          child: StreamBuilder(
+              stream: getEvolutionData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Column(

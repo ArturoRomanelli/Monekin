@@ -6,7 +6,7 @@ import 'package:monekin/app/home/widgets/drawer.dart';
 import 'package:monekin/app/stats/widgets/balance_bar_chart_small.dart';
 import 'package:monekin/app/stats/widgets/chart_by_categories.dart';
 import 'package:monekin/app/stats/widgets/fund_evolution_line_chart.dart';
-import 'package:monekin/app/stats/widgets/incomeOrExpenseCard.dart';
+import 'package:monekin/app/stats/widgets/income_or_expense_card.dart';
 import 'package:monekin/app/transactions/form/transaction_form.page.dart';
 import 'package:monekin/app/transactions/transaction_list.dart';
 import 'package:monekin/app/transactions/transactions.page.dart';

@@ -104,7 +104,7 @@ class AccountService {
   /// If [categoriesIds] is defined, it will only take into account the transactions
   /// of this categories to get the final money.
   Stream<double> getAccountsMoney({
-    required Iterable<String> accountIds,
+    Iterable<String>? accountIds,
     DateTime? date,
     Iterable<String>? categoriesIds,
     bool convertToPreferredCurrency = true,
@@ -118,7 +118,7 @@ class AccountService {
       SELECT COALESCE(SUM(accounts.iniValue ${convertToPreferredCurrency ? ' * COALESCE(excRate.exchangeRate, 1)' : ''} ), 0) AS balance
       FROM accounts
           ${convertToPreferredCurrency ? _joinAccountAndRate(date) : ''}
-          WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})
+          ${accountIds != null ? 'WHERE accounts.id IN (${List.filled(accountIds.length, '?').join(', ')})' : ''} 
       """,
           readsFrom: {
             db.accounts,
@@ -126,7 +126,8 @@ class AccountService {
           },
           variables: [
             if (convertToPreferredCurrency) Variable.withDateTime(date),
-            for (var id in accountIds) Variable.withString(id)
+            if (accountIds != null)
+              for (var id in accountIds) Variable.withString(id)
           ],
         )
         .watchSingleOrNull()
@@ -152,8 +153,8 @@ class AccountService {
   }
 
   Stream<double> getAccountsData(
-      {required Iterable<String> accountIds,
-      required AccountDataFilter accountDataFilter,
+      {required AccountDataFilter accountDataFilter,
+      Iterable<String>? accountIds,
       Iterable<String>? categoriesIds,
       DateTime? endDate,
       DateTime? startDate,
@@ -191,8 +192,8 @@ class AccountService {
                   ( SELECT * FROM accounts )
                   AS accounts ON transactions.accountID = accounts.id
                   ${convertToPreferredCurrency ? _joinAccountAndRate(endDate) : ''}
-                  WHERE accountID IN (${List.filled(accountIds.length, '?').join(', ')}) 
-                  AND $transactionWhereStatement
+                  WHERE ${accountIds != null ? 'accountID IN (${List.filled(accountIds.length, '?').join(', ')}) AND ' : ''} 
+                  $transactionWhereStatement
             GROUP BY accountID
             UNION
             SELECT receivingAccountID,
@@ -207,7 +208,7 @@ class AccountService {
                   AS accounts ON transactions.receivingAccountID = accounts.id
                   ${convertToPreferredCurrency ? _joinAccountAndRate(endDate) : ''}
             WHERE receivingAccountID IS NOT NULL
-            AND receivingAccountID IN (${List.filled(accountIds.length, '?').join(', ')})
+            ${accountIds != null ? 'AND receivingAccountID IN (${List.filled(accountIds.length, '?').join(', ')})' : ''}
             AND $transactionWhereStatement
             GROUP BY receivingAccountID
        )
@@ -219,11 +220,13 @@ class AccountService {
         }, variables: [
           if (endDate != null && convertToPreferredCurrency)
             Variable.withDateTime(endDate),
-          for (var id in accountIds) Variable.withString(id),
+          if (accountIds != null)
+            for (var id in accountIds) Variable.withString(id),
           ...transactionWhereArgs,
           if (endDate != null && convertToPreferredCurrency)
             Variable.withDateTime(endDate),
-          for (var id in accountIds) Variable.withString(id),
+          if (accountIds != null)
+            for (var id in accountIds) Variable.withString(id),
           ...transactionWhereArgs,
         ])
         .watchSingleOrNull()
@@ -239,11 +242,12 @@ class AccountService {
   /// Returns a stream of a double representing the variation in money for a list of accounts between two dates.
   ///
   /// If the user does not provide a value for endDate, the function sets it to the current date. If the user does not provide a value for startDate, the function sets it to the minimum date in the list of accounts.
-  Stream<double> getAccountsMoneyVariation(
-      {required List<Account> accounts,
-      DateTime? startDate,
-      DateTime? endDate,
-      bool convertToPreferredCurrency = true}) {
+  Stream<double> getAccountsMoneyVariation({
+    required List<Account> accounts,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool convertToPreferredCurrency = true,
+  }) {
     endDate ??= DateTime.now();
     startDate ??= accounts.map((e) => e.date).min;
 

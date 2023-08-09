@@ -280,13 +280,13 @@ class _HomePageState extends State<HomePage> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return CardWithHeader(
-                        title: t.general.accounts,
+                        title: t.home.active_accounts,
                         body: const LinearProgressIndicator());
                   } else {
                     final accounts = snapshot.data!;
 
                     return CardWithHeader(
-                        title: t.general.accounts,
+                        title: t.home.active_accounts,
                         headerButtonIcon: Icons.add_rounded,
                         onHeaderButtonClick: accounts.isEmpty
                             ? null

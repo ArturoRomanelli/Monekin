@@ -1,19 +1,20 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:monekin/app/accounts/account_form.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
-import 'package:monekin/core/database/services/currency/currency_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
-import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
-import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:rxdart/rxdart.dart';
+
+import '../../core/database/services/currency/currency_service.dart';
+import '../../core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
+import '../../core/presentation/widgets/skeleton.dart';
+import 'account_form.dart';
 
 class AccountWithMoney {
   final double money;
@@ -41,35 +42,26 @@ class AllAccountBalancePage extends StatefulWidget {
 }
 
 class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
-  Stream<List<AccountWithMoney>> getAccountsWithMoney(
-      DateTime date, TransactionFilters? filters) {
-    final accounts = filters?.accounts != null
-        ? Stream.value(filters!.accounts!)
-        : AccountService.instance.getAccounts();
+  Future<List<AccountWithMoney>> getAccountsWithMoney(
+      DateTime date, TransactionFilters? filters) async {
+    final accounts =
+        filters?.accounts ?? await AccountService.instance.getAccounts().first;
 
-    final balances = accounts.asyncMap(
-      (accountList) => Future.wait(
-        accountList.map((account) => AccountService.instance
+    final balances = accounts.map((account) async => AccountWithMoney(
+        money: await AccountService.instance
             .getAccountMoney(
               account: account,
               categoriesIds: filters?.categories?.map((e) => e.id),
               convertToPreferredCurrency: true,
               date: date,
             )
-            .first),
-      ),
-    );
+            .first,
+        account: account));
 
-    return Rx.combineLatest2(accounts, balances, (accounts, balances) {
-      final toReturn = accounts
-          .mapIndexed((index, element) =>
-              AccountWithMoney(money: balances[index], account: element))
-          .toList();
+    final toReturn = await Future.wait(balances);
+    toReturn.sort((a, b) => b.money.compareTo(a.money));
 
-      toReturn.sort((a, b) => b.money.compareTo(a.money));
-
-      return toReturn;
-    });
+    return toReturn;
   }
 
   List<CurrencyWithMoney> getCurrenciesWithMoney(
@@ -101,16 +93,11 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
 
-    return StreamBuilder(
-        stream: getAccountsWithMoney(widget.date, widget.filters),
+    return FutureBuilder(
+        future: getAccountsWithMoney(widget.date, widget.filters),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const LinearProgressIndicator();
@@ -155,7 +142,14 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(accountWithMoney.account.name),
+                                    Flexible(
+                                      child: Text(
+                                        accountWithMoney.account.name,
+                                        softWrap: false,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
                                     CurrencyDisplayer(
                                         amountToConvert: accountWithMoney.money)
                                   ],
@@ -207,7 +201,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(100),
                                 ),
-                                child: currency.displayFlagIcon(size: 42));
+                                child: currency.displayFlagIcon(size: 32));
                           },
                         ),
                         title: Column(
@@ -236,6 +230,7 @@ class _AllAccountBalancePageState extends State<AllAccountBalancePage> {
                                         ),
                                       );
                                     }),
+                                const SizedBox(width: 6),
                                 CurrencyDisplayer(
                                     amountToConvert: currencyWithMoney.money)
                               ],

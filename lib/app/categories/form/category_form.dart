@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:monekin/app/categories/subcategory_form.dart';
+import 'package:monekin/app/categories/form/category_form_functions.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/category/category_service.dart';
 import 'package:monekin/core/models/category/category.dart';
@@ -107,72 +107,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
     super.dispose();
   }
 
-  deleteCategory(String categoryId) {
-    final t = Translations.of(context);
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(t.general.delete),
-          content: const SingleChildScrollView(
-              child: Text(
-                  'This action will irreversibly delete all transactions <b>({{x}})</b> related to this category.')),
-          actions: [
-            TextButton(
-              child: Text(t.general.understood),
-              onPressed: () {
-                CategoryService.instance
-                    .deleteCategory(categoryId)
-                    .then((value) async {
-                  if (categoryId == widget.categoryUUID) {
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(t.categories.delete_success)));
-                  }
-                }).catchError((error) {});
-
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  makeMainCategory(Category category) {
-    if (category.isMainCategory) return;
-
-    CategoryService.instance.updateCategory(CategoryInDB(
-        id: category.id,
-        name: category.name,
-        iconId: category.icon.id,
-        color: categoryToEdit!.color,
-        type: categoryToEdit!.type));
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(t.categories.create_success)));
-  }
-
-  openSubcategoryForm(
-      {required void Function(String, SupportedIcon) onSubmit,
-      Category? subcategory}) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: (context) {
-          return SubcategoryFormDialog(
-            name: subcategory?.name ?? '',
-            color: ColorHex.get(_color),
-            icon: subcategory?.icon ??
-                SupportedIconService.instance.defaultSupportedIcon,
-            onSubmit: onSubmit,
-          );
-        });
-  }
-
   submitForm() {
     final messager = ScaffoldMessenger.of(context);
 
@@ -266,7 +200,16 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                     ];
                   },
                   onSelected: (String value) {
-                    if (value == 'delete') deleteCategory(widget.categoryUUID!);
+                    if (value == 'delete') {
+                      CategoryFormFunctions.deleteCategory(
+                          context, widget.categoryUUID!);
+                    } else if (value == 'to_subcategory') {
+                      CategoryFormFunctions.makeSubcategory(
+                          context, categoryToEdit!);
+                    } else if (value == 'merge') {
+                      CategoryFormFunctions.mergeCategory(
+                          context, categoryToEdit!);
+                    }
                   },
                 ),
             ]),
@@ -397,7 +340,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                     index == colorOptions.length - 1 ? 16 : 4),
                             child: Stack(
                               children: [
-                                Container(
+                                DecoratedBox(
                                   decoration: BoxDecoration(
                                     color: ColorHex.get(colorItem),
                                   ),
@@ -411,12 +354,12 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                   ),
                                 ),
                                 if (colorItem == _color)
-                                  Container(
-                                      decoration: const BoxDecoration(
+                                  const DecoratedBox(
+                                      decoration: BoxDecoration(
                                         color:
                                             Color.fromARGB(47, 255, 255, 255),
                                       ),
-                                      child: const Center(
+                                      child: Center(
                                           child: Icon(
                                         Icons.check,
                                         color: Colors.white,
@@ -427,9 +370,7 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                         },
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     if (widget.categoryUUID != null) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -437,7 +378,6 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                         child: Text(t.categories.subcategories),
                       ),
                       StreamBuilder(
-                        initialData: const <Category>[],
                         stream: CategoryService.instance
                             .getChildCategories(parentId: widget.categoryUUID!),
                         builder: (context, snapshot) {
@@ -500,21 +440,28 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                                   },
                                   onSelected: (String value) {
                                     if (value == 'delete') {
-                                      deleteCategory(subcategory.id);
+                                      CategoryFormFunctions.deleteCategory(
+                                          context, subcategory.id);
                                     } else if (value == 'to_category') {
-                                      makeMainCategory(subcategory);
+                                      CategoryFormFunctions.makeMainCategory(
+                                          context, subcategory);
                                     } else if (value == 'edit') {
-                                      openSubcategoryForm(
+                                      CategoryFormFunctions.openSubcategoryForm(
+                                          context,
+                                          color: _color,
                                           subcategory: subcategory,
                                           onSubmit: (name, icon) {
-                                            CategoryService.instance
-                                                .updateCategory(CategoryInDB(
-                                                    id: subcategory.id,
-                                                    name: name,
-                                                    iconId: icon.id,
-                                                    parentCategoryID:
-                                                        widget.categoryUUID!));
-                                          });
+                                        CategoryService.instance.updateCategory(
+                                            CategoryInDB(
+                                                id: subcategory.id,
+                                                name: name,
+                                                iconId: icon.id,
+                                                parentCategoryID:
+                                                    widget.categoryUUID!));
+                                      });
+                                    } else if (value == 'merge') {
+                                      CategoryFormFunctions.mergeCategory(
+                                          context, subcategory);
                                     }
                                   },
                                 ),
@@ -525,7 +472,8 @@ class _CategoryFormPageState extends State<CategoryFormPage> {
                       ListTile(
                           leading: const Icon(Icons.add),
                           onTap: () {
-                            openSubcategoryForm(onSubmit: (name, icon) {
+                            CategoryFormFunctions.openSubcategoryForm(context,
+                                color: _color, onSubmit: (name, icon) {
                               CategoryService.instance.insertCategory(
                                   CategoryInDB(
                                       id: const Uuid().v4(),

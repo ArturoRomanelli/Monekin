@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:monekin/app/categories/category_form.dart';
 import 'package:monekin/app/categories/subcategory_selector.dart';
 import 'package:monekin/core/database/services/category/category_service.dart';
 import 'package:monekin/core/models/category/category.dart';
@@ -7,6 +6,8 @@ import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
+
+import 'form/category_form.dart';
 
 enum CategoriesListMode {
   page,
@@ -87,7 +88,7 @@ class _CategoriesListState extends State<CategoriesList> {
                   .displayFilled(size: 25, color: ColorHex.get(category.color)),
               onTap: () async {
                 if (widget.mode == CategoriesListMode.page) {
-                  goToCategoryForm;
+                  await goToCategoryForm();
                 } else if (widget.mode ==
                     CategoriesListMode.modalSelectCategory) {
                   category.type = type;
@@ -259,7 +260,6 @@ class _CategoriesListState extends State<CategoriesList> {
                         BottomSheetFooter(
                           onSaved: selectedCategories.isNotEmpty
                               ? () {
-                                  print(selectedCategories.map((e) => e.name));
                                   return Navigator.of(context)
                                       .pop(selectedCategories);
                                 }

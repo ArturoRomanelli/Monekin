@@ -12,6 +12,7 @@ import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:monekin/i18n/translations.g.dart';
 
 import '../../core/services/filters/date_range_service.dart';
+import '../accounts/all_accounts_balance.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key, this.initialIndex = 0});
@@ -140,10 +141,10 @@ class _StatsPageState extends State<StatsPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    /*   AllAccountBalancePage(
+                    AllAccountBalancePage(
                       date: currentEndDate ?? DateTime.now(),
                       filters: filters,
-                    ), */
+                    ),
                   ],
                 ),
                 buildContainerWithPadding([

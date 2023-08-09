@@ -243,6 +243,14 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _isArchivedMeta =
+      const VerificationMeta('isArchived');
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+      'isArchived', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL DEFAULT 0',
+      defaultValue: const CustomExpression('0'));
   static const VerificationMeta _currencyIdMeta =
       const VerificationMeta('currencyId');
   late final GeneratedColumn<String> currencyId = GeneratedColumn<String>(
@@ -272,6 +280,7 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
         description,
         type,
         iconId,
+        isArchived,
         currencyId,
         iban,
         swift
@@ -321,6 +330,12 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
     } else if (isInserting) {
       context.missing(_iconIdMeta);
     }
+    if (data.containsKey('isArchived')) {
+      context.handle(
+          _isArchivedMeta,
+          isArchived.isAcceptableOrUnknown(
+              data['isArchived']!, _isArchivedMeta));
+    }
     if (data.containsKey('currencyId')) {
       context.handle(
           _currencyIdMeta,
@@ -360,6 +375,8 @@ class Accounts extends Table with TableInfo<Accounts, AccountInDB> {
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!),
       iconId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}iconId'])!,
+      isArchived: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}isArchived'])!,
       currencyId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}currencyId'])!,
       iban: attachedDatabase.typeMapping
@@ -393,6 +410,9 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
   final AccountType type;
   final String iconId;
 
+  /// If true, the account will be no-selectable for new transactions and will not appear in some stats
+  final bool isArchived;
+
   /// ID of the currency used by this account and therefore all transactions contained in it
   final String currencyId;
   final String? iban;
@@ -405,6 +425,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
       this.description,
       required this.type,
       required this.iconId,
+      required this.isArchived,
       required this.currencyId,
       this.iban,
       this.swift});
@@ -423,6 +444,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
       map['type'] = Variable<String>(converter.toSql(type));
     }
     map['iconId'] = Variable<String>(iconId);
+    map['isArchived'] = Variable<bool>(isArchived);
     map['currencyId'] = Variable<String>(currencyId);
     if (!nullToAbsent || iban != null) {
       map['iban'] = Variable<String>(iban);
@@ -444,6 +466,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
           : Value(description),
       type: Value(type),
       iconId: Value(iconId),
+      isArchived: Value(isArchived),
       currencyId: Value(currencyId),
       iban: iban == null && nullToAbsent ? const Value.absent() : Value(iban),
       swift:
@@ -463,6 +486,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
       type: Accounts.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
       iconId: serializer.fromJson<String>(json['iconId']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
       currencyId: serializer.fromJson<String>(json['currencyId']),
       iban: serializer.fromJson<String?>(json['iban']),
       swift: serializer.fromJson<String?>(json['swift']),
@@ -479,6 +503,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
       'description': serializer.toJson<String?>(description),
       'type': serializer.toJson<String>(Accounts.$convertertype.toJson(type)),
       'iconId': serializer.toJson<String>(iconId),
+      'isArchived': serializer.toJson<bool>(isArchived),
       'currencyId': serializer.toJson<String>(currencyId),
       'iban': serializer.toJson<String?>(iban),
       'swift': serializer.toJson<String?>(swift),
@@ -493,6 +518,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
           Value<String?> description = const Value.absent(),
           AccountType? type,
           String? iconId,
+          bool? isArchived,
           String? currencyId,
           Value<String?> iban = const Value.absent(),
           Value<String?> swift = const Value.absent()}) =>
@@ -504,6 +530,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
         description: description.present ? description.value : this.description,
         type: type ?? this.type,
         iconId: iconId ?? this.iconId,
+        isArchived: isArchived ?? this.isArchived,
         currencyId: currencyId ?? this.currencyId,
         iban: iban.present ? iban.value : this.iban,
         swift: swift.present ? swift.value : this.swift,
@@ -518,6 +545,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
           ..write('description: $description, ')
           ..write('type: $type, ')
           ..write('iconId: $iconId, ')
+          ..write('isArchived: $isArchived, ')
           ..write('currencyId: $currencyId, ')
           ..write('iban: $iban, ')
           ..write('swift: $swift')
@@ -527,7 +555,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
 
   @override
   int get hashCode => Object.hash(id, name, iniValue, date, description, type,
-      iconId, currencyId, iban, swift);
+      iconId, isArchived, currencyId, iban, swift);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -539,6 +567,7 @@ class AccountInDB extends DataClass implements Insertable<AccountInDB> {
           other.description == this.description &&
           other.type == this.type &&
           other.iconId == this.iconId &&
+          other.isArchived == this.isArchived &&
           other.currencyId == this.currencyId &&
           other.iban == this.iban &&
           other.swift == this.swift);
@@ -552,6 +581,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
   final Value<String?> description;
   final Value<AccountType> type;
   final Value<String> iconId;
+  final Value<bool> isArchived;
   final Value<String> currencyId;
   final Value<String?> iban;
   final Value<String?> swift;
@@ -564,6 +594,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
     this.description = const Value.absent(),
     this.type = const Value.absent(),
     this.iconId = const Value.absent(),
+    this.isArchived = const Value.absent(),
     this.currencyId = const Value.absent(),
     this.iban = const Value.absent(),
     this.swift = const Value.absent(),
@@ -577,6 +608,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
     this.description = const Value.absent(),
     required AccountType type,
     required String iconId,
+    this.isArchived = const Value.absent(),
     required String currencyId,
     this.iban = const Value.absent(),
     this.swift = const Value.absent(),
@@ -596,6 +628,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
     Expression<String>? description,
     Expression<String>? type,
     Expression<String>? iconId,
+    Expression<bool>? isArchived,
     Expression<String>? currencyId,
     Expression<String>? iban,
     Expression<String>? swift,
@@ -609,6 +642,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
       if (description != null) 'description': description,
       if (type != null) 'type': type,
       if (iconId != null) 'iconId': iconId,
+      if (isArchived != null) 'isArchived': isArchived,
       if (currencyId != null) 'currencyId': currencyId,
       if (iban != null) 'iban': iban,
       if (swift != null) 'swift': swift,
@@ -624,6 +658,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
       Value<String?>? description,
       Value<AccountType>? type,
       Value<String>? iconId,
+      Value<bool>? isArchived,
       Value<String>? currencyId,
       Value<String?>? iban,
       Value<String?>? swift,
@@ -636,6 +671,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
       description: description ?? this.description,
       type: type ?? this.type,
       iconId: iconId ?? this.iconId,
+      isArchived: isArchived ?? this.isArchived,
       currencyId: currencyId ?? this.currencyId,
       iban: iban ?? this.iban,
       swift: swift ?? this.swift,
@@ -668,6 +704,9 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
     if (iconId.present) {
       map['iconId'] = Variable<String>(iconId.value);
     }
+    if (isArchived.present) {
+      map['isArchived'] = Variable<bool>(isArchived.value);
+    }
     if (currencyId.present) {
       map['currencyId'] = Variable<String>(currencyId.value);
     }
@@ -693,6 +732,7 @@ class AccountsCompanion extends UpdateCompanion<AccountInDB> {
           ..write('description: $description, ')
           ..write('type: $type, ')
           ..write('iconId: $iconId, ')
+          ..write('isArchived: $isArchived, ')
           ..write('currencyId: $currencyId, ')
           ..write('iban: $iban, ')
           ..write('swift: $swift, ')
@@ -3569,6 +3609,7 @@ abstract class _$AppDB extends GeneratedDatabase {
           type: Accounts.$convertertype.fromSql(row.read<String>('type')),
           iconId: row.read<String>('iconId'),
           currency: await currencies.mapFromRow(row, tablePrefix: 'nested_0'),
+          isArchived: row.read<bool>('isArchived'),
           description: row.readNullable<String>('description'),
           iban: row.readNullable<String>('iban'),
           swift: row.readNullable<String>('swift'),
@@ -3619,7 +3660,7 @@ abstract class _$AppDB extends GeneratedDatabase {
         startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedlimit.amountOfVariables;
     return customSelect(
-        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","accountCurrency"."code" AS "nested_1.code", "accountCurrency"."symbol" AS "nested_1.symbol","receivingAccountCurrency"."code" AS "nested_2.code", "receivingAccountCurrency"."symbol" AS "nested_2.symbol","ra"."id" AS "nested_3.id", "ra"."name" AS "nested_3.name", "ra"."iniValue" AS "nested_3.iniValue", "ra"."date" AS "nested_3.date", "ra"."description" AS "nested_3.description", "ra"."type" AS "nested_3.type", "ra"."iconId" AS "nested_3.iconId", "ra"."currencyId" AS "nested_3.currencyId", "ra"."iban" AS "nested_3.iban", "ra"."swift" AS "nested_3.swift","c"."id" AS "nested_4.id", "c"."name" AS "nested_4.name", "c"."iconId" AS "nested_4.iconId", "c"."color" AS "nested_4.color", "c"."type" AS "nested_4.type", "c"."parentCategoryID" AS "nested_4.parentCategoryID","pc"."id" AS "nested_5.id", "pc"."name" AS "nested_5.name", "pc"."iconId" AS "nested_5.iconId", "pc"."color" AS "nested_5.color", "pc"."type" AS "nested_5.type", "pc"."parentCategoryID" AS "nested_5.parentCategoryID" FROM transactions AS t INNER JOIN accounts AS a ON t.accountID = a.id INNER JOIN currencies AS accountCurrency ON a.currencyId = accountCurrency.code LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id INNER JOIN currencies AS receivingAccountCurrency ON a.currencyId = receivingAccountCurrency.code LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
+        'SELECT t.*,"a"."id" AS "nested_0.id", "a"."name" AS "nested_0.name", "a"."iniValue" AS "nested_0.iniValue", "a"."date" AS "nested_0.date", "a"."description" AS "nested_0.description", "a"."type" AS "nested_0.type", "a"."iconId" AS "nested_0.iconId", "a"."isArchived" AS "nested_0.isArchived", "a"."currencyId" AS "nested_0.currencyId", "a"."iban" AS "nested_0.iban", "a"."swift" AS "nested_0.swift","accountCurrency"."code" AS "nested_1.code", "accountCurrency"."symbol" AS "nested_1.symbol","receivingAccountCurrency"."code" AS "nested_2.code", "receivingAccountCurrency"."symbol" AS "nested_2.symbol","ra"."id" AS "nested_3.id", "ra"."name" AS "nested_3.name", "ra"."iniValue" AS "nested_3.iniValue", "ra"."date" AS "nested_3.date", "ra"."description" AS "nested_3.description", "ra"."type" AS "nested_3.type", "ra"."iconId" AS "nested_3.iconId", "ra"."isArchived" AS "nested_3.isArchived", "ra"."currencyId" AS "nested_3.currencyId", "ra"."iban" AS "nested_3.iban", "ra"."swift" AS "nested_3.swift","c"."id" AS "nested_4.id", "c"."name" AS "nested_4.name", "c"."iconId" AS "nested_4.iconId", "c"."color" AS "nested_4.color", "c"."type" AS "nested_4.type", "c"."parentCategoryID" AS "nested_4.parentCategoryID","pc"."id" AS "nested_5.id", "pc"."name" AS "nested_5.name", "pc"."iconId" AS "nested_5.iconId", "pc"."color" AS "nested_5.color", "pc"."type" AS "nested_5.type", "pc"."parentCategoryID" AS "nested_5.parentCategoryID" FROM transactions AS t INNER JOIN accounts AS a ON t.accountID = a.id INNER JOIN currencies AS accountCurrency ON a.currencyId = accountCurrency.code LEFT JOIN accounts AS ra ON t.receivingAccountID = ra.id INNER JOIN currencies AS receivingAccountCurrency ON a.currencyId = receivingAccountCurrency.code LEFT JOIN categories AS c ON t.categoryID = c.id LEFT JOIN categories AS pc ON c.parentCategoryID = pc.id WHERE ${generatedpredicate.sql} ${generatedorderBy.sql} ${generatedlimit.sql}',
         variables: [
           ...generatedpredicate.introducedVariables,
           ...generatedorderBy.introducedVariables,

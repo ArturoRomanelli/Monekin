@@ -13,6 +13,8 @@
     "close_and_save": "Guardar y cerrar",
     "add": "Añadir",
     "edit": "Editar",
+    "archivo": "Archivo",
+    "desarchivar": "Desarchivar",
     "delete": "Eliminar",
     "balance": "Balance",
     "income": "Ingreso",
@@ -153,7 +155,7 @@
     "no-accounts.descr": "Empieza a usar toda la magia de Monekin. Crea al menos una cuenta para empezar a añadir tranacciones",
     "last-transactions": "Últimas transacciones",
     "should-create-account.header": "Ops!",
-    "should-create-account.message": "Debes crear una cuenta antes de empezar a crear transacciones"
+    "should-create-account.message": "Debes tener al menos una cuenta no archivada que no sea de ahorros antes de empezar a crear transacciones"
   },
   "FINANCIAL-HEALTH": {
     "display": "Salud financiera",
@@ -339,6 +341,13 @@
       "warning-header": "¿Estas seguro?",
       "warning-text": "Esta acción borrara esta cuenta y todas sus transacciones",
       "success": "Cuenta eliminada correctamente"
+    },
+    "ARCHIVE": {
+      "title": "Archive account",
+      "warn": "This account will no longer appear in certain listings and you will not be able to create new transactions on this account. You can unarchive this account whenever you want",
+      "should-have-zero-balance": "You must have a current balance of 0 to be able to archive this account. Please edit it before continuing",
+      "success": "Account archived successfully",
+      "unarchive-succes": "Account unarchived successfully"
     },
     "SELECT": {
       "one": "Selecciona una cuenta",

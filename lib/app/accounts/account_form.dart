@@ -272,6 +272,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
                           suffixText: _currency?.symbol,
                         ),
                         keyboardType: TextInputType.number,
+                        enabled: !(widget.account != null &&
+                            widget.account!.isArchived),
                         inputFormatters: decimalDigitFormatter,
                         validator: (value) => fieldValidator(value,
                             validator: ValidatorType.double, isRequired: true),

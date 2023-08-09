@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/app/categories/category_form.dart';
 import 'package:monekin/app/categories/subcategory_selector.dart';
 import 'package:monekin/core/database/services/category/category_service.dart';
@@ -6,7 +7,6 @@ import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/core/presentation/widgets/persistent_footer_button.dart';
 import 'package:monekin/core/utils/color_utils.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 enum CategoriesListMode {
   page,
@@ -72,6 +72,14 @@ class _CategoriesListState extends State<CategoriesList> {
         itemBuilder: (context, index) {
           final category = categoriesToDisplay[index];
 
+          goToCategoryForm() => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => CategoryFormPage(
+                          categoryUUID: category.id,
+                        )),
+              );
+
           if (widget.mode != CategoriesListMode.modalSelectMultiCategory) {
             return ListTile(
               title: Text(category.name),
@@ -79,12 +87,7 @@ class _CategoriesListState extends State<CategoriesList> {
                   .displayFilled(size: 25, color: ColorHex.get(category.color)),
               onTap: () async {
                 if (widget.mode == CategoriesListMode.page) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CategoryFormPage(
-                                categoryUUID: category.id,
-                              )));
+                  goToCategoryForm;
                 } else if (widget.mode ==
                     CategoriesListMode.modalSelectCategory) {
                   category.type = type;
@@ -119,18 +122,33 @@ class _CategoriesListState extends State<CategoriesList> {
                     size: 25, color: ColorHex.get(category.color)),
                 value:
                     selectedCategories.map((e) => e.id).contains(category.id),
-                onChanged: (value) {
-                  if (value == true) {
-                    selectedCategories.add(category);
-                  } else {
-                    selectedCategories
-                        .removeWhere((element) => element.id == category.id);
-                  }
-
+                onChanged: (value) async {
+                  await toggleCategorySelection(value, category);
                   setState(() {});
                 });
           }
         });
+  }
+
+  toggleCategorySelection(bool? isNowSelected, Category category) async {
+    if (isNowSelected == true) {
+      if (!selectedCategories.map((e) => e.id).contains(category.id)) {
+        selectedCategories.add(category);
+
+        final subcats = await CategoryService.instance
+            .getChildCategories(parentId: category.id)
+            .first;
+
+        for (final subcat in subcats) {
+          if (!selectedCategories.map((e) => e.id).contains(subcat.id)) {
+            selectedCategories.add(subcat);
+          }
+        }
+      }
+    } else {
+      selectedCategories.removeWhere((element) =>
+          element.id == category.id || element.parentCategoryID == category.id);
+    }
   }
 
   @override
@@ -158,8 +176,10 @@ class _CategoriesListState extends State<CategoriesList> {
                         widget.mode ==
                             CategoriesListMode.modalSelectMultiCategory)
                       Builder(builder: (context) {
-                        if (categoriesSnapshot.data!.length ==
-                            selectedCategories.length) {
+                        if (categoriesSnapshot.data!.every((mainCat) =>
+                            selectedCategories
+                                .map((e) => e.id)
+                                .contains(mainCat.id))) {
                           return IconButton(
                             onPressed: () {
                               setState(() {
@@ -172,10 +192,12 @@ class _CategoriesListState extends State<CategoriesList> {
                         }
 
                         return IconButton(
-                          onPressed: () {
-                            setState(() {
-                              selectedCategories = categoriesSnapshot.data!;
-                            });
+                          onPressed: () async {
+                            for (final category in categoriesSnapshot.data!) {
+                              await toggleCategorySelection(true, category);
+                            }
+
+                            setState(() {});
                           },
                           icon: const Icon(Icons.select_all),
                           tooltip: t.general.select_all,
@@ -230,14 +252,21 @@ class _CategoriesListState extends State<CategoriesList> {
                   }),
                   if (widget.mode ==
                       CategoriesListMode.modalSelectMultiCategory)
-                    ListView(shrinkWrap: true, children: [
-                      const SizedBox(height: 14),
-                      BottomSheetFooter(
+                    ListView(
+                      shrinkWrap: true,
+                      children: [
+                        const SizedBox(height: 14),
+                        BottomSheetFooter(
                           onSaved: selectedCategories.isNotEmpty
-                              ? () =>
-                                  Navigator.of(context).pop(selectedCategories)
-                              : null)
-                    ])
+                              ? () {
+                                  print(selectedCategories.map((e) => e.name));
+                                  return Navigator.of(context)
+                                      .pop(selectedCategories);
+                                }
+                              : null,
+                        ),
+                      ],
+                    )
                 ],
               ),
             );

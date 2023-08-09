@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:monekin/core/database/app_db.dart';
+import 'package:monekin/core/database/services/account/account_service.dart';
+import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 
 class TransactionService {
@@ -76,5 +78,17 @@ class TransactionService {
                 transaction.id.equals(id),
             limit: 1)
         .map((res) => res.firstOrNull);
+  }
+
+  Stream<bool> checkIfCreateTransactionIsPossible() {
+    return AccountService.instance
+        .getAccounts(
+          predicate: (acc, curr) => AppDB.instance.buildExpr([
+            acc.type.equalsValue(AccountType.saving).not(),
+            acc.isArchived.isNotValue(true)
+          ]),
+          limit: 1,
+        )
+        .map((event) => event.isNotEmpty);
   }
 }

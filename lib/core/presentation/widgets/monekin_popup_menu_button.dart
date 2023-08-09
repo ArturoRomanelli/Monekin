@@ -1,5 +1,5 @@
-import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:flutter/material.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
 
 class MonekinPopuMenuButton extends StatelessWidget {
   const MonekinPopuMenuButton({super.key, required this.actionItems});
@@ -17,9 +17,19 @@ class MonekinPopuMenuButton extends StatelessWidget {
               value: index,
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(actionItem.icon),
+                leading: Icon(
+                  actionItem.icon,
+                  color: actionItem.role != null
+                      ? actionItem.getColorBasedOnRole(context)
+                      : null,
+                ),
                 minLeadingWidth: 26,
-                title: Text(actionItem.label),
+                title: Text(actionItem.label,
+                    style: TextStyle(
+                      color: actionItem.role != null
+                          ? actionItem.getColorBasedOnRole(context)
+                          : null,
+                    )),
               ));
         });
       },

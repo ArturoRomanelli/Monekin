@@ -46,6 +46,9 @@ CREATE TABLE IF NOT EXISTS accounts (
     
     iconId TEXT NOT NULL,
 
+    -- If true, the account will be no-selectable for new transactions and will not appear in some stats
+    isArchived BOOLEAN NOT NULL DEFAULT 0,
+
     -- ID of the currency used by this account and therefore all transactions contained in it
     currencyId TEXT NOT NULL REFERENCES currencies(code) ON DELETE CASCADE ON UPDATE CASCADE,
     

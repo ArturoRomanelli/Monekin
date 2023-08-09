@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 831 (415 per locale)
+/// Strings: 845 (422 per locale)
 ///
-/// Built on 2023-08-07 at 12:25 UTC
+/// Built on 2023-08-08 at 17:35 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -188,6 +188,8 @@ class _TranslationsGeneralEn {
 	String get close_and_save => 'Save and close';
 	String get add => 'Add';
 	String get edit => 'Edit';
+	String get archive => 'Archive';
+	String get unarchive => 'Unarchive';
 	String get balance => 'Balance';
 	String get delete => 'Delete';
 	String get income => 'Income';
@@ -256,7 +258,7 @@ class _TranslationsHomeEn {
 	String get no_accounts_descr => 'Start using all the magic of Monekin. Create at least one account to start adding transactions';
 	String get last_transactions => 'Last transactions';
 	String get should_create_account_header => 'Oops!';
-	String get should_create_account_message => 'You must create an account before you can start creating transactions';
+	String get should_create_account_message => 'You must create a no-archived account before you can start creating transactions';
 }
 
 // Path: financial_health
@@ -375,6 +377,7 @@ class _TranslationsAccountEn {
 	late final _TranslationsAccountTypesEn types = _TranslationsAccountTypesEn._(_root);
 	late final _TranslationsAccountFormEn form = _TranslationsAccountFormEn._(_root);
 	late final _TranslationsAccountDeleteEn delete = _TranslationsAccountDeleteEn._(_root);
+	late final _TranslationsAccountArchiveEn archive = _TranslationsAccountArchiveEn._(_root);
 	late final _TranslationsAccountSelectEn select = _TranslationsAccountSelectEn._(_root);
 }
 
@@ -765,6 +768,20 @@ class _TranslationsAccountDeleteEn {
 	String get warning_header => 'Are you sure?';
 	String get warning_text => 'This action will delete this account and all its transactions';
 	String get success => 'Account deleted successfully';
+}
+
+// Path: account.archive
+class _TranslationsAccountArchiveEn {
+	_TranslationsAccountArchiveEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Archive account';
+	String get warn => 'This account will no longer appear in certain listings and you will not be able to create new transactions on this account. You can unarchive this account whenever you want';
+	String get should_have_zero_balance => 'You must have a current balance of 0 to be able to archive this account. Please edit it before continuing';
+	String get success => 'Account archived successfully';
+	String get unarchive_succes => 'Account unarchived successfully';
 }
 
 // Path: account.select
@@ -1204,6 +1221,8 @@ class _TranslationsGeneralEs extends _TranslationsGeneralEn {
 	@override String get close_and_save => 'Guardar y cerrar';
 	@override String get add => 'Añadir';
 	@override String get edit => 'Editar';
+	@override String get archivo => 'Archivo';
+	@override String get desarchivar => 'Desarchivar';
 	@override String get delete => 'Eliminar';
 	@override String get balance => 'Balance';
 	@override String get income => 'Ingreso';
@@ -1272,7 +1291,7 @@ class _TranslationsHomeEs extends _TranslationsHomeEn {
 	@override String get no_accounts_descr => 'Empieza a usar toda la magia de Monekin. Crea al menos una cuenta para empezar a añadir tranacciones';
 	@override String get last_transactions => 'Últimas transacciones';
 	@override String get should_create_account_header => 'Ops!';
-	@override String get should_create_account_message => 'Debes crear una cuenta antes de empezar a crear transacciones';
+	@override String get should_create_account_message => 'Debes tener al menos una cuenta no archivada que no sea de ahorros antes de empezar a crear transacciones';
 }
 
 // Path: financial_health
@@ -1391,6 +1410,7 @@ class _TranslationsAccountEs extends _TranslationsAccountEn {
 	@override late final _TranslationsAccountTypesEs types = _TranslationsAccountTypesEs._(_root);
 	@override late final _TranslationsAccountFormEs form = _TranslationsAccountFormEs._(_root);
 	@override late final _TranslationsAccountDeleteEs delete = _TranslationsAccountDeleteEs._(_root);
+	@override late final _TranslationsAccountArchiveEs archive = _TranslationsAccountArchiveEs._(_root);
 	@override late final _TranslationsAccountSelectEs select = _TranslationsAccountSelectEs._(_root);
 }
 
@@ -1781,6 +1801,20 @@ class _TranslationsAccountDeleteEs extends _TranslationsAccountDeleteEn {
 	@override String get warning_header => '¿Estas seguro?';
 	@override String get warning_text => 'Esta acción borrara esta cuenta y todas sus transacciones';
 	@override String get success => 'Cuenta eliminada correctamente';
+}
+
+// Path: account.archive
+class _TranslationsAccountArchiveEs extends _TranslationsAccountArchiveEn {
+	_TranslationsAccountArchiveEs._(_TranslationsEs root) : this._root = root, super._(root);
+
+	@override final _TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Archive account';
+	@override String get warn => 'This account will no longer appear in certain listings and you will not be able to create new transactions on this account. You can unarchive this account whenever you want';
+	@override String get should_have_zero_balance => 'You must have a current balance of 0 to be able to archive this account. Please edit it before continuing';
+	@override String get success => 'Account archived successfully';
+	@override String get unarchive_succes => 'Account unarchived successfully';
 }
 
 // Path: account.select
@@ -2175,6 +2209,8 @@ extension on _TranslationsEn {
 			case 'general.close_and_save': return 'Save and close';
 			case 'general.add': return 'Add';
 			case 'general.edit': return 'Edit';
+			case 'general.archive': return 'Archive';
+			case 'general.unarchive': return 'Unarchive';
 			case 'general.balance': return 'Balance';
 			case 'general.delete': return 'Delete';
 			case 'general.income': return 'Income';
@@ -2294,7 +2330,7 @@ extension on _TranslationsEn {
 			case 'home.no_accounts_descr': return 'Start using all the magic of Monekin. Create at least one account to start adding transactions';
 			case 'home.last_transactions': return 'Last transactions';
 			case 'home.should_create_account_header': return 'Oops!';
-			case 'home.should_create_account_message': return 'You must create an account before you can start creating transactions';
+			case 'home.should_create_account_message': return 'You must create a no-archived account before you can start creating transactions';
 			case 'financial_health.display': return 'Financial health';
 			case 'financial_health.review.very_good': return 'Very good!';
 			case 'financial_health.review.good': return 'Good';
@@ -2433,6 +2469,11 @@ extension on _TranslationsEn {
 			case 'account.delete.warning_header': return 'Are you sure?';
 			case 'account.delete.warning_text': return 'This action will delete this account and all its transactions';
 			case 'account.delete.success': return 'Account deleted successfully';
+			case 'account.archive.title': return 'Archive account';
+			case 'account.archive.warn': return 'This account will no longer appear in certain listings and you will not be able to create new transactions on this account. You can unarchive this account whenever you want';
+			case 'account.archive.should_have_zero_balance': return 'You must have a current balance of 0 to be able to archive this account. Please edit it before continuing';
+			case 'account.archive.success': return 'Account archived successfully';
+			case 'account.archive.unarchive_succes': return 'Account unarchived successfully';
 			case 'account.select.one': return 'Select an account';
 			case 'account.select.all': return 'All accounts';
 			case 'account.select.multiple': return 'Select accounts';
@@ -2616,6 +2657,8 @@ extension on _TranslationsEs {
 			case 'general.close_and_save': return 'Guardar y cerrar';
 			case 'general.add': return 'Añadir';
 			case 'general.edit': return 'Editar';
+			case 'general.archivo': return 'Archivo';
+			case 'general.desarchivar': return 'Desarchivar';
 			case 'general.delete': return 'Eliminar';
 			case 'general.balance': return 'Balance';
 			case 'general.income': return 'Ingreso';
@@ -2736,7 +2779,7 @@ extension on _TranslationsEs {
 			case 'home.no_accounts_descr': return 'Empieza a usar toda la magia de Monekin. Crea al menos una cuenta para empezar a añadir tranacciones';
 			case 'home.last_transactions': return 'Últimas transacciones';
 			case 'home.should_create_account_header': return 'Ops!';
-			case 'home.should_create_account_message': return 'Debes crear una cuenta antes de empezar a crear transacciones';
+			case 'home.should_create_account_message': return 'Debes tener al menos una cuenta no archivada que no sea de ahorros antes de empezar a crear transacciones';
 			case 'financial_health.display': return 'Salud financiera';
 			case 'financial_health.review.very_good': return 'Muy buena!';
 			case 'financial_health.review.good': return 'Buena';
@@ -2875,6 +2918,11 @@ extension on _TranslationsEs {
 			case 'account.delete.warning_header': return '¿Estas seguro?';
 			case 'account.delete.warning_text': return 'Esta acción borrara esta cuenta y todas sus transacciones';
 			case 'account.delete.success': return 'Cuenta eliminada correctamente';
+			case 'account.archive.title': return 'Archive account';
+			case 'account.archive.warn': return 'This account will no longer appear in certain listings and you will not be able to create new transactions on this account. You can unarchive this account whenever you want';
+			case 'account.archive.should_have_zero_balance': return 'You must have a current balance of 0 to be able to archive this account. Please edit it before continuing';
+			case 'account.archive.success': return 'Account archived successfully';
+			case 'account.archive.unarchive_succes': return 'Account unarchived successfully';
 			case 'account.select.one': return 'Selecciona una cuenta';
 			case 'account.select.multiple': return 'Selecciona cuentas';
 			case 'account.select.all': return 'Todas las cuentas';

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:monekin/app/accounts/account_form.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
+import 'package:monekin/core/presentation/widgets/monekin_quick_actions_buttons.dart';
 import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
-import 'package:monekin/core/services/view-actions/account_view_actions_service.dart';
+import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:monekin/i18n/translations.g.dart';
+
+import '../transactions/form/transaction_form.page.dart';
 
 class AccountDetailsPage extends StatefulWidget {
   const AccountDetailsPage({super.key, required this.account});
@@ -18,6 +22,180 @@ class AccountDetailsPage extends StatefulWidget {
 }
 
 class _AccountDetailsPageState extends State<AccountDetailsPage> {
+  List<ListTileActionItem> getAccountDetailsActions(BuildContext context,
+      {required Account account, bool navigateBackOnDelete = false}) {
+    final t = Translations.of(context);
+
+    return [
+      ListTileActionItem(
+          label: t.general.edit,
+          icon: Icons.edit,
+          onClick: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AccountFormPage(
+                        account: account,
+                      )))),
+      ListTileActionItem(
+          label: t.transfer.create,
+          icon: Icons.swap_vert_rounded,
+          onClick: account.isArchived
+              ? null
+              : () async {
+                  showAccountsWarn() => showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                t.transfer.need_two_accounts_warning_header),
+                            content: SingleChildScrollView(
+                                child: Text(t.transfer
+                                    .need_two_accounts_warning_message)),
+                            actions: [
+                              TextButton(
+                                  child: Text(t.general.understood),
+                                  onPressed: () => Navigator.pop(context)),
+                            ],
+                          );
+                        },
+                      );
+
+                  navigateToTransferForm() => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TransactionFormPage(
+                                fromAccount: account,
+                                mode: TransactionFormMode.transfer,
+                              )));
+
+                  final numberOfAccounts =
+                      (await AccountService.instance.getAccounts().first)
+                          .length;
+
+                  if (numberOfAccounts <= 1) {
+                    await showAccountsWarn();
+                  } else {
+                    await navigateToTransferForm();
+                  }
+                }),
+      ListTileActionItem(
+          label: account.isArchived ? t.general.unarchive : t.general.archive,
+          icon: account.isArchived
+              ? Icons.unarchive_rounded
+              : Icons.archive_rounded,
+          role: ListTileActionRole.warn,
+          onClick: () async {
+            if (account.isArchived) {
+              await AccountService.instance
+                  .updateAccount(account.copyWith(isArchived: false))
+                  .then((value) {
+                if (value) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(t.account.archive.unarchive_succes)),
+                  );
+                }
+              }).catchError((err) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('$err')));
+              });
+
+              return;
+            }
+
+            final currentBalance = await AccountService.instance
+                .getAccountMoney(account: account)
+                .first;
+
+            showArchiveWarnDialog(account, currentBalance);
+          }),
+      ListTileActionItem(
+          label: t.general.delete,
+          icon: Icons.delete,
+          role: ListTileActionRole.delete,
+          onClick: () => deleteTransactionWithAlertAndSnackBar(
+                context,
+                transactionId: account.id,
+                navigateBack: navigateBackOnDelete,
+              )),
+    ];
+  }
+
+  showArchiveWarnDialog(Account account, double currentBalance) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(currentBalance == 0 ? t.account.archive.title : 'Ops!'),
+        content: SingleChildScrollView(
+            child: Text(currentBalance == 0
+                ? t.account.archive.warn
+                : t.account.archive.should_have_zero_balance)),
+        actions: [
+          TextButton(
+            child: Text(
+                currentBalance == 0 ? t.general.confirm : t.general.understood),
+            onPressed: () {
+              if (currentBalance != 0) {
+                Navigator.pop(context);
+                return;
+              }
+
+              AccountService.instance
+                  .updateAccount(account.copyWith(isArchived: true))
+                  .then((value) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(t.account.archive.success)));
+              }).catchError((err) {
+                Navigator.pop(context);
+
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('$err')));
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  deleteTransactionWithAlertAndSnackBar(BuildContext context,
+      {required String transactionId, required bool navigateBack}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(t.account.delete.warning_header),
+          content:
+              SingleChildScrollView(child: Text(t.account.delete.warning_text)),
+          actions: [
+            TextButton(
+              child: Text(t.general.confirm),
+              onPressed: () {
+                AccountService.instance
+                    .deleteAccount(transactionId)
+                    .then((value) {
+                  Navigator.pop(context);
+
+                  if (navigateBack) {
+                    Navigator.pop(context);
+                  }
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(t.account.delete.success)));
+                }).catchError((err) {
+                  Navigator.pop(context);
+
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('$err')));
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   ListTile buildCopyableTile(String title, String value) {
     final snackbarDisplayer = ScaffoldMessenger.of(context).showSnackBar;
 
@@ -42,13 +220,6 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final accountDetailsActions =
-        AccountViewActionService().accountDetailsActions(
-      context,
-      account: widget.account,
-      navigateBackOnDelete: true,
-    );
-
     final t = Translations.of(context);
 
     return StreamBuilder(
@@ -63,6 +234,12 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
               }
 
               final account = snapshot.data!;
+
+              final accountDetailsActions = getAccountDetailsActions(
+                context,
+                account: account,
+                navigateBackOnDelete: true,
+              );
 
               return Column(
                 children: [
@@ -93,20 +270,8 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                           ],
                         ),
                         Hero(
-                          tag: 'account-icon-${widget.account.id}',
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(1000),
-                                border: Border.all(
-                                    width: 2,
-                                    color: Theme.of(context).primaryColor)),
-                            child: account.icon.displayFilled(
-                              size: 36,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        )
+                            tag: 'account-icon-${widget.account.id}',
+                            child: account.displayIcon(context, size: 48))
                       ],
                     ),
                   ),
@@ -154,44 +319,9 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                               )),
                           const SizedBox(height: 16),
                           CardWithHeader(
-                            title: t.general.quick_actions,
-                            body: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  Wrap(
-                                    spacing: 24,
-                                    runSpacing: 16,
-                                    children: accountDetailsActions
-                                        .map((item) => Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton.filledTonal(
-                                                    onPressed: item.onClick,
-                                                    icon: Icon(
-                                                      item.icon,
-                                                      size: 32,
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
-                                                    )),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  item.label,
-                                                  softWrap: false,
-                                                  overflow: TextOverflow.fade,
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w300),
-                                                )
-                                              ],
-                                            ))
-                                        .toList(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                              title: t.general.quick_actions,
+                              body: MonekinQuickActionsButton(
+                                  actions: accountDetailsActions)),
                         ],
                       ),
                     ),

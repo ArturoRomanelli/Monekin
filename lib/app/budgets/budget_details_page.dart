@@ -12,8 +12,8 @@ import 'package:monekin/core/models/budget/budget.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/presentation/widgets/animated_progress_bar.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
-import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/monekin_popup_menu_button.dart';
+import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/utils/list_tile_action_item.dart';
 import 'package:monekin/i18n/translations.g.dart';
@@ -62,6 +62,7 @@ class _BudgetDetailsPageState extends State<BudgetDetailsPage> {
               ListTileActionItem(
                 label: t.general.delete,
                 icon: Icons.delete,
+                role: ListTileActionRole.delete,
                 onClick: () async {
                   await showDialog(
                     context: context,

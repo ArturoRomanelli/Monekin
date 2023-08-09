@@ -1,9 +1,11 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:monekin/app/accounts/account_selector.dart';
 import 'package:monekin/app/categories/categories_list.dart';
 import 'package:monekin/app/transactions/form/widgets/interval_selector_help.dart';
+import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
@@ -214,6 +216,10 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
     } else {
       AccountService.instance
           .getAccounts(
+              predicate: (acc, curr) => AppDB.instance.buildExpr([
+                    acc.type.equalsValue(AccountType.saving).not(),
+                    acc.isArchived.isNotValue(true)
+                  ]),
               limit: widget.mode == TransactionFormMode.incomeOrExpense ? 1 : 2)
           .first
           .then((acc) {
@@ -236,6 +242,7 @@ class _TransactionFormPageState extends State<TransactionFormPage> {
           allowMultiSelection: false,
           filterSavingAccounts:
               widget.mode == TransactionFormMode.incomeOrExpense,
+          includeArchivedAccounts: false,
           selectedAccounts: [account],
         ));
   }

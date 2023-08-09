@@ -243,9 +243,7 @@ class _ExportDataPageState extends State<ExportDataPage> {
                                                   .modalSelectMultiCategory,
                                               selectedCategories:
                                                   filters.categories ??
-                                                      (snapshot.hasData
-                                                          ? [...snapshot.data!]
-                                                          : []),
+                                                      (snapshot.data ?? []),
                                             ));
 
                                     if (modalRes != null &&

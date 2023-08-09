@@ -146,34 +146,33 @@ class FundEvolutionLineChart extends StatelessWidget {
                               t.stats.compared_to_previous_period,
                               style: const TextStyle(fontSize: 12),
                             ),
-                            if (startDate != null && endDate != null)
-                              StreamBuilder(
-                                  stream:
-                                      accountService.getAccountsMoneyVariation(
-                                          accounts: accounts,
-                                          startDate: startDate,
-                                          endDate: endDate,
-                                          convertToPreferredCurrency: true),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return const Skeleton(
-                                          width: 52, height: 22);
-                                    }
+                            StreamBuilder(
+                                stream:
+                                    accountService.getAccountsMoneyVariation(
+                                        accounts: accounts,
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                        convertToPreferredCurrency: true),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Skeleton(
+                                        width: 52, height: 22);
+                                  }
 
-                                    return TrendingValue(
-                                      percentage: snapshot.data!,
-                                      filled: false,
-                                      fontWeight: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall!
-                                          .fontWeight!,
-                                      fontSize: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall!
-                                          .fontSize!,
-                                      outlined: false,
-                                    );
-                                  })
+                                  return TrendingValue(
+                                    percentage: snapshot.data!,
+                                    filled: false,
+                                    fontWeight: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .fontWeight!,
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .fontSize!,
+                                    outlined: false,
+                                  );
+                                })
                           ],
                         )
                       ],
@@ -297,9 +296,7 @@ class FundEvolutionLineChart extends StatelessWidget {
                               : Colors.grey.withOpacity(0.2),
                           barWidth: 5,
                           isStrokeCapRound: true,
-                          dotData: FlDotData(
-                            show: false,
-                          ),
+                          dotData: const FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(

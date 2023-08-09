@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/core/presentation/widgets/filter_sheet_modal.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 class FilterRowIndicator extends StatefulWidget {
   const FilterRowIndicator(
@@ -69,7 +69,8 @@ class _FilterRowIndicatorState extends State<FilterRowIndicator> {
             const SizedBox(width: 8),
             buildChip(
               context,
-              label: '${filters.categories!.length} ${t.general.categories}',
+              label:
+                  '${filters.categories!.where((cat) => cat.isMainCategory).length} ${t.general.categories}',
               onDeleted: () {
                 filters.categories = null;
                 widget.onChange(filters);

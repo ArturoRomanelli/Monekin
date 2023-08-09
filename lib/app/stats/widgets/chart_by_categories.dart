@@ -55,11 +55,9 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
   int touchedIndex = -1;
   late TransactionType transactionsType;
 
-  Future<List<ChartByCategoriesDataItem>?> getEvolutionData(
+  Future<List<ChartByCategoriesDataItem>> getEvolutionData(
     BuildContext context,
   ) async {
-    if (widget.startDate == null || widget.endDate == null) return null;
-
     final data = <ChartByCategoriesDataItem>[];
 
     final transactionService = TransactionService.instance;
@@ -69,6 +67,9 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
           predicate: (t, acc, p2, p3, p4, transCategory, p6) =>
               AppDB.instance.buildExpr([
             t.receivingAccountID.isNull(),
+            t.isHidden.isNotValue(true),
+            t.status.isNotInValues(
+                [TransactionStatus.pending, TransactionStatus.voided]),
             if (widget.startDate != null)
               t.date.isBiggerThanValue(widget.startDate!),
             if (widget.endDate != null)
@@ -77,9 +78,7 @@ class _ChartByCategoriesState extends State<ChartByCategories> {
               t.accountID.isIn(widget.filters!.accounts!.map((e) => e.id)),
             if (widget.filters?.categories != null)
               transCategory.id
-                      .isIn(widget.filters!.categories!.map((e) => e.id)) |
-                  transCategory.parentCategoryID
-                      .isIn(widget.filters!.categories!.map((e) => e.id)),
+                  .isIn(widget.filters!.categories!.map((e) => e.id)),
             if (transactionsType == TransactionType.income)
               t.value.isBiggerOrEqualValue(0),
             if (transactionsType == TransactionType.expense)

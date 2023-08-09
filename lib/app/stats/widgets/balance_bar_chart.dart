@@ -50,7 +50,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
 
   Future<IncomeExpenseChartDataItem?> getDataByPeriods(
       DateTime? startDate, DateTime? endDate, DateRange range) async {
-    if (startDate == null) return null;
+    if (startDate == null && range != DateRange.infinite) return null;
 
     List<String> shortTitles = [];
     List<String> longTitles = [];
@@ -116,7 +116,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
       }
     } else if (range == DateRange.annualy) {
       for (var i = 1; i <= 12; i++) {
-        final selStartDate = DateTime(startDate.year, i);
+        final selStartDate = DateTime(startDate!.year, i);
         final endDate = DateTime(startDate.year, i + 1);
 
         shortTitles.add(DateFormat.M().format(selStartDate));
@@ -130,7 +130,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         balance.add(incomeToAdd + expenseToAdd);
       }
     } else if (range == DateRange.quaterly) {
-      for (var i = startDate.month; i < startDate.month + 3; i++) {
+      for (var i = startDate!.month; i < startDate.month + 3; i++) {
         final selStartDate = DateTime(startDate.year, i);
         final endDate = DateTime(startDate.year, i + 1);
 
@@ -147,7 +147,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
     } else if (range == DateRange.weekly) {
       for (var i = 0; i < DateTime.daysPerWeek; i++) {
         final selStartDate =
-            DateTime(startDate.year, startDate.month, startDate.day + i);
+            DateTime(startDate!.year, startDate.month, startDate.day + i);
         final endDate =
             DateTime(startDate.year, startDate.month, startDate.day + i + 1);
 
@@ -166,7 +166,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         throw Exception("End date can not be null");
       }
 
-      final dateDiff = endDate.difference(startDate).inDays;
+      final dateDiff = endDate.difference(startDate!).inDays;
 
       if (dateDiff <= 7) {
         return getDataByPeriods(startDate, endDate, DateRange.weekly);
@@ -174,10 +174,31 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
         return getDataByPeriods(startDate, endDate, DateRange.monthly);
       } else if (dateDiff <= 365) {
         return getDataByPeriods(startDate, endDate, DateRange.annualy);
+      } else {
+        return getDataByPeriods(startDate, endDate, DateRange.infinite);
+      }
+    } else {
+      // INFINITE:
+
+      final minDate = startDate ?? accounts.map((e) => e.date).min;
+
+      for (var i = min(minDate.year, DateTime.now().year - 3);
+          i <= DateTime.now().year;
+          i++) {
+        final selStartDate = DateTime(i);
+        final endDate = DateTime(i + 1);
+
+        shortTitles.add(DateFormat.y().format(selStartDate));
+        longTitles.add(DateFormat.y().format(selStartDate));
+
+        final incomeToAdd = await getIncomeData(selStartDate, endDate);
+        final expenseToAdd = await getExpenseData(selStartDate, endDate);
+
+        income.add(incomeToAdd);
+        expense.add(expenseToAdd);
+        balance.add(incomeToAdd + expenseToAdd);
       }
     }
-
-    //TODO: custom and infinite
 
     return IncomeExpenseChartDataItem(
       income: income,
@@ -238,6 +259,7 @@ class _BalanceBarChartState extends State<BalanceBarChart> {
           future: getDataByPeriods(
               widget.startDate, widget.endDate, widget.dateRange),
           builder: (context, snapshot) {
+            print(snapshot.data);
             if (!snapshot.hasData) {
               return const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

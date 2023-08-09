@@ -40,34 +40,31 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
 
     final isSubcategorySelected = category.id != widget.parentCategory.id;
 
-    return Container(
-      margin: const EdgeInsets.only(right: 6),
-      child: ActionChip(
-          avatar: isSubcategorySelected
-              ? category.icon.display(
-                  color: isSelected
-                      ? Colors.white
-                      : Theme.of(context).colorScheme.onBackground)
-              : Icon(
-                  Icons.hide_source,
-                  color: isSelected
-                      ? Colors.white
-                      : Theme.of(context).colorScheme.onBackground,
-                ),
-          backgroundColor:
-              isSelected ? ColorHex.get(widget.parentCategory.color) : null,
-          onPressed: () {
-            if (!isSelected) {
-              setState(() {
-                selectedCategory = category;
-              });
-            }
-          },
-          label: Text(
-            isSubcategorySelected ? category.name : 'Sin categoría',
-            style: isSelected ? const TextStyle(color: Colors.white) : null,
-          )),
-    );
+    return ActionChip(
+        avatar: isSubcategorySelected
+            ? category.icon.display(
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onBackground)
+            : Icon(
+                Icons.hide_source,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onBackground,
+              ),
+        backgroundColor:
+            isSelected ? ColorHex.get(widget.parentCategory.color) : null,
+        onPressed: () {
+          if (!isSelected) {
+            setState(() {
+              selectedCategory = category;
+            });
+          }
+        },
+        label: Text(
+          isSubcategorySelected ? category.name : 'Sin categoría',
+          style: isSelected ? const TextStyle(color: Colors.white) : null,
+        ));
   }
 
   @override
@@ -88,15 +85,15 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
                   t.categories.select.select_subcategory,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(
-                  height: 22,
-                ),
+                const SizedBox(height: 22),
                 Builder(
                   builder: (_) {
                     if (childCategories == null) {
                       return const LinearProgressIndicator();
                     } else {
                       return Wrap(
+                        runSpacing: 6,
+                        spacing: 6,
                         children: [
                           subcategoryChip(widget.parentCategory),
                           ...List.generate(

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/app/accounts/account_selector.dart';
 import 'package:monekin/app/categories/categories_list.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
@@ -6,10 +7,12 @@ import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/models/category/category.dart';
 import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 class TransactionFilters {
+  /// Accounts that this filter contains. Will be null if this filter is not in use, or if all categories are selected
   List<Account>? accounts;
+
+  /// Categories that this filter contains. Will be null if this filter is not in use, or if all categories are selected
   List<Category>? categories;
 
   TransactionFilters({this.accounts, this.categories});
@@ -75,7 +78,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 22),
           child: Text(
-            'Filters',
+            t.general.filters,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
@@ -98,7 +101,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                     (snapshot.hasData &&
                                         filtersToReturn.accounts!.length ==
                                             snapshot.data!.length)
-                                ? 'All accounts'
+                                ? t.account.select.all
                                 : filtersToReturn.accounts
                                     ?.map((e) => e.name)
                                     .join(', '),
@@ -127,15 +130,15 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                               }
                             });
                       }),
-                  if (widget.showCategoryFilter) const SizedBox(height: 16),
 
                   /* ---------------------------------- */
                   /* -------- CATEGORY SELECTOR ------- */
                   /* ---------------------------------- */
 
-                  if (widget.showCategoryFilter)
+                  if (widget.showCategoryFilter) ...[
+                    const SizedBox(height: 16),
                     StreamBuilder(
-                        stream: CategoryService.instance.getMainCategories(),
+                        stream: CategoryService.instance.getCategories(),
                         builder: (context, snapshot) {
                           return selector(
                               title: t.general.categories,
@@ -143,9 +146,11 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                       (snapshot.hasData &&
                                           filtersToReturn.categories!.length ==
                                               snapshot.data!.length)
-                                  ? 'All categories'
+                                  ? t.categories.select.all
                                   : filtersToReturn.categories
-                                      ?.map((e) => e.name)
+                                      ?.where(
+                                          (element) => element.isMainCategory)
+                                      .map((e) => e.name)
                                       .join(', '),
                               onClick: () async {
                                 final modalRes = await showCategoryListModal(
@@ -155,9 +160,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                         .modalSelectMultiCategory,
                                     selectedCategories:
                                         filtersToReturn.categories ??
-                                            (snapshot.hasData
-                                                ? [...snapshot.data!]
-                                                : []),
+                                            (snapshot.data ?? []),
                                   ),
                                 );
 
@@ -173,6 +176,7 @@ class _FilterSheetModalState extends State<FilterSheetModal> {
                                 }
                               });
                         }),
+                  ]
                 ],
               ),
             ),

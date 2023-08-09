@@ -43,6 +43,7 @@ class TransactionViewActionService {
       ListTileActionItem(
           label: t.general.delete,
           icon: Icons.delete,
+          role: ListTileActionRole.delete,
           onClick: () => TransactionViewActionService()
                   .deleteTransactionWithAlertAndSnackBar(
                 context,

@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/material.dart';
 import 'package:monekin/core/database/app_db.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/core/models/account/account.dart';
 import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 Future<List<Account>?> showAccountSelectorBottomSheet(
     BuildContext context, AccountSelector accountSelector) {
@@ -23,10 +23,12 @@ class AccountSelector extends StatefulWidget {
       {super.key,
       required this.allowMultiSelection,
       required this.filterSavingAccounts,
+      this.includeArchivedAccounts = true,
       this.selectedAccounts = const []});
 
   final bool allowMultiSelection;
   final bool filterSavingAccounts;
+  final bool includeArchivedAccounts;
 
   final List<Account> selectedAccounts;
 
@@ -49,7 +51,8 @@ class _AccountSelectorState extends State<AccountSelector> {
         .getAccounts(
           predicate: (acc, curr) => AppDB.instance.buildExpr([
             if (widget.filterSavingAccounts)
-              acc.type.equalsValue(AccountType.saving).not()
+              acc.type.equalsValue(AccountType.saving).not(),
+            if (!widget.includeArchivedAccounts) acc.isArchived.isNotValue(true)
           ]),
         )
         .first

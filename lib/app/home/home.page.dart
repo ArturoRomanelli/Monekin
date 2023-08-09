@@ -99,15 +99,7 @@ class _HomePageState extends State<HomePage> {
                             AccountDetailsPage(account: account))),
                 leading: Hero(
                     tag: 'account-icon-${account.id}',
-                    child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                width: 2,
-                                color: Theme.of(context).primaryColor),
-                            borderRadius: BorderRadius.circular(1000)),
-                        child: account.icon.display(
-                            size: 22, color: Theme.of(context).primaryColor))),
+                    child: account.displayIcon(context)),
                 trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,8 +184,11 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add_rounded),
           onPressed: () {
-            AccountService.instance.getAccounts(limit: 1).first.then((value) {
-              if (value.isEmpty) {
+            TransactionService.instance
+                .checkIfCreateTransactionIsPossible()
+                .first
+                .then((value) {
+              if (!value) {
                 _showShouldCreateAccountWarn();
               } else {
                 Navigator.push(
@@ -279,7 +274,9 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
             StreamBuilder(
-                stream: _accountsStream,
+                stream: AccountService.instance.getAccounts(
+                  predicate: (acc, curr) => acc.isArchived.isNotValue(true),
+                ),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return CardWithHeader(
@@ -307,20 +304,21 @@ class _HomePageState extends State<HomePage> {
               height: 16,
             ),
             StreamBuilder(
-                stream: AccountService.instance.getAccounts(limit: 1),
+                stream: TransactionService.instance
+                    .checkIfCreateTransactionIsPossible(),
                 builder: (context, accountSnapshot) {
                   return CardWithHeader(
                     title: t.home.last_transactions,
-                    onHeaderButtonClick: accountSnapshot.hasData &&
-                            accountSnapshot.data!.isNotEmpty
-                        ? () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TransactionsPage()));
-                          }
-                        : null,
+                    onHeaderButtonClick:
+                        accountSnapshot.hasData && accountSnapshot.data!
+                            ? () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TransactionsPage()));
+                              }
+                            : null,
                     body: StreamBuilder(
                         stream: TransactionService.instance.getTransactions(
                             predicate: (transaction,

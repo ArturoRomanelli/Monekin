@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
+import 'package:monekin/app/accounts/all_accounts_page.dart';
 import 'package:monekin/app/stats/stats_page.dart';
 import 'package:monekin/core/database/services/user-setting/user_setting_service.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
@@ -35,6 +36,11 @@ class HomeDrawer extends StatelessWidget {
         label: t.budgets.title,
         icon: Icons.calculate,
         onClick: () => navigateToRoute(context, const BudgetsPage()),
+      ),
+      ListTileActionItem(
+        label: t.general.accounts,
+        icon: Icons.account_balance_rounded,
+        onClick: () => navigateToRoute(context, const AllAccountsPage()),
       ),
       ListTileActionItem(
         label: t.general.transactions,

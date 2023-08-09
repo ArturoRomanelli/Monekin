@@ -6,6 +6,7 @@ import 'package:monekin/core/database/services/exchange-rate/exchange_rate_servi
 import 'package:monekin/core/database/services/transaction/transaction_service.dart';
 import 'package:monekin/core/models/transaction/transaction.dart';
 import 'package:monekin/core/presentation/widgets/card_with_header.dart';
+import 'package:monekin/core/presentation/widgets/monekin_quick_actions_buttons.dart';
 import 'package:monekin/core/presentation/widgets/number_ui_formatters/currency_displayer.dart';
 import 'package:monekin/core/presentation/widgets/skeleton.dart';
 import 'package:monekin/core/services/view-actions/transaction_view_actions_service.dart';
@@ -407,10 +408,6 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final transactionDetailsActions = TransactionViewActionService()
-        .transactionDetailsActions(context,
-            transaction: widget.transaction, navigateBackOnDelete: true);
-
     final t = Translations.of(context);
 
     return StreamBuilder(
@@ -426,6 +423,10 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               }
 
               final transaction = snapshot.data!;
+
+              final transactionDetailsActions = TransactionViewActionService()
+                  .transactionDetailsActions(context,
+                      transaction: transaction, navigateBackOnDelete: true);
 
               return SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
@@ -687,42 +688,9 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                       ),
                       const SizedBox(height: 16),
                       CardWithHeader(
-                        title: t.general.quick_actions,
-                        body: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Wrap(
-                                spacing: 24,
-                                runSpacing: 16,
-                                children: transactionDetailsActions
-                                    .map((item) => Column(
-                                          children: [
-                                            IconButton.filledTonal(
-                                                onPressed: item.onClick,
-                                                icon: Icon(
-                                                  item.icon,
-                                                  size: 32,
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
-                                                )),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              item.label,
-                                              softWrap: false,
-                                              overflow: TextOverflow.fade,
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w300),
-                                            )
-                                          ],
-                                        ))
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                          title: t.general.quick_actions,
+                          body: MonekinQuickActionsButton(
+                              actions: transactionDetailsActions)),
                     ],
                   ));
             }),

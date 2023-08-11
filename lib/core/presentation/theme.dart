@@ -67,5 +67,7 @@ ThemeData getThemeData(bool dark) {
       leadingAndTrailingTextStyle: listTileSmallText,
     ),
     useMaterial3: true,
+    materialTapTargetSize: MaterialTapTargetSize.padded,
+    visualDensity: VisualDensity.standard,
   );
 }

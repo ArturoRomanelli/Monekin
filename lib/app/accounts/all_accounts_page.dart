@@ -17,7 +17,7 @@ class AllAccountsPage extends StatelessWidget {
       appBar: AppBar(title: Text(t.home.my_accounts)),
       floatingActionButton: FloatingActionButton.extended(
           icon: const Icon(Icons.add_rounded),
-          label: Text(t.transaction.create),
+          label: Text(t.account.form.create),
           onPressed: () => {
                 Navigator.push(
                     context,

@@ -62,7 +62,9 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
           }
         },
         label: Text(
-          isSubcategorySelected ? category.name : 'Sin categoría',
+          isSubcategorySelected
+              ? category.name
+              : t.categories.select.without_subcategory,
           style: isSelected ? const TextStyle(color: Colors.white) : null,
         ));
   }
@@ -92,7 +94,7 @@ class _SubcategorySelectorState extends State<SubcategorySelector> {
                       return const LinearProgressIndicator();
                     } else {
                       return Wrap(
-                        runSpacing: 6,
+                        runSpacing: 0,
                         spacing: 6,
                         children: [
                           subcategoryChip(widget.parentCategory),

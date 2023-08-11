@@ -9,15 +9,19 @@ class MonekinQuickActionsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Wrap(
-            spacing: 24,
-            runSpacing: 16,
-            children: actions
-                .map((item) => Column(
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Wrap(
+          spacing: 14,
+          runSpacing: 16,
+          direction: Axis.horizontal,
+          alignment: WrapAlignment.start,
+          children: actions
+              .map((item) => SizedBox(
+                    width: constraints.maxWidth > 600 ? 100 : 62,
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CircleAvatar(
@@ -43,11 +47,11 @@ class MonekinQuickActionsButton extends StatelessWidget {
                               fontSize: 12, fontWeight: FontWeight.w300),
                         )
                       ],
-                    ))
-                .toList(),
-          ),
-        ],
-      ),
+                    ),
+                  ))
+              .toList(),
+        );
+      }),
     );
   }
 }

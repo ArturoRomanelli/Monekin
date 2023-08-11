@@ -15,7 +15,7 @@ def download_google_font_icons(data, path: str):
 
         if response.status_code != 200:
             print(
-                f"Icon {el['scope']}/{el['id']} skipped because it does not exist in the source."
+                f"🔴 Icon {el['scope']}/{el['id']} skipped because it does not exist in the source."
             )
             continue
 
@@ -24,7 +24,7 @@ def download_google_font_icons(data, path: str):
 
         with open(f"{new_path}/{el['scope']}/{el['id']}.svg", "wb") as f:
             f.write(response.content)
-            print(f"Icon {el['scope']}/{el['id']} downloaded successfully")
+            print(f"✅ Icon {el['scope']}/{el['id']} downloaded successfully")
 
 
 with open(os.path.join(current_path, "supported_icons.json"), "r") as f:

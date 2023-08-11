@@ -94,6 +94,7 @@ flutter:
     - assets/icons/supported_selectable_icons/medical/
     - assets/icons/supported_selectable_icons/transport/
     - assets/icons/supported_selectable_icons/technology/
+    - assets/icons/supported_selectable_icons/logos/financial_institutions/
     - assets/sql/
     - assets/icons/backup/
 

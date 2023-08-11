@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 847 (423 per locale)
+/// Strings: 849 (424 per locale)
 ///
-/// Built on 2023-08-09 at 15:23 UTC
+/// Built on 2023-08-11 at 16:05 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -374,7 +374,7 @@ class _TranslationsAccountEn {
 	String get n_transactions => 'Number of transactions';
 	String get add_money => 'Add money';
 	String get withdraw_money => 'Withdraw money';
-	String get no_accounts => 'There are no accounts to display in this section';
+	String get no_accounts => 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
 	late final _TranslationsAccountTypesEn types = _TranslationsAccountTypesEn._(_root);
 	late final _TranslationsAccountFormEn form = _TranslationsAccountFormEn._(_root);
 	late final _TranslationsAccountDeleteEn delete = _TranslationsAccountDeleteEn._(_root);
@@ -431,7 +431,7 @@ class _TranslationsCategoriesEn {
 	String make_child_warning2({required Object x, required Object destiny}) => 'Their transactions <b>(${x})</b> will be moved to the new subcategories created within the <b>${destiny}</b> category.';
 	String get make_child_success => 'Subcategories created successfully';
 	String get merge => 'Merge with another category';
-	String merge_warning1({required Object x, required Object from, required Object destiny}) => 'All transactions (<b>${x}</b>) associated with the category <b>${from}</b> will be moved to the category <b>${destiny}</b>.';
+	String merge_warning1({required Object x, required Object from, required Object destiny}) => 'All transactions (<b>${x}</b>) associated with the category <b>${from}</b> will be moved to the category <b>${destiny}</b>';
 	String merge_warning2({required Object from}) => 'The category <b>${from}</b> will be irreversibly deleted.';
 	String get merge_success => 'Category merged successfully';
 	String get delete_success => 'Category deleted correctly';
@@ -623,6 +623,7 @@ class _TranslationsIconSelectorScopesEn {
 	String get entertainment => 'Leisure';
 	String get technology => 'Technology';
 	String get other => 'Others';
+	String get logos_financial_institutions => 'Financial institutions';
 }
 
 // Path: transaction.next_payments
@@ -1220,7 +1221,7 @@ class _TranslationsGeneralEs implements _TranslationsGeneralEn {
 	@override String get close_and_save => 'Guardar y cerrar';
 	@override String get add => 'Añadir';
 	@override String get edit => 'Editar';
-	@override String get archive => 'Archivo';
+	@override String get archive => 'Archivar';
 	@override String get unarchive => 'Desarchivar';
 	@override String get delete => 'Eliminar';
 	@override String get balance => 'Balance';
@@ -1406,7 +1407,7 @@ class _TranslationsAccountEs implements _TranslationsAccountEn {
 	@override String get n_transactions => 'Número de transacciones';
 	@override String get add_money => 'Añadir dinero';
 	@override String get withdraw_money => 'Retirar dinero';
-	@override String get no_accounts => 'No hay cuentas que mostrar en esta sección';
+	@override String get no_accounts => 'No se han encontrado cuentas que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
 	@override late final _TranslationsAccountTypesEs types = _TranslationsAccountTypesEs._(_root);
 	@override late final _TranslationsAccountFormEs form = _TranslationsAccountFormEs._(_root);
 	@override late final _TranslationsAccountDeleteEs delete = _TranslationsAccountDeleteEs._(_root);
@@ -1655,6 +1656,7 @@ class _TranslationsIconSelectorScopesEs implements _TranslationsIconSelectorScop
 	@override String get entertainment => 'Entretenimiento';
 	@override String get technology => 'Technología';
 	@override String get other => 'Otros';
+	@override String get logos_financial_institutions => 'Financial institutions';
 }
 
 // Path: transaction.next_payments
@@ -2374,6 +2376,7 @@ extension on _TranslationsEn {
 			case 'icon_selector.scopes.entertainment': return 'Leisure';
 			case 'icon_selector.scopes.technology': return 'Technology';
 			case 'icon_selector.scopes.other': return 'Others';
+			case 'icon_selector.scopes.logos_financial_institutions': return 'Financial institutions';
 			case 'transaction.create': return 'New transaction';
 			case 'transaction.new_income': return 'New income';
 			case 'transaction.new_expense': return 'New expense';
@@ -2447,7 +2450,7 @@ extension on _TranslationsEn {
 			case 'account.n_transactions': return 'Number of transactions';
 			case 'account.add_money': return 'Add money';
 			case 'account.withdraw_money': return 'Withdraw money';
-			case 'account.no_accounts': return 'There are no accounts to display in this section';
+			case 'account.no_accounts': return 'No transactions found to display here. Add a transaction by clicking the \'+\' button at the bottom';
 			case 'account.types.title': return 'Account type';
 			case 'account.types.warning': return 'Once the type of account has been chosen, it cannot be changed in the future';
 			case 'account.types.normal': return 'Normal account';
@@ -2516,7 +2519,7 @@ extension on _TranslationsEn {
 			case 'categories.make_child_warning2': return ({required Object x, required Object destiny}) => 'Their transactions <b>(${x})</b> will be moved to the new subcategories created within the <b>${destiny}</b> category.';
 			case 'categories.make_child_success': return 'Subcategories created successfully';
 			case 'categories.merge': return 'Merge with another category';
-			case 'categories.merge_warning1': return ({required Object x, required Object from, required Object destiny}) => 'All transactions (<b>${x}</b>) associated with the category <b>${from}</b> will be moved to the category <b>${destiny}</b>.';
+			case 'categories.merge_warning1': return ({required Object x, required Object from, required Object destiny}) => 'All transactions (<b>${x}</b>) associated with the category <b>${from}</b> will be moved to the category <b>${destiny}</b>';
 			case 'categories.merge_warning2': return ({required Object from}) => 'The category <b>${from}</b> will be irreversibly deleted.';
 			case 'categories.merge_success': return 'Category merged successfully';
 			case 'categories.delete_success': return 'Category deleted correctly';
@@ -2658,7 +2661,7 @@ extension on _TranslationsEs {
 			case 'general.close_and_save': return 'Guardar y cerrar';
 			case 'general.add': return 'Añadir';
 			case 'general.edit': return 'Editar';
-			case 'general.archive': return 'Archivo';
+			case 'general.archive': return 'Archivar';
 			case 'general.unarchive': return 'Desarchivar';
 			case 'general.delete': return 'Eliminar';
 			case 'general.balance': return 'Balance';
@@ -2824,6 +2827,7 @@ extension on _TranslationsEs {
 			case 'icon_selector.scopes.entertainment': return 'Entretenimiento';
 			case 'icon_selector.scopes.technology': return 'Technología';
 			case 'icon_selector.scopes.other': return 'Otros';
+			case 'icon_selector.scopes.logos_financial_institutions': return 'Financial institutions';
 			case 'transaction.create': return 'Nueva transacción';
 			case 'transaction.new_income': return 'Nuevo ingreso';
 			case 'transaction.new_expense': return 'Nuevo gasto';
@@ -2897,7 +2901,7 @@ extension on _TranslationsEs {
 			case 'account.n_transactions': return 'Número de transacciones';
 			case 'account.add_money': return 'Añadir dinero';
 			case 'account.withdraw_money': return 'Retirar dinero';
-			case 'account.no_accounts': return 'No hay cuentas que mostrar en esta sección';
+			case 'account.no_accounts': return 'No se han encontrado cuentas que mostrar aquí. Añade una transacción pulsando el botón \'+\' de la parte inferior';
 			case 'account.types.title': return 'Tipo de cuenta';
 			case 'account.types.warning': return 'Una vez elegido el tipo de cuenta este no podrá cambiarse en un futuro';
 			case 'account.types.normal': return 'Cuenta corriente';

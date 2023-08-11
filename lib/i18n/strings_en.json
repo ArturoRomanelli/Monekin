@@ -213,7 +213,8 @@
       "medical": "Health",
       "entertainment": "Leisure",
       "technology": "Technology",
-      "other": "Others"
+      "other": "Others",
+      "logos/financial_institutions": "Financial institutions"
     }
   },
   "TRANSACTION": {
@@ -312,7 +313,7 @@
     "n_transactions": "Number of transactions",
     "add_money": "Add money",
     "withdraw_money": "Withdraw money",
-    "no-accounts": "There are no accounts to display in this section",
+    "no-accounts": "No transactions found to display here. Add a transaction by clicking the '+' button at the bottom",
     "TYPES": {
       "title": "Account type",
       "warning": "Once the type of account has been chosen, it cannot be changed in the future",

@@ -13,7 +13,7 @@
     "close_and_save": "Guardar y cerrar",
     "add": "Añadir",
     "edit": "Editar",
-    "archive": "Archivo",
+    "archive": "Archivar",
     "unarchive": "Desarchivar",
     "delete": "Eliminar",
     "balance": "Balance",
@@ -214,7 +214,8 @@
       "medical": "Salud",
       "entertainment": "Entretenimiento",
       "technology": "Technología",
-      "other": "Otros"
+      "other": "Otros",
+      "logos/financial_institutions": "Financial institutions"
     }
   },
   "TRANSACTION": {
@@ -314,7 +315,7 @@
     "n_transactions": "Número de transacciones",
     "add_money": "Añadir dinero",
     "withdraw_money": "Retirar dinero",
-    "no-accounts": "No hay cuentas que mostrar en esta sección",
+    "no-accounts": "No se han encontrado cuentas que mostrar aquí. Añade una transacción pulsando el botón '+' de la parte inferior",
     "TYPES": {
       "title": "Tipo de cuenta",
       "warning": "Una vez elegido el tipo de cuenta este no podrá cambiarse en un futuro",

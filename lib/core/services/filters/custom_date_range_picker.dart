@@ -1,6 +1,6 @@
-import 'package:monekin/i18n/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:monekin/i18n/translations.g.dart';
 
 import '../../utils/date_time_picker.dart';
 
@@ -24,23 +24,29 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
   late DateTime selectedStartDate;
   late DateTime selectedEndDate;
 
-  Widget _buildSelector(String label, DateTime date) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Icon(Icons.calendar_today, size: 25),
-        const SizedBox(height: 4),
-        Text(label),
-        Text(
-          DateFormat.yMMMMd().format(date),
-          style: Theme.of(context)
-              .textTheme
-              .labelSmall!
-              .copyWith(fontWeight: FontWeight.w300),
-          textAlign: TextAlign.center,
+  Widget _buildSelector(
+      {required String label, required DateTime date, void Function()? onTap}) {
+    return Material(
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(Icons.calendar_today, size: 25),
+            const SizedBox(height: 4),
+            Text(label),
+            Text(
+              DateFormat.yMMMMd().format(date),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelSmall!
+                  .copyWith(fontWeight: FontWeight.w300),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -79,30 +85,29 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  Material(
-                    child: InkWell(
-                      child: _buildSelector(
-                          t.general.time.start_date, selectedStartDate),
-                      onTap: () async {
-                        final dateResult = await openDateTimePicker(context,
-                            showTimePickerAfterDate: false,
-                            initialDate: selectedStartDate);
+                  _buildSelector(
+                    label: t.general.time.start_date,
+                    date: selectedStartDate,
+                    onTap: () async {
+                      final dateResult = await openDateTimePicker(context,
+                          showTimePickerAfterDate: false,
+                          lastDate: selectedEndDate,
+                          initialDate: selectedStartDate);
 
-                        if (dateResult != null) {
-                          setState(() {
-                            selectedStartDate = dateResult;
-                          });
-                        }
-                      },
-                    ),
+                      if (dateResult != null) {
+                        setState(() {
+                          selectedStartDate = dateResult;
+                        });
+                      }
+                    },
                   ),
-                  Material(
-                    child: InkWell(
-                      child: _buildSelector(
-                          t.general.time.end_date, selectedEndDate),
+                  _buildSelector(
+                      label: t.general.time.end_date,
+                      date: selectedEndDate,
                       onTap: () async {
                         final dateResult = await openDateTimePicker(context,
                             showTimePickerAfterDate: false,
+                            lastDate: selectedStartDate,
                             initialDate: selectedEndDate);
 
                         if (dateResult != null) {
@@ -110,9 +115,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                             selectedEndDate = dateResult;
                           });
                         }
-                      },
-                    ),
-                  ),
+                      }),
                 ],
               ),
               const Divider(),

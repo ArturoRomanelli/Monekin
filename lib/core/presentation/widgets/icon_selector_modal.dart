@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:monekin/core/models/supported-icon/supported_icon.dart';
 import 'package:monekin/core/presentation/widgets/bottomSheetFooter.dart';
 import 'package:monekin/core/presentation/widgets/scrollable_with_bottom_gradient.dart';
 import 'package:monekin/core/services/supported_icon/supported_icon_service.dart';
 import 'package:monekin/i18n/translations.g.dart';
-import 'package:flutter/material.dart';
 
 showIconSelectorModal(BuildContext context, IconSelectorModal component) {
   return showModalBottomSheet(
@@ -98,7 +98,8 @@ class _IconSelectorModalState extends State<IconSelectorModal> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 0, horizontal: 16),
                               color: colors.background,
-                              child: Text(t['icon_selector.scopes.$scope']),
+                              child: Text(t[
+                                  'icon_selector.scopes.${scope.replaceAll("/", "_")}']),
                             ),
                           ],
                         ),

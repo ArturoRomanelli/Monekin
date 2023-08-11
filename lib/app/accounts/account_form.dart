@@ -328,9 +328,6 @@ class _AccountFormPageState extends State<AccountFormPage> {
                                 .getLastExchangeRateOf(
                                     currencyCode: _currency!.code),
                             builder: (context, snapshot) {
-                              print(_currency?.code);
-                              print(_userPrCurrency?.code);
-                              print("-----------------");
                               if (snapshot.hasData ||
                                   _currency?.code == _userPrCurrency?.code) {
                                 return Container();

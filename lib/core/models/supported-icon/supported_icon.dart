@@ -20,14 +20,21 @@ class SupportedIcon {
 
   Map<String, dynamic> toJson() => _$SupportedIconToJson(this);
 
+  bool get isBrandLogo =>
+      scope.split('/').isNotEmpty && scope.split('/').first == 'logos';
+
   /// Display the icon in any widget
-  SvgPicture display({double size = 22, Color? color}) {
-    return SvgPicture.asset(
-      urlToAssets,
+  Widget display({double size = 22, Color? color}) {
+    return SizedBox(
       height: size,
       width: size,
-      colorFilter:
-          color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+      child: SvgPicture.asset(
+        urlToAssets,
+        height: size,
+        width: size,
+        colorFilter:
+            color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
+      ),
     );
   }
 

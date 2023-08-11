@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monekin/app/accounts/account_details.dart';
+import 'package:monekin/app/accounts/account_form.dart';
 import 'package:monekin/core/database/services/account/account_service.dart';
 import 'package:monekin/i18n/translations.g.dart';
 
@@ -14,6 +15,15 @@ class AllAccountsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(t.home.my_accounts)),
+      floatingActionButton: FloatingActionButton.extended(
+          icon: const Icon(Icons.add_rounded),
+          label: Text(t.transaction.create),
+          onPressed: () => {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountFormPage()))
+              }),
       body: StreamBuilder(
           stream: AccountService.instance.getAccounts(),
           builder: (context, snapshot) {
@@ -29,7 +39,7 @@ class AllAccountsPage extends StatelessWidget {
                   Expanded(
                       child: EmptyIndicator(
                           title: t.general.empty_warn,
-                          description: t.transaction.list.empty)),
+                          description: t.account.no_accounts)),
                 ],
               );
             }
